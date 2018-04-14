@@ -1,104 +1,31 @@
-# Start Polymer 3.0 
+# Replus App
 
-A simple Polymer 3.0 demo app. See it deployed at [start-polymer3.firebaseapp.com](https://start-polymer3.firebaseapp.com).
+A Replus Progressive Web App (PWA) for Replus Remote and Replus Vision.
 
-Note: Please use the latest version of Chrome or Safari to view the app. It uses native [dynamic imports](https://developers.google.com/web/updates/2017/11/dynamic-import).
+### Prerequisites
 
-To use the app:
+* Latest Node.js
+* Latest Chrome Browser
+* Polymer CLI
+* Yarn
 
-  1. [Install the Polymer CLI and its prerequisites](#install)
-  2. [Clone, install and serve locally](#clone)
-  3. [Build](#build)
-  4. [Deploy](#deploy)
-
-<a name="install"></a>
-
-## Install the Polymer CLI and its prerequisites
-
-Before you can serve this project, you will need to install the Polymer CLI
-and its prerequisites.
-
-**Prerequisites:**
-
-* [Git](https://git-scm.com/download/)
-* [Node.js](https://nodejs.org/en/)
-* [npm](https://www.npmjs.com/)
-* [Yarn](https://yarnpkg.com/en/)
-
-When you've installed the prerequisites, run the following command to install the Polymer CLI globally:
+### Clone and pull all branches
 
 ```
-npm install -g polymer-cli@next
+git clone https://github.com/eufat/replus-app.git
+git branch -r | grep -v '\->' | while read remote; do git branch --track "${remote#origin/}" "$remote"; done
 ```
 
-<a name="clone"></a>
+### Install project
 
-## Clone, install and serve locally 
-
-To clone the project, install its dependencies, and serve locally:
+Start by installing all dependencies and dev dependencies
 
 ```
-git clone https://github.com/PolymerLabs/start-polymer3.git
-cd start-polymer3
-yarn install --flat
-polymer serve
+yarn
 ```
 
-To view the app, open the `applications` link in the latest version of Chrome or Safari. For example:
+Start project with
 
 ```
-~/start-polymer3 > polymer serve
-info:    Files in this directory are available under the following URLs
-      applications: http://127.0.0.1:8081
-      reusable components: http://127.0.0.1:8081/components/start-polymer3/
+yarn run start
 ```
-
-In the example above, you'd open http://127.0.0.1:8081.
-
-## Build
-
-TODO: Complete this section
-
-_The Polymer CLI build tool is still in flux for Polymer 3.0 apps. Weird stuff might happen. Please keep an eye on [the Polymer project blog](https://www.polymer-project.org/blog/)-we'll make a post when the tools have been updated :)_
-
-To build the app: 
-
-```
-yarn install --flat
-polymer build
-```
-
-The build is output to `build/es6-unbundled`. 
-
-## Deploy
-
-TODO: Complete this section
-
-This sample site is deployed on Firebase at [start-polymer3.firebaseapp.com](https://start-polymer3.firebaseapp.com). 
-
-Take a look at `firebase.json` for example deployment config, and also see [the Firebase docs](https://firebase.google.com/docs/hosting/deploying).
-
-To deploy your own app:
-
-1.  [Install the Firebase CLI tools](https://firebase.google.com/docs/cli/).
-
-    ```
-    npm install -g firebase-tools
-    firebase login
-    ```
-
-2.  From the [Firebase console](https://console.firebase.google.com/), create a Firebase project.
-
-3.  [Initialize Firebase in your project folder](https://firebase.google.com/docs/cli/#initializing_a_project_directory). 
-
-    ```
-    firebase init
-    ```
-
-    When prompted for a `public` folder, you can enter `build/es6-unbundled` to deploy the build configuration supplied with this sample project.
-
-4.  [Deploy your project](https://firebase.google.com/docs/cli/#deployment).
-
-    ```
-    firebase deploy
-    ```
