@@ -1,0 +1,22 @@
+{
+  "name": "replus-app",
+  "version": "0.0.1",
+  "main": "index.js",
+  "repository": "https://github.com/eufat/replus-app.git",
+  "author": "Replus Engineering",
+  "license": "unlicensed",
+  "scripts": {
+    "start": "npm run serve | npm run watch",
+    "serve": "polymer serve --port 8080",
+    "test": "polymer test",
+    "watch": "browser-sync start --proxy localhost:8080 --open --files \"**/*.js\""
+  },
+  "dependencies": {
+    "@polymer/app-layout": "^3.0.0-pre.12",
+    "@polymer/paper-checkbox": "^3.0.0-pre.12",
+    "@polymer/polymer": "^3.0.0-pre.12"
+  },
+  "devDependencies": {
+    "browser-sync": "^2.23.6"
+  }
+}
