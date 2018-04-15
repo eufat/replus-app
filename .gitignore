@@ -1,6 +1,31 @@
-.vscode
+# Created by .ignore support plugin (hsz.mobi)
+
+# modules
+/functions/node_modules
+/node_modules/
+
+# env editor
+.idea/*
+.vscode/*
 .DS_Store
-public
-build
-node_modules
+
+# lock
+yarn.lock
+package-lock.json
+/functions/package-lock.json
+/functions/yarn.lock
+
+# error Files
+yarn-error.log
+/functions/yarn-error.log
+
+# build
+build/*
+!build/build.xml
+
+# firebase
+firebase-debug.log
 .firebaserc
+
+# env
+.env

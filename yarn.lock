@@ -49,6 +49,29 @@
   dependencies:
     "@polymer/polymer" "3.0.0-pre.12"
 
+"@polymer/iron-icon@3.0.0-pre.12", "@polymer/iron-icon@^3.0.0-pre.12":
+  version "3.0.0-pre.12"
+  resolved "https://registry.yarnpkg.com/@polymer/iron-icon/-/iron-icon-3.0.0-pre.12.tgz#5c6c8cef297ef02a25703c9de1dd7aef089c8ee7"
+  dependencies:
+    "@polymer/iron-flex-layout" "3.0.0-pre.12"
+    "@polymer/iron-meta" "3.0.0-pre.12"
+    "@polymer/polymer" "3.0.0-pre.12"
+
+"@polymer/iron-icons@^3.0.0-pre.12":
+  version "3.0.0-pre.12"
+  resolved "https://registry.yarnpkg.com/@polymer/iron-icons/-/iron-icons-3.0.0-pre.12.tgz#35316139f6a2c84dc207dbecce174bf122921c0f"
+  dependencies:
+    "@polymer/iron-icon" "3.0.0-pre.12"
+    "@polymer/iron-iconset-svg" "3.0.0-pre.12"
+    "@polymer/polymer" "3.0.0-pre.12"
+
+"@polymer/iron-iconset-svg@3.0.0-pre.12":
+  version "3.0.0-pre.12"
+  resolved "https://registry.yarnpkg.com/@polymer/iron-iconset-svg/-/iron-iconset-svg-3.0.0-pre.12.tgz#99677b304a8ba72d5b6d9ec19ba4e0b16ef47662"
+  dependencies:
+    "@polymer/iron-meta" "3.0.0-pre.12"
+    "@polymer/polymer" "3.0.0-pre.12"
+
 "@polymer/iron-media-query@3.0.0-pre.12":
   version "3.0.0-pre.12"
   resolved "https://registry.yarnpkg.com/@polymer/iron-media-query/-/iron-media-query-3.0.0-pre.12.tgz#b24ad27df566d6990798f5465a7bade40ee197d5"
@@ -58,6 +81,12 @@
 "@polymer/iron-meta@3.0.0-pre.12":
   version "3.0.0-pre.12"
   resolved "https://registry.yarnpkg.com/@polymer/iron-meta/-/iron-meta-3.0.0-pre.12.tgz#b89c280f4d004e7d6c8263d848803837e69d9776"
+  dependencies:
+    "@polymer/polymer" "3.0.0-pre.12"
+
+"@polymer/iron-range-behavior@3.0.0-pre.12":
+  version "3.0.0-pre.12"
+  resolved "https://registry.yarnpkg.com/@polymer/iron-range-behavior/-/iron-range-behavior-3.0.0-pre.12.tgz#bd03bf5dc1a4049764ae1e693c04bcc7bc2d19d3"
   dependencies:
     "@polymer/polymer" "3.0.0-pre.12"
 
@@ -100,6 +129,24 @@
     "@polymer/paper-styles" "3.0.0-pre.12"
     "@polymer/polymer" "3.0.0-pre.12"
 
+"@polymer/paper-icon-button@^3.0.0-pre.12":
+  version "3.0.0-pre.12"
+  resolved "https://registry.yarnpkg.com/@polymer/paper-icon-button/-/paper-icon-button-3.0.0-pre.12.tgz#52c63fc87d98998d055a1ff5fc46b207ce85c623"
+  dependencies:
+    "@polymer/iron-icon" "3.0.0-pre.12"
+    "@polymer/paper-behaviors" "3.0.0-pre.12"
+    "@polymer/paper-styles" "3.0.0-pre.12"
+    "@polymer/polymer" "3.0.0-pre.12"
+
+"@polymer/paper-progress@^3.0.0-pre.12":
+  version "3.0.0-pre.12"
+  resolved "https://registry.yarnpkg.com/@polymer/paper-progress/-/paper-progress-3.0.0-pre.12.tgz#36d163e25929f15cda8eecd08c7a3f7e9a97d3e3"
+  dependencies:
+    "@polymer/iron-flex-layout" "3.0.0-pre.12"
+    "@polymer/iron-range-behavior" "3.0.0-pre.12"
+    "@polymer/paper-styles" "3.0.0-pre.12"
+    "@polymer/polymer" "3.0.0-pre.12"
+
 "@polymer/paper-ripple@3.0.0-pre.12":
   version "3.0.0-pre.12"
   resolved "https://registry.yarnpkg.com/@polymer/paper-ripple/-/paper-ripple-3.0.0-pre.12.tgz#66f6f7ab406e7466a980eee0c92f5ff024fc57ea"
@@ -123,12 +170,12 @@
     "@webcomponents/webcomponentsjs" "^1.0.0"
 
 "@webcomponents/shadycss@^1.0.0":
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/@webcomponents/shadycss/-/shadycss-1.1.2.tgz#947e9306eb2e084a4a3a4fd738aced00721bce92"
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/@webcomponents/shadycss/-/shadycss-1.1.3.tgz#6d4c7d2d842de9dba1b3ac5cc051938b8439c043"
 
 "@webcomponents/webcomponentsjs@^1.0.0":
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/@webcomponents/webcomponentsjs/-/webcomponentsjs-1.1.1.tgz#50caffdf8a901e5357532b7d85e776637a56446a"
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@webcomponents/webcomponentsjs/-/webcomponentsjs-1.2.0.tgz#c9e129340c3e4637f5fa6505e968e85face7bd5b"
 
 abbrev@1:
   version "1.1.1"

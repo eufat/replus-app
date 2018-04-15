@@ -1,8 +1,6 @@
-import { PolymerElement, html } from "@polymer/polymer/polymer-element.js";
-import "@polymer/paper-checkbox/paper-checkbox.js";
-import "@polymer/app-layout/app-header/app-header.js";
-import "@polymer/app-layout/app-toolbar/app-toolbar.js";
-import "@polymer/app-layout/app-drawer/app-drawer.js";
+import { PolymerElement, html } from "@polymer/polymer/polymer-element";
+import "@polymer/app-layout/demo/sample-content";
+import "./main-dashboard";
 
 class MainApp extends PolymerElement {
   static get properties() {
@@ -11,17 +9,16 @@ class MainApp extends PolymerElement {
 
   static get template() {
     return html`
-      <style is="custom-style">
-        app-toolbar {
-          background-color: #4285f4;
-          color: #fff;
-        }
+      <style>
       </style>
-      <app-header reveals>
-        <app-toolbar>
-          <div main-title>Replus App</div>
-        </app-toolbar>
-      </app-header>
+      <main-dashboard>
+        <span slot="app-content">
+          App content
+        </span>
+        <span slot="drawer-content">
+          Drawer content
+        </span>
+      </main-dashboard>
     `;
   }
 }
