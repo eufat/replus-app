@@ -2,6 +2,7 @@ import { PolymerElement, html } from "@polymer/polymer/polymer-element";
 import "@polymer/iron-ajax/iron-ajax";
 import "@polymer/paper-material/paper-material";
 import "@polymer/paper-spinner/paper-spinner";
+import "@polymer/paper-button/paper-button";
 import { firebaseConfig } from "./configs";
 
 class MainAuth extends PolymerElement {
@@ -65,11 +66,7 @@ class MainAuth extends PolymerElement {
       this.setupPosition();
     });
 
-    console.log("Waiting for load");
-    setTimeout(() => {
-      console.log("Load Firebase UI");
-      this.loadFirebaseUI();
-    }, 3000);
+    this.loadFirebaseUI();
   }
 
   _triggerLogout() {
@@ -123,7 +120,10 @@ class MainAuth extends PolymerElement {
       tosUrl: "/"
     };
     const ui = new firebaseui.auth.AuthUI(firebase.auth());
-    ui.start("#uiauthcontainer", uiConfig);
+
+    if (ui.isPendingRedirect()) {
+      ui.start("#uiauthcontainer", uiConfig);
+    }
   }
 
   static get template() {
@@ -188,11 +188,14 @@ class MainAuth extends PolymerElement {
                   <p id="subheader">to continue using <span>{{host}}</span></p>
                   <div id="spinner" class="horizontal layout center-justified">
                       <paper-spinner active></paper-spinner>
+                      <div id="uiauthcontainer"></div>
                   </div>
               </paper-material>
           </div>
       </div>
-      <div id="uiauthcontainer"></div>
+      <div>
+        <paper-button raised on-tap="loadFirebaseUI">Force render FirebaseUI</paper-button>
+      </div>
     `;
   }
 }

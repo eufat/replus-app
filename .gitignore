@@ -18,6 +18,7 @@ package-lock.json
 # error Files
 yarn-error.log
 /functions/yarn-error.log
+npm-debug.log
 
 # build
 build/*
