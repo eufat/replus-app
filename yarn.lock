@@ -99,6 +99,12 @@
   version "3.0.0-pre.12"
   resolved "https://registry.yarnpkg.com/@polymer/font-roboto/-/font-roboto-3.0.0-pre.12.tgz#b19391245d1d36369f4c6136e0a328468f18f423"
 
+"@polymer/iron-a11y-announcer@3.0.0-pre.12":
+  version "3.0.0-pre.12"
+  resolved "https://registry.yarnpkg.com/@polymer/iron-a11y-announcer/-/iron-a11y-announcer-3.0.0-pre.12.tgz#1af9b650c9feaba6702622a2612475c18b2d6a83"
+  dependencies:
+    "@polymer/polymer" "3.0.0-pre.12"
+
 "@polymer/iron-a11y-keys-behavior@3.0.0-pre.12":
   version "3.0.0-pre.12"
   resolved "https://registry.yarnpkg.com/@polymer/iron-a11y-keys-behavior/-/iron-a11y-keys-behavior-3.0.0-pre.12.tgz#bb25b4b991c30514b2e156ed92952c7ce0e34c81"
@@ -109,6 +115,15 @@
   version "3.0.0-pre.12"
   resolved "https://registry.yarnpkg.com/@polymer/iron-ajax/-/iron-ajax-3.0.0-pre.12.tgz#fa995654e88cdef2073e3d97c206082e0f2609c8"
   dependencies:
+    "@polymer/polymer" "3.0.0-pre.12"
+
+"@polymer/iron-autogrow-textarea@3.0.0-pre.12":
+  version "3.0.0-pre.12"
+  resolved "https://registry.yarnpkg.com/@polymer/iron-autogrow-textarea/-/iron-autogrow-textarea-3.0.0-pre.12.tgz#9104176232aea78284f07689bd59f7797550f08f"
+  dependencies:
+    "@polymer/iron-behaviors" "3.0.0-pre.12"
+    "@polymer/iron-flex-layout" "3.0.0-pre.12"
+    "@polymer/iron-validatable-behavior" "3.0.0-pre.12"
     "@polymer/polymer" "3.0.0-pre.12"
 
 "@polymer/iron-behaviors@3.0.0-pre.12":
@@ -124,6 +139,15 @@
   dependencies:
     "@polymer/iron-form-element-behavior" "3.0.0-pre.12"
     "@polymer/iron-validatable-behavior" "3.0.0-pre.12"
+    "@polymer/polymer" "3.0.0-pre.12"
+
+"@polymer/iron-dropdown@3.0.0-pre.12":
+  version "3.0.0-pre.12"
+  resolved "https://registry.yarnpkg.com/@polymer/iron-dropdown/-/iron-dropdown-3.0.0-pre.12.tgz#00f795f226e0991e6d44015b0abb2a9f29362fa9"
+  dependencies:
+    "@polymer/iron-behaviors" "3.0.0-pre.12"
+    "@polymer/iron-overlay-behavior" "3.0.0-pre.12"
+    "@polymer/neon-animation" "3.0.0-pre.12"
     "@polymer/polymer" "3.0.0-pre.12"
 
 "@polymer/iron-fit-behavior@3.0.0-pre.12":
@@ -165,6 +189,14 @@
   resolved "https://registry.yarnpkg.com/@polymer/iron-iconset-svg/-/iron-iconset-svg-3.0.0-pre.12.tgz#99677b304a8ba72d5b6d9ec19ba4e0b16ef47662"
   dependencies:
     "@polymer/iron-meta" "3.0.0-pre.12"
+    "@polymer/polymer" "3.0.0-pre.12"
+
+"@polymer/iron-input@3.0.0-pre.12":
+  version "3.0.0-pre.12"
+  resolved "https://registry.yarnpkg.com/@polymer/iron-input/-/iron-input-3.0.0-pre.12.tgz#ea85137779e21d5f7d0d98fea9fc9d06f898cae7"
+  dependencies:
+    "@polymer/iron-a11y-announcer" "3.0.0-pre.12"
+    "@polymer/iron-validatable-behavior" "3.0.0-pre.12"
     "@polymer/polymer" "3.0.0-pre.12"
 
 "@polymer/iron-location@3.0.0-pre.12":
@@ -242,7 +274,7 @@
     "@polymer/iron-meta" "3.0.0-pre.12"
     "@polymer/polymer" "3.0.0-pre.12"
 
-"@polymer/neon-animation@3.0.0-pre.12":
+"@polymer/neon-animation@3.0.0-pre.12", "@polymer/neon-animation@^3.0.0-pre.12":
   version "3.0.0-pre.12"
   resolved "https://registry.yarnpkg.com/@polymer/neon-animation/-/neon-animation-3.0.0-pre.12.tgz#395327088ee038f6355e6e08edab827d323f9392"
   dependencies:
@@ -296,12 +328,40 @@
     "@polymer/paper-dialog-behavior" "3.0.0-pre.12"
     "@polymer/polymer" "3.0.0-pre.12"
 
+"@polymer/paper-dropdown-menu@^3.0.0-pre.12":
+  version "3.0.0-pre.12"
+  resolved "https://registry.yarnpkg.com/@polymer/paper-dropdown-menu/-/paper-dropdown-menu-3.0.0-pre.12.tgz#1f74a1202acae94b8c093ca55a73d9c2a9d49315"
+  dependencies:
+    "@polymer/iron-a11y-keys-behavior" "3.0.0-pre.12"
+    "@polymer/iron-form-element-behavior" "3.0.0-pre.12"
+    "@polymer/iron-icon" "3.0.0-pre.12"
+    "@polymer/iron-iconset-svg" "3.0.0-pre.12"
+    "@polymer/iron-validatable-behavior" "3.0.0-pre.12"
+    "@polymer/paper-behaviors" "3.0.0-pre.12"
+    "@polymer/paper-input" "3.0.0-pre.12"
+    "@polymer/paper-menu-button" "3.0.0-pre.12"
+    "@polymer/paper-ripple" "3.0.0-pre.12"
+    "@polymer/paper-styles" "3.0.0-pre.12"
+    "@polymer/polymer" "3.0.0-pre.12"
+
 "@polymer/paper-icon-button@^3.0.0-pre.12":
   version "3.0.0-pre.12"
   resolved "https://registry.yarnpkg.com/@polymer/paper-icon-button/-/paper-icon-button-3.0.0-pre.12.tgz#52c63fc87d98998d055a1ff5fc46b207ce85c623"
   dependencies:
     "@polymer/iron-icon" "3.0.0-pre.12"
     "@polymer/paper-behaviors" "3.0.0-pre.12"
+    "@polymer/paper-styles" "3.0.0-pre.12"
+    "@polymer/polymer" "3.0.0-pre.12"
+
+"@polymer/paper-input@3.0.0-pre.12":
+  version "3.0.0-pre.12"
+  resolved "https://registry.yarnpkg.com/@polymer/paper-input/-/paper-input-3.0.0-pre.12.tgz#d654786045a0f9638c228731d6478abbfe035e3c"
+  dependencies:
+    "@polymer/iron-a11y-keys-behavior" "3.0.0-pre.12"
+    "@polymer/iron-autogrow-textarea" "3.0.0-pre.12"
+    "@polymer/iron-behaviors" "3.0.0-pre.12"
+    "@polymer/iron-form-element-behavior" "3.0.0-pre.12"
+    "@polymer/iron-input" "3.0.0-pre.12"
     "@polymer/paper-styles" "3.0.0-pre.12"
     "@polymer/polymer" "3.0.0-pre.12"
 
@@ -327,6 +387,18 @@
   version "3.0.0-pre.12"
   resolved "https://registry.yarnpkg.com/@polymer/paper-material/-/paper-material-3.0.0-pre.12.tgz#1fa1d993a935d4254f8791ed4d1d6a9fdaeb36a9"
   dependencies:
+    "@polymer/paper-styles" "3.0.0-pre.12"
+    "@polymer/polymer" "3.0.0-pre.12"
+
+"@polymer/paper-menu-button@3.0.0-pre.12":
+  version "3.0.0-pre.12"
+  resolved "https://registry.yarnpkg.com/@polymer/paper-menu-button/-/paper-menu-button-3.0.0-pre.12.tgz#4cb7e8bd1b5eaacce738342ddcf82ce21e682f45"
+  dependencies:
+    "@polymer/iron-a11y-keys-behavior" "3.0.0-pre.12"
+    "@polymer/iron-behaviors" "3.0.0-pre.12"
+    "@polymer/iron-dropdown" "3.0.0-pre.12"
+    "@polymer/iron-fit-behavior" "3.0.0-pre.12"
+    "@polymer/neon-animation" "3.0.0-pre.12"
     "@polymer/paper-styles" "3.0.0-pre.12"
     "@polymer/polymer" "3.0.0-pre.12"
 

@@ -28,13 +28,13 @@ class ReplusLayout extends PolymerElement {
         super.ready();
         this.$.accountMenu.style.display = 'none';
         this.$.accountMenu.style.position = 'fixed';
-        hideOnClickOutside(this.$.accountMenu);
+        this.$.accountMenu.style.right = 0;
+        this.$.accountMenu.style.top = 'auto';
     }
 
     toggleAccountMenu(event) {
-        this.$.accountMenu.style.right = 0;
-        this.$.accountMenu.style.top = 'auto';
         const accountMenuDisplay = this.$.accountMenu.style.display === 'block';
+
         if (accountMenuDisplay) {
             this.$.accountMenu.style.display = 'none';
             this.accountMenu = false;

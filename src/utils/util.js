@@ -1,8 +1,7 @@
 export function hideOnClickOutside(element) {
     const outsideClickListener = (event) => {
         if (!element.contains(event.target)) {
-            // or use: event.target.closest(selector) === null
-            if (isVisible(element)) {
+            if (isBlock(element)) {
                 element.style.display = 'none';
                 removeClickListener();
             }
@@ -16,6 +15,4 @@ export function hideOnClickOutside(element) {
     document.addEventListener('click', outsideClickListener);
 }
 
-const isVisible = (elem) =>
-    !!elem &&
-    !!(elem.offsetWidth || elem.offsetHeight || elem.getClientRects().length); // source (2018-03-11): https://github.com/jquery/jquery/blob/master/src/css/hiddenVisibleSelectors.js
+const isBlock = (elem) => elem.style.display == 'block';
