@@ -24,14 +24,6 @@ class ReplusLayout extends PolymerElement {
         return {};
     }
 
-    ready() {
-        super.ready();
-        this.$.accountMenu.style.display = 'none';
-        this.$.accountMenu.style.position = 'fixed';
-        this.$.accountMenu.style.right = 0;
-        this.$.accountMenu.style.top = 'auto';
-    }
-
     toggleAccountMenu(event) {
         const accountMenuDisplay = this.$.accountMenu.style.display === 'block';
 
@@ -46,60 +38,65 @@ class ReplusLayout extends PolymerElement {
 
     static get template() {
         return html`
-      <style>
-        app-header {
-          background-color: #4285f4;
-          color: #fff;
-        }
+          <style>
+            app-header {
+              background-color: #4285f4;
+              color: #fff;
+            }
 
-        app-header paper-icon-button {
-          --paper-icon-button-ink-color: white;
-        }
+            app-header paper-icon-button {
+              --paper-icon-button-ink-color: white;
+            }
 
-        app-drawer-layout:not([narrow]) [drawer-toggle] {
-          display: none;
-        }
+            app-drawer-layout:not([narrow]) [drawer-toggle] {
+              display: none;
+            }
 
-        a {
-          text-decoration: none;
-          color: inherit;
-          font-size: inherit;
-        }
+            a {
+              text-decoration: none;
+              color: inherit;
+              font-size: inherit;
+            }
 
-        #accountMenu {
-          margin: 0;
-        }
-      </style>
-      <app-drawer-layout fullbleed>
+            #accountMenu {
+              margin: 0;
+              right: 0;
+              top: auto;
+              position: fixed;
+              display: none;
+              min-width: 200px;
+            }
+          </style>
+          <app-drawer-layout fullbleed>
 
-        <app-header-layout fullbleed>
+            <app-header-layout fullbleed>
 
-          <app-header fixed effects="waterfall" slot="header">
-            <app-toolbar>
-              <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
-              <div main-title>Replus App</div>
-              <paper-icon-button icon="more-vert" on-click="toggleAccountMenu"></paper-icon-button>
-            </app-toolbar>
-          </app-header>
+              <app-header fixed effects="waterfall" slot="header">
+                <app-toolbar>
+                  <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
+                  <div main-title>Replus App</div>
+                  <paper-icon-button icon="more-vert" on-click="toggleAccountMenu"></paper-icon-button>
+                </app-toolbar>
+              </app-header>
 
-          <slot name="app-content"></slot>
-          <paper-material id="accountMenu">
-            <paper-listbox>
-              <a name='account' href='/account' tabindex='-1'>
-                <paper-item raised>Account</paper-item>
-              </a>
-              <a name='sign-out' href='/' tabindex='-1'>
-                <paper-item raised>Sign Out</paper-item>
-              </a>
-            </paper-listbox>
-          </paper-material>
-        </app-header-layout>
+              <slot name="app-content"></slot>
+              <paper-material id="accountMenu">
+                <paper-listbox>
+                  <a name='account' href='/account' tabindex='-1'>
+                    <paper-item raised>Account</paper-item>
+                  </a>
+                  <a name='sign-out' href='/' tabindex='-1'>
+                    <paper-item raised>Sign Out</paper-item>
+                  </a>
+                </paper-listbox>
+              </paper-material>
+            </app-header-layout>
 
-        <app-drawer slot="drawer">
-          <slot name="drawer-content"></slot>
-        </app-drawer>
+            <app-drawer id="drawer" slot="drawer">
+              <slot name="drawer-content"></slot>
+            </app-drawer>
 
-      </app-drawer-layout>
+          </app-drawer-layout>
     `;
     }
 }

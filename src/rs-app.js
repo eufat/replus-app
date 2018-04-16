@@ -4,6 +4,9 @@ import '@polymer/iron-flex-layout/iron-flex-layout';
 import '@polymer/iron-pages/iron-pages';
 import '@polymer/iron-selector/iron-selector';
 
+import '@polymer/app-route/app-location';
+import '@polymer/app-route/app-route';
+
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-item/paper-item';
@@ -16,7 +19,29 @@ import './rs-route';
 class ReplusApp extends PolymerElement {
     static get properties() {
         return {
-            menus: {
+            route: Object,
+            subRoute: Object,
+            routeData: Object,
+            remoteMenus: {
+                type: Array,
+                value() {
+                    return [
+                        {
+                            name: 'rooms',
+                            title: 'Rooms',
+                        },
+                        {
+                            name: 'devices',
+                            title: 'Devices',
+                        },
+                        {
+                            name: 'settings',
+                            title: 'Settings',
+                        },
+                    ];
+                },
+            },
+            visionMenus: {
                 type: Array,
                 value() {
                     return [
@@ -38,6 +63,15 @@ class ReplusApp extends PolymerElement {
         };
     }
 
+    isEqualTo(a, b) {
+        return a === b;
+    }
+
+    mapDeviceRoute(route) {
+        const array = ['remote', 'vision'];
+        return array.indexOf(route);
+    }
+
     static get template() {
         return html`
           <style>
@@ -54,29 +88,72 @@ class ReplusApp extends PolymerElement {
                 };
             }
           </style>
-          <rs-route></rs-route>
+          <app-location route="{{route}}"></app-location>
+            <app-route
+                route="{{route}}"
+                pattern="/:device"
+                data="{{deviceRoute}}"
+                tail="{{subroute}}">
+            </app-route>
+            <app-route
+                route="{{subroute}}"
+                pattern="/:page"
+                data="{{pageRoute}}">
+            </app-route>
+          <!-- <rs-route></rs-route> -->
           <!-- <rs-auth /> -->
           <rs-layout>
             <span slot='app-content'>
+            <iron-pages selected="[[deviceRoute.device]]" attr-for-selected="device-name" fallback-selection="fallback">
+                <iron-pages device-name="vision" selected="[[pageRoute.page]]" attr-for-selected="page-name" fallback-selection="fallback">
+                    <div page-name="streams">Streams</div>
+                    <div page-name="events">Events</div>
+                    <div page-name="settings">Settings</div>
+                </iron-pages>
+                <iron-pages device-name="remote" selected="[[pageRoute.page]]" attr-for-selected="page-name" fallback-selection="fallback">
+                    <div page-name="rooms">Rooms</div>
+                    <div page-name="devices">Devices</div>
+                    <div page-name="settings">Settings</div>
+                </iron-pages>
+            </iron-pages>
             </span>
             <span slot='drawer-content'>
-                <paper-dropdown-menu class="device-dropdown" label="Choose device" no-label-float noink no-animations>
-                <paper-listbox slot="dropdown-content">
-                    <paper-item>Replus Remote</paper-item>
-                    <paper-item>Replus Vision</paper-item>
+                <paper-dropdown-menu class="device-dropdown" label="Choose device"  vertical-offset="40" no-label-float noink no-animations>
+                <paper-listbox slot="dropdown-content" selected="{{mapDeviceRoute(deviceRoute.device)}}">
+                    <a href='/remote/rooms' tabindex='-1'>
+                        <paper-item >Replus Remote</paper-item>
+                    </a>
+                    <a href='/vision/streams' tabindex='-1'>
+                        <paper-item >Replus Vision</paper-item>
+                    </a>
                 </paper-listbox>
                 </paper-dropdown-menu>
-                <iron-selector
-                    class='nav-menu'
-                    selected=''
-                    attr-for-selected='name'
-                    on-iron-activate=''>
-                    <template is='dom-repeat' items='{{menus}}'>
-                    <a name='[[item.name]]' href='/[[item.name]]' tabindex='-1'>
-                        <paper-item raised>[[item.title]]</paper-item>
-                    </a>
-                    </template>
-                </iron-selector>
+                <template is="dom-if" if="{{isEqualTo(deviceRoute.device, 'vision')}}">
+                    <iron-selector
+                        class='nav-menu'
+                        selected="[[pageRoute.page]]"
+                        attr-for-selected='name'
+                        on-iron-activate='drawerSelected'>
+                        <template is='dom-repeat' items='{{visionMenus}}'>
+                        <a name='[[item.name]]' href='/vision/[[item.name]]' tabindex='-1'>
+                            <paper-item raised>[[item.title]]</paper-item>
+                        </a>
+                        </template>
+                    </iron-selector>
+                </template>
+                <template is="dom-if" if="{{isEqualTo(deviceRoute.device, 'remote')}}">
+                    <iron-selector
+                        class='nav-menu'
+                        selected="[[pageRoute.page]]"
+                        attr-for-selected='name'
+                        on-iron-activate='drawerSelected'>
+                        <template is='dom-repeat' items='{{remoteMenus}}'>
+                        <a name='[[item.name]]' href='/remote/[[item.name]]' tabindex='-1'>
+                            <paper-item raised>[[item.title]]</paper-item>
+                        </a>
+                        </template>
+                    </iron-selector>
+                </template>
             </span>
           </rs-layout>
     `;

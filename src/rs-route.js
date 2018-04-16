@@ -21,7 +21,7 @@ export default class ReplusRoute extends PolymerElement {
       <app-route
           route="{{route}}"
           pattern="/:page"
-          data="{{routeData}}"
+          data="{{pageData}}"
           tail="{{subroute}}">
       </app-route>
     `;
