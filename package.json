@@ -1,39 +1,41 @@
 {
-  "name": "replus-app",
-  "version": "0.0.1",
-  "main": "index.js",
-  "repository": "https://github.com/eufat/replus-app.git",
-  "author": "Replus Engineering",
-  "license": "unlicensed",
-  "scripts": {
-    "start": "npm run serve | npm run watch",
-    "serve": "polymer serve --port 8080",
-    "test": "polymer test",
-    "watch": "browser-sync start --proxy localhost:8080 --open --files \"**/*.js\""
-  },
-  "dependencies": {
-    "@polymer/app-layout": "^3.0.0-pre.12",
-    "@polymer/app-route": "^3.0.0-pre.12",
-    "@polymer/iron-ajax": "^3.0.0-pre.12",
-    "@polymer/iron-flex-layout": "^3.0.0-pre.12",
-    "@polymer/iron-icon": "^3.0.0-pre.12",
-    "@polymer/iron-icons": "^3.0.0-pre.12",
-    "@polymer/iron-pages": "^3.0.0-pre.12",
-    "@polymer/iron-selector": "^3.0.0-pre.12",
-    "@polymer/paper-button": "^3.0.0-pre.12",
-    "@polymer/paper-checkbox": "^3.0.0-pre.12",
-    "@polymer/paper-icon-button": "^3.0.0-pre.12",
-    "@polymer/paper-material": "^3.0.0-pre.12",
-    "@polymer/paper-progress": "^3.0.0-pre.12",
-    "@polymer/paper-spinner": "^3.0.0-pre.12",
-    "@polymer/polymer": "^3.0.0-pre.12",
-    "firebase": "^4.13.0-4"
-  },
-  "devDependencies": {
-    "browser-sync": "^2.23.6",
-    "eslint": "^4.19.1",
-    "eslint-config-google": "^0.9.1",
-    "eslint-config-recommended": "^2.0.0",
-    "eslint-plugin-html": "^4.0.3"
-  }
+    "name": "rs-app",
+    "version": "0.0.1",
+    "main": "index.js",
+    "repository": "https://github.com/eufat/rs-app.git",
+    "author": "Replus Engineering",
+    "license": "unlicensed",
+    "scripts": {
+        "start": "npm run serve | npm run watch",
+        "serve": "polymer serve --port 8080",
+        "test": "polymer test",
+        "watch": "browser-sync start --proxy localhost:8080 --open --files \"**/*.js\""
+    },
+    "dependencies": {
+        "@polymer/app-layout": "^3.0.0-pre.12",
+        "@polymer/app-route": "^3.0.0-pre.12",
+        "@polymer/iron-ajax": "^3.0.0-pre.12",
+        "@polymer/iron-flex-layout": "^3.0.0-pre.12",
+        "@polymer/iron-icon": "^3.0.0-pre.12",
+        "@polymer/iron-icons": "^3.0.0-pre.12",
+        "@polymer/iron-pages": "^3.0.0-pre.12",
+        "@polymer/iron-selector": "^3.0.0-pre.12",
+        "@polymer/paper-button": "^3.0.0-pre.12",
+        "@polymer/paper-checkbox": "^3.0.0-pre.12",
+        "@polymer/paper-dialog": "^3.0.0-pre.12",
+        "@polymer/paper-icon-button": "^3.0.0-pre.12",
+        "@polymer/paper-item": "^3.0.0-pre.12",
+        "@polymer/paper-listbox": "^3.0.0-pre.12",
+        "@polymer/paper-material": "^3.0.0-pre.12",
+        "@polymer/paper-progress": "^3.0.0-pre.12",
+        "@polymer/paper-spinner": "^3.0.0-pre.12",
+        "@polymer/polymer": "^3.0.0-pre.12"
+    },
+    "devDependencies": {
+        "browser-sync": "^2.23.6",
+        "eslint": "^4.19.1",
+        "eslint-config-google": "^0.9.1",
+        "eslint-config-recommended": "^2.0.0",
+        "eslint-plugin-html": "^4.0.3"
+    }
 }

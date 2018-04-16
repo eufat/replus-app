@@ -9,12 +9,6 @@
 .vscode/*
 .DS_Store
 
-# lock
-yarn.lock
-package-lock.json
-/functions/package-lock.json
-/functions/yarn.lock
-
 # error Files
 yarn-error.log
 /functions/yarn-error.log

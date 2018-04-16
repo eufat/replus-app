@@ -1,17 +1,17 @@
 {
-  "entrypoint": "index.html",
-  "shell": "src/app.js",
-  "fragments": ["src/lazy-element.js"],
-  "sources": ["src/app.js", "manifest/**", "package.json"],
-  "extraDependencies": [
-    "manifest.json",
-    "node_modules/@webcomponents/webcomponentsjs/**"
-  ],
-  "builds": [
-    {
-      "preset": "es6-bundled"
-    }
-  ],
-  "moduleResolution": "node",
-  "npm": true
+    "entrypoint": "index.html",
+    "shell": "src/app.js",
+    "fragments": ["src/lazy-element.js"],
+    "sources": ["src/app.js", "manifest/**", "package.json"],
+    "extraDependencies": [
+        "manifest.json",
+        "node_modules/@webcomponents/webcomponentsjs/**"
+    ],
+    "builds": [
+        {
+            "preset": "es6-bundled"
+        }
+    ],
+    "moduleResolution": "node",
+    "npm": true
 }
