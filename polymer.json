@@ -1,8 +1,15 @@
 {
     "entrypoint": "index.html",
-    "shell": "src/app.js",
+    "shell": "src/rs-app.js",
     "fragments": ["src/lazy-element.js"],
-    "sources": ["src/app.js", "manifest/**", "package.json"],
+    "sources": [
+        "src/rs-app.js",
+        "src/rs-auth.js",
+        "src/rs-layout.j",
+        "src/rs-route.js",
+        "manifest/**",
+        "package.json"
+    ],
     "extraDependencies": [
         "manifest.json",
         "node_modules/@webcomponents/webcomponentsjs/**"

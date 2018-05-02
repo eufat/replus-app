@@ -16,6 +16,14 @@ import './rs-layout';
 import './rs-auth';
 import './rs-route';
 
+import './rs-remote-rooms';
+import './rs-remote-devices';
+import './rs-remote-settings';
+
+import './rs-vision-events';
+import './rs-vision-settings';
+import './rs-vision-streams';
+
 class ReplusApp extends PolymerElement {
     static get properties() {
         return {
@@ -88,6 +96,7 @@ class ReplusApp extends PolymerElement {
                 };
             }
           </style>
+          <script src="../../node_modules/redux/dist/redux.js"></script>
           <app-location route="{{route}}"></app-location>
             <app-route
                 route="{{route}}"
@@ -106,14 +115,14 @@ class ReplusApp extends PolymerElement {
             <span slot='app-content'>
             <iron-pages selected="[[deviceRoute.device]]" attr-for-selected="device-name" fallback-selection="fallback">
                 <iron-pages device-name="vision" selected="[[pageRoute.page]]" attr-for-selected="page-name" fallback-selection="fallback">
-                    <div page-name="streams">Streams</div>
-                    <div page-name="events">Events</div>
-                    <div page-name="settings">Settings</div>
+                    <div page-name="streams"><rs-vision-streams /></div>
+                    <div page-name="events"><rs-vision-events /></div>
+                    <div page-name="settings"><rs-vision-settings /></div>
                 </iron-pages>
                 <iron-pages device-name="remote" selected="[[pageRoute.page]]" attr-for-selected="page-name" fallback-selection="fallback">
-                    <div page-name="rooms">Rooms</div>
-                    <div page-name="devices">Devices</div>
-                    <div page-name="settings">Settings</div>
+                    <div page-name="rooms"><rs-remote-rooms /></div>
+                    <div page-name="devices"><rs-remote-devices /></div>
+                    <div page-name="settings"><rs-remote-settings /></div>
                 </iron-pages>
             </iron-pages>
             </span>

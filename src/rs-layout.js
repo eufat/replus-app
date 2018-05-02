@@ -17,7 +17,7 @@ import '@polymer/paper-progress/paper-progress';
 import '@polymer/paper-checkbox/paper-checkbox';
 import '@polymer/paper-icon-button/paper-icon-button';
 
-import {hideOnClickOutside} from './utils/util';
+import {hideOnClickOutside} from './utils';
 
 class ReplusLayout extends PolymerElement {
     static get properties() {

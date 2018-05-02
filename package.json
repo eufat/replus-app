@@ -7,9 +7,9 @@
     "license": "unlicensed",
     "scripts": {
         "start": "npm run serve | npm run watch",
-        "serve": "polymer serve --port 8080",
+        "serve": "polymer serve --port 3000",
         "test": "polymer test",
-        "watch": "browser-sync start --proxy localhost:8080 --open --files \"**/*.js\""
+        "watch": "browser-sync start --proxy localhost:3000 --open --files \"**/*.js\""
     },
     "dependencies": {
         "@polymer/app-layout": "^3.0.0-pre.12",
@@ -31,7 +31,9 @@
         "@polymer/paper-material": "^3.0.0-pre.12",
         "@polymer/paper-progress": "^3.0.0-pre.12",
         "@polymer/paper-spinner": "^3.0.0-pre.12",
-        "@polymer/polymer": "^3.0.0-pre.12"
+        "@polymer/polymer": "^3.0.0-pre.12",
+        "polymer-redux": "git://github.com/tur-nr/polymer-redux#polymer-3",
+        "redux": "^4.0.0"
     },
     "devDependencies": {
         "browser-sync": "^2.23.6",

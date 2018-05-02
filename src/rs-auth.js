@@ -3,7 +3,7 @@ import '@polymer/iron-ajax/iron-ajax';
 import '@polymer/paper-material/paper-material';
 import '@polymer/paper-spinner/paper-spinner';
 import '@polymer/paper-button/paper-button';
-import {firebaseConfig} from './utils/configs';
+import {firebaseConfig} from './configs';
 
 class ReplusAuth extends PolymerElement {
     static get properties() {
