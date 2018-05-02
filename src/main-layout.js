@@ -19,7 +19,7 @@ import '@polymer/paper-icon-button/paper-icon-button';
 
 import {hideOnClickOutside} from './utils';
 
-class ReplusLayout extends PolymerElement {
+class MainLayout extends PolymerElement {
     static get properties() {
         return {};
     }
@@ -101,4 +101,4 @@ class ReplusLayout extends PolymerElement {
     }
 }
 
-customElements.define('rs-layout', ReplusLayout);
+customElements.define('main-layout', MainLayout);

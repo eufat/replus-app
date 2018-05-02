@@ -5,7 +5,7 @@ import '@polymer/paper-spinner/paper-spinner';
 import '@polymer/paper-button/paper-button';
 import {firebaseConfig} from './configs';
 
-class ReplusAuth extends PolymerElement {
+class MainAuth extends PolymerElement {
     static get properties() {
         return {
             displayName: {
@@ -203,4 +203,4 @@ class ReplusAuth extends PolymerElement {
     }
 }
 
-customElements.define('rs-auth', ReplusAuth);
+customElements.define('main-auth', MainAuth);

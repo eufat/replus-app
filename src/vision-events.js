@@ -1,6 +1,6 @@
 import {PolymerElement, html} from '@polymer/polymer/polymer-element';
 
-export default class ReplusVisionEvents extends PolymerElement {
+export default class VisionEvents extends PolymerElement {
     static get template() {
         return html`
       <div>Vision Events</div>
@@ -8,4 +8,4 @@ export default class ReplusVisionEvents extends PolymerElement {
     }
 }
 
-customElements.define('rs-vision-events', ReplusVisionEvents);
+customElements.define('vision-events', VisionEvents);

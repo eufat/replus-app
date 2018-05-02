@@ -1,4 +1,6 @@
 import {PolymerElement, html} from '@polymer/polymer/polymer-element';
+import PolymerRedux from 'polymer-redux/polymer-redux.js';
+
 import '@polymer/font-roboto/roboto';
 import '@polymer/iron-flex-layout/iron-flex-layout';
 import '@polymer/iron-pages/iron-pages';
@@ -12,21 +14,33 @@ import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-item/paper-item';
 import '@polymer/neon-animation/neon-animations';
 
-import './rs-layout';
-import './rs-auth';
-import './rs-route';
+import './main-layout';
+import './main-auth';
+import './main-route';
 
-import './rs-remote-rooms';
-import './rs-remote-devices';
-import './rs-remote-settings';
+import './remote-rooms';
+import './remote-devices';
+import './remote-settings';
 
-import './rs-vision-events';
-import './rs-vision-settings';
-import './rs-vision-streams';
+import './vision-events';
+import './vision-settings';
+import './vision-streams';
 
-class ReplusApp extends PolymerElement {
+const store = Redux.createStore((state, action) => {
+    return {
+        message: 'Hello, Redux!',
+    };
+});
+
+const ReduxMixin = PolymerRedux(store);
+
+class ReplusApp extends ReduxMixin(PolymerElement) {
     static get properties() {
         return {
+            message: {
+                type: String,
+                statePath: 'message',
+            },
             route: Object,
             subRoute: Object,
             routeData: Object,
@@ -96,7 +110,6 @@ class ReplusApp extends PolymerElement {
                 };
             }
           </style>
-          <script src="../../node_modules/redux/dist/redux.js"></script>
           <app-location route="{{route}}"></app-location>
             <app-route
                 route="{{route}}"
@@ -109,20 +122,20 @@ class ReplusApp extends PolymerElement {
                 pattern="/:page"
                 data="{{pageRoute}}">
             </app-route>
-          <!-- <rs-route></rs-route> -->
-          <!-- <rs-auth /> -->
-          <rs-layout>
+          <!-- <main-route></main-route> -->
+          <!-- <main-auth /> -->
+          <main-layout>
             <span slot='app-content'>
             <iron-pages selected="[[deviceRoute.device]]" attr-for-selected="device-name" fallback-selection="fallback">
                 <iron-pages device-name="vision" selected="[[pageRoute.page]]" attr-for-selected="page-name" fallback-selection="fallback">
-                    <div page-name="streams"><rs-vision-streams /></div>
-                    <div page-name="events"><rs-vision-events /></div>
-                    <div page-name="settings"><rs-vision-settings /></div>
+                    <div page-name="streams"><vision-streams /></div>
+                    <div page-name="events"><vision-events /></div>
+                    <div page-name="settings"><vision-settings /></div>
                 </iron-pages>
                 <iron-pages device-name="remote" selected="[[pageRoute.page]]" attr-for-selected="page-name" fallback-selection="fallback">
-                    <div page-name="rooms"><rs-remote-rooms /></div>
-                    <div page-name="devices"><rs-remote-devices /></div>
-                    <div page-name="settings"><rs-remote-settings /></div>
+                    <div page-name="rooms"><remote-rooms /></div>
+                    <div page-name="devices"><remote-devices /></div>
+                    <div page-name="settings"><remote-settings /></div>
                 </iron-pages>
             </iron-pages>
             </span>
@@ -164,9 +177,9 @@ class ReplusApp extends PolymerElement {
                     </iron-selector>
                 </template>
             </span>
-          </rs-layout>
+          </main-layout>
     `;
     }
 }
 
-customElements.define('rs-app', ReplusApp);
+customElements.define('main-app', ReplusApp);

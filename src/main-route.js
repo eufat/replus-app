@@ -6,7 +6,7 @@ import '@polymer/iron-flex-layout/iron-flex-layout';
 import '@polymer/iron-pages/iron-pages';
 import '@polymer/iron-selector/iron-selector';
 
-export default class ReplusRoute extends PolymerElement {
+export default class MainRoute extends PolymerElement {
     static get properties() {
         return {
             route: Object,
@@ -28,4 +28,4 @@ export default class ReplusRoute extends PolymerElement {
     }
 }
 
-customElements.define('rs-route', ReplusRoute);
+customElements.define('main-route', MainRoute);

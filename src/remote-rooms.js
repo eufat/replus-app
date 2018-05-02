@@ -1,6 +1,6 @@
 import {PolymerElement, html} from '@polymer/polymer/polymer-element';
 
-export default class ReplusRemoteRooms extends PolymerElement {
+export default class RemoteRooms extends PolymerElement {
     static get template() {
         return html`
       <div>Remote Rooms</div>
@@ -8,4 +8,4 @@ export default class ReplusRemoteRooms extends PolymerElement {
     }
 }
 
-customElements.define('rs-remote-rooms', ReplusRemoteRooms);
+customElements.define('remote-rooms', RemoteRooms);
