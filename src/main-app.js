@@ -26,15 +26,7 @@ import './vision-events';
 import './vision-settings';
 import './vision-streams';
 
-const store = Redux.createStore((state, action) => {
-    return {
-        message: 'Hello, Redux!',
-    };
-});
-
-const ReduxMixin = PolymerRedux(store);
-
-class ReplusApp extends ReduxMixin(PolymerElement) {
+class ReplusApp extends PolymerElement {
     static get properties() {
         return {
             message: {
