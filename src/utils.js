@@ -16,3 +16,10 @@ export function hideOnClickOutside(element) {
 }
 
 const isBlock = (elem) => elem.style.display == 'block';
+
+export const userDataKey = ['uid', 'email', 'displayName', 'photoURL'];
+
+export const pushLocationTo = (location) => {
+    window.history.pushState({}, null, location);
+    window.dispatchEvent(new CustomEvent('location-changed'));
+};

@@ -9,7 +9,9 @@ import '@polymer/iron-selector/iron-selector';
 import '@polymer/app-route/app-location';
 import '@polymer/app-route/app-route';
 
+import {firebaseConfig} from './configs';
 import store from './main-store';
+import actions from './main-actions';
 
 import './main-dashboard';
 import './main-auth';
@@ -17,6 +19,25 @@ import './main-auth';
 const ReduxMixin = PolymerRedux(store);
 
 class MainApp extends ReduxMixin(PolymerElement) {
+    static get actions() {
+        return actions;
+    }
+
+    ready() {
+        super.ready();
+
+        const thisMainApp = this;
+
+        firebase.auth().onAuthStateChanged((firebaseUser) => {
+            if (firebaseUser) {
+                thisMainApp.dispatch('authenticateUser');
+                thisMainApp.dispatch('setCurrentUser', firebaseUser);
+            } else {
+                thisMainApp.dispatch('deauthenticateUser');
+            }
+        });
+    }
+
     static get properties() {
         return {};
     }
@@ -31,7 +52,7 @@ class MainApp extends ReduxMixin(PolymerElement) {
                 tail="{{routeTail}}">
             </app-route>
             <main class="content">
-                <iron-pages role="main" selected="{{containerRoute.page}}" attr-for-selected="name" fallback-selection="auth">
+                <iron-pages role="main" selected="{{containerRoute.page}}" attr-for-selected="name"  selected-attribute="visible">
                     <main-dashboard name="dashboard" route="{{routeTail}}"></main-dashboard>
                     <main-auth name="auth" route="{{routeTail}}"></main-auth>
                 </iron-pages>

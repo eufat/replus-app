@@ -1,4 +1,6 @@
 import {PolymerElement, html} from '@polymer/polymer/polymer-element';
+import PolymerRedux from 'polymer-redux/polymer-redux';
+
 import '@polymer/polymer/polymer-legacy';
 import '@polymer/iron-icons/iron-icons';
 
@@ -18,6 +20,10 @@ import '@polymer/paper-checkbox/paper-checkbox';
 import '@polymer/paper-icon-button/paper-icon-button';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 
+import store from './main-store';
+import actions from './main-actions';
+const ReduxMixin = PolymerRedux(store);
+
 import './remote-rooms';
 import './remote-devices';
 import './remote-settings';
@@ -26,9 +32,14 @@ import './vision-events';
 import './vision-settings';
 import './vision-streams';
 
-class MainDashboard extends PolymerElement {
+class MainDashboard extends ReduxMixin(PolymerElement) {
+    static get actions() {
+        return actions;
+    }
     static get properties() {
         return {
+            route: Object,
+            subRoute: Object,
             remoteMenus: {
                 type: Array,
                 value() {
@@ -70,6 +81,10 @@ class MainDashboard extends PolymerElement {
         };
     }
 
+    handleSignOut() {
+        this.dispatch('deauthenticateUser');
+    }
+
     toggleAccountMenu(event) {
         const accountMenuDisplay = this.$.accountMenu.style.display === 'block';
 
@@ -93,119 +108,137 @@ class MainDashboard extends PolymerElement {
 
     static get template() {
         return html`
-          <style>
-            app-header {
-              background-color: #4285f4;
-              color: #fff;
-            }
+            <style>
+                app-header {
+                    background-color: #4285f4;
+                    color: #fff;
+                }
 
-            app-header paper-icon-button {
-              --paper-icon-button-ink-color: white;
-            }
+                app-header paper-icon-button {
+                    --paper-icon-button-ink-color: white;
+                }
 
-            app-drawer-layout:not([narrow]) [drawer-toggle] {
-              display: none;
-            }
-
-            a {
-              text-decoration: none;
-              color: inherit;
-              font-size: inherit;
-            }
-
-            #accountMenu {
-              margin: 0;
-              right: 0;
-              top: auto;
-              position: fixed;
-              display: none;
-              min-width: 200px;
-            }
-
-            paper-dropdown-menu.device-dropdown {
-                margin: 1em;
-                --paper-input-container-underline: {
+                app-drawer-layout:not([narrow]) [drawer-toggle] {
                     display: none;
-                };
-            }
-          </style>
-          <app-drawer-layout fullbleed>
+                }
 
-            <app-header-layout fullbleed>
+                a {
+                    text-decoration: none;
+                    color: inherit;
+                    font-size: inherit;
+                }
 
-              <app-header fixed effects="waterfall" slot="header">
-                <app-toolbar>
-                  <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
-                  <div main-title>Replus App</div>
-                  <paper-icon-button icon="more-vert" on-click="toggleAccountMenu"></paper-icon-button>
-                </app-toolbar>
-              </app-header>
+                #accountMenu {
+                    margin: 0;
+                    right: 0;
+                    top: auto;
+                    position: fixed;
+                    display: none;
+                    min-width: 200px;
+                }
 
-              <slot name="app-content"></slot>
-              <paper-material id="accountMenu">
-                <paper-listbox>
-                  <a name='account' href='/account' tabindex='-1'>
-                    <paper-item raised>Account</paper-item>
-                  </a>
-                  <a name='sign-out' href='/' tabindex='-1'>
-                    <paper-item raised>Sign Out</paper-item>
-                  </a>
-                </paper-listbox>
-              </paper-material>
-            </app-header-layout>
+                paper-dropdown-menu.device-dropdown {
+                    margin: 1em;
+                    --paper-input-container-underline: {
+                        display: none;
+                    };
+                }
+            </style>
+            <app-route
+                route="[[route]]"
+                pattern="/:device"
+                data="{{deviceRoute}}"
+                tail="{{subroute}}">
+            </app-route>
+            <app-route
+                route="{{subroute}}"
+                pattern="/:page"
+                data="{{pageRoute}}">
+            </app-route>
 
-            <app-drawer id="drawer" slot="drawer">
-                <iron-pages selected="[[deviceRoute.device]]" attr-for-selected="device-name" fallback-selection="fallback">
-                    <iron-pages device-name="vision" selected="[[pageRoute.page]]" attr-for-selected="page-name" fallback-selection="fallback">
-                        <div page-name="streams"><vision-streams /></div>
-                        <div page-name="events"><vision-events /></div>
-                        <div page-name="settings"><vision-settings /></div>
+            <app-drawer-layout fullbleed>
+
+                <app-header-layout fullbleed>
+
+                    <!-- Dashboard app bar -->
+                    <app-header fixed effects="waterfall" slot="header">
+                        <app-toolbar>
+                            <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
+                            <div main-title>Replus App</div>
+                            <paper-icon-button icon="more-vert" on-tap="toggleAccountMenu"></paper-icon-button>
+                        </app-toolbar>
+                    </app-header>
+
+                    <!-- Dashboard content pages -->
+                    <iron-pages selected="[[deviceRoute.device]]" attr-for-selected="device-name" fallback-selection="fallback">
+                        <iron-pages device-name="vision" selected="[[pageRoute.page]]" attr-for-selected="page-name" fallback-selection="fallback">
+                            <div page-name="streams"><vision-streams /></div>
+                            <div page-name="events"><vision-events /></div>
+                            <div page-name="settings"><vision-settings /></div>
+                        </iron-pages>
+                        <iron-pages device-name="remote" selected="[[pageRoute.page]]" attr-for-selected="page-name" fallback-selection="fallback">
+                            <div page-name="rooms"><remote-rooms /></div>
+                            <div page-name="devices"><remote-devices /></div>
+                            <div page-name="settings"><remote-settings /></div>
+                        </iron-pages>
                     </iron-pages>
-                    <iron-pages device-name="remote" selected="[[pageRoute.page]]" attr-for-selected="page-name" fallback-selection="fallback">
-                        <div page-name="rooms"><remote-rooms /></div>
-                        <div page-name="devices"><remote-devices /></div>
-                        <div page-name="settings"><remote-settings /></div>
-                    </iron-pages>
-                </iron-pages>
-                <paper-dropdown-menu class="device-dropdown" label="Choose device"  vertical-offset="40" no-label-float noink no-animations>
-                    <paper-listbox slot="dropdown-content" selected="{{mapDeviceRoute(deviceRoute.device)}}">
-                        <a href='/remote/rooms' tabindex='-1'>
-                            <paper-item >Replus Remote</paper-item>
-                        </a>
-                        <a href='/vision/streams' tabindex='-1'>
-                            <paper-item >Replus Vision</paper-item>
-                        </a>
-                    </paper-listbox>
-                </paper-dropdown-menu>
-                <template is="dom-if" if="{{isEqualTo(deviceRoute.device, 'vision')}}">
-                    <iron-selector
-                        class='nav-menu'
-                        selected="[[pageRoute.page]]"
-                        attr-for-selected='name'
-                        on-iron-activate='drawerSelected'>
-                        <template is='dom-repeat' items='{{visionMenus}}'>
-                        <a name='[[item.name]]' href='/vision/[[item.name]]' tabindex='-1'>
-                            <paper-item raised>[[item.title]]</paper-item>
-                        </a>
-                        </template>
-                    </iron-selector>
-                </template>
-                <template is="dom-if" if="{{isEqualTo(deviceRoute.device, 'remote')}}">
-                    <iron-selector
-                        class='nav-menu'
-                        selected="[[pageRoute.page]]"
-                        attr-for-selected='name'
-                        on-iron-activate='drawerSelected'>
-                        <template is='dom-repeat' items='{{remoteMenus}}'>
-                        <a name='[[item.name]]' href='/remote/[[item.name]]' tabindex='-1'>
-                            <paper-item raised>[[item.title]]</paper-item>
-                        </a>
-                        </template>
-                    </iron-selector>
-                </template>
-            </app-drawer>
 
-          </app-drawer-layout>
+                    <!-- Dashboard app bar menu -->
+                    <paper-material id="accountMenu">
+                        <paper-listbox>
+                            <a name='account' href='/dashboard/account' tabindex='-1'>
+                            <paper-item raised>Account</paper-item>
+                            </a>
+                            <a name='sign-out' on-tap='handleSignOut' tabindex='-1'>
+                            <paper-item raised>Sign Out</paper-item>
+                            </a>
+                        </paper-listbox>
+                    </paper-material>
+                </app-header-layout>
+
+                <app-drawer id="drawer" slot="drawer">
+
+                    <!-- Dashboard drawer -->
+                    <paper-dropdown-menu class="device-dropdown" label="Choose device"  vertical-offset="40" no-label-float noink no-animations>
+                        <paper-listbox slot="dropdown-content" selected="{{mapDeviceRoute(deviceRoute.device)}}">
+                            <a href='/dashboard/remote/rooms' tabindex='-1'>
+                                <paper-item >Replus Remote</paper-item>
+                            </a>
+                            <a href='/dashboard/vision/events' tabindex='-1'>
+                                <paper-item >Replus Vision</paper-item>
+                            </a>
+                        </paper-listbox>
+                    </paper-dropdown-menu>
+                    <template is="dom-if" if="{{isEqualTo(deviceRoute.device, 'vision')}}">
+                        <iron-selector
+                            class='nav-menu'
+                            selected="[[pageRoute.page]]"
+                            attr-for-selected='name'
+                            on-iron-activate='drawerSelected'>
+                            <template is='dom-repeat' items='{{visionMenus}}'>
+                            <a name='[[item.name]]' href='/dashboard/vision/[[item.name]]' tabindex='-1'>
+                                <paper-item raised>[[item.title]]</paper-item>
+                            </a>
+                            </template>
+                        </iron-selector>
+                    </template>
+                    <template is="dom-if" if="{{isEqualTo(deviceRoute.device, 'remote')}}">
+                        <iron-selector
+                            class='nav-menu'
+                            selected="[[pageRoute.page]]"
+                            attr-for-selected='name'
+                            on-iron-activate='drawerSelected'>
+                            <template is='dom-repeat' items='{{remoteMenus}}'>
+                            <a name='[[item.name]]' href='/dashboard/remote/[[item.name]]' tabindex='-1'>
+                                <paper-item raised>[[item.title]]</paper-item>
+                            </a>
+                            </template>
+                        </iron-selector>
+                    </template>
+
+                </app-drawer>
+
+            </app-drawer-layout>
     `;
     }
 }

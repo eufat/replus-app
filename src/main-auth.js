@@ -5,61 +5,32 @@ import '@polymer/iron-ajax/iron-ajax';
 import '@polymer/paper-material/paper-material';
 import '@polymer/paper-spinner/paper-spinner';
 import '@polymer/paper-button/paper-button';
+
 import {firebaseConfig} from './configs';
-
+import {userDataKey} from './utils';
 import store from './main-store';
+import actions from './main-actions';
 const ReduxMixin = PolymerRedux(store);
-
-const userDataKey = ['uid', 'email', 'displayName', 'photoURL'];
 
 class MainAuth extends ReduxMixin(PolymerElement) {
     static get actions() {
-        return {
-            setCurrentUser(user) {
-                const currentUser = _.pick(user, userDataKey);
-                return {
-                    type: 'SET_CURRENT_USER',
-                    currentUser,
-                };
-            },
-            authenticateUser() {
-                if (!(window.location.href.indexOf('dashboard') > -1)) {
-                    window.location = '/dashboard';
-                }
-
-                return {
-                    type: 'AUTHENTICATE_USER',
-                };
-            },
-            deauthenticateUser() {
-                firebase.auth().signOut();
-                return {
-                    type: 'DEAUTHENTICATE_USER',
-                };
-            },
-        };
+        return actions;
     }
 
     ready() {
         super.ready();
-        const thisMainAuth = this;
-        firebase.initializeApp(firebaseConfig);
-        thisMainAuth.setupPosition();
-        this.$.firebaseuicontainer.style.display = 'none';
 
-        firebase.auth().onAuthStateChanged((firebaseUser) => {
-            if (firebaseUser) {
-                thisMainAuth.dispatch('setCurrentUser', firebaseUser);
-                thisMainAuth.dispatch('authenticateUser');
-            } else {
-                thisMainAuth.dispatch('deauthenticateUser');
-            }
-        });
+        const thisMainAuth = this;
+
+        thisMainAuth.setupPosition();
+
+        this.$.firebaseuicontainer.style.display = 'none';
 
         window.addEventListener('resize', () => {
             this.setupPosition();
         });
 
+        firebase.initializeApp(firebaseConfig);
         this.loadFirebaseUI();
     }
 
