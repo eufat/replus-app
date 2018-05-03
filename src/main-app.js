@@ -1,4 +1,5 @@
 import {PolymerElement, html} from '@polymer/polymer/polymer-element';
+import PolymerRedux from 'polymer-redux/polymer-redux';
 
 import '@polymer/font-roboto/roboto';
 import '@polymer/iron-flex-layout/iron-flex-layout';
@@ -8,31 +9,16 @@ import '@polymer/iron-selector/iron-selector';
 import '@polymer/app-route/app-location';
 import '@polymer/app-route/app-route';
 
-import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
-import '@polymer/paper-listbox/paper-listbox';
-import '@polymer/paper-item/paper-item';
-import '@polymer/neon-animation/neon-animations';
+import store from './main-store';
 
 import './main-dashboard';
 import './main-auth';
 
-class MainApp extends PolymerElement {
+const ReduxMixin = PolymerRedux(store);
+
+class MainApp extends ReduxMixin(PolymerElement) {
     static get properties() {
         return {};
-    }
-
-    ready() {
-        super.ready();
-        const thisMainApp = this;
-    }
-
-    isEqualTo(a, b) {
-        return a === b;
-    }
-
-    mapDeviceRoute(route) {
-        const array = ['remote', 'vision'];
-        return array.indexOf(route);
     }
 
     static get template() {
@@ -50,8 +36,6 @@ class MainApp extends PolymerElement {
                     <main-auth name="auth" route="{{routeTail}}"></main-auth>
                 </iron-pages>
             </main>
-            <div id="firebaseuicontainer"></div>
-
     `;
     }
 }

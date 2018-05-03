@@ -1,41 +1,41 @@
 import {PolymerElement, html} from '@polymer/polymer/polymer-element';
+import PolymerRedux from 'polymer-redux/polymer-redux';
+
 import '@polymer/iron-ajax/iron-ajax';
 import '@polymer/paper-material/paper-material';
 import '@polymer/paper-spinner/paper-spinner';
 import '@polymer/paper-button/paper-button';
 import {firebaseConfig} from './configs';
 
-class MainAuth extends PolymerElement {
-    static get properties() {
+import store from './main-store';
+const ReduxMixin = PolymerRedux(store);
+
+const userDataKey = ['uid', 'email', 'displayName', 'photoURL'];
+
+class MainAuth extends ReduxMixin(PolymerElement) {
+    static get actions() {
         return {
-            displayName: {
-                type: String,
-                notify: true,
+            setCurrentUser(user) {
+                const currentUser = _.pick(user, userDataKey);
+                return {
+                    type: 'SET_CURRENT_USER',
+                    currentUser,
+                };
             },
+            authenticateUser() {
+                if (!(window.location.href.indexOf('dashboard') > -1)) {
+                    window.location = '/dashboard';
+                }
 
-            email: {
-                type: String,
-                notify: true,
+                return {
+                    type: 'AUTHENTICATE_USER',
+                };
             },
-
-            isLoggedIn: {
-                type: Number,
-                notify: true,
-            },
-
-            photoUrl: {
-                type: String,
-                notify: true,
-            },
-
-            trigger: {
-                type: Number,
-                observer: '_triggerLogout',
-            },
-
-            uid: {
-                type: String,
-                notify: true,
+            deauthenticateUser() {
+                firebase.auth().signOut();
+                return {
+                    type: 'DEAUTHENTICATE_USER',
+                };
             },
         };
     }
@@ -43,22 +43,16 @@ class MainAuth extends PolymerElement {
     ready() {
         super.ready();
         const thisMainAuth = this;
-
         firebase.initializeApp(firebaseConfig);
         thisMainAuth.setupPosition();
-
         this.$.firebaseuicontainer.style.display = 'none';
 
         firebase.auth().onAuthStateChanged((firebaseUser) => {
             if (firebaseUser) {
-                this.uid = firebaseUser.uid;
-                this.displayName = firebaseUser.displayName;
-                this.email = firebaseUser.email;
-                this.photoUrl = firebaseUser.photoURL;
-                this.isLoggedIn = 1;
-                this.$.ajax.generateRequest();
+                thisMainAuth.dispatch('setCurrentUser', firebaseUser);
+                thisMainAuth.dispatch('authenticateUser');
             } else {
-                this.isLoggedIn = 0;
+                thisMainAuth.dispatch('deauthenticateUser');
             }
         });
 
@@ -67,11 +61,6 @@ class MainAuth extends PolymerElement {
         });
 
         this.loadFirebaseUI();
-    }
-
-    _triggerLogout() {
-        firebase.auth().signOut();
-        firebaseUI.start('#firebaseuicontainer', uiConfig);
     }
 
     setupPosition() {
@@ -89,8 +78,8 @@ class MainAuth extends PolymerElement {
 
     loadFirebaseUI() {
         const thisMainAuth = this;
-        console.log('rs-auth: loadFirebaseUI');
         const uiConfig = {
+            signInSuccessUrl: '/dashboard',
             signInOptions: [
                 firebase.auth.GoogleAuthProvider.PROVIDER_ID,
                 {
@@ -99,25 +88,22 @@ class MainAuth extends PolymerElement {
                 },
             ],
             callbacks: {
-                signInSuccess: (currentUser, credential, redirectUrl) => {
-                    return false;
+                signInSuccessWithAuthResult: (authResult, redirectUrl) => {
+                    const currentUser = _.pick(authResult.user, userDataKey);
+                    thisMainAuth.dispatch('setCurrentUser', currentUser);
+                    thisMainAuth.dispatch('authenticateUser');
+                    return true;
                 },
                 uiShown: () => {
-                    console.log('rs-auth: FirebaseUI ready');
                     thisMainAuth.$.firebaseuicontainer.style.display = 'block';
                     thisMainAuth.$.spinner.style.display = 'none';
                 },
             },
-            tosUrl: '/dashboard',
         };
 
-        const ui = new firebaseui.auth.AuthUI(firebase.auth());
+        this.ui = new firebaseui.auth.AuthUI(firebase.auth());
 
-        ui.start(thisMainAuth.$.firebaseuicontainer, uiConfig);
-    }
-
-    _handleResponse() {
-        // console.log(`main-auth: POST request ${thisMainAuth.response}`)
+        this.ui.start(thisMainAuth.$.firebaseuicontainer, uiConfig);
     }
 
     static get template() {
@@ -172,15 +158,6 @@ class MainAuth extends PolymerElement {
                     width: 300px;
                 }
             </style>
-            <iron-ajax
-                id="ajax"
-                url="https://core.replus.co/api/user-register"
-                method="POST"
-                body='uid={{uid}}&name={{displayName}}&email={{email}}'
-                handle-as="text"
-                last-response="{{response}}"
-                on-response="_handleResponse">
-            </iron-ajax>
             <div id="container" class="vertical layout">
                 <paper-material>
                     <p id="header">Sign in</p>

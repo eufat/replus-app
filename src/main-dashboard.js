@@ -16,6 +16,7 @@ import '@polymer/paper-listbox/paper-listbox';
 import '@polymer/paper-progress/paper-progress';
 import '@polymer/paper-checkbox/paper-checkbox';
 import '@polymer/paper-icon-button/paper-icon-button';
+import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 
 import './remote-rooms';
 import './remote-devices';
@@ -81,6 +82,15 @@ class MainDashboard extends PolymerElement {
         }
     }
 
+    isEqualTo(a, b) {
+        return a === b;
+    }
+
+    mapDeviceRoute(route) {
+        const array = ['remote', 'vision'];
+        return array.indexOf(route);
+    }
+
     static get template() {
         return html`
           <style>
@@ -144,7 +154,7 @@ class MainDashboard extends PolymerElement {
               </paper-material>
             </app-header-layout>
 
-            <app-drawer id="drawer">
+            <app-drawer id="drawer" slot="drawer">
                 <iron-pages selected="[[deviceRoute.device]]" attr-for-selected="device-name" fallback-selection="fallback">
                     <iron-pages device-name="vision" selected="[[pageRoute.page]]" attr-for-selected="page-name" fallback-selection="fallback">
                         <div page-name="streams"><vision-streams /></div>
@@ -158,14 +168,14 @@ class MainDashboard extends PolymerElement {
                     </iron-pages>
                 </iron-pages>
                 <paper-dropdown-menu class="device-dropdown" label="Choose device"  vertical-offset="40" no-label-float noink no-animations>
-                <paper-listbox slot="dropdown-content" selected="{{mapDeviceRoute(deviceRoute.device)}}">
-                    <a href='/remote/rooms' tabindex='-1'>
-                        <paper-item >Replus Remote</paper-item>
-                    </a>
-                    <a href='/vision/streams' tabindex='-1'>
-                        <paper-item >Replus Vision</paper-item>
-                    </a>
-                </paper-listbox>
+                    <paper-listbox slot="dropdown-content" selected="{{mapDeviceRoute(deviceRoute.device)}}">
+                        <a href='/remote/rooms' tabindex='-1'>
+                            <paper-item >Replus Remote</paper-item>
+                        </a>
+                        <a href='/vision/streams' tabindex='-1'>
+                            <paper-item >Replus Vision</paper-item>
+                        </a>
+                    </paper-listbox>
                 </paper-dropdown-menu>
                 <template is="dom-if" if="{{isEqualTo(deviceRoute.device, 'vision')}}">
                     <iron-selector
