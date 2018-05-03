@@ -9,6 +9,11 @@ import '@polymer/iron-selector/iron-selector';
 import '@polymer/app-route/app-location';
 import '@polymer/app-route/app-route';
 
+import '@polymer/paper-styles/color';
+import '@polymer/paper-styles/typography';
+import '@polymer/paper-styles/shadow';
+import '@polymer/paper-styles/default-theme';
+
 import {firebaseConfig} from './configs';
 import store from './main-store';
 import actions from './main-actions';

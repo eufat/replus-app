@@ -291,7 +291,7 @@
     "@polymer/paper-ripple" "3.0.0-pre.12"
     "@polymer/polymer" "3.0.0-pre.12"
 
-"@polymer/paper-button@^3.0.0-pre.12":
+"@polymer/paper-button@3.0.0-pre.12":
   version "3.0.0-pre.12"
   resolved "https://registry.yarnpkg.com/@polymer/paper-button/-/paper-button-3.0.0-pre.12.tgz#c02396aea32595801dc147c159c65910d3ce75f4"
   dependencies:
@@ -409,6 +409,25 @@
     "@polymer/iron-flex-layout" "3.0.0-pre.12"
     "@polymer/iron-range-behavior" "3.0.0-pre.12"
     "@polymer/paper-styles" "3.0.0-pre.12"
+    "@polymer/polymer" "3.0.0-pre.12"
+
+"@polymer/paper-radio-button@3.0.0-pre.12":
+  version "3.0.0-pre.12"
+  resolved "https://registry.yarnpkg.com/@polymer/paper-radio-button/-/paper-radio-button-3.0.0-pre.12.tgz#fedabb54ab7b283aadb2baa56e19c5bdc1c3d1e8"
+  dependencies:
+    "@polymer/iron-checked-element-behavior" "3.0.0-pre.12"
+    "@polymer/iron-flex-layout" "3.0.0-pre.12"
+    "@polymer/paper-behaviors" "3.0.0-pre.12"
+    "@polymer/paper-styles" "3.0.0-pre.12"
+    "@polymer/polymer" "3.0.0-pre.12"
+
+"@polymer/paper-radio-group@3.0.0-pre.12":
+  version "3.0.0-pre.12"
+  resolved "https://registry.yarnpkg.com/@polymer/paper-radio-group/-/paper-radio-group-3.0.0-pre.12.tgz#bde309470dffca6f9da6fc83e2a9b070e1eac04a"
+  dependencies:
+    "@polymer/iron-a11y-keys-behavior" "3.0.0-pre.12"
+    "@polymer/iron-menu-behavior" "3.0.0-pre.12"
+    "@polymer/paper-radio-button" "3.0.0-pre.12"
     "@polymer/polymer" "3.0.0-pre.12"
 
 "@polymer/paper-ripple@3.0.0-pre.12":
