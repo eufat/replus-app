@@ -1,15 +1,15 @@
 {
     "entrypoint": "index.html",
-    "shell": "src/rs-app.js",
-    "fragments": ["src/lazy-element.js"],
-    "sources": [
-        "src/rs-app.js",
-        "src/rs-auth.js",
-        "src/rs-layout.j",
-        "src/rs-route.js",
-        "manifest/**",
-        "package.json"
+    "shell": "src/main-app.js",
+    "fragments": [
+        "src/remote-devices.js",
+        "src/remote-rooms.js",
+        "src/remote-settings.js",
+        "src/vision-events.js",
+        "src/vision-streams.js",
+        "src/vision-settings.js"
     ],
+    "sources": ["src/main-app.js", "manifest/**", "package.json"],
     "extraDependencies": [
         "manifest.json",
         "node_modules/@webcomponents/webcomponentsjs/**"
