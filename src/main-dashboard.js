@@ -24,6 +24,7 @@ import store from './main-store';
 import actions from './main-actions';
 const ReduxMixin = PolymerRedux(store);
 
+import './main-account';
 import './remote-rooms';
 import './remote-devices';
 import './remote-settings';
@@ -146,8 +147,8 @@ class MainDashboard extends ReduxMixin(PolymerElement) {
             </style>
             <app-route
                 route="[[route]]"
-                pattern="/:device"
-                data="{{deviceRoute}}"
+                pattern="/:page"
+                data="{{containerRoute}}"
                 tail="{{subroute}}">
             </app-route>
             <app-route
@@ -170,17 +171,18 @@ class MainDashboard extends ReduxMixin(PolymerElement) {
                     </app-header>
 
                     <!-- Dashboard content pages -->
-                    <iron-pages selected="[[deviceRoute.device]]" attr-for-selected="device-name" fallback-selection="fallback">
-                        <iron-pages device-name="vision" selected="[[pageRoute.page]]" attr-for-selected="page-name" fallback-selection="fallback">
+                    <iron-pages selected="[[containerRoute.page]]" attr-for-selected="container-name" fallback-selection="fallback">
+                        <iron-pages container-name="vision" selected="[[pageRoute.page]]" attr-for-selected="page-name" fallback-selection="fallback">
                             <div page-name="streams"><vision-streams /></div>
                             <div page-name="events"><vision-events /></div>
                             <div page-name="settings"><vision-settings /></div>
                         </iron-pages>
-                        <iron-pages device-name="remote" selected="[[pageRoute.page]]" attr-for-selected="page-name" fallback-selection="fallback">
+                        <iron-pages container-name="remote" selected="[[pageRoute.page]]" attr-for-selected="page-name" fallback-selection="fallback">
                             <div page-name="rooms"><remote-rooms /></div>
                             <div page-name="devices"><remote-devices /></div>
                             <div page-name="settings"><remote-settings /></div>
                         </iron-pages>
+                        <div container-name="account"><main-account /></div>
                     </iron-pages>
 
                     <!-- Dashboard app bar menu -->
@@ -200,7 +202,7 @@ class MainDashboard extends ReduxMixin(PolymerElement) {
 
                     <!-- Dashboard drawer -->
                     <paper-dropdown-menu class="device-dropdown" label="Choose device"  vertical-offset="40" no-label-float noink no-animations>
-                        <paper-listbox slot="dropdown-content" selected="{{mapDeviceRoute(deviceRoute.device)}}">
+                        <paper-listbox slot="dropdown-content" selected="{{mapDeviceRoute(containerRoute.page)}}">
                             <a href='/dashboard/remote/rooms' tabindex='-1'>
                                 <paper-item >Replus Remote</paper-item>
                             </a>
@@ -209,7 +211,7 @@ class MainDashboard extends ReduxMixin(PolymerElement) {
                             </a>
                         </paper-listbox>
                     </paper-dropdown-menu>
-                    <template is="dom-if" if="{{isEqualTo(deviceRoute.device, 'vision')}}">
+                    <template is="dom-if" if="{{isEqualTo(containerRoute.page, 'vision')}}">
                         <iron-selector
                             class='nav-menu'
                             selected="[[pageRoute.page]]"
@@ -222,7 +224,7 @@ class MainDashboard extends ReduxMixin(PolymerElement) {
                             </template>
                         </iron-selector>
                     </template>
-                    <template is="dom-if" if="{{isEqualTo(deviceRoute.device, 'remote')}}">
+                    <template is="dom-if" if="{{isEqualTo(containerRoute.page, 'remote')}}">
                         <iron-selector
                             class='nav-menu'
                             selected="[[pageRoute.page]]"

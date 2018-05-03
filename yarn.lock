@@ -433,6 +433,15 @@
     "@polymer/iron-flex-layout" "3.0.0-pre.12"
     "@polymer/polymer" "3.0.0-pre.12"
 
+"@polymer/paper-toggle-button@3.0.0-pre.12":
+  version "3.0.0-pre.12"
+  resolved "https://registry.yarnpkg.com/@polymer/paper-toggle-button/-/paper-toggle-button-3.0.0-pre.12.tgz#73976105c5265bd3d70b1a3d1d7bf9a88c832e15"
+  dependencies:
+    "@polymer/iron-checked-element-behavior" "3.0.0-pre.12"
+    "@polymer/paper-behaviors" "3.0.0-pre.12"
+    "@polymer/paper-styles" "3.0.0-pre.12"
+    "@polymer/polymer" "3.0.0-pre.12"
+
 "@polymer/polymer@3.0.0-pre.12", "@polymer/polymer@^3.0.0-pre.12":
   version "3.0.0-pre.12"
   resolved "https://registry.yarnpkg.com/@polymer/polymer/-/polymer-3.0.0-pre.12.tgz#3f5dd19099a194bf1066cf417ae13c335bd63b04"
