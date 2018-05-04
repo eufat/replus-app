@@ -1,15 +1,18 @@
-import {PolymerElement, html} from '@polymer/polymer/polymer-element';
-import PolymerRedux from 'polymer-redux/polymer-redux';
+import {
+    PolymerElement,
+    html,
+} from '/node_modules/@polymer/polymer/polymer-element.js';
+import PolymerRedux from '/node_modules/polymer-redux/polymer-redux.js';
 
-import '@polymer/iron-ajax/iron-ajax';
-import '@polymer/paper-material/paper-material';
-import '@polymer/paper-spinner/paper-spinner';
-import '@polymer/paper-button/paper-button';
+import '/node_modules/@polymer/iron-ajax/iron-ajax.js';
+import '/node_modules/@polymer/paper-material/paper-material.js';
+import '/node_modules/@polymer/paper-spinner/paper-spinner.js';
+import '/node_modules/@polymer/paper-button/paper-button.js';
 
-import {firebaseConfig} from './configs';
-import {userDataKey} from './utils';
-import store from './main-store';
-import actions from './main-actions';
+import {firebaseConfig} from './configs.js';
+import {userDataKey} from './utils.js';
+import store from './main-store.js';
+import actions from './main-actions.js';
 const ReduxMixin = PolymerRedux(store);
 
 class MainAuth extends ReduxMixin(PolymerElement) {
@@ -25,7 +28,7 @@ class MainAuth extends ReduxMixin(PolymerElement) {
 
         thisMainAuth.setupPosition();
 
-        this.$.firebaseuicontainer.style.display = 'none';
+        this.$.firebaseuicontainer.style.display = 'none.js';
 
         window.addEventListener('resize', () => {
             this.setupPosition();
@@ -37,13 +40,13 @@ class MainAuth extends ReduxMixin(PolymerElement) {
     setupPosition() {
         const thisMainAuth = this;
         thisMainAuth.$.container.style.marginTop =
-            (window.innerHeight - 294) / 2 - 100 + 'px';
+            (window.innerHeight - 294) / 2 - 100 + 'px.js';
         thisMainAuth.$.container.style.marginLeft =
-            (window.innerWidth - 300) / 2 + 'px';
+            (window.innerWidth - 300) / 2 + 'px.js';
 
         if (window.innerWidth < 640) {
             thisMainAuth.$.container.style.marginTop =
-                (window.innerHeight - 294) / 2 + 'px';
+                (window.innerHeight - 294) / 2 + 'px.js';
         }
     }
 
@@ -66,8 +69,9 @@ class MainAuth extends ReduxMixin(PolymerElement) {
                     return true;
                 },
                 uiShown: () => {
-                    thisMainAuth.$.firebaseuicontainer.style.display = 'block';
-                    thisMainAuth.$.spinner.style.display = 'none';
+                    thisMainAuth.$.firebaseuicontainer.style.display =
+                        'block.js';
+                    thisMainAuth.$.spinner.style.display = 'none.js';
                 },
             },
         };

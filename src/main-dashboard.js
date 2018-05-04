@@ -1,37 +1,40 @@
-import {PolymerElement, html} from '@polymer/polymer/polymer-element';
-import PolymerRedux from 'polymer-redux/polymer-redux';
+import {
+    PolymerElement,
+    html,
+} from '/node_modules/@polymer/polymer/polymer-element.js';
+import PolymerRedux from '/node_modules/polymer-redux/polymer-redux.js';
 
-import '@polymer/polymer/polymer-legacy';
-import '@polymer/iron-icons/iron-icons';
+import '/node_modules/@polymer/polymer/polymer-legacy.js';
+import '/node_modules/@polymer/iron-icons/iron-icons.js';
 
-import '@polymer/app-layout/app-header/app-header';
-import '@polymer/app-layout/app-toolbar/app-toolbar';
-import '@polymer/app-layout/app-drawer/app-drawer';
-import '@polymer/app-layout/app-drawer-layout/app-drawer-layout';
-import '@polymer/app-layout/app-header-layout/app-header-layout';
-import '@polymer/app-layout/app-scroll-effects/app-scroll-effects';
-import '@polymer/app-layout/demo/sample-content';
+import '/node_modules/@polymer/app-layout/app-header/app-header.js';
+import '/node_modules/@polymer/app-layout/app-toolbar/app-toolbar.js';
+import '/node_modules/@polymer/app-layout/app-drawer/app-drawer.js';
+import '/node_modules/@polymer/app-layout/app-drawer-layout/app-drawer-layout.js';
+import '/node_modules/@polymer/app-layout/app-header-layout/app-header-layout.js';
+import '/node_modules/@polymer/app-layout/app-scroll-effects/app-scroll-effects.js';
+import '/node_modules/@polymer/app-layout/demo/sample-content.js';
 
-import '@polymer/paper-item/paper-item';
-import '@polymer/paper-material/paper-material';
-import '@polymer/paper-listbox/paper-listbox';
-import '@polymer/paper-progress/paper-progress';
-import '@polymer/paper-checkbox/paper-checkbox';
-import '@polymer/paper-icon-button/paper-icon-button';
-import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
+import '/node_modules/@polymer/paper-item/paper-item.js';
+import '/node_modules/@polymer/paper-material/paper-material.js';
+import '/node_modules/@polymer/paper-listbox/paper-listbox.js';
+import '/node_modules/@polymer/paper-progress/paper-progress.js';
+import '/node_modules/@polymer/paper-checkbox/paper-checkbox.js';
+import '/node_modules/@polymer/paper-icon-button/paper-icon-button.js';
+import '/node_modules/@polymer/paper-dropdown-menu/paper-dropdown-menu.js';
 
-import store from './main-store';
-import actions from './main-actions';
+import store from './main-store.js';
+import actions from './main-actions.js';
 const ReduxMixin = PolymerRedux(store);
 
-import './main-account';
-import './remote-rooms';
-import './remote-devices';
-import './remote-settings';
+import './main-account.js';
+import './remote-rooms.js';
+import './remote-devices.js';
+import './remote-settings.js';
 
-import './vision-events';
-import './vision-settings';
-import './vision-streams';
+import './vision-events.js';
+import './vision-settings.js';
+import './vision-streams.js';
 
 class MainDashboard extends ReduxMixin(PolymerElement) {
     static get actions() {
@@ -87,13 +90,14 @@ class MainDashboard extends ReduxMixin(PolymerElement) {
     }
 
     toggleAccountMenu(event) {
-        const accountMenuDisplay = this.$.accountMenu.style.display === 'block';
+        const accountMenuDisplay =
+            this.$.accountMenu.style.display === 'block.js';
 
         if (accountMenuDisplay) {
-            this.$.accountMenu.style.display = 'none';
+            this.$.accountMenu.style.display = 'none.js';
             this.accountMenu = false;
         } else {
-            this.$.accountMenu.style.display = 'block';
+            this.$.accountMenu.style.display = 'block.js';
             this.accountMenu = true;
         }
     }

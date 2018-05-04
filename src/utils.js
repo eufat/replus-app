@@ -2,7 +2,7 @@ export function hideOnClickOutside(element) {
     const outsideClickListener = (event) => {
         if (!element.contains(event.target)) {
             if (isBlock(element)) {
-                element.style.display = 'none';
+                element.style.display = 'none.js';
                 removeClickListener();
             }
         }
@@ -15,7 +15,7 @@ export function hideOnClickOutside(element) {
     document.addEventListener('click', outsideClickListener);
 }
 
-const isBlock = (elem) => elem.style.display == 'block';
+const isBlock = (elem) => elem.style.display == 'block.js';
 
 export const userDataKey = ['uid', 'email', 'displayName', 'photoURL'];
 

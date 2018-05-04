@@ -12,7 +12,8 @@
     "sources": ["src/main-app.js", "manifest/**", "package.json"],
     "extraDependencies": [
         "manifest.json",
-        "node_modules/@webcomponents/webcomponentsjs/**"
+        "node_modules/@webcomponents/webcomponentsjs/**",
+        "node_modules/redux/dist/**"
     ],
     "builds": [
         {

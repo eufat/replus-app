@@ -9,7 +9,9 @@
         "start": "npm run serve | npm run watch",
         "serve": "polymer serve --port 3000",
         "test": "polymer test",
-        "watch": "browser-sync start --proxy localhost:3000 --open --files \"**/*.js\""
+        "watch":
+            "browser-sync start --proxy localhost:3000 --open --files \"**/*.js\"",
+        "deploy": "polymer build && firebase deploy"
     },
     "dependencies": {
         "@polymer/app-layout": "^3.0.0-pre.12",

@@ -1,4 +1,4 @@
-import {PolymerElement, html} from '@polymer/polymer/polymer-element';
+import {PolymerElement, html} from '/node_modules/@polymer/polymer/polymer-element.js';
 
 export default class VisionStreams extends PolymerElement {
     static get template() {

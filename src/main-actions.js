@@ -1,4 +1,4 @@
-import {userDataKey, pushLocationTo} from './utils';
+import {userDataKey, pushLocationTo} from './utils.js';
 
 const actions = {
     setCurrentUser(user) {

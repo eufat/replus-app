@@ -1,15 +1,12 @@
 {
-  "hosting": {
-    "public": "build/es6-unbundled",
-    "ignore": [
-      "firebase.json",
-      "**/.*"
-    ],
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
-    ]
-  }
+    "hosting": {
+        "public": "build/esm-bundled",
+        "ignore": ["firebase.json", "**/.*"],
+        "rewrites": [
+            {
+                "source": "/",
+                "destination": "/index.html"
+            }
+        ]
+    }
 }

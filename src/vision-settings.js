@@ -1,11 +1,11 @@
-import {PolymerElement, html} from '@polymer/polymer/polymer-element';
+import {PolymerElement, html} from '/node_modules/@polymer/polymer/polymer-element.js';
 
-import '@polymer/paper-toggle-button/paper-toggle-button';
-import '@polymer/paper-button/paper-button';
-import '@polymer/paper-item/paper-item';
-import '@polymer/paper-dialog/paper-dialog';
-import '@polymer/paper-radio-group/paper-radio-group';
-import '@polymer/paper-radio-button/paper-radio-button';
+import '/node_modules/@polymer/paper-toggle-button/paper-toggle-button.js';
+import '/node_modules/@polymer/paper-button/paper-button.js';
+import '/node_modules/@polymer/paper-item/paper-item.js';
+import '/node_modules/@polymer/paper-dialog/paper-dialog.js';
+import '/node_modules/@polymer/paper-radio-group/paper-radio-group.js';
+import '/node_modules/@polymer/paper-radio-button/paper-radio-button.js';
 
 export default class VisionSettings extends PolymerElement {
     static get properties() {

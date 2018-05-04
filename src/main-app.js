@@ -1,26 +1,29 @@
-import {PolymerElement, html} from '@polymer/polymer/polymer-element';
-import PolymerRedux from 'polymer-redux/polymer-redux';
+import {
+    PolymerElement,
+    html,
+} from '/node_modules/@polymer/polymer/polymer-element.js';
+import PolymerRedux from '/node_modules/polymer-redux/polymer-redux.js';
 
-import '@polymer/font-roboto/roboto';
-import '@polymer/iron-flex-layout/iron-flex-layout';
-import '@polymer/iron-pages/iron-pages';
-import '@polymer/iron-selector/iron-selector';
+import '/node_modules/@polymer/font-roboto/roboto.js';
+import '/node_modules/@polymer/iron-flex-layout/iron-flex-layout.js';
+import '/node_modules/@polymer/iron-pages/iron-pages.js';
+import '/node_modules/@polymer/iron-selector/iron-selector.js';
 
-import '@polymer/app-route/app-location';
-import '@polymer/app-route/app-route';
+import '/node_modules/@polymer/app-route/app-location.js';
+import '/node_modules/@polymer/app-route/app-route.js';
 
-import '@polymer/paper-styles/color';
-import '@polymer/paper-styles/typography';
-import '@polymer/paper-styles/shadow';
-import '@polymer/paper-styles/default-theme';
+import '/node_modules/@polymer/paper-styles/color.js';
+import '/node_modules/@polymer/paper-styles/typography.js';
+import '/node_modules/@polymer/paper-styles/shadow.js';
+import '/node_modules/@polymer/paper-styles/default-theme.js';
 
-import {firebaseConfig} from './configs';
-import store from './main-store';
-import actions from './main-actions';
+import {firebaseConfig} from './configs.js';
+import store from './main-store.js';
+import actions from './main-actions.js';
 
-import './main-dashboard';
-import './main-auth';
-import './main-not-found';
+import './main-dashboard.js';
+import './main-auth.js';
+import './main-not-found.js';
 
 const ReduxMixin = PolymerRedux(store);
 
