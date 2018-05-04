@@ -23,7 +23,7 @@ import '/node_modules/@polymer/paper-checkbox/paper-checkbox.js';
 import '/node_modules/@polymer/paper-icon-button/paper-icon-button.js';
 import '/node_modules/@polymer/paper-dropdown-menu/paper-dropdown-menu.js';
 
-import store from './main-store.js';
+import store from './store.js';
 import actions from './main-actions.js';
 const ReduxMixin = PolymerRedux(store);
 

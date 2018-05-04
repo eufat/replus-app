@@ -1,4 +1,8 @@
-import {PolymerElement, html} from '/node_modules/@polymer/polymer/polymer-element.js';
+import {
+    PolymerElement,
+    html,
+} from '/node_modules/@polymer/polymer/polymer-element.js';
+import PolymerRedux from '/node_modules/polymer-redux/polymer-redux.js';
 
 import '/node_modules/@polymer/paper-toggle-button/paper-toggle-button.js';
 import '/node_modules/@polymer/paper-button/paper-button.js';
@@ -7,7 +11,29 @@ import '/node_modules/@polymer/paper-dialog/paper-dialog.js';
 import '/node_modules/@polymer/paper-radio-group/paper-radio-group.js';
 import '/node_modules/@polymer/paper-radio-button/paper-radio-button.js';
 
-export default class VisionSettings extends PolymerElement {
+import store from './store.js';
+import actions from './vision-actions.js';
+const ReduxMixin = PolymerRedux(store);
+
+export default class VisionSettings extends ReduxMixin(PolymerElement) {
+    constructor() {
+        super();
+
+        const initialSettings = {
+            resolution: 0,
+            rotation: 0,
+            lamp: false,
+            motion: false,
+            update: false,
+        };
+
+        this.settings = initialSettings;
+    }
+
+    static get actions() {
+        return actions;
+    }
+
     static get properties() {
         return {
             resolutions: {
@@ -16,23 +42,19 @@ export default class VisionSettings extends PolymerElement {
             },
             rotations: {
                 type: Array,
-                value: ['0°', '180°'],
+                value: ['0°', '90°', '180°', '270°'],
             },
-            resolution: Number,
-            rotation: Number,
-            light: Boolean,
-            motion: Boolean,
-            update: Boolean,
+            settingsIsDisabled: Boolean,
+            off: Boolean,
+            restart: Boolean,
+            settings: {
+                type: Object,
+            },
         };
     }
 
-    ready() {
-        super.ready();
-        this.resolution = 0;
-        this.rotation = 0;
-        this.light = false;
-        this.motion = false;
-        this.update = false;
+    static get observers() {
+        return ['offOrRestartIsChanged(off, restart)'];
     }
 
     getResolution(resolution) {
@@ -47,23 +69,38 @@ export default class VisionSettings extends PolymerElement {
         return array.indexOf(element);
     }
 
-    _onSaveSettings() {
-        const settings = {
-            resolution: this.resolution,
-            rotation: this.rotation,
-            light: this.light,
-            motion: this.motion,
-            update: this.update,
-        };
-        console.log('settings', settings);
+    offOrRestartIsChanged(off, restart) {
+        this.settingsIsDisabled = off || restart;
     }
 
-    _openResolutionDialog() {
+    handleSaveSettings() {
+        this.dispatch('setSettings', this.settings);
+    }
+
+    openResolutionDialog() {
         this.$.resolutionDialog.open();
     }
 
-    _openRotationDialog() {
+    openRotationDialog() {
         this.$.rotationDialog.open();
+    }
+
+    openTurnOffDialog() {
+        this.$.turnOffDialog.open();
+    }
+
+    openRestartDialog() {
+        this.$.restartDialog.open();
+    }
+
+    onTurnOffDevice() {
+        this.off = true;
+        this.handleSaveSettings();
+    }
+
+    onRestartDevice() {
+        this.restart = true;
+        this.handleSaveSettings();
     }
 
     static get template() {
@@ -94,12 +131,12 @@ export default class VisionSettings extends PolymerElement {
             }
         </style>
         <div role="listbox" class="command">
-            <paper-item>
+            <paper-item on-tap="openTurnOffDialog">
                 <paper-item-body>
                     <div>Turn Off Device</div>
                 </paper-item-body>
             </paper-item>
-            <paper-item>
+            <paper-item  on-tap="openRestartDialog">
                 <paper-item-body>
                     <div>Restart Device</div>
                 </paper-item-body>
@@ -110,47 +147,61 @@ export default class VisionSettings extends PolymerElement {
                 <paper-item-body>
                     <div>Light</div>
                 </paper-item-body>
-                <paper-toggle-button checked="{{light}}" class="settings-right"></paper-toggle-button>
+                <paper-toggle-button disabled$="[[settingsIsDisabled]]" checked="{{settings.lamp}}" class="settings-right"></paper-toggle-button>
             </paper-item>
             <paper-item>
                 <paper-item-body>
                     <div>Motion Detection</div>
                 </paper-item-body>
-                <paper-toggle-button checked="{{motion}}" class="settings-right"></paper-toggle-button>
+                <paper-toggle-button disabled$="[[settingsIsDisabled]]" checked="{{settings.motion}}" class="settings-right"></paper-toggle-button>
             </paper-item>
             <paper-item>
                 <paper-item-body>
                     <div>Auto Update</div>
                 </paper-item-body>
-                <paper-toggle-button checked="{{update}}" class="settings-right"></paper-toggle-button>
+                <paper-toggle-button disabled$="[[settingsIsDisabled]]" checked="{{settings.update}}" class="settings-right"></paper-toggle-button>
             </paper-item>
-            <paper-item on-tap="_openResolutionDialog">
+            <paper-item on-tap="openResolutionDialog">
                 <paper-item-body>
                     <div>Image Resolution</div>
                 </paper-item-body>
-                <div class="settings-right">{{getResolution(resolution)}}</div>
+                <div class="settings-right">{{getResolution(settings.resolution)}}</div>
             </paper-item>
-            <paper-item on-tap="_openRotationDialog">
+            <paper-item on-tap="openRotationDialog">
                 <paper-item-body>
                     <div>Image Rotation</div>
                 </paper-item-body>
-                <div class="settings-right">{{getRotation(rotation)}}</div>
+                <div class="settings-right">{{getRotation(settings.rotation)}}</div>
             </paper-item>
-            <paper-button class="save" raised on-tap="_onSaveSettings">Save Settings</paper-button>
+            <paper-button  disabled$="[[settingsIsDisabled]]" class="save" raised on-tap="handleSaveSettings">Save Settings</paper-button>
         </div>
         <paper-dialog id="resolutionDialog">
-            <paper-radio-group selected="{{resolution}}">
+            <paper-radio-group selected="{{settings.resolution}}">
                 <template is="dom-repeat" items="{{resolutions}}">
-                    <paper-radio-button name="{{getIndexOf(resolutions, item)}}">{{item}}</paper-radio-button>
+                    <paper-radio-button  disabled$="[[settingsIsDisabled]]" name="{{getIndexOf(resolutions, item)}}">{{item}}</paper-radio-button>
                 </template>
             </paper-radio-group>
         </paper-dialog>
         <paper-dialog id="rotationDialog">
-            <paper-radio-group selected="{{rotation}}">
+            <paper-radio-group selected="{{settings.rotation}}">
                 <template is="dom-repeat" items="{{rotations}}">
-                    <paper-radio-button name="{{getIndexOf(rotations, item)}}">{{item}}</paper-radio-button>
+                    <paper-radio-button  disabled$="[[settingsIsDisabled]]" name="{{getIndexOf(rotations, item)}}">{{item}}</paper-radio-button>
                 </template>
             </paper-radio-group>
+        </paper-dialog>
+        <paper-dialog id="turnOffDialog">
+            <p>Are you sure you want to turn off the device?</p>
+            <div class="buttons">
+                <paper-button dialog-dismiss>Cancel</paper-button>
+                <paper-button dialog-confirm autofocus on-tap="onTurnOffDevice">Turn Off</paper-button>
+            </div>
+        </paper-dialog>
+        <paper-dialog id="restartDialog">
+            <p>Are you sure you want to restart the device?</p>
+            <div class="buttons">
+                <paper-button dialog-dismiss>Cancel</paper-button>
+                <paper-button dialog-confirm autofocus on-tap="onRestartDevice">Restart</paper-button>
+            </div>
         </paper-dialog>
     `;
     }

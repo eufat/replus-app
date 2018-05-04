@@ -18,7 +18,7 @@ import '/node_modules/@polymer/paper-styles/shadow.js';
 import '/node_modules/@polymer/paper-styles/default-theme.js';
 
 import {firebaseConfig} from './configs.js';
-import store from './main-store.js';
+import store from './store.js';
 import actions from './main-actions.js';
 
 import './main-dashboard.js';

@@ -25,6 +25,4 @@ const reducer = (state = initialState, action) => {
     }
 };
 
-const store = Redux.createStore(reducer);
-
-export default store;
+export default reducer;

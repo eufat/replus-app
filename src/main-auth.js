@@ -11,7 +11,7 @@ import '/node_modules/@polymer/paper-button/paper-button.js';
 
 import {firebaseConfig} from './configs.js';
 import {userDataKey} from './utils.js';
-import store from './main-store.js';
+import store from './store.js';
 import actions from './main-actions.js';
 const ReduxMixin = PolymerRedux(store);
 
