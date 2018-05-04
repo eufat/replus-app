@@ -1,7 +1,8 @@
 export const firebaseConfig = {
-    apiKey: 'AIzaSyAunkgswJoWW_cN8iF5SWDXKfEm07scMuo',
-    authDomain: 'mqtt-remote.firebaseapp.com',
-    databaseURL: 'https://mqtt-remote.firebaseio.com',
-    storageBucket: 'mqtt-remote.appspot.com',
-    messagingSenderId: '369821906057',
+    apiKey: 'AIzaSyDGCQ24hjwEeQwlus_Knet1_Lnx93Lyy2g',
+    authDomain: 'replus-162509.firebaseapp.com',
+    databaseURL: 'https://replus-162509.firebaseio.com',
+    projectId: 'replus-162509',
+    storageBucket: 'replus-162509.appspot.com',
+    messagingSenderId: '169133229879',
 };
