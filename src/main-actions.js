@@ -3,6 +3,7 @@ import {userDataKey, pushLocationTo} from './utils';
 const actions = {
     setCurrentUser(user) {
         const currentUser = _.pick(user, userDataKey);
+        console.log('dispatching', currentUser);
         return {
             type: 'SET_CURRENT_USER',
             currentUser,

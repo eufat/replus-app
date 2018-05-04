@@ -20,6 +20,7 @@ import actions from './main-actions';
 
 import './main-dashboard';
 import './main-auth';
+import './main-not-found';
 
 const ReduxMixin = PolymerRedux(store);
 
@@ -57,9 +58,10 @@ class MainApp extends ReduxMixin(PolymerElement) {
                 tail="{{routeTail}}">
             </app-route>
             <main class="content">
-                <iron-pages role="main" selected="{{containerRoute.page}}" attr-for-selected="name"  selected-attribute="visible">
+                <iron-pages role="main" selected="{{containerRoute.page}}" attr-for-selected="name"  selected-attribute="visible" fallback-selection="not-found">
                     <main-dashboard name="dashboard" route="{{routeTail}}"></main-dashboard>
                     <main-auth name="auth" route="{{routeTail}}"></main-auth>
+                    <main-not-found name="not-found"></main-not-found>
                 </iron-pages>
             </main>
     `;

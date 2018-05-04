@@ -21,6 +21,7 @@ class MainAuth extends ReduxMixin(PolymerElement) {
         super.ready();
 
         const thisMainAuth = this;
+        firebase.initializeApp(firebaseConfig);
 
         thisMainAuth.setupPosition();
 
@@ -30,7 +31,6 @@ class MainAuth extends ReduxMixin(PolymerElement) {
             this.setupPosition();
         });
 
-        firebase.initializeApp(firebaseConfig);
         this.loadFirebaseUI();
     }
 
@@ -109,6 +109,8 @@ class MainAuth extends ReduxMixin(PolymerElement) {
                 }
 
                 paper-material {
+                    display: block;
+                    width: 300px;
                     padding: 16px;
                     padding-bottom: 25px;
                     background: #fbfbfb;
