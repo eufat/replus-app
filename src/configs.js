@@ -6,3 +6,10 @@ export const firebaseConfig = {
     storageBucket: 'replus-162509.appspot.com',
     messagingSenderId: '169133229879',
 };
+
+export const env = {
+    HOST_ADDRESS: '127.0.0.1',
+    PORT_ADDRESS: '5000',
+    WS_PORT: '5010',
+    GCP_PROJECT: 'replus-162509',
+};
