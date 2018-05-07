@@ -2,11 +2,14 @@ import {
     PolymerElement,
     html,
 } from '/node_modules/@polymer/polymer/polymer-element.js';
+import '/node_modules/@polymer/paper-card/paper-card.js';
+
 import {env} from './configs.js';
+import {getEventsDummy, getDateFromFilename} from './utils.js';
 
 const HOST_ADDRESS = env.HOST_ADDRESS;
-let WS_PORT = env.WS_PORT;
-WS_PORT = WS_PORT ? `:${WS_PORT}` : '';
+let EVENTS_PORT = env.EVENTS_PORT;
+EVENTS_PORT = EVENTS_PORT ? `:${EVENTS_PORT}` : '';
 
 export default class VisionEvents extends PolymerElement {
     static get properties() {
@@ -26,6 +29,7 @@ export default class VisionEvents extends PolymerElement {
     constructor() {
         super();
         this.status = 'Not available';
+        this.realtimeEvents = getEventsDummy();
     }
 
     addFrame(frame) {
@@ -37,10 +41,14 @@ export default class VisionEvents extends PolymerElement {
         this.realtimeEvents = frames;
     }
 
+    getDateFromFilename(name) {
+        return getDateFromFilename(name);
+    }
+
     ready() {
         super.ready();
-        const endpoint = `ws://${HOST_ADDRESS}${WS_PORT}/`;
-        const socket = io(endpoint);
+        const url = `ws://${HOST_ADDRESS}${EVENTS_PORT}/`;
+        const socket = io(url);
 
         socket.on('connect', () => {
             this.status = 'Connected';
@@ -57,27 +65,37 @@ export default class VisionEvents extends PolymerElement {
 
     static get template() {
         return html`
-            <p>Websocket status is: [[status]]</p>
+        <style>
+            .event-container {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            paper-card {
+                width: 480px;
+                margin-bottom: 20px;
+
+            }
+        </style>
+        <div>
+            <p class="event-container">Connection status: [[status]]</p>
             <template is="dom-repeat" items="[[realtimeEvents]]">
-                <div >
-                    <p>From [[item.dev_id]] at [[getDateFromFilename(item.name)</p>
-                    <img
-                        height="240px"
-                        src={item.data}
-                    />
-                    <br />
+                <div class="event-container">
+                    <paper-card image="[[item.data]]">
+                        <div class="card-content">
+                            <p>From [[item.dev_id]] at [[getDateFromFilename(item.name)]]</p>
+                        </div>
+                    </paper-card>
                 </div>
             </template>
             <template is="dom-repeat" items="[[storedEvents]]">
-                <div >
-                    <p>From [[item.dev_id]] at [[getDateFromFilename(item.name)</p>
-                    <img
-                        height="240px"
-                        src={item.data}
-                    />
-                    <br />
-                </div>
+                <paper-card image="[[item.data]]">
+                    <div class="card-content">
+                        <p>From [[item.dev_id]] at [[getDateFromFilename(item.name)]]</p>
+                    </div>
+                </paper-card>
             </template>
+        </div>
     `;
     }
 }

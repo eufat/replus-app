@@ -298,6 +298,12 @@
     "@polymer/iron-meta" "3.0.0-pre.12"
     "@polymer/polymer" "3.0.0-pre.12"
 
+"@polymer/iron-image@3.0.0-pre.12":
+  version "3.0.0-pre.12"
+  resolved "https://registry.yarnpkg.com/@polymer/iron-image/-/iron-image-3.0.0-pre.12.tgz#470c309ab3ada92cfe5c1db006ca85dff3f34078"
+  dependencies:
+    "@polymer/polymer" "3.0.0-pre.12"
+
 "@polymer/iron-input@3.0.0-pre.12":
   version "3.0.0-pre.12"
   resolved "https://registry.yarnpkg.com/@polymer/iron-input/-/iron-input-3.0.0-pre.12.tgz#ea85137779e21d5f7d0d98fea9fc9d06f898cae7"
@@ -404,6 +410,15 @@
   dependencies:
     "@polymer/iron-flex-layout" "3.0.0-pre.12"
     "@polymer/paper-behaviors" "3.0.0-pre.12"
+    "@polymer/paper-styles" "3.0.0-pre.12"
+    "@polymer/polymer" "3.0.0-pre.12"
+
+"@polymer/paper-card@3.0.0-pre.12":
+  version "3.0.0-pre.12"
+  resolved "https://registry.yarnpkg.com/@polymer/paper-card/-/paper-card-3.0.0-pre.12.tgz#5450d2e0f25cb2b84f6788157be4613b87ac309b"
+  dependencies:
+    "@polymer/iron-flex-layout" "3.0.0-pre.12"
+    "@polymer/iron-image" "3.0.0-pre.12"
     "@polymer/paper-styles" "3.0.0-pre.12"
     "@polymer/polymer" "3.0.0-pre.12"
 
@@ -1281,10 +1296,6 @@ domutils@^1.5.1:
   dependencies:
     dom-serializer "0"
     domelementtype "1"
-
-dotenv@^5.0.1:
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-5.0.1.tgz#a5317459bd3d79ab88cff6e44057a6a3fbb1fcef"
 
 easy-extender@2.3.2:
   version "2.3.2"
@@ -2290,6 +2301,14 @@ jsbn@~0.1.0:
 jsesc@^2.5.1:
   version "2.5.1"
   resolved "https://registry.yarnpkg.com/jsesc/-/jsesc-2.5.1.tgz#e421a2a8e20d6b0819df28908f782526b96dd1fe"
+
+jsmpeg-player@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/jsmpeg-player/-/jsmpeg-player-1.2.0.tgz#bd2efd782e6bcb65fe724e90cecac4ae8c77f117"
+
+jsmpeg@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/jsmpeg/-/jsmpeg-1.0.0.tgz#7e41516d748720e06336392eeb951709ae532442"
 
 json-schema-traverse@^0.3.0:
   version "0.3.1"

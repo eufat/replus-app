@@ -10,6 +10,7 @@ export const firebaseConfig = {
 export const env = {
     HOST_ADDRESS: '127.0.0.1',
     PORT_ADDRESS: '5000',
-    WS_PORT: '5010',
+    EVENTS_PORT: '5010',
+    STREAM_PORT: '5020',
     GCP_PROJECT: 'replus-162509',
 };
