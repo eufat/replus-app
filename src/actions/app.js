@@ -1,8 +1,13 @@
+import _ from "lodash";
+
 export const UPDATE_PAGE = "UPDATE_PAGE";
 export const UPDATE_OFFLINE = "UPDATE_OFFLINE";
 export const UPDATE_DRAWER_STATE = "UPDATE_DRAWER_STATE";
 export const OPEN_SNACKBAR = "OPEN_SNACKBAR";
 export const CLOSE_SNACKBAR = "CLOSE_SNACKBAR";
+export const SET_CURRENT_USER = "SET_CURRENT_USER";
+export const AUTHENTICATE_USER = "AUTHENTICATE_USER";
+export const DEAUTHENTICATE_USER = "DEAUTHENTICATE_USER";
 
 export const navigate = path => dispatch => {
     // Extract the page name from path.
@@ -72,4 +77,31 @@ export const updateDrawerState = opened => (dispatch, getState) => {
             opened
         });
     }
+};
+
+export const setCurrentUser = user => (dispatch, getState) => {
+    const currentUser = _.pick(user, userDataKey);
+    dispatch({
+        type: SET_CURRENT_USER,
+        currentUser
+    });
+};
+
+export const authenticateUser = () => (dispatch, getState) => {
+    if (!(window.location.href.indexOf("dashboard") > -1)) {
+        pushLocationTo("/dashboard");
+    }
+
+    dispatch({
+        type: AUTHENTICATE_USER
+    });
+};
+
+export const deauthenticateUser = () => (dispatch, getState) => {
+    pushLocationTo("/auth");
+    firebase.auth().signOut();
+
+    dispatch({
+        type: DEAUTHENTICATE_USER
+    });
 };
