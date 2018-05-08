@@ -1,5 +1,3 @@
-# Created by .ignore support plugin (hsz.mobi)
-
 # modules
 /functions/node_modules
 /node_modules/
@@ -18,9 +16,8 @@ npm-debug.log
 build/*
 !build/build.xml
 
-# firebase
-firebase-debug.log
-.firebaserc
-
 # env
 .env
+
+# tests
+test/integration/screenshots-current

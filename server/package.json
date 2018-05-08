@@ -1,0 +1,16 @@
+{
+    "name": "replus-app",
+    "version": "0.1.0",
+    "license": "BSD-3-Clause",
+    "repository": "eufat/replus-app",
+    "scripts": {
+        "start":
+            "prpl-server --root build/ --host 0.0.0.0 --https-redirect --bot-proxy https://render-tron.appspot.com/render"
+    },
+    "engines": {
+        "node": ">=6.0.0"
+    },
+    "dependencies": {
+        "prpl-server": "^1.1.0"
+    }
+}
