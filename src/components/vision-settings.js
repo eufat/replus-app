@@ -68,7 +68,7 @@ export default class VisionSettings extends connect(store)(LitElement) {
     }
 
     handleSaveSettings() {
-        this.dispatch('setSettings', this.settings);
+        store.dispatch(setSettings(this.settings));
     }
 
     openResolutionDialog() {

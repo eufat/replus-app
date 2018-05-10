@@ -10,11 +10,7 @@ import {firebaseConfig} from '../configs.js';
 import {userDataKey} from '../utils.js';
 import {store} from '../store.js';
 
-import {
-    setCurrentUser,
-    authenticateUser,
-    deauthenticateUser,
-} from '../actions/app.js';
+import {setCurrentUser, authenticateUser} from '../actions/app.js';
 
 class MainAuth extends connect(store)(LitElement) {
     _render() {
@@ -126,8 +122,8 @@ class MainAuth extends connect(store)(LitElement) {
             callbacks: {
                 signInSuccessWithAuthResult: (authResult, redirectUrl) => {
                     const currentUser = _.pick(authResult.user, userDataKey);
-                    thisMainAuth.dispatch('setCurrentUser', currentUser);
-                    thisMainAuth.dispatch('authenticateUser');
+                    store.dispatch(authenticateUser());
+                    store.dispatch(setCurrentUser(currentUser));
                     return true;
                 },
                 uiShown: () => {

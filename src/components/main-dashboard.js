@@ -15,12 +15,7 @@ import {installMediaQueryWatcher} from 'pwa-helpers/media-query.js';
 import {updateMetadata} from 'pwa-helpers/metadata.js';
 
 import {store} from '../store.js';
-import {
-    navigate,
-    updateOffline,
-    updateDrawerState,
-    updateLayout,
-} from '../actions/app.js';
+import {navigate, updateOffline, updateLayout} from '../actions/app.js';
 
 import './main-account.js';
 import './remote-rooms.js';

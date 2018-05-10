@@ -5,22 +5,13 @@ import '@polymer/app-layout/app-header/app-header.js';
 import '@polymer/app-layout/app-scroll-effects/effects/waterfall.js';
 import '@polymer/app-layout/app-toolbar/app-toolbar.js';
 import '@polymer/iron-pages/iron-pages.js';
-import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings.js';
 
 import './snack-bar.js';
 
 import {connect} from 'pwa-helpers/connect-mixin.js';
-import {installRouter} from 'pwa-helpers/router.js';
-import {installOfflineWatcher} from 'pwa-helpers/network.js';
-import {installMediaQueryWatcher} from 'pwa-helpers/media-query.js';
-import {updateMetadata} from 'pwa-helpers/metadata.js';
 
 import {store} from '../store.js';
 import {
-    navigate,
-    updateOffline,
-    updateDrawerState,
-    updateLayout,
     setCurrentUser,
     authenticateUser,
     deauthenticateUser,
