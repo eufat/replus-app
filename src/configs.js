@@ -14,3 +14,7 @@ export const env = {
     STREAM_PORT: '5020',
     GCP_PROJECT: 'replus-162509',
 };
+
+export const loadEnv = () => {
+    windows.process.env = env;
+};

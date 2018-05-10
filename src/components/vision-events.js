@@ -1,17 +1,14 @@
-import {
-    PolymerElement,
-    html,
-} from '/node_modules/@polymer/polymer/polymer-element.js';
-import '/node_modules/@polymer/paper-card/paper-card.js';
+import {LitElement, html} from '@polymer/lit-element';
+import '@polymer/paper-card/paper-card.js';
 
-import {env} from './configs.js';
-import {getEventsDummy, getDateFromFilename} from './utils.js';
+import {env} from '../configs.js';
+import {getEventsDummy, getDateFromFilename} from '../utils.js';
 
 const HOST_ADDRESS = env.HOST_ADDRESS;
 let EVENTS_PORT = env.EVENTS_PORT;
 EVENTS_PORT = EVENTS_PORT ? `:${EVENTS_PORT}` : '';
 
-export default class VisionEvents extends PolymerElement {
+export default class VisionEvents extends LitElement {
     static get properties() {
         return {
             realtimeStatus: String,
@@ -45,8 +42,7 @@ export default class VisionEvents extends PolymerElement {
         return getDateFromFilename(name);
     }
 
-    ready() {
-        super.ready();
+    _firstRendered() {
         const url = `ws://${HOST_ADDRESS}${EVENTS_PORT}/`;
         const socket = io(url);
 
@@ -63,7 +59,7 @@ export default class VisionEvents extends PolymerElement {
         });
     }
 
-    static get template() {
+    _render() {
         return html`
         <style>
             .event-container {

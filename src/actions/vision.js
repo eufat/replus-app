@@ -1,0 +1,6 @@
+export const setSettings = (settings) => (dispatch, getState) => {
+    dispatch({
+        type: 'SET_SETTINGS',
+        settings,
+    });
+};

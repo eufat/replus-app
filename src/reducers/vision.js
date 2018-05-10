@@ -2,7 +2,7 @@ const initialState = {
     settings: {},
 };
 
-const reducer = (state = initialState, action) => {
+const vision = (state = initialState, action) => {
     switch (action.type) {
         case 'SET_SETTINGS':
             return {
@@ -14,4 +14,4 @@ const reducer = (state = initialState, action) => {
     }
 };
 
-export default reducer;
+export default vision;

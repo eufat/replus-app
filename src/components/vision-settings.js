@@ -1,21 +1,17 @@
-import {
-    PolymerElement,
-    html,
-} from '/node_modules/@polymer/polymer/polymer-element.js';
-import PolymerRedux from '/node_modules/polymer-redux/polymer-redux.js';
+import {LitElement, html} from '@polymer/lit-element';
 
-import '/node_modules/@polymer/paper-toggle-button/paper-toggle-button.js';
-import '/node_modules/@polymer/paper-button/paper-button.js';
-import '/node_modules/@polymer/paper-item/paper-item.js';
-import '/node_modules/@polymer/paper-dialog/paper-dialog.js';
-import '/node_modules/@polymer/paper-radio-group/paper-radio-group.js';
-import '/node_modules/@polymer/paper-radio-button/paper-radio-button.js';
+import '@polymer/paper-toggle-button/paper-toggle-button.js';
+import '@polymer/paper-button/paper-button.js';
+import '@polymer/paper-item/paper-item.js';
+import '@polymer/paper-dialog/paper-dialog.js';
+import '@polymer/paper-radio-group/paper-radio-group.js';
+import '@polymer/paper-radio-button/paper-radio-button.js';
 
-import store from './store.js';
-import actions from './vision-actions.js';
-const ReduxMixin = PolymerRedux(store);
+import {store} from '../store.js';
+import {setSettings} from '../actions/vision.js';
+import {connect} from 'pwa-helpers/connect-mixin.js';
 
-export default class VisionSettings extends ReduxMixin(PolymerElement) {
+export default class VisionSettings extends connect(store)(LitElement) {
     constructor() {
         super();
 
@@ -28,10 +24,6 @@ export default class VisionSettings extends ReduxMixin(PolymerElement) {
         };
 
         this.settings = initialSettings;
-    }
-
-    static get actions() {
-        return actions;
     }
 
     static get properties() {
@@ -52,6 +44,8 @@ export default class VisionSettings extends ReduxMixin(PolymerElement) {
             },
         };
     }
+
+    _stateChanged(state) {}
 
     static get observers() {
         return ['offOrRestartIsChanged(off, restart)'];
@@ -74,7 +68,7 @@ export default class VisionSettings extends ReduxMixin(PolymerElement) {
     }
 
     handleSaveSettings() {
-        this.dispatch('setSettings', this.settings);
+        store.dispatch(setSettings(this.settings));
     }
 
     openResolutionDialog() {
@@ -103,7 +97,7 @@ export default class VisionSettings extends ReduxMixin(PolymerElement) {
         this.handleSaveSettings();
     }
 
-    static get template() {
+    _render() {
         return html`
         <style>
             .command {

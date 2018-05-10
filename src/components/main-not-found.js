@@ -1,7 +1,7 @@
-import {PolymerElement, html} from '/node_modules/@polymer/polymer/polymer-element.js';
+import {LitElement, html} from '@polymer/lit-element';
 
-export default class NotFound extends PolymerElement {
-    static get template() {
+export default class NotFound extends LitElement {
+    _render() {
         return html`
             <center>
                 <h1>404 Not Found</h1>
