@@ -1,30 +1,21 @@
-import { LitElement, html } from "@polymer/lit-element";
+import {LitElement, html} from '@polymer/lit-element';
 
-import * as firebase from "firebase";
+import '@polymer/app-layout/app-drawer/app-drawer.js';
+import '@polymer/app-layout/app-header/app-header.js';
+import '@polymer/app-layout/app-scroll-effects/effects/waterfall.js';
+import '@polymer/app-layout/app-toolbar/app-toolbar.js';
+import '@polymer/iron-pages/iron-pages.js';
+import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings.js';
 
-import "@polymer/app-layout/app-drawer/app-drawer.js";
-import "@polymer/app-layout/app-header/app-header.js";
-import "@polymer/app-layout/app-scroll-effects/effects/waterfall.js";
-import "@polymer/app-layout/app-toolbar/app-toolbar.js";
-import { setPassiveTouchGestures } from "@polymer/polymer/lib/utils/settings.js";
+import './snack-bar.js';
 
-import "/node_modules/@polymer/paper-item/paper-item.js";
-import "/node_modules/@polymer/paper-material/paper-material.js";
-import "/node_modules/@polymer/paper-listbox/paper-listbox.js";
-import "/node_modules/@polymer/paper-progress/paper-progress.js";
-import "/node_modules/@polymer/paper-checkbox/paper-checkbox.js";
-import "/node_modules/@polymer/paper-icon-button/paper-icon-button.js";
-import "/node_modules/@polymer/paper-dropdown-menu/paper-dropdown-menu.js";
+import {connect} from 'pwa-helpers/connect-mixin.js';
+import {installRouter} from 'pwa-helpers/router.js';
+import {installOfflineWatcher} from 'pwa-helpers/network.js';
+import {installMediaQueryWatcher} from 'pwa-helpers/media-query.js';
+import {updateMetadata} from 'pwa-helpers/metadata.js';
 
-import "./snack-bar.js";
-
-import { connect } from "pwa-helpers/connect-mixin.js";
-import { installRouter } from "pwa-helpers/router.js";
-import { installOfflineWatcher } from "pwa-helpers/network.js";
-import { installMediaQueryWatcher } from "pwa-helpers/media-query.js";
-import { updateMetadata } from "pwa-helpers/metadata.js";
-
-import { store } from "../store.js";
+import {store} from '../store.js';
 import {
     navigate,
     updateOffline,
@@ -32,12 +23,14 @@ import {
     updateLayout,
     setCurrentUser,
     authenticateUser,
-    deauthenticateUser
-} from "../actions/app.js";
+    deauthenticateUser,
+} from '../actions/app.js';
 
-import "./main-auth.js";
-import "./main-dashboard.js";
-import "./main-not-found.js";
+import './main-auth.js';
+import './main-dashboard.js';
+import './main-not-found.js';
+
+import {firebaseConfig} from '../configs.js';
 
 class MainApp extends connect(store)(LitElement) {
     _render() {
@@ -60,7 +53,9 @@ class MainApp extends connect(store)(LitElement) {
     }
 
     _firstRendered() {
-        firebase.auth().onAuthStateChanged(firebaseUser => {
+        firebase.initializeApp(firebaseConfig);
+
+        firebase.auth().onAuthStateChanged((firebaseUser) => {
             if (firebaseUser) {
                 store.dispatch(authenticateUser());
                 store.dispatch(setCurrentUser(firebaseUser));
@@ -70,9 +65,7 @@ class MainApp extends connect(store)(LitElement) {
         });
     }
 
-    static get properties() {
-        return {};
-    }
+    _stateChanged(state) {}
 }
 
-window.customElements.define("main-app", MainApp);
+window.customElements.define('main-app', MainApp);

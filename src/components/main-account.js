@@ -1,14 +1,11 @@
-import {
-    PolymerElement,
-    html
-} from "/node_modules/@polymer/polymer/polymer-element.js";
+import {LitElement, html} from '@polymer/lit-element';
 
-export default class MainAccount extends PolymerElement {
-    static get template() {
+export default class MainAccount extends LitElement {
+    _render() {
         return html`
       <div>Main Account</div>
     `;
     }
 }
 
-customElements.define("main-account", MainAccount);
+customElements.define('main-account', MainAccount);

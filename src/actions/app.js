@@ -1,107 +1,103 @@
-import _ from "lodash";
+import { pushLocationTo } from '../utils';
 
-export const UPDATE_PAGE = "UPDATE_PAGE";
-export const UPDATE_OFFLINE = "UPDATE_OFFLINE";
-export const UPDATE_DRAWER_STATE = "UPDATE_DRAWER_STATE";
-export const OPEN_SNACKBAR = "OPEN_SNACKBAR";
-export const CLOSE_SNACKBAR = "CLOSE_SNACKBAR";
-export const SET_CURRENT_USER = "SET_CURRENT_USER";
-export const AUTHENTICATE_USER = "AUTHENTICATE_USER";
-export const DEAUTHENTICATE_USER = "DEAUTHENTICATE_USER";
+export const UPDATE_PAGE = 'UPDATE_PAGE';
+export const UPDATE_OFFLINE = 'UPDATE_OFFLINE';
+export const UPDATE_DRAWER_STATE = 'UPDATE_DRAWER_STATE';
+export const OPEN_SNACKBAR = 'OPEN_SNACKBAR';
+export const CLOSE_SNACKBAR = 'CLOSE_SNACKBAR';
+export const SET_CURRENT_USER = 'SET_CURRENT_USER';
+export const AUTHENTICATE_USER = 'AUTHENTICATE_USER';
+export const DEAUTHENTICATE_USER = 'DEAUTHENTICATE_USER';
 
-export const navigate = path => dispatch => {
+export const navigate = (path) => (dispatch) => {
     // Extract the page name from path.
-    const page = path === "/" ? "view1" : path.slice(1);
+    const page = path === '/' ? 'auth' : path.slice(1);
 
-    // Any other info you might want to extract from the path (like page type),
-    // you can do here
     dispatch(loadPage(page));
 
     // Close the drawer - in case the *path* change came from a link in the drawer.
     dispatch(updateDrawerState(false));
 };
 
-const loadPage = page => async dispatch => {
+const loadPage = (page) => async (dispatch) => {
     switch (page) {
-        case "view1":
-            await import("../components/my-view1.js");
-            // Put code here that you want it to run every time when
-            // navigate to view1 page and my-view1.js is loaded
+        case 'auth':
+            await import('../components/main-auth.js');
             break;
         default:
-            page = "view404";
-            await import("../components/my-view404.js");
+            page = '404';
+            await import('../components/main-not-found.js');
     }
 
     dispatch(updatePage(page));
 };
 
-const updatePage = page => {
+const updatePage = (page) => {
     return {
         type: UPDATE_PAGE,
-        page
+        page,
     };
 };
 
 let snackbarTimer;
 
-export const showSnackbar = () => dispatch => {
+export const showSnackbar = () => (dispatch) => {
     dispatch({
-        type: OPEN_SNACKBAR
+        type: OPEN_SNACKBAR,
     });
     clearTimeout(snackbarTimer);
     snackbarTimer = setTimeout(() => dispatch({ type: CLOSE_SNACKBAR }), 3000);
 };
 
-export const updateOffline = offline => (dispatch, getState) => {
+export const updateOffline = (offline) => (dispatch, getState) => {
     // Show the snackbar, unless this is the first load of the page.
     if (getState().app.offline !== undefined) {
         dispatch(showSnackbar());
     }
     dispatch({
         type: UPDATE_OFFLINE,
-        offline
+        offline,
     });
 };
 
-export const updateLayout = wide => (dispatch, getState) => {
+export const updateLayout = (wide) => (dispatch, getState) => {
     if (getState().app.drawerOpened) {
         dispatch(updateDrawerState(false));
     }
 };
 
-export const updateDrawerState = opened => (dispatch, getState) => {
+export const updateDrawerState = (opened) => (dispatch, getState) => {
     if (getState().app.drawerOpened !== opened) {
         dispatch({
             type: UPDATE_DRAWER_STATE,
-            opened
+            opened,
         });
     }
 };
 
-export const setCurrentUser = user => (dispatch, getState) => {
+export const setCurrentUser = (user) => (dispatch, getState) => {
     const currentUser = _.pick(user, userDataKey);
     dispatch({
         type: SET_CURRENT_USER,
-        currentUser
+        currentUser,
     });
 };
 
 export const authenticateUser = () => (dispatch, getState) => {
-    if (!(window.location.href.indexOf("dashboard") > -1)) {
-        pushLocationTo("/dashboard");
+    if (!(window.location.href.indexOf('dashboard') > -1)) {
+        pushLocationTo('/dashboard');
     }
 
     dispatch({
-        type: AUTHENTICATE_USER
+        type: AUTHENTICATE_USER,
     });
 };
 
 export const deauthenticateUser = () => (dispatch, getState) => {
-    pushLocationTo("/auth");
+    pushLocationTo('/auth');
     firebase.auth().signOut();
 
     dispatch({
-        type: DEAUTHENTICATE_USER
+        type: DEAUTHENTICATE_USER,
     });
 };

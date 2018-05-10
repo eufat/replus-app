@@ -1,17 +1,17 @@
-const puppeteer = require("puppeteer");
-const { startServer } = require("polyserve");
-const path = require("path");
-const fs = require("fs");
+const puppeteer = require('puppeteer');
+const {startServer} = require('polyserve');
+const path = require('path');
+const fs = require('fs');
 const baselineDir = `${process.cwd()}/test/integration/screenshots-baseline`;
 
-describe("🎁 regenerate screenshots", function() {
+describe('🎁 regenerate screenshots', function() {
     let polyserve, browser, page;
 
     before(async function() {
         polyserve = await startServer({
             port: 4444,
-            root: path.join(__dirname, "../../.."),
-            moduleResolution: "node"
+            root: path.join(__dirname, '../../..'),
+            moduleResolution: 'node',
         });
 
         // Create the test directory if needed.
@@ -27,7 +27,7 @@ describe("🎁 regenerate screenshots", function() {
         }
     });
 
-    after(done => polyserve.close(done));
+    after((done) => polyserve.close(done));
 
     beforeEach(async function() {
         browser = await puppeteer.launch();
@@ -36,24 +36,24 @@ describe("🎁 regenerate screenshots", function() {
 
     afterEach(() => browser.close());
 
-    it("did it", async function() {
+    it('did it', async function() {
         return generateBaselineScreenshots(page);
     });
 });
 
 async function generateBaselineScreenshots(page) {
     const breakpoints = [
-        { width: 800, height: 600 },
-        { width: 375, height: 667 }
+        {width: 800, height: 600},
+        {width: 375, height: 667},
     ];
-    const prefixes = ["wide", "narrow"];
+    const prefixes = ['wide', 'narrow'];
 
     for (let i = 0; i < prefixes.length; i++) {
         const prefix = prefixes[i];
-        console.log(prefix + "...");
+        console.log(prefix + '...');
         page.setViewport(breakpoints[i]);
         // Index.
-        await page.goto("http://127.0.0.1:4444/");
-        await page.screenshot({ path: `${baselineDir}/${prefix}/index.png` });
+        await page.goto('http://127.0.0.1:4444/');
+        await page.screenshot({path: `${baselineDir}/${prefix}/index.png`});
     }
 }

@@ -1,4 +1,4 @@
-import { LitElement, html } from "@polymer/lit-element";
+import {LitElement, html} from '@polymer/lit-element';
 
 class SnackBar extends LitElement {
     _render(props) {
@@ -38,9 +38,9 @@ class SnackBar extends LitElement {
 
     static get properties() {
         return {
-            active: Boolean
+            active: Boolean,
         };
     }
 }
 
-window.customElements.define("snack-bar", SnackBar);
+window.customElements.define('snack-bar', SnackBar);

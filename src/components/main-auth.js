@@ -1,81 +1,22 @@
-import { LitElement, html } from "@polymer/lit-element";
-import * as firebase from "firebase";
+import {LitElement, html} from '@polymer/lit-element';
 
-import "@polymer/iron-ajax/iron-ajax.js";
-import "@polymer/paper-material/paper-material.js";
-import "@polymer/paper-spinner/paper-spinner.js";
-import "@polymer/paper-button/paper-button.js";
+import '@polymer/iron-ajax/iron-ajax.js';
+import '@polymer/paper-material/paper-material.js';
+import '@polymer/paper-spinner/paper-spinner.js';
+import '@polymer/paper-button/paper-button.js';
+import {connect} from 'pwa-helpers/connect-mixin.js';
 
-import { firebaseConfig } from "./configs.js";
-import { userDataKey } from "./utils.js";
-import store from "../store.js";
+import {firebaseConfig} from '../configs.js';
+import {userDataKey} from '../utils.js';
+import {store} from '../store.js';
 
 import {
     setCurrentUser,
     authenticateUser,
-    deauthenticateUser
-} from "../actions/app.js";
+    deauthenticateUser,
+} from '../actions/app.js';
 
 class MainAuth extends connect(store)(LitElement) {
-    _firstRender() {
-        const thisMainAuth = this;
-        firebase.initializeApp(firebaseConfig);
-
-        thisMainAuth.setupPosition();
-
-        this.$.firebaseuicontainer.style.display = "none.js";
-
-        window.addEventListener("resize", () => {
-            this.setupPosition();
-        });
-
-        this.loadFirebaseUI();
-    }
-
-    setupPosition() {
-        const thisMainAuth = this;
-        thisMainAuth.$.container.style.marginTop =
-            (window.innerHeight - 294) / 2 - 100 + "px.js";
-        thisMainAuth.$.container.style.marginLeft =
-            (window.innerWidth - 300) / 2 + "px.js";
-
-        if (window.innerWidth < 640) {
-            thisMainAuth.$.container.style.marginTop =
-                (window.innerHeight - 294) / 2 + "px.js";
-        }
-    }
-
-    loadFirebaseUI() {
-        const thisMainAuth = this;
-        const uiConfig = {
-            signInSuccessUrl: "/dashboard",
-            signInOptions: [
-                firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-                {
-                    provider: firebase.auth.FacebookAuthProvider.PROVIDER_ID,
-                    scopes: ["public_profile", "email"]
-                }
-            ],
-            callbacks: {
-                signInSuccessWithAuthResult: (authResult, redirectUrl) => {
-                    const currentUser = _.pick(authResult.user, userDataKey);
-                    thisMainAuth.dispatch("setCurrentUser", currentUser);
-                    thisMainAuth.dispatch("authenticateUser");
-                    return true;
-                },
-                uiShown: () => {
-                    thisMainAuth.$.firebaseuicontainer.style.display =
-                        "block.js";
-                    thisMainAuth.$.spinner.style.display = "none.js";
-                }
-            }
-        };
-
-        this.ui = new firebaseui.auth.AuthUI(firebase.auth());
-
-        this.ui.start(thisMainAuth.$.firebaseuicontainer, uiConfig);
-    }
-
     _render() {
         return html`
             <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/2.7.0/firebaseui.css" />
@@ -142,6 +83,66 @@ class MainAuth extends connect(store)(LitElement) {
             </div>
     `;
     }
+
+    _firstRender() {
+        const thisMainAuth = this;
+        firebase.initializeApp(firebaseConfig);
+
+        thisMainAuth.setupPosition();
+
+        this.$.firebaseuicontainer.style.display = 'none';
+
+        window.addEventListener('resize', () => {
+            this.setupPosition();
+        });
+
+        this.loadFirebaseUI();
+    }
+
+    setupPosition() {
+        const thisMainAuth = this;
+        thisMainAuth.$.container.style.marginTop =
+            (window.innerHeight - 294) / 2 - 100 + 'px';
+        thisMainAuth.$.container.style.marginLeft =
+            (window.innerWidth - 300) / 2 + 'px';
+
+        if (window.innerWidth < 640) {
+            thisMainAuth.$.container.style.marginTop =
+                (window.innerHeight - 294) / 2 + 'px';
+        }
+    }
+
+    loadFirebaseUI() {
+        const thisMainAuth = this;
+        const uiConfig = {
+            signInSuccessUrl: '/dashboard',
+            signInOptions: [
+                firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+                {
+                    provider: firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+                    scopes: ['public_profile', 'email'],
+                },
+            ],
+            callbacks: {
+                signInSuccessWithAuthResult: (authResult, redirectUrl) => {
+                    const currentUser = _.pick(authResult.user, userDataKey);
+                    thisMainAuth.dispatch('setCurrentUser', currentUser);
+                    thisMainAuth.dispatch('authenticateUser');
+                    return true;
+                },
+                uiShown: () => {
+                    thisMainAuth.$.firebaseuicontainer.style.display = 'block';
+                    thisMainAuth.$.spinner.style.display = 'none';
+                },
+            },
+        };
+
+        this.ui = new firebaseui.auth.AuthUI(firebase.auth());
+
+        this.ui.start(thisMainAuth.$.firebaseuicontainer, uiConfig);
+    }
+
+    _stateChanged(state) {}
 }
 
-customElements.define("main-auth", MainAuth);
+customElements.define('main-auth', MainAuth);

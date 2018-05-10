@@ -1,7 +1,7 @@
-import {PolymerElement, html} from '/node_modules/@polymer/polymer/polymer-element.js';
+import {LitElement, html} from '@polymer/lit-element';
 
-export default class RemoteDevices extends PolymerElement {
-    static get template() {
+export default class RemoteDevices extends LitElement {
+    _render() {
         return html`
       <div>Remote Devices</div>
     `;

@@ -1,21 +1,21 @@
-const puppeteer = require("puppeteer");
-const expect = require("chai").expect;
-const { startServer } = require("polyserve");
-const path = require("path");
-const appUrl = "http://127.0.0.1:4444";
+const puppeteer = require('puppeteer');
+const expect = require('chai').expect;
+const {startServer} = require('polyserve');
+const path = require('path');
+const appUrl = 'http://127.0.0.1:4444';
 
-describe("routing tests", function() {
+describe('routing tests', function() {
     let polyserve, browser, page;
 
     before(async function() {
         polyserve = await startServer({
             port: 4444,
-            root: path.join(__dirname, "../.."),
-            moduleResolution: "node"
+            root: path.join(__dirname, '../..'),
+            moduleResolution: 'node',
         });
     });
 
-    after(done => polyserve.close(done));
+    after((done) => polyserve.close(done));
 
     beforeEach(async function() {
         browser = await puppeteer.launch();
@@ -24,23 +24,23 @@ describe("routing tests", function() {
 
     afterEach(() => browser.close());
 
-    it("the page selector switches pages", async function() {
+    it('the page selector switches pages', async function() {
         await page.goto(`${appUrl}`);
-        await page.waitForSelector("my-app", { visible: true });
+        await page.waitForSelector('my-app', {visible: true});
 
-        await testNavigation(page, "view2", "View Two");
-        await testNavigation(page, "view3", "View Three");
-        await testNavigation(page, "view1", "View One");
+        await testNavigation(page, 'view2', 'View Two');
+        await testNavigation(page, 'view3', 'View Three');
+        await testNavigation(page, 'view1', 'View One');
     });
 
-    it("the page selector switches pages in a different way", async function() {
+    it('the page selector switches pages in a different way', async function() {
         await page.goto(`${appUrl}`);
-        await page.waitForSelector("my-app", { visible: true });
+        await page.waitForSelector('my-app', {visible: true});
 
         // Setup
         await page.evaluate(() => {
             window.deepQuerySelector = function(query) {
-                const parts = query.split("::shadow");
+                const parts = query.split('::shadow');
                 let el = document;
                 for (let i = 0; i < parts.length; i++) {
                     el = el.querySelector(parts[i]);
@@ -53,9 +53,9 @@ describe("routing tests", function() {
             console.log(window.deepQuerySelector);
         });
 
-        await testNavigationInADifferentWay(page, "view2", "View Two");
-        await testNavigationInADifferentWay(page, "view3", "View Three");
-        await testNavigationInADifferentWay(page, "view1", "View One");
+        await testNavigationInADifferentWay(page, 'view2', 'View Two');
+        await testNavigationInADifferentWay(page, 'view3', 'View Three');
+        await testNavigationInADifferentWay(page, 'view1', 'View One');
     });
 });
 
@@ -72,18 +72,18 @@ async function testNavigation(page, href, linkText) {
     const shadowSelector = `a[href="/${href}"]`;
 
     // Does the link say the right thing?
-    const myApp = await page.$("my-app");
+    const myApp = await page.$('my-app');
     const myText = await page.evaluate(
         getShadowRootChildProp,
         myApp,
         selector,
-        "textContent"
+        'textContent'
     );
     expect(await myText).equal(linkText);
 
     // Does the click take you to the right page?
     await page.evaluate(doShadowRootClick, myApp, selector);
-    const newUrl = await page.evaluate("window.location.href");
+    const newUrl = await page.evaluate('window.location.href');
     expect(newUrl).equal(`${appUrl}/${href}`);
 }
 
@@ -91,13 +91,13 @@ async function testNavigationInADifferentWay(page, href, linkText) {
     const query = `my-app::shadow a[href="/${href}"]`;
 
     const linkHandle = await page.evaluateHandle(
-        query => window.deepQuerySelector(query),
+        (query) => window.deepQuerySelector(query),
         query
     );
-    const text = await page.evaluate(el => el.textContent, linkHandle);
+    const text = await page.evaluate((el) => el.textContent, linkHandle);
     expect(text).equal(linkText);
 
     await linkHandle.click();
-    let newUrl = await page.evaluate("window.location.href");
+    let newUrl = await page.evaluate('window.location.href');
     expect(newUrl).equal(`${appUrl}/${href}`);
 }

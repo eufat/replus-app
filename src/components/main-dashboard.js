@@ -1,38 +1,38 @@
-import { LitElement, html } from "@polymer/lit-element";
+import {LitElement, html} from '@polymer/lit-element';
 
-import "@polymer/app-layout/app-header/app-header.js";
-import "@polymer/app-layout/app-toolbar/app-toolbar.js";
-import "@polymer/app-layout/app-drawer/app-drawer.js";
-import "@polymer/app-layout/app-scroll-effects/effects/waterfall.js";
-import "@polymer/app-layout/app-drawer-layout/app-drawer-layout.js";
-import "@polymer/app-layout/app-header-layout/app-header-layout.js";
-import { setPassiveTouchGestures } from "@polymer/polymer/lib/utils/settings.js";
+import '@polymer/app-layout/app-header/app-header.js';
+import '@polymer/app-layout/app-toolbar/app-toolbar.js';
+import '@polymer/app-layout/app-drawer/app-drawer.js';
+import '@polymer/app-layout/app-scroll-effects/effects/waterfall.js';
+import '@polymer/app-layout/app-drawer-layout/app-drawer-layout.js';
+import '@polymer/app-layout/app-header-layout/app-header-layout.js';
+import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings.js';
 
-import { connect } from "pwa-helpers/connect-mixin.js";
-import { installRouter } from "pwa-helpers/router.js";
-import { installOfflineWatcher } from "pwa-helpers/network.js";
-import { installMediaQueryWatcher } from "pwa-helpers/media-query.js";
-import { updateMetadata } from "pwa-helpers/metadata.js";
+import {connect} from 'pwa-helpers/connect-mixin.js';
+import {installRouter} from 'pwa-helpers/router.js';
+import {installOfflineWatcher} from 'pwa-helpers/network.js';
+import {installMediaQueryWatcher} from 'pwa-helpers/media-query.js';
+import {updateMetadata} from 'pwa-helpers/metadata.js';
 
-import { store } from "../store.js";
+import {store} from '../store.js';
 import {
     navigate,
     updateOffline,
     updateDrawerState,
-    updateLayout
-} from "../actions/app.js";
+    updateLayout,
+} from '../actions/app.js';
 
-import "./main-account.js";
-import "./remote-rooms.js";
-import "./remote-devices.js";
-import "./remote-settings.js";
+import './main-account.js';
+import './remote-rooms.js';
+import './remote-devices.js';
+import './remote-settings.js';
 
-import "./vision-events.js";
-import "./vision-settings.js";
-import "./vision-streams.js";
+import './vision-events.js';
+import './vision-settings.js';
+import './vision-streams.js';
 
 class MainDashboard extends connect(store)(LitElement) {
-    _render({ appTitle, _page, _drawerOpened, _snackbarOpened, _offline }) {
+    _render({appTitle, _page, _drawerOpened, _snackbarOpened, _offline}) {
         return html`
           <app-drawer-layout fullbleed>
 
@@ -135,39 +135,39 @@ class MainDashboard extends connect(store)(LitElement) {
                 value() {
                     return [
                         {
-                            name: "rooms",
-                            title: "Rooms"
+                            name: 'rooms',
+                            title: 'Rooms',
                         },
                         {
-                            name: "devices",
-                            title: "Devices"
+                            name: 'devices',
+                            title: 'Devices',
                         },
                         {
-                            name: "settings",
-                            title: "Settings"
-                        }
+                            name: 'settings',
+                            title: 'Settings',
+                        },
                     ];
-                }
+                },
             },
             visionMenus: {
                 type: Array,
                 value() {
                     return [
                         {
-                            name: "events",
-                            title: "Events"
+                            name: 'events',
+                            title: 'Events',
                         },
                         {
-                            name: "streams",
-                            title: "Streams"
+                            name: 'streams',
+                            title: 'Streams',
                         },
                         {
-                            name: "settings",
-                            title: "Settings"
-                        }
+                            name: 'settings',
+                            title: 'Settings',
+                        },
                     ];
-                }
-            }
+                },
+            },
         };
     }
 
@@ -179,25 +179,25 @@ class MainDashboard extends connect(store)(LitElement) {
     }
 
     _firstRendered() {
-        installRouter(location =>
+        installRouter((location) =>
             store.dispatch(
                 navigate(window.decodeURIComponent(location.pathname))
             )
         );
-        installOfflineWatcher(offline =>
+        installOfflineWatcher((offline) =>
             store.dispatch(updateOffline(offline))
         );
-        installMediaQueryWatcher(`(min-width: 460px)`, matches =>
+        installMediaQueryWatcher(`(min-width: 460px)`, (matches) =>
             store.dispatch(updateLayout(matches))
         );
     }
 
     _didRender(properties, changeList) {
-        if ("_page" in changeList) {
-            const pageTitle = properties.appTitle + " - " + changeList._page;
+        if ('_page' in changeList) {
+            const pageTitle = properties.appTitle + ' - ' + changeList._page;
             updateMetadata({
                 title: pageTitle,
-                description: pageTitle
+                description: pageTitle,
                 // This object also takes an image property, that points to an img src.
             });
         }
@@ -215,9 +215,11 @@ class MainDashboard extends connect(store)(LitElement) {
     }
 
     mapDeviceRoute(route) {
-        const array = ["remote", "vision"];
+        const array = ['remote', 'vision'];
         return array.indexOf(route);
     }
+
+    _stateChanged(state) {}
 }
 
-window.customElements.define("main-dashboard", MainDashboard);
+window.customElements.define('main-dashboard', MainDashboard);
