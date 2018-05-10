@@ -14,6 +14,7 @@ npm-debug.log
 
 # build
 build/*
+server/build/*
 !build/build.xml
 
 # env

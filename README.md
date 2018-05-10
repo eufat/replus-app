@@ -6,6 +6,7 @@ A Replus Progressive Web App (PWA) for Replus Remote and Replus Vision.
 
 *   Latest Node.js
 *   Latest Chrome Browser
+*   Google Cloud SDK
 *   Polymer CLI
 *   Yarn
 
@@ -28,4 +29,12 @@ Start project with
 
 ```
 yarn run start
+```
+
+### Deploy project
+
+Deployment process include building builds and App Engine deployment
+
+```
+yarn run deploy
 ```
