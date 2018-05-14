@@ -12,21 +12,16 @@ export default class VisionEvents extends LitElement {
     static get properties() {
         return {
             realtimeStatus: String,
-            realtimeEvents: {
-                type: Array,
-                value: [],
-            },
-            storedEvents: {
-                type: Array,
-                value: [],
-            },
+            realtimeEvents: Array,
+            storedEvents: Array,
         };
     }
 
     constructor() {
         super();
-        this.status = 'Not available';
+        this.realtimeStatus = 'Not available';
         this.realtimeEvents = getEventsDummy();
+        this.storedEvents = [];
     }
 
     addFrame(frame) {
@@ -59,7 +54,25 @@ export default class VisionEvents extends LitElement {
         });
     }
 
-    _render() {
+    _render({realtimeStatus, realtimeEvents, storedEvents}) {
+        const eventsItems = (items) => {
+            return items.map((item, index) => {
+                const date = getDateFromFilename(item.name);
+                return html`
+                <div class="event-container">
+                    <paper-card image="${item.data}">
+                        <div class="card-content">
+                            <p>From ${item.dev_id} at ${date}</p>
+                        </div>
+                    </paper-card>
+                </div>
+            `;
+            });
+        };
+
+        const realtimeItems = eventsItems(realtimeEvents);
+        const storedItems = eventsItems(storedEvents);
+
         return html`
         <style>
             .event-container {
@@ -70,27 +83,12 @@ export default class VisionEvents extends LitElement {
             paper-card {
                 width: 480px;
                 margin-bottom: 20px;
-
             }
         </style>
         <div>
-            <p class="event-container">Connection status: [[status]]</p>
-            <template is="dom-repeat" items="[[realtimeEvents]]">
-                <div class="event-container">
-                    <paper-card image="[[item.data]]">
-                        <div class="card-content">
-                            <p>From [[item.dev_id]] at [[getDateFromFilename(item.name)]]</p>
-                        </div>
-                    </paper-card>
-                </div>
-            </template>
-            <template is="dom-repeat" items="[[storedEvents]]">
-                <paper-card image="[[item.data]]">
-                    <div class="card-content">
-                        <p>From [[item.dev_id]] at [[getDateFromFilename(item.name)]]</p>
-                    </div>
-                </paper-card>
-            </template>
+            <p class="event-container">Connection status: ${realtimeStatus}</p>
+            ${realtimeItems}
+            ${storedItems}
         </div>
     `;
     }
