@@ -12,6 +12,7 @@ export default class VisionEvents extends LitElement {
     static get properties() {
         return {
             realtimeStatus: String,
+            realtimeURL: String,
             realtimeEvents: Array,
             storedEvents: Array,
         };
@@ -19,12 +20,13 @@ export default class VisionEvents extends LitElement {
 
     constructor() {
         super();
+        this.realtimeURL = 'Not set';
         this.realtimeStatus = 'Not available';
-        this.realtimeEvents = getEventsDummy();
+        this.realtimeEvents = [];
         this.storedEvents = [];
     }
 
-    addFrame(frame) {
+    addFrameRealtime(frame) {
         const newData = `data:frame/jpeg;base64, ${frame.data}`;
         const frames = [
             ...this.realtimeEvents,
@@ -33,28 +35,43 @@ export default class VisionEvents extends LitElement {
         this.realtimeEvents = frames;
     }
 
+    addFrameStored(frame) {
+        const newData = `data:frame/jpeg;base64, ${frame.data}`;
+        const frames = [
+            ...this.storedEvents,
+            {data: newData, name: frame.name, dev_id: frame.dev_id},
+        ];
+        this.storedEvents = frames;
+    }
+
     getDateFromFilename(name) {
         return getDateFromFilename(name);
     }
 
-    _firstRendered() {
-        const url = `ws://${HOST_ADDRESS}${EVENTS_PORT}/`;
+    _didRender() {
+        const url = `ws://${HOST_ADDRESS}${EVENTS_PORT}`;
+        this.realtimeURL = url;
+
         const socket = io(url);
 
         socket.on('connect', () => {
-            this.status = 'Connected';
+            this.realtimeStatus = 'Connected';
         });
 
         socket.on('disconnect', () => {
-            this.status = 'Disconnected';
+            this.realtimeStatus = 'Disconnected';
         });
 
-        socket.on('frame', (data) => {
-            this.addFrame(data);
+        socket.on('frame_now', (data) => {
+            this.addFrameRealtime(data);
+        });
+
+        socket.on('frame_before', (data) => {
+            this.addFrameStored(data);
         });
     }
 
-    _render({realtimeStatus, realtimeEvents, storedEvents}) {
+    _render({realtimeStatus, realtimeEvents, storedEvents, realtimeURL}) {
         const eventsItems = (items) => {
             return items.map((item, index) => {
                 const date = getDateFromFilename(item.name);
@@ -86,6 +103,7 @@ export default class VisionEvents extends LitElement {
             }
         </style>
         <div>
+            <p class="event-container">Listening on: ${realtimeURL}</p>
             <p class="event-container">Connection status: ${realtimeStatus}</p>
             ${realtimeItems}
             ${storedItems}
