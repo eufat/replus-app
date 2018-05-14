@@ -1,4 +1,4 @@
-import {LitElement, html} from '@polymer/lit-element';
+import {PolymerElement, html} from '@polymer/polymer/polymer-element';
 
 import '@polymer/app-layout/app-header/app-header.js';
 import '@polymer/app-layout/app-toolbar/app-toolbar.js';
@@ -6,7 +6,18 @@ import '@polymer/app-layout/app-drawer/app-drawer.js';
 import '@polymer/app-layout/app-scroll-effects/effects/waterfall.js';
 import '@polymer/app-layout/app-drawer-layout/app-drawer-layout.js';
 import '@polymer/app-layout/app-header-layout/app-header-layout.js';
+import '@polymer/app-layout/app-scroll-effects/app-scroll-effects.js';
+import '@polymer/paper-item/paper-item.js';
+import '@polymer/paper-material/paper-material.js';
+import '@polymer/paper-listbox/paper-listbox.js';
+import '@polymer/paper-icon-button/paper-icon-button.js';
+import '@polymer/paper-dropdown-menu/paper-dropdown-menu.js';
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings.js';
+
+import '@polymer/app-route/app-location.js';
+import '@polymer/app-route/app-route.js';
+import '@polymer/iron-pages/iron-pages.js';
+import '@polymer/iron-selector/iron-selector.js';
 
 import {connect} from 'pwa-helpers/connect-mixin.js';
 import {installRouter} from 'pwa-helpers/router.js';
@@ -26,10 +37,57 @@ import './vision-events.js';
 import './vision-settings.js';
 import './vision-streams.js';
 
-class MainDashboard extends connect(store)(LitElement) {
-    _render({appTitle, _page, _drawerOpened, _snackbarOpened, _offline}) {
+class MainDashboard extends connect(store)(PolymerElement) {
+    static get template() {
         return html`
-          <app-drawer-layout fullbleed>
+            <style>
+                app-header {
+                    background-color: #4285f4;
+                    color: #fff;
+                }
+
+                app-header paper-icon-button {
+                    --paper-icon-button-ink-color: white;
+                }
+
+                app-drawer-layout:not([narrow]) [drawer-toggle] {
+                    display: none;
+                }
+
+                a {
+                    text-decoration: none;
+                    color: inherit;
+                    font-size: inherit;
+                }
+
+                #accountMenu {
+                    margin: 0;
+                    right: 0;
+                    top: auto;
+                    position: fixed;
+                    display: none;
+                    min-width: 200px;
+                }
+
+                paper-dropdown-menu.device-dropdown {
+                    margin: 1em;
+                    --paper-input-container-underline:  {
+                        display: none;
+                    };
+                }
+            </style>
+            <app-route
+                route="[[route]]"
+                pattern="/:page"
+                data="{{containerRoute}}"
+                tail="{{subroute}}">
+            </app-route>
+            <app-route
+                route="{{subroute}}"
+                pattern="/:page"
+                data="{{pageRoute}}">
+            </app-route>
+            <app-drawer-layout fullbleed>
 
               <app-header-layout fullbleed>
 
@@ -112,7 +170,7 @@ class MainDashboard extends connect(store)(LitElement) {
 
               </app-drawer>
 
-          </app-drawer-layout>
+            </app-drawer-layout>
     `;
     }
 
@@ -173,7 +231,9 @@ class MainDashboard extends connect(store)(LitElement) {
         setPassiveTouchGestures(true);
     }
 
-    _firstRendered() {
+    ready() {
+        super.ready();
+
         installRouter((location) =>
             store.dispatch(
                 navigate(window.decodeURIComponent(location.pathname))
@@ -213,8 +273,6 @@ class MainDashboard extends connect(store)(LitElement) {
         const array = ['remote', 'vision'];
         return array.indexOf(route);
     }
-
-    _stateChanged(state) {}
 }
 
 window.customElements.define('main-dashboard', MainDashboard);

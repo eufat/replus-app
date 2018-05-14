@@ -16,5 +16,5 @@ export const env = {
 };
 
 export const loadEnv = () => {
-    windows.process.env = env;
+    window.process.env = env;
 };

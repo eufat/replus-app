@@ -1,4 +1,4 @@
-import {LitElement, html} from '@polymer/lit-element';
+import {PolymerElement, html} from '@polymer/polymer/polymer-element';
 
 import '@polymer/iron-ajax/iron-ajax.js';
 import '@polymer/paper-material/paper-material.js';
@@ -12,8 +12,8 @@ import {store} from '../store.js';
 
 import {setCurrentUser, authenticateUser} from '../actions/app.js';
 
-class MainAuth extends connect(store)(LitElement) {
-    _render() {
+class MainAuth extends connect(store)(PolymerElement) {
+    static get template() {
         return html`
             <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/2.7.0/firebaseui.css" />
             <style>
@@ -80,9 +80,11 @@ class MainAuth extends connect(store)(LitElement) {
     `;
     }
 
-    _firstRender() {
-        const thisMainAuth = this;
+    ready() {
+        super.ready();
         firebase.initializeApp(firebaseConfig);
+
+        const thisMainAuth = this;
 
         thisMainAuth.setupPosition();
 

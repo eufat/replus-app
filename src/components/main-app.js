@@ -1,9 +1,11 @@
-import {LitElement, html} from '@polymer/lit-element';
+import {PolymerElement, html} from '@polymer/polymer/polymer-element';
 
 import '@polymer/app-layout/app-drawer/app-drawer.js';
 import '@polymer/app-layout/app-header/app-header.js';
 import '@polymer/app-layout/app-scroll-effects/effects/waterfall.js';
 import '@polymer/app-layout/app-toolbar/app-toolbar.js';
+import '@polymer/app-route/app-location.js';
+import '@polymer/app-route/app-route.js';
 import '@polymer/iron-pages/iron-pages.js';
 
 import './snack-bar.js';
@@ -23,8 +25,8 @@ import './main-not-found.js';
 
 import {firebaseConfig} from '../configs.js';
 
-class MainApp extends connect(store)(LitElement) {
-    _render() {
+class MainApp extends connect(store)(PolymerElement) {
+    static get template() {
         return html`
             <app-location route="{{route}}"></app-location>
             <app-route
@@ -43,7 +45,8 @@ class MainApp extends connect(store)(LitElement) {
     `;
     }
 
-    _firstRendered() {
+    ready() {
+        super.ready();
         firebase.initializeApp(firebaseConfig);
 
         firebase.auth().onAuthStateChanged((firebaseUser) => {
@@ -56,7 +59,7 @@ class MainApp extends connect(store)(LitElement) {
         });
     }
 
-    _stateChanged(state) {}
+    _stateChanged() {}
 }
 
 window.customElements.define('main-app', MainApp);
