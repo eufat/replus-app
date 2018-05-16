@@ -49,11 +49,7 @@ class MainAuth extends connect(store)(PolymerElement) {
                     width: 300px;
                     padding: 16px;
                     padding-bottom: 25px;
-                    background: #fbfbfb;
-                    background: -webkit-linear-gradient(#fbfbfb, #f8f8f8);
-                    background: -o-linear-gradient(#fbfbfb, #f8f8f8);
-                    background: -moz-linear-gradient(#fbfbfb, #f8f8f8);
-                    background: linear-gradient(#fbfbfb, #f8f8f8);
+                    background: white;
                 }
 
                 paper-spinner {
@@ -82,7 +78,7 @@ class MainAuth extends connect(store)(PolymerElement) {
 
     ready() {
         super.ready();
-        firebase.initializeApp(firebaseConfig);
+        // firebase.initializeApp(firebaseConfig);
 
         const thisMainAuth = this;
 

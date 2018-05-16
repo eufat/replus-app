@@ -1,5 +1,11 @@
 import {PolymerElement, html} from '@polymer/polymer/polymer-element';
 
+import '@polymer/app-route/app-location.js';
+import '@polymer/app-route/app-route.js';
+import '@polymer/iron-icons/iron-icons.js';
+import '@polymer/iron-pages/iron-pages.js';
+import '@polymer/iron-selector/iron-selector.js';
+
 import '@polymer/app-layout/app-header/app-header.js';
 import '@polymer/app-layout/app-toolbar/app-toolbar.js';
 import '@polymer/app-layout/app-drawer/app-drawer.js';
@@ -13,11 +19,6 @@ import '@polymer/paper-listbox/paper-listbox.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu.js';
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings.js';
-
-import '@polymer/app-route/app-location.js';
-import '@polymer/app-route/app-route.js';
-import '@polymer/iron-pages/iron-pages.js';
-import '@polymer/iron-selector/iron-selector.js';
 
 import {connect} from 'pwa-helpers/connect-mixin.js';
 import {installRouter} from 'pwa-helpers/router.js';
@@ -267,6 +268,18 @@ class MainDashboard extends connect(store)(PolymerElement) {
 
     isEqualTo(a, b) {
         return a === b;
+    }
+
+    toggleAccountMenu(event) {
+        const accountMenuDisplay = this.$.accountMenu.style.display === 'block';
+
+        if (accountMenuDisplay) {
+            this.$.accountMenu.style.display = 'none';
+            this.accountMenu = false;
+        } else {
+            this.$.accountMenu.style.display = 'block';
+            this.accountMenu = true;
+        }
     }
 
     mapDeviceRoute(route) {
