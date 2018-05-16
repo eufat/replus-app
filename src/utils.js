@@ -86,3 +86,37 @@ export function getEventsDummy() {
         },
     ];
 }
+
+export function getRoomsDummy() {
+    return [
+        {
+            devices: {
+                a: '299B',
+                b: '299B',
+                c: '299B',
+                d: '299B',
+            },
+            name: 'Room 1',
+            owner: 'owner-1',
+            remotes: {
+                'remote-a': 'TV LG',
+                'remote-b': 'TV Sony',
+                'remote-c': 'AC Panasonic',
+                'remote-d': 'AC Mitsubishi',
+            },
+        },
+        {
+            devices: {
+                y: '2DF6',
+                z: '2DDX',
+            },
+            name: 'Room 2',
+            owner: 'owner-1',
+            remotes: {
+                'remote-a': 'TV LG',
+                'remote-b': 'AC Samsung',
+                'remote-c': 'TV Toshiba',
+            },
+        },
+    ];
+}
