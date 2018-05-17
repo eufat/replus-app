@@ -104,6 +104,7 @@ export function getRoomsDummy() {
                 'remote-c': 'AC Panasonic',
                 'remote-d': 'AC Mitsubishi',
             },
+            onEdit: false,
         },
         {
             devices: {
@@ -117,6 +118,7 @@ export function getRoomsDummy() {
                 'remote-b': 'AC Samsung',
                 'remote-c': 'TV Toshiba',
             },
+            onEdit: false,
         },
     ];
 }

@@ -1,6 +1,10 @@
 import {LitElement, html} from '@polymer/lit-element';
 import {getRoomsDummy} from '../utils';
 
+import '@polymer/paper-item/paper-item.js';
+import {Button} from '@material/mwc-button/mwc-button.js';
+import {Icon} from '@material/mwc-icon/mwc-icon.js';
+
 export default class RemoteRooms extends LitElement {
     static get properties() {
         return {
@@ -23,6 +27,7 @@ export default class RemoteRooms extends LitElement {
                 <div id="remote-item">
                     <img id="appliance-icon" src="/images/${applicanceType}-icon.png"/>
                     <p>${remote}</p>
+                    <mwc-button label="Remove" icon="close"></mwc-button>
                 </div>
             `;
                 })
@@ -42,13 +47,14 @@ export default class RemoteRooms extends LitElement {
         const roomsItems = rooms.map((item) => {
             return html`
                 <paper-material>
-                    <div id="room-title">
+                    <div class="room-title">
                         <h2>${item.name}</h2>
+                        <mwc-button label="Edit" icon="edit"></mwc-button>
                     </div>
-                    <div id="room-remotes">
+                    <div class="room-remotes">
                         ${roomRemotes(item.remotes)}
                     </div>
-                    <div id="room-devices">
+                    <div class="room-devices">
                         ${roomDevices(item.devices)}
                     </div>
                 </paper-material>
@@ -60,6 +66,10 @@ export default class RemoteRooms extends LitElement {
                 #container {
                     display: block;
                     margin: 100px;
+                }
+
+                .room-title paper-button, .room-title h2 {
+                    display: inline-block;
                 }
 
                 #remote-item {
