@@ -22,7 +22,7 @@ export default class VisionEvents extends LitElement {
         super();
         this.realtimeURL = 'Not set';
         this.realtimeStatus = 'Not available';
-        this.realtimeEvents = [];
+        this.realtimeEvents = getEventsDummy();
         this.storedEvents = [];
     }
 

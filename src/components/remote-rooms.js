@@ -2,11 +2,20 @@ import {LitElement, html} from '@polymer/lit-element';
 import {connect} from 'pwa-helpers/connect-mixin.js';
 
 import '@polymer/paper-item/paper-item.js';
-import {Button} from '@material/mwc-button/mwc-button.js';
-import {Icon} from '@material/mwc-icon/mwc-icon.js';
+import '@polymer/paper-dialog/paper-dialog.js';
+import '@material/mwc-button/mwc-button.js';
+import '@material/mwc-icon/mwc-icon.js';
+import '@material/mwc-radio/mwc-radio.js';
+
+// Not registered yet on NPM registry
+// import '@material/mwc-icon-toggle/mwc-icon-toggle.js';
+// import '@material/mwc-textfield.js';
+
+// Using old alternative
+import '@polymer/paper-input/paper-input.js';
 
 import {setRooms} from '../actions/remote';
-import {getRoomsDummy} from '../utils';
+import {getNewRoomTemplate, getRoomsDummy} from '../utils';
 import {store} from '../store.js';
 
 export default class RemoteRooms extends connect(store)(LitElement) {
@@ -28,8 +37,15 @@ export default class RemoteRooms extends connect(store)(LitElement) {
     _toggleOnEdit(roomIndex) {
         const prevOnEditState = this.rooms[roomIndex].onEdit;
         let newRooms = [...this.rooms];
-        newRooms[roomIndex].onEdit = !prevOnEditState;
 
+        newRooms[roomIndex].onEdit = !prevOnEditState;
+        store.dispatch(setRooms(newRooms));
+    }
+
+    _changeRoomName(e, roomIndex) {
+        let newRooms = [...this.rooms];
+
+        newRooms[roomIndex].name = e.target.value;
         store.dispatch(setRooms(newRooms));
     }
 
@@ -51,6 +67,11 @@ export default class RemoteRooms extends connect(store)(LitElement) {
         let newRooms = [...this.rooms];
         delete newRooms[roomIndex].devices[deviceKey];
 
+        store.dispatch(setRooms(newRooms));
+    }
+
+    _addNewRoom() {
+        let newRooms = [...this.rooms, getNewRoomTemplate()];
         store.dispatch(setRooms(newRooms));
     }
 
@@ -110,24 +131,31 @@ export default class RemoteRooms extends connect(store)(LitElement) {
             return html`
                 <paper-material>
                     <div class="room-title">
-                        <h1>${item.name}</h1>
-                            ${
-                                onEdit
-                                    ? html`
-                                        <mwc-button label="Delete Room" icon="delete" on-click="${() =>
-                                            this._removeRoom(
-                                                roomIndex
-                                            )}"></mwc-button>
-                                        <mwc-button label="Save Changes" icon="save" on-click="${() =>
-                                            this._toggleOnEdit(
-                                                roomIndex
-                                            )}"></mwc-button>`
-                                    : html`
-                                        <mwc-button label="Edit" icon="edit" on-click="${() =>
-                                            this._toggleOnEdit(
-                                                roomIndex
-                                            )}"></mwc-button>`
-                            }
+                        ${
+                            onEdit
+                                ? html`
+                                    <paper-input on-input="${(e) =>
+                                        this._changeRoomName(
+                                            e,
+                                            roomIndex
+                                        )}" value="${
+                                      item.name
+                                  }" label="Enter Room Name" always-float-label></paper-input>
+                                    <mwc-button label="Save Changes" icon="save" on-click="${() =>
+                                        this._toggleOnEdit(
+                                            roomIndex
+                                        )}"></mwc-button>
+                                    <mwc-button label="Delete Room" icon="delete" on-click="${() =>
+                                        this._removeRoom(
+                                            roomIndex
+                                        )}"></mwc-button>`
+                                : html`
+                                    <h1>${item.name}</h1>
+                                    <mwc-button label="Edit" icon="edit" on-click="${() =>
+                                        this._toggleOnEdit(
+                                            roomIndex
+                                        )}"></mwc-button>`
+                        }
                     </div>
                     <div class="room-remotes">
                         ${roomRemotes(item.remotes, roomIndex)}
@@ -144,7 +172,7 @@ export default class RemoteRooms extends connect(store)(LitElement) {
                         ${roomDevices(item.devices, roomIndex)}
                         ${
                             onEdit
-                                ? html`<mwc-button label="Assign device" icon="add"></mwc-button>`
+                                ? html`<mwc-button label="Add device" icon="add"></mwc-button>`
                                 : null
                         }
                     </div>
@@ -185,6 +213,10 @@ export default class RemoteRooms extends connect(store)(LitElement) {
                     margin-bottom: 10px;
                     border: 1px solid #ccc;
                     border-radius: 10px;
+                }
+
+                .remote-item:hover {
+                    background-color: #f5f5f5;
                 }
 
                 .remote-item p {
@@ -245,7 +277,8 @@ export default class RemoteRooms extends connect(store)(LitElement) {
                 <div class="paper-container">
                 ${roomsItems}
                 <paper-material class="add-new-room">
-                    <mwc-button label="Add new room" icon="add"></mwc-button>
+                    <mwc-button label="Add new room" icon="add" on-click="${() =>
+                        this._addNewRoom()}"></mwc-button>
                 </paper-material>
                 </div>
             </div>

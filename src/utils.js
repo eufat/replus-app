@@ -87,14 +87,24 @@ export function getEventsDummy() {
     ];
 }
 
+export function getNewRoomTemplate() {
+    return {
+        devices: {},
+        name: 'My Room',
+        owner: '',
+        remotes: {},
+        onEdit: true,
+    };
+}
+
 export function getRoomsDummy() {
     return [
         {
             devices: {
-                a: '299B',
-                b: '299B',
-                c: '299B',
-                d: '299B',
+                a: '296A',
+                b: '297B',
+                c: '298C',
+                d: '299D',
             },
             name: 'Room 1',
             owner: 'owner-1',
