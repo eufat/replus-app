@@ -46,14 +46,14 @@ export default class Help extends LitElement {
                 <paper-material>
                     <h1>Help and Guides</h1>
                     <h3>1. Add Replus App to Android (Chrome)</h3>
-                    <img class="add-to-homescreen" src="/images/add-to-homescreen-android.png" />
+                    <img class="add-to-homescreen" src="images/add-to-homescreen-android.png" />
                     <ol>
                         <li>Click the top vertical three dot icon</li>
                         <li>Find the "Add to Home screen" button</li>
                         <li>Press "Add to Home screen"</li>
                     </ol>
                     <h3>2. Add Replus App for iOS (Safari)</h3>
-                    <img class="add-to-homescreen" src="/images/add-to-homescreen-ios.png" />
+                    <img class="add-to-homescreen" src="images/add-to-homescreen-ios.png" />
                     <ol>
                         <li>Click bottom share icon</li>
                         <li>Swipe to find the "Add to Home screen" button</li>

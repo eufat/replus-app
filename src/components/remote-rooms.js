@@ -95,7 +95,7 @@ export default class RemoteRooms extends connect(store)(LitElement) {
                                           )}"></mwc-button>`
                                     : null
                             }
-                            <img class="appliance-icon" src="/images/${applicanceType}-icon.png"/>
+                            <img class="appliance-icon" src="images/${applicanceType}-icon.png"/>
                             <p>${remoteValue}</p>
                         </div>
                     `;
@@ -162,7 +162,7 @@ export default class RemoteRooms extends connect(store)(LitElement) {
                         ${
                             onEdit
                                 ? html`<div class="remote-item">
-                                    <img class="appliance-icon" src="/images/add-plus-button.png"/>
+                                    <img class="appliance-icon" src="images/add-plus-button.png"/>
                                     <p>Add Remote</p>
                                 </div>`
                                 : null
