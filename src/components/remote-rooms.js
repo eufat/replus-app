@@ -17,6 +17,11 @@ export default class RemoteRooms extends LitElement {
         this.rooms = getRoomsDummy();
     }
 
+    toggleOnEdit(roomIndex) {
+        const prevOnEditState = this.rooms[roomIndex].onEdit;
+        this.rooms[roomIndex].onEdit = !prevOnEditState;
+    }
+
     _render({rooms}) {
         const roomRemotes = (remotes) =>
             _.values(
@@ -24,10 +29,10 @@ export default class RemoteRooms extends LitElement {
                     const applicanceType = remote.split(' ')[0].toLowerCase();
 
                     return html`
-                <div id="remote-item">
-                    <img id="appliance-icon" src="/images/${applicanceType}-icon.png"/>
-                    <p>${remote}</p>
+                <div class="remote-item">
                     <mwc-button label="Remove" icon="close"></mwc-button>
+                    <img class="appliance-icon" src="/images/${applicanceType}-icon.png"/>
+                    <p>${remote}</p>
                 </div>
             `;
                 })
@@ -37,29 +42,39 @@ export default class RemoteRooms extends LitElement {
             _.values(
                 _.mapValues(devices, (deviceId) => {
                     return html`
-                <div id="device-pill">
-                    ${deviceId}
+                <div class="device-pill">
+                    <span class="pill-content">${deviceId}</span> <mwc-icon>close</mwc-icon>
                 </div>
             `;
                 })
             );
 
-        const roomsItems = rooms.map((item) => {
+        const roomsItems = rooms.map((item, roomIndex) => {
             return html`
                 <paper-material>
                     <div class="room-title">
-                        <h2>${item.name}</h2>
-                        <mwc-button label="Edit" icon="edit"></mwc-button>
+                        <h1>${item.name}</h1>
+                        <mwc-button label="Edit" icon="edit" on-click="${() =>
+                            this.toggleOnEdit(roomIndex)}"></mwc-button>
+                            <mwc-button label="Delete Room" icon="delete"></mwc-button>
+                            <mwc-button label="Save Changes" icon="save"></mwc-button>
                     </div>
                     <div class="room-remotes">
                         ${roomRemotes(item.remotes)}
+                        <div class="remote-item">
+                            <img class="appliance-icon" src="/images/add-plus-button.png"/>
+                            <p>Add Remote</p>
+                        </div>
                     </div>
                     <div class="room-devices">
                         ${roomDevices(item.devices)}
+                        <mwc-button label="Assign device" icon="add"></mwc-button>
                     </div>
                 </paper-material>
             `;
         });
+
+        console.log('onEdit on render', this.rooms[0].onEdit);
 
         return html`
             <style>
@@ -68,43 +83,66 @@ export default class RemoteRooms extends LitElement {
                     margin: 100px;
                 }
 
-                .room-title paper-button, .room-title h2 {
+                .room-title paper-button, .room-title h1 {
                     display: inline-block;
                 }
 
-                #remote-item {
+                .room-title h1 {
+                    font-weight: normal;
+                    font-size: 1.25em;
+                }
+
+                .room-remotes {
+                    width: 100%;
+                    display: block;
+                }
+
+                .remote-item {
                     text-align: center;
                     display: inline-block;
-                    padding: 5px;
-                    width: 100px;
-                    height: 100px;
+                    vertical-align: top;
+                    padding: 10px;
+                    width: 120px;
+                    height: 120px;
+                    margin-top: 0;
+                    margin-right: 10px;
+                    margin-bottom: 10px;
+                    border: 1px solid #ccc;
+                    border-radius: 10px;
                 }
 
-                #remote-item p {
+                .remote-item p {
                     margin: 0;
                 }
 
-                #device-pill {
+                .device-pill {
+                    color: white;
                     background-color: #ccc;
                     border-radius: 15px;
                     display: inline-block;
                     text-align: center;
-                    width: 60px;
+                    padding: 0 10px;
+                    width: auto;
                     height: 30px;
                     line-height: 30px;
-                    margin: 5px;
+                    margin-right: 5px;
                 }
 
-                #add-new-room {
+                .device-pill .pill-content, .device-pill mwc-icon {
+                    vertical-align: top;
+                    display: inline-block;
+                }
+
+                .add-new-room {
                     text-align: center;
 
                 }
 
-                #appliance-icon {
+                .appliance-icon {
                     height: 50px;
                 }
 
-                #add-new-room-icon {
+                .add-new-room-icon {
                     font-size: 4em;
                 }
 
@@ -113,20 +151,27 @@ export default class RemoteRooms extends LitElement {
                     font-size: 1.25em;
                 }
 
+                .items-container {
+                    margin: 0 auto;
+                    max-width: 960px;
+
+                }
+
                 paper-material {
                     display: block;
-                    margin: 20px auto;
-                    width: 600px;
+                    margin: 20px;
                     padding: 10px 20px;
                     background-color: white;
+
                 }
             </style>
-            <div id="rooms-container">
+            <div class="rooms-container">
+                <div class="items-container">
                 ${roomsItems}
-                <paper-material id="add-new-room">
-                    <h2>Add New Room</h2>
-                    <span id="add-new-room-icon">+</span>
+                <paper-material class="add-new-room">
+                    <mwc-button label="Add new room" icon="add"></mwc-button>
                 </paper-material>
+                </div>
             </div>
     `;
     }
