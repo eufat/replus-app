@@ -9,6 +9,7 @@ import {lazyReducerEnhancer} from 'pwa-helpers/lazy-reducer-enhancer.js';
 
 import app from './reducers/app.js';
 import vision from './reducers/vision.js';
+import remote from './reducers/remote.js';
 
 // Sets up a Chrome extension for time travel debugging.
 // See https://github.com/zalmoxisus/redux-devtools-extension for more information.
@@ -28,4 +29,5 @@ export const store = createStore(
 store.addReducers({
     app,
     vision,
+    remote,
 });

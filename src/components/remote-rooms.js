@@ -1,11 +1,15 @@
 import {LitElement, html} from '@polymer/lit-element';
-import {getRoomsDummy} from '../utils';
+import {connect} from 'pwa-helpers/connect-mixin.js';
 
 import '@polymer/paper-item/paper-item.js';
 import {Button} from '@material/mwc-button/mwc-button.js';
 import {Icon} from '@material/mwc-icon/mwc-icon.js';
 
-export default class RemoteRooms extends LitElement {
+import {setRooms} from '../actions/remote';
+import {getRoomsDummy} from '../utils';
+import {store} from '../store.js';
+
+export default class RemoteRooms extends connect(store)(LitElement) {
     static get properties() {
         return {
             rooms: Array,
@@ -14,67 +18,139 @@ export default class RemoteRooms extends LitElement {
 
     constructor() {
         super();
-        this.rooms = getRoomsDummy();
+        store.dispatch(setRooms(getRoomsDummy()));
     }
 
-    toggleOnEdit(roomIndex) {
+    _stateChanged(state) {
+        this.rooms = state.remote.rooms;
+    }
+
+    _toggleOnEdit(roomIndex) {
         const prevOnEditState = this.rooms[roomIndex].onEdit;
-        this.rooms[roomIndex].onEdit = !prevOnEditState;
+        let newRooms = [...this.rooms];
+        newRooms[roomIndex].onEdit = !prevOnEditState;
+
+        store.dispatch(setRooms(newRooms));
+    }
+
+    _removeRoom(roomIndex) {
+        let newRooms = [...this.rooms];
+        newRooms.splice(roomIndex, 1);
+
+        store.dispatch(setRooms(newRooms));
+    }
+
+    _removeRemote(roomIndex, remoteKey) {
+        let newRooms = [...this.rooms];
+        delete newRooms[roomIndex].remotes[remoteKey];
+
+        store.dispatch(setRooms(newRooms));
+    }
+
+    _removeDevice(roomIndex, deviceKey) {
+        let newRooms = [...this.rooms];
+        delete newRooms[roomIndex].devices[deviceKey];
+
+        store.dispatch(setRooms(newRooms));
     }
 
     _render({rooms}) {
-        const roomRemotes = (remotes) =>
+        const roomRemotes = (remotes, roomIndex) =>
             _.values(
-                _.mapValues(remotes, (remote) => {
-                    const applicanceType = remote.split(' ')[0].toLowerCase();
+                _.mapValues(remotes, (remoteValue, remoteKey) => {
+                    const onEdit = rooms[roomIndex].onEdit;
+                    const applicanceType = remoteValue
+                        .split(' ')[0]
+                        .toLowerCase();
 
                     return html`
-                <div class="remote-item">
-                    <mwc-button label="Remove" icon="close"></mwc-button>
-                    <img class="appliance-icon" src="/images/${applicanceType}-icon.png"/>
-                    <p>${remote}</p>
-                </div>
-            `;
+                        <div class="remote-item">
+                            ${
+                                onEdit
+                                    ? html`<mwc-button label="Remove" icon="close" on-click="${() =>
+                                          this._removeRemote(
+                                              roomIndex,
+                                              remoteKey
+                                          )}"></mwc-button>`
+                                    : null
+                            }
+                            <img class="appliance-icon" src="/images/${applicanceType}-icon.png"/>
+                            <p>${remoteValue}</p>
+                        </div>
+                    `;
                 })
             );
 
-        const roomDevices = (devices) =>
+        const roomDevices = (devices, roomIndex) =>
             _.values(
-                _.mapValues(devices, (deviceId) => {
+                _.mapValues(devices, (deviceId, deviceKey) => {
+                    const onEdit = rooms[roomIndex].onEdit;
+
                     return html`
-                <div class="device-pill">
-                    <span class="pill-content">${deviceId}</span> <mwc-icon>close</mwc-icon>
-                </div>
-            `;
+                        <div class="device-pill">
+                            <span class="pill-content">${deviceId}</span>
+                            ${
+                                onEdit
+                                    ? html`<mwc-icon on-click="${() =>
+                                          this._removeDevice(
+                                              roomIndex,
+                                              deviceKey
+                                          )}">close</mwc-icon>`
+                                    : null
+                            }
+                        </div>
+                    `;
                 })
             );
 
-        const roomsItems = rooms.map((item, roomIndex) => {
+        const roomsValues = _.values(rooms);
+        const roomsItems = roomsValues.map((item, roomIndex) => {
+            const onEdit = rooms[roomIndex].onEdit;
+
             return html`
                 <paper-material>
                     <div class="room-title">
                         <h1>${item.name}</h1>
-                        <mwc-button label="Edit" icon="edit" on-click="${() =>
-                            this.toggleOnEdit(roomIndex)}"></mwc-button>
-                            <mwc-button label="Delete Room" icon="delete"></mwc-button>
-                            <mwc-button label="Save Changes" icon="save"></mwc-button>
+                            ${
+                                onEdit
+                                    ? html`
+                                        <mwc-button label="Delete Room" icon="delete" on-click="${() =>
+                                            this._removeRoom(
+                                                roomIndex
+                                            )}"></mwc-button>
+                                        <mwc-button label="Save Changes" icon="save" on-click="${() =>
+                                            this._toggleOnEdit(
+                                                roomIndex
+                                            )}"></mwc-button>`
+                                    : html`
+                                        <mwc-button label="Edit" icon="edit" on-click="${() =>
+                                            this._toggleOnEdit(
+                                                roomIndex
+                                            )}"></mwc-button>`
+                            }
                     </div>
                     <div class="room-remotes">
-                        ${roomRemotes(item.remotes)}
-                        <div class="remote-item">
-                            <img class="appliance-icon" src="/images/add-plus-button.png"/>
-                            <p>Add Remote</p>
-                        </div>
+                        ${roomRemotes(item.remotes, roomIndex)}
+                        ${
+                            onEdit
+                                ? html`<div class="remote-item">
+                                    <img class="appliance-icon" src="/images/add-plus-button.png"/>
+                                    <p>Add Remote</p>
+                                </div>`
+                                : null
+                        }
                     </div>
                     <div class="room-devices">
-                        ${roomDevices(item.devices)}
-                        <mwc-button label="Assign device" icon="add"></mwc-button>
+                        ${roomDevices(item.devices, roomIndex)}
+                        ${
+                            onEdit
+                                ? html`<mwc-button label="Assign device" icon="add"></mwc-button>`
+                                : null
+                        }
                     </div>
                 </paper-material>
             `;
         });
-
-        console.log('onEdit on render', this.rooms[0].onEdit);
 
         return html`
             <style>

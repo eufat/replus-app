@@ -22,13 +22,13 @@ git branch -r | grep -v '\->' | while read remote; do git branch --track "${remo
 Start by installing all dependencies and dev dependencies
 
 ```
-yarn
+npm
 ```
 
 Start project with
 
 ```
-yarn run start
+npm run start
 ```
 
 ### Deploy project
