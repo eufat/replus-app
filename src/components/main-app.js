@@ -47,7 +47,7 @@ class MainApp extends connect(store)(PolymerElement) {
 
     ready() {
         super.ready();
-        firebase.initializeApp(firebaseConfig);
+        // firebase.initializeApp(firebaseConfig);
 
         firebase.auth().onAuthStateChanged((firebaseUser) => {
             if (firebaseUser) {

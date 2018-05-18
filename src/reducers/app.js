@@ -4,6 +4,9 @@ import {
     OPEN_SNACKBAR,
     CLOSE_SNACKBAR,
     UPDATE_DRAWER_STATE,
+    AUTHENTICATE_USER,
+    DEAUTHENTICATE_USER,
+    SET_CURRENT_USER,
 } from '../actions/app.js';
 
 const app = (state = {drawerOpened: false}, action) => {
@@ -32,6 +35,21 @@ const app = (state = {drawerOpened: false}, action) => {
             return {
                 ...state,
                 snackbarOpened: false,
+            };
+        case AUTHENTICATE_USER:
+            return {
+                ...state,
+                isAuthenticated: true,
+            };
+        case DEAUTHENTICATE_USER:
+            return {
+                ...state,
+                isAuthenticated: false,
+            };
+        case SET_CURRENT_USER:
+            return {
+                ...state,
+                currentUser: action.currentUser,
             };
         default:
             return state;

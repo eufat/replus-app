@@ -27,8 +27,15 @@ import {installMediaQueryWatcher} from 'pwa-helpers/media-query.js';
 import {updateMetadata} from 'pwa-helpers/metadata.js';
 
 import {store} from '../store.js';
-import {navigate, updateOffline, updateLayout} from '../actions/app.js';
+import {
+    navigate,
+    updateOffline,
+    updateLayout,
+    deauthenticateUser,
+} from '../actions/app.js';
 
+import './main-welcome.js';
+import './main-not-found.js';
 import './main-account.js';
 import './remote-rooms.js';
 import './remote-devices.js';
@@ -107,13 +114,16 @@ class MainDashboard extends connect(store)(PolymerElement) {
                           <div page-name="streams"><vision-streams /></div>
                           <div page-name="events"><vision-events /></div>
                           <div page-name="settings"><vision-settings /></div>
+                          <div page-name="fallback"><main-not-found /></div>
                       </iron-pages>
                       <iron-pages container-name="remote" selected="[[pageRoute.page]]" attr-for-selected="page-name" fallback-selection="fallback">
                           <div page-name="rooms"><remote-rooms /></div>
                           <div page-name="devices"><remote-devices /></div>
                           <div page-name="settings"><remote-settings /></div>
+                          <div page-name="fallback"><main-not-found /></div>
                       </iron-pages>
                       <div container-name="account"><main-account /></div>
+                      <div container-name="fallback"><main-welcome /></div>
                   </iron-pages>
 
                   <!-- Dashboard app bar menu -->
@@ -121,6 +131,9 @@ class MainDashboard extends connect(store)(PolymerElement) {
                       <paper-listbox>
                           <a name='account' href='/dashboard/account' tabindex='-1'>
                           <paper-item raised>Account</paper-item>
+                          </a>
+                          <a name='account' href='/dashboard/welcome' tabindex='-1'>
+                          <paper-item raised>Welcome</paper-item>
                           </a>
                           <a name='sign-out' on-tap='handleSignOut' tabindex='-1'>
                           <paper-item raised>Sign Out</paper-item>
@@ -264,6 +277,10 @@ class MainDashboard extends connect(store)(PolymerElement) {
         this._offline = state.app.offline;
         this._snackbarOpened = state.app.snackbarOpened;
         this._drawerOpened = state.app.drawerOpened;
+    }
+
+    handleSignOut() {
+        store.dispatch(deauthenticateUser());
     }
 
     isEqualTo(a, b) {

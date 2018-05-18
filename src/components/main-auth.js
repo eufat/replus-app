@@ -78,7 +78,7 @@ class MainAuth extends connect(store)(PolymerElement) {
 
     ready() {
         super.ready();
-        // firebase.initializeApp(firebaseConfig);
+        firebase.initializeApp(firebaseConfig);
 
         const thisMainAuth = this;
 

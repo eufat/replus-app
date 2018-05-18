@@ -151,7 +151,7 @@ export default class RemoteRooms extends LitElement {
                     font-size: 1.25em;
                 }
 
-                .items-container {
+                .paper-container {
                     margin: 0 auto;
                     max-width: 960px;
 
@@ -166,7 +166,7 @@ export default class RemoteRooms extends LitElement {
                 }
             </style>
             <div class="rooms-container">
-                <div class="items-container">
+                <div class="paper-container">
                 ${roomsItems}
                 <paper-material class="add-new-room">
                     <mwc-button label="Add new room" icon="add"></mwc-button>
