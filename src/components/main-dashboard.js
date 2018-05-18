@@ -35,6 +35,7 @@ import {
 } from '../actions/app.js';
 
 import './main-welcome.js';
+import './main-help.js';
 import './main-not-found.js';
 import './main-account.js';
 import './remote-rooms.js';
@@ -123,6 +124,7 @@ class MainDashboard extends connect(store)(PolymerElement) {
                           <div page-name="fallback"><main-not-found /></div>
                       </iron-pages>
                       <div container-name="account"><main-account /></div>
+                      <div container-name="help"><main-help /></div>
                       <div container-name="fallback"><main-welcome /></div>
                   </iron-pages>
 

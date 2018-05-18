@@ -27,7 +27,7 @@ export default class Welcome extends connect(store)(LitElement) {
 
                 paper-material {
                     display: block;
-                    margin: 20px;
+                    margin-bottom: 20px;
                     padding: 10px 20px;
                     background-color: white;
                 }
@@ -57,7 +57,8 @@ export default class Welcome extends connect(store)(LitElement) {
                     </div>
                 </paper-material>
                 <paper-material>
-                        <mwc-button label="Help and Guides"></mwc-button>
+                        <mwc-button label="Help and Guides" on-click="${() =>
+                            pushLocationTo('/dashboard/help')}"></mwc-button>
                         <mwc-button label="Support"></mwc-button>
                         <mwc-button label="Feedback"></mwc-button>
                 </paper-material>
