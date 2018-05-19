@@ -44,7 +44,7 @@ export default class Welcome extends connect(store)(LitElement) {
             <div class="paper-container">
                 <paper-material>
                     <div id="welcome">
-                    <h1>Welcome${displayName ? ` ${displayName}.` : `.`}</h1>
+                    <h1>Welcome${displayName ? `, ${displayName}.` : `.`}</h1>
                     <p>Select your Replus Device</p>
                     <mwc-button raised class="light" label="Replus Remote" on-click="${() =>
                         pushLocationTo(
