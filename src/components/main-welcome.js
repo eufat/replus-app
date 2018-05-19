@@ -59,8 +59,12 @@ export default class Welcome extends connect(store)(LitElement) {
                 <paper-material>
                         <mwc-button label="Help and Guides" on-click="${() =>
                             pushLocationTo('/dashboard/help')}"></mwc-button>
-                        <mwc-button label="Support"></mwc-button>
-                        <mwc-button label="Feedback"></mwc-button>
+                        <mwc-button label="Support" on-click="${() =>
+                            pushLocationTo('/dashboard/support')}"></mwc-button>
+                        <mwc-button label="Feedback"  on-click="${() =>
+                            pushLocationTo(
+                                '/dashboard/feedback'
+                            )}"></mwc-button>
                 </paper-material>
             </div>
     `;
