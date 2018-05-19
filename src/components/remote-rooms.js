@@ -75,6 +75,15 @@ export default class RemoteRooms extends connect(store)(LitElement) {
         store.dispatch(setRooms(newRooms));
     }
 
+    _patchOverlay(e) {
+        if (e.target.withBackdrop) {
+            e.target.parentNode.insertBefore(
+                e.target.backdropElement,
+                e.target
+            );
+        }
+    }
+
     _render({rooms}) {
         const roomRemotes = (remotes, roomIndex) =>
             _.values(
@@ -161,7 +170,12 @@ export default class RemoteRooms extends connect(store)(LitElement) {
                         ${roomRemotes(item.remotes, roomIndex)}
                         ${
                             onEdit
-                                ? html`<div class="remote-item">
+                                ? html`<div class="remote-item" on-click="${() =>
+                                      this.shadowRoot
+                                          .getElementById(
+                                              'add-new-remote-modal'
+                                          )
+                                          .open()}">
                                     <img class="appliance-icon" src="images/add-plus-button.png"/>
                                     <p>Add Remote</p>
                                 </div>`
@@ -172,7 +186,12 @@ export default class RemoteRooms extends connect(store)(LitElement) {
                         ${roomDevices(item.devices, roomIndex)}
                         ${
                             onEdit
-                                ? html`<mwc-button label="Add device" icon="add"></mwc-button>`
+                                ? html`<mwc-button label="Add device" icon="add" on-click="${() =>
+                                      this.shadowRoot
+                                          .getElementById(
+                                              'add-new-device-modal'
+                                          )
+                                          .open()}"></mwc-button>`
                                 : null
                         }
                     </div>
@@ -182,6 +201,15 @@ export default class RemoteRooms extends connect(store)(LitElement) {
 
         return html`
             <style>
+                img {
+                    user-drag: none;
+                    user-select: none;
+                    -moz-user-select: none;
+                    -webkit-user-drag: none;
+                    -webkit-user-select: none;
+                    -ms-user-select: none;
+                }
+
                 #container {
                     display: block;
                     margin: 100px;
@@ -217,6 +245,7 @@ export default class RemoteRooms extends connect(store)(LitElement) {
 
                 .remote-item:hover {
                     background-color: #f5f5f5;
+                    cursor: pointer;
                 }
 
                 .remote-item p {
@@ -265,6 +294,11 @@ export default class RemoteRooms extends connect(store)(LitElement) {
 
                 }
 
+                paper-dialog {
+                    z-index: 99999;
+                    border-radius: 5px;
+                }
+
                 paper-material {
                     display: block;
                     margin: 20px;
@@ -273,6 +307,40 @@ export default class RemoteRooms extends connect(store)(LitElement) {
 
                 }
             </style>
+            <paper-dialog id="add-new-device-modal">
+                <div class="modal-content">
+                    <paper-input label="Device ID" always-float-label>
+                    </paper-input>
+                    <paper-input label="Device Activation Code" always-float-label>
+                    </paper-input>
+                    <div class="buttons">
+                        <mwc-button dialog-confirm label="Add This Device"></mwc-button>
+                    </div>
+                </div>
+            </paper-dialog>
+            <paper-dialog id="add-new-remote-modal">
+                <div class="modal-content">
+                    <label id="appliance-type">Appliance Type:</label>
+                    <paper-radio-group aria-labelledby="appliance-type">
+                    <paper-radio-button name="tv">TV</paper-radio-button>
+                    <paper-radio-button name="ac">AC</paper-radio-button>
+                    </paper-radio-group>
+                    <paper-dropdown-menu label="Brand">
+                    <paper-listbox slot="dropdown-content">
+                        <paper-item>Samsung</paper-item>
+                        <paper-item>LG</paper-item>
+                        <paper-item>Panasonic</paper-item>
+                        <paper-item>Toshiba</paper-item>
+                        <paper-item>Mitsubishi</paper-item>
+                        <paper-item>Daikin</paper-item>
+                        <paper-item>Dast</paper-item>
+                    </paper-listbox>
+                    </paper-dropdown-menu>
+                    <div class="buttons">
+                        <mwc-button dialog-confirm label="Add This Remote"></mwc-button>
+                    </div>
+                </div>
+            </paper-dialog>
             <div class="rooms-container">
                 <div class="paper-container">
                 ${roomsItems}
