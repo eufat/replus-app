@@ -17,7 +17,7 @@ export function hideOnClickOutside(element) {
 
 const isBlock = (elem) => elem.style.display == 'block.js';
 
-export const userDataKey = ['uid', 'email', 'displayName', 'photoURL'];
+export const userDataKey = ['uid', 'email', 'display_name', 'photo_url'];
 
 export const pushLocationTo = (location) => {
     window.history.pushState({}, null, location);
@@ -49,16 +49,17 @@ export function getFormattedTime(now) {
 }
 
 export function getDateFromFilename(name) {
-    const filename = name.split('.')[0]; // leave filename, remove extension
-    const dates = filename.split('-');
-    const [h, m, s] = dates;
-    const now = new Date();
-    const Y = `${now.getFullYear()}`;
-    const M = `${now.getMonth()}`;
-    const D = `${now.getDate()}`;
-
-    const date = new Date(Y, M, D, h, m, s, 0);
-    return date;
+    if (name !== undefined) {
+        const filename = name.split('.')[0]; // leave filename, remove extension
+        const dates = filename.split('-');
+        const [h, m, s] = dates;
+        const now = new Date();
+        const Y = `${now.getFullYear()}`;
+        const M = `${now.getMonth()}`;
+        const D = `${now.getDate()}`;
+        const date = new Date(Y, M, D, h, m, s, 0);
+        return date;
+    }
 }
 
 export function formatLocale(date) {

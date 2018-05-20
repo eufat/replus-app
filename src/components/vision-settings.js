@@ -60,22 +60,6 @@ export default class VisionSettings extends connect(store)(LitElement) {
         store.dispatch(setSettings(this.settings));
     }
 
-    openResolutionDialog() {
-        this.shadowRoot.getElementById('resolutionDialog').open();
-    }
-
-    openRotationDialog() {
-        this.shadowRoot.getElementById('rotationDialog').open();
-    }
-
-    openTurnOffDialog() {
-        this.shadowRoot.getElementById('turnOffDialog').open();
-    }
-
-    openRestartDialog() {
-        this.shadowRoot.getElementById('restartDialog').open();
-    }
-
     onTurnOffDevice() {
         this.off = true;
         this.handleSaveSettings();
@@ -88,10 +72,6 @@ export default class VisionSettings extends connect(store)(LitElement) {
 
     _render({settings, resolutions, settingsIsDisabled, rotations}) {
         const {
-            openTurnOffDialog,
-            openRestartDialog,
-            openResolutionDialog,
-            openRotationDialog,
             getIndexOf,
             onTurnOffDevice,
             handleSaveSettings,
@@ -128,12 +108,14 @@ export default class VisionSettings extends connect(store)(LitElement) {
             }
         </style>
         <div role="listbox" class="command">
-            <paper-item on-="${(e) => openTurnOffDialog(e)}">
+            <paper-item on-click="${() =>
+                this.shadowRoot.getElementById('turnOffDialog').open()}">
                 <paper-item-body>
                     <div>Turn Off Device</div>
                 </paper-item-body>
             </paper-item>
-            <paper-item  on-="${(e) => openRestartDialog(e)}">
+            <paper-item  on-click="${() =>
+                this.shadowRoot.getElementById('restartDialog').open()}">
                 <paper-item-body>
                     <div>Restart Device</div>
                 </paper-item-body>
@@ -142,7 +124,7 @@ export default class VisionSettings extends connect(store)(LitElement) {
         <div role="listbox" class="settings">
             <paper-item>
                 <paper-item-body>
-                    <div>Light</div>
+                    <div>Lamp</div>
                 </paper-item-body>
                 <paper-toggle-button
                     disabled$="${settingsIsDisabled}"
@@ -170,7 +152,8 @@ export default class VisionSettings extends connect(store)(LitElement) {
                     class="settings-right">
                 </paper-toggle-button>
             </paper-item>
-            <paper-item on-="${(e) => openResolutionDialog(e)}">
+            <paper-item on-click="${() =>
+                this.shadowRoot.getElementById('resolutionDialog').open()}">
                 <paper-item-body>
                     <div>Image Resolution</div>
                 </paper-item-body>
@@ -178,7 +161,8 @@ export default class VisionSettings extends connect(store)(LitElement) {
                     ${settingsResolution}
                 </div>
             </paper-item>
-            <paper-item on-="${(e) => openRotationDialog(e)}">
+            <paper-item on-click="${() =>
+                this.shadowRoot.getElementById('rotationDialog').open()}">
                 <paper-item-body>
                     <div>Image Rotation</div>
                 </paper-item-body>
@@ -187,10 +171,10 @@ export default class VisionSettings extends connect(store)(LitElement) {
                 </div>
             </paper-item>
             <paper-button
-                disabled$="${(e) => settingsIsDisabled(e)}"
+                disabled$="${settingsIsDisabled}"
                 class="save"
                 raised
-                on-="${(e) => handleSaveSettings(e)}">
+                on-click="${() => handleSaveSettings()}">
                     Save Settings
             </paper-button>
         </div>
@@ -227,7 +211,7 @@ export default class VisionSettings extends connect(store)(LitElement) {
                 <paper-button
                     dialog-confirm
                     autofocus
-                    on-="${(e) => onTurnOffDevice(e)}">
+                    on-click="${() => onTurnOffDevice()}">
                         Turn Off
                 </paper-button>
             </div>
@@ -239,7 +223,7 @@ export default class VisionSettings extends connect(store)(LitElement) {
                 <paper-button
                     dialog-confirm
                     autofocus
-                    on-="${(e) => onRestartDevice(e)}">
+                    on-click="${() => onRestartDevice()}">
                         Turn Off
                 </paper-button>
             </div>

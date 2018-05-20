@@ -22,7 +22,7 @@ export default class VisionEvents extends LitElement {
         super();
         this.realtimeURL = 'Not set';
         this.realtimeStatus = 'Not available';
-        this.realtimeEvents = getEventsDummy();
+        this.realtimeEvents = [];
         this.storedEvents = [];
     }
 
@@ -39,7 +39,7 @@ export default class VisionEvents extends LitElement {
         const newData = `data:frame/jpeg;base64, ${frame.data}`;
         const frames = [
             ...this.storedEvents,
-            {data: newData, name: frame.name, dev_id: frame.dev_id},
+            {data: newData, frame: frame.name, dev_id: frame.dev_id},
         ];
         this.storedEvents = frames;
     }
@@ -49,7 +49,7 @@ export default class VisionEvents extends LitElement {
     }
 
     _didRender() {
-        const url = `ws://${HOST_ADDRESS}${EVENTS_PORT}`;
+        const url = `ws://${HOST_ADDRESS}${EVENTS_PORT}/d3v1`;
         this.realtimeURL = url;
 
         const socket = io(url);
