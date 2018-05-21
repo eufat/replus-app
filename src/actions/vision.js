@@ -4,3 +4,7 @@ export const setSettings = (settings) => (dispatch, getState) => {
         settings,
     });
 };
+
+export const saveSettings = (settings) => {
+    console.log(settings);
+};
