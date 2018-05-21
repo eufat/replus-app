@@ -1,4 +1,4 @@
-# Replus App
+# Replus App [![CircleCI](https://circleci.com/gh/eufat/replus-app.svg?style=svg)](https://circleci.com/gh/eufat/replus-app)
 
 A Replus Progressive Web App (PWA) for Replus Remote and Replus Vision.
 
