@@ -50,7 +50,7 @@ describe('routing tests', function() {
                 }
                 return el === document ? null : el;
             };
-            console.log(window.deepQuerySelector);
+            // console.log(window.deepQuerySelector);
         });
 
         await testNavigationInADifferentWay(page, 'view2', 'View Two');

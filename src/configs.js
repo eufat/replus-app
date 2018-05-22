@@ -8,6 +8,7 @@ export const firebaseConfig = {
 };
 
 export const env = {
+    REMOTE_API: 'core.replus.co',
     HOST_ADDRESS: '35.184.71.225',
     PORT_ADDRESS: '5000',
     EVENTS_PORT: '5010',

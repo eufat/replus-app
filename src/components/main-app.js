@@ -12,6 +12,7 @@ import './snack-bar.js';
 
 import {connect} from 'pwa-helpers/connect-mixin.js';
 
+import {env} from '../configs';
 import {store} from '../store.js';
 import {
     setCurrentUser,
@@ -47,7 +48,6 @@ class MainApp extends connect(store)(PolymerElement) {
 
     ready() {
         super.ready();
-        // firebase.initializeApp(firebaseConfig);
 
         firebase.auth().onAuthStateChanged((firebaseUser) => {
             if (firebaseUser) {
@@ -59,7 +59,7 @@ class MainApp extends connect(store)(PolymerElement) {
         });
     }
 
-    _stateChanged() {}
+    _stateChanged(state) {}
 }
 
 window.customElements.define('main-app', MainApp);

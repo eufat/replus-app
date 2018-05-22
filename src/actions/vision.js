@@ -5,6 +5,4 @@ export const setSettings = (settings) => (dispatch, getState) => {
     });
 };
 
-export const saveSettings = (settings) => {
-    console.log(settings);
-};
+export const saveSettings = (settings) => {};

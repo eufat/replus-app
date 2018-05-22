@@ -5,16 +5,9 @@ import '@polymer/paper-item/paper-item.js';
 import '@polymer/paper-dialog/paper-dialog.js';
 import '@material/mwc-button/mwc-button.js';
 import '@material/mwc-icon/mwc-icon.js';
-import '@material/mwc-radio/mwc-radio.js';
-
-// Not registered yet on NPM registry
-// import '@material/mwc-icon-toggle/mwc-icon-toggle.js';
-// import '@material/mwc-textfield.js';
-
-// Using old alternative
 import '@polymer/paper-input/paper-input.js';
 
-import {setRooms} from '../actions/remote';
+import {setRooms, addRoom} from '../actions/remote';
 import {getNewRoomTemplate, getRoomsDummy} from '../utils';
 import {store} from '../store.js';
 
@@ -22,6 +15,7 @@ export default class RemoteRooms extends connect(store)(LitElement) {
     static get properties() {
         return {
             rooms: Array,
+            uid: String,
         };
     }
 
@@ -31,7 +25,8 @@ export default class RemoteRooms extends connect(store)(LitElement) {
     }
 
     _stateChanged(state) {
-        this.rooms = state.remote.rooms;
+        this.rooms = _.get(state, 'remote.rooms');
+        this.uid = _.get(state, 'app.currentUser.uid');
     }
 
     _toggleOnEdit(roomIndex) {
@@ -40,6 +35,13 @@ export default class RemoteRooms extends connect(store)(LitElement) {
 
         newRooms[roomIndex].onEdit = !prevOnEditState;
         store.dispatch(setRooms(newRooms));
+    }
+
+    _saveChanges(roomIndex) {
+        this._toggleOnEdit(roomIndex);
+        const room = this.rooms[roomIndex];
+        const uid = this.uid;
+        store.dispatch(addRoom(uid, room));
     }
 
     _changeRoomName(e, roomIndex) {
@@ -151,7 +153,7 @@ export default class RemoteRooms extends connect(store)(LitElement) {
                                       item.name
                                   }" label="Enter Room Name" always-float-label></paper-input>
                                     <mwc-button label="Save Changes" icon="save" on-click="${() =>
-                                        this._toggleOnEdit(
+                                        this._saveChanges(
                                             roomIndex
                                         )}"></mwc-button>
                                     <mwc-button label="Delete Room" icon="delete" on-click="${() =>

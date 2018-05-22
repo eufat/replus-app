@@ -78,6 +78,7 @@ export const updateDrawerState = (opened) => (dispatch, getState) => {
 
 export const setCurrentUser = (user) => (dispatch, getState) => {
     const currentUser = _.pick(user, userDataKey);
+
     dispatch({
         type: SET_CURRENT_USER,
         currentUser,
