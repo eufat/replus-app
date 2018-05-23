@@ -1,5 +1,6 @@
 import { pushLocationTo } from '../utils';
-import { userDataKey } from '../utils.js';
+import { userDataKey } from '../utils';
+import { visionClient } from '../client';
 
 export const UPDATE_PAGE = 'UPDATE_PAGE';
 export const UPDATE_OFFLINE = 'UPDATE_OFFLINE';
@@ -78,6 +79,23 @@ export const updateDrawerState = (opened) => (dispatch, getState) => {
 
 export const setCurrentUser = (user) => (dispatch, getState) => {
     const currentUser = _.pick(user, userDataKey);
+    const payload = {
+        uid: currentUser.uid,
+        display_name: currentUser.displayName,
+        email: currentUser.email,
+        device_list: {},
+    };
+
+    console.log(payload);
+
+    visionClient
+        .post('/profile', payload)
+        .then((response) => {
+            console.log(response);
+        })
+        .catch((error) => {
+            console.log(error);
+        });
 
     dispatch({
         type: SET_CURRENT_USER,

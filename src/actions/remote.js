@@ -1,4 +1,4 @@
-import {remoteAPI} from '../utils';
+import {remoteClient} from '../client';
 
 export const setRooms = (rooms) => (dispatch, getState) => {
     dispatch({
@@ -7,8 +7,8 @@ export const setRooms = (rooms) => (dispatch, getState) => {
     });
 };
 
-export const addRoom = (uid, name) => (dispatch, getState) => {
-    remoteAPI
+export const addRoom = ({uid, name}) => (dispatch, getState) => {
+    remoteClient
         .post('/room-add', {
             uid,
             name,

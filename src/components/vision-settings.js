@@ -7,6 +7,7 @@ import '@polymer/paper-dialog/paper-dialog.js';
 import '@polymer/paper-radio-group/paper-radio-group.js';
 import '@polymer/paper-radio-button/paper-radio-button.js';
 
+import {rotationsList, resolutionsList} from '../utils';
 import {store} from '../store.js';
 import {setSettings, saveSettings} from '../actions/vision.js';
 import {connect} from 'pwa-helpers/connect-mixin.js';
@@ -14,19 +15,21 @@ import {connect} from 'pwa-helpers/connect-mixin.js';
 export default class VisionSettings extends connect(store)(LitElement) {
     static get properties() {
         return {
+            deviceName: '',
             resolutions: Array,
             rotations: Array,
             settingsIsDisabled: Boolean,
             off: Boolean,
             restart: Boolean,
             settings: Object,
+            uid: String,
         };
     }
 
     constructor() {
         super();
-        this.resolutions = ['320p', '480p', '720p', '1080p'];
-        this.rotations = ['0°', '90°', '180°', '270°'];
+        this.resolutions = resolutionsList;
+        this.rotations = rotationsList;
         this.settingsIsDisabled = false;
         this.settings = {
             resolution: 0,
@@ -34,13 +37,14 @@ export default class VisionSettings extends connect(store)(LitElement) {
             lamp: false,
             motion: false,
             update: false,
+            deviceName: 'd3v2',
         };
 
         store.dispatch(setSettings(this.settings));
     }
 
     _stateChanged(state) {
-        this.settings = state.vision.settings;
+        this.settings = _.get(state, 'vision.settings');
     }
 
     getResolution(resolution) {
@@ -60,7 +64,7 @@ export default class VisionSettings extends connect(store)(LitElement) {
     }
 
     handleSaveSettings() {
-        store.dispatch(saveSettings(this.settings));
+        store.dispatch(saveSettings());
     }
 
     toggleSettings(key) {

@@ -12,7 +12,6 @@ import './snack-bar.js';
 
 import {connect} from 'pwa-helpers/connect-mixin.js';
 
-import {env} from '../configs';
 import {store} from '../store.js';
 import {
     setCurrentUser,
@@ -23,8 +22,6 @@ import {
 import './main-auth.js';
 import './main-dashboard.js';
 import './main-not-found.js';
-
-import {firebaseConfig} from '../configs.js';
 
 class MainApp extends connect(store)(PolymerElement) {
     static get template() {

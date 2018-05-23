@@ -8,7 +8,7 @@ STREAM_PORT = STREAM_PORT ? `:${STREAM_PORT}` : '';
 
 export default class VisionStreams extends LitElement {
     _firstRendered() {
-        const canvas = this.$.streamingCanvas;
+        const canvas = null;
         const url = `ws://${HOST_ADDRESS}${STREAM_PORT}/`;
         const player = new JSMpeg.Player(url, {canvas: canvas});
     }

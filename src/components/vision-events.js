@@ -51,21 +51,16 @@ export default class VisionEvents extends LitElement {
     _didRender() {
         const url = `ws://${HOST_ADDRESS}${EVENTS_PORT}/d3v1`;
         this.realtimeURL = url;
-
         const socket = io(url);
-
         socket.on('connect', () => {
             this.realtimeStatus = 'Connected';
         });
-
         socket.on('disconnect', () => {
             this.realtimeStatus = 'Disconnected';
         });
-
         socket.on('frame_now', (data) => {
             this.addFrameRealtime(data);
         });
-
         socket.on('frame_before', (data) => {
             this.addFrameStored(data);
         });

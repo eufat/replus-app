@@ -16,6 +16,8 @@ export default class RemoteRooms extends connect(store)(LitElement) {
         return {
             rooms: Array,
             uid: String,
+            newDevice: Object,
+            newRemote: Object,
         };
     }
 
@@ -41,7 +43,7 @@ export default class RemoteRooms extends connect(store)(LitElement) {
         this._toggleOnEdit(roomIndex);
         const room = this.rooms[roomIndex];
         const uid = this.uid;
-        store.dispatch(addRoom(uid, room));
+        store.dispatch(addRoom({uid, room}));
     }
 
     _changeRoomName(e, roomIndex) {
@@ -86,8 +88,12 @@ export default class RemoteRooms extends connect(store)(LitElement) {
         }
     }
 
-    _render({rooms}) {
-        const roomRemotes = (remotes, roomIndex) =>
+    _handleBrandSelect(e) {
+        store.dispatch(setRooms(newRooms));
+    }
+
+    _render({rooms, newRemote, newDevice}) {
+        const roomRemotes = (remotes, roomIndex, brandSelected) =>
             _.values(
                 _.mapValues(remotes, (remoteValue, remoteKey) => {
                     const onEdit = rooms[roomIndex].onEdit;
@@ -140,6 +146,45 @@ export default class RemoteRooms extends connect(store)(LitElement) {
             const onEdit = rooms[roomIndex].onEdit;
 
             return html`
+                <paper-dialog id="add-new-device-modal">
+                    <div class="modal-content">
+                        <paper-input label="Device ID" always-float-label>
+                        </paper-input>
+                        <paper-input label="Device Activation Code" always-float-label>
+                        </paper-input>
+                        <div class="buttons">
+                            <mwc-button dialog-confirm label="Add This Device"></mwc-button>
+                        </div>
+                    </div>
+                </paper-dialog>
+                <paper-dialog id="add-new-remote-modal">
+                    <div class="modal-content">
+                        <label id="appliance-type">Appliance Type:</label>
+                        <paper-radio-group aria-labelledby="appliance-type">
+                            <paper-radio-button name="tv">TV</paper-radio-button>
+                            <paper-radio-button name="ac">AC</paper-radio-button>
+                        </paper-radio-group>
+                        <paper-dropdown-menu label="Brand">
+                        <paper-listbox
+                            slot="dropdown-content"
+                            attr-for-selected="item-name"
+                            selected="${_.get(newRemote, 'brand')}"
+                            on-select="${(event) =>
+                                this._handleBrandSelect(event, roomIndex)}">
+                            <paper-item item-name="samsung">Samsung</paper-item>
+                            <paper-item item-name="lg">LG</paper-item>
+                            <paper-item item-name="panasonic">Panasonic</paper-item>
+                            <paper-item item-name="toshiba">Toshiba</paper-item>
+                            <paper-item item-name="mitsubishi">Mitsubishi</paper-item>
+                            <paper-item item-name="daikin">Daikin</paper-item>
+                            <paper-item item-name="dast">Dast</paper-item>
+                        </paper-listbox>
+                        </paper-dropdown-menu>
+                        <div class="buttons">
+                            <mwc-button dialog-confirm label="Add This Remote"></mwc-button>
+                        </div>
+                    </div>
+                </paper-dialog>
                 <paper-material>
                     <div class="room-title">
                         ${
@@ -309,40 +354,6 @@ export default class RemoteRooms extends connect(store)(LitElement) {
 
                 }
             </style>
-            <paper-dialog id="add-new-device-modal">
-                <div class="modal-content">
-                    <paper-input label="Device ID" always-float-label>
-                    </paper-input>
-                    <paper-input label="Device Activation Code" always-float-label>
-                    </paper-input>
-                    <div class="buttons">
-                        <mwc-button dialog-confirm label="Add This Device"></mwc-button>
-                    </div>
-                </div>
-            </paper-dialog>
-            <paper-dialog id="add-new-remote-modal">
-                <div class="modal-content">
-                    <label id="appliance-type">Appliance Type:</label>
-                    <paper-radio-group aria-labelledby="appliance-type">
-                    <paper-radio-button name="tv">TV</paper-radio-button>
-                    <paper-radio-button name="ac">AC</paper-radio-button>
-                    </paper-radio-group>
-                    <paper-dropdown-menu label="Brand">
-                    <paper-listbox slot="dropdown-content">
-                        <paper-item>Samsung</paper-item>
-                        <paper-item>LG</paper-item>
-                        <paper-item>Panasonic</paper-item>
-                        <paper-item>Toshiba</paper-item>
-                        <paper-item>Mitsubishi</paper-item>
-                        <paper-item>Daikin</paper-item>
-                        <paper-item>Dast</paper-item>
-                    </paper-listbox>
-                    </paper-dropdown-menu>
-                    <div class="buttons">
-                        <mwc-button dialog-confirm label="Add This Remote"></mwc-button>
-                    </div>
-                </div>
-            </paper-dialog>
             <div class="rooms-container">
                 <div class="paper-container">
                 ${roomsItems}
