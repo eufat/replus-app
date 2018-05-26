@@ -7,7 +7,7 @@ import '@material/mwc-button/mwc-button.js';
 import '@material/mwc-icon/mwc-icon.js';
 import '@polymer/paper-input/paper-input.js';
 
-import {setRooms, addRoom} from '../actions/remote';
+import {setRooms, addRoom, fetchRooms, fetchDevices} from '../actions/remote';
 import {getNewRoomTemplate} from '../utils';
 import {store} from '../store.js';
 
@@ -22,6 +22,11 @@ export default class RemoteRooms extends connect(store)(LitElement) {
 
     constructor() {
         super();
+    }
+
+    _firstRendered() {
+        store.dispatch(fetchRooms());
+        store.dispatch(fetchDevices());
     }
 
     _stateChanged(state) {
@@ -63,9 +68,9 @@ export default class RemoteRooms extends connect(store)(LitElement) {
         store.dispatch(setRooms(newRooms));
     }
 
-    _removeDevice(roomIndex, deviceKey) {
+    _removeDevice(roomIndex, deviceIndex) {
         let newRooms = [...this.rooms];
-        delete newRooms[roomIndex].devices[deviceKey];
+        delete newRooms[roomIndex].devices[deviceIndex];
 
         store.dispatch(setRooms(newRooms));
     }
@@ -111,26 +116,24 @@ export default class RemoteRooms extends connect(store)(LitElement) {
             );
 
         const roomDevices = (devices, roomIndex) =>
-            _.values(
-                _.mapValues(devices, (deviceId, deviceKey) => {
-                    const onEdit = rooms[roomIndex].onEdit;
+            devices.map((device, index) => {
+                const onEdit = rooms[roomIndex].onEdit;
 
-                    return html`
-                        <div class="device-pill">
-                            <span class="pill-content">${deviceId}</span>
-                            ${
-                                onEdit
-                                    ? html`
-                                        <mwc-icon
-                                            on-click="${() => this._removeDevice(roomIndex, deviceKey)}">
-                                            close
-                                        </mwc-icon>`
-                                    : null
-                            }
-                        </div>
-                    `;
-                })
-            );
+                return html`
+                    <div class="device-pill">
+                        <span class="pill-content">${device.id}</span>
+                        ${
+                            onEdit
+                                ? html`
+                                    <mwc-icon
+                                        on-click="${() => this._removeDevice(roomIndex, index)}">
+                                        close
+                                    </mwc-icon>`
+                                : null
+                        }
+                    </div>
+                `;
+            });
 
         const roomsValues = _.values(rooms);
         const roomsItems = roomsValues.map((item, roomIndex) => {

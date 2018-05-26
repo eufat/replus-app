@@ -8,27 +8,48 @@ export const setRooms = (rooms) => (dispatch, getState) => {
     });
 };
 
+export const setDevices = (devices) => (dispatch, getState) => {
+    const prevRooms = _.get(getState(), 'remote.rooms');
+
+    const newRooms = prevRooms.map((room) => {
+        const roomDevices = devices.filter((device) => {
+            return device.room === room.id;
+        });
+
+        const newRoom = {...room, devices: roomDevices};
+        return newRoom;
+    });
+
+    dispatch({
+        type: 'SET_ROOMS',
+        rooms: newRooms,
+    });
+};
+
 export const fetchDevices = () => (dispatch, getState) => {
-    const uid = getState().app.currentUser.uid;
+    const uid = _.get(getState(), 'app.currentUser.uid');
 
     remoteClient
         .post('/get-devices', qs({uid}))
-        .then((response) => {});
+        .then((response) => {
+            dispatch(setDevices(response.data))
+        })
+        .catch((error) => console.log(error));
 };
 
 export const fetchRooms = () => (dispatch, getState) => {
-    const uid = getState().app.currentUser.uid;
+    const uid = _.get(getState(), 'app.currentUser.uid');
 
     remoteClient
         .post('/get-rooms', qs({uid}))
         .then((response) => {
-            setRooms(response);
+            dispatch(setRooms(response.data.rooms));
         })
         .catch((error) => console.log(error));
 };
 
 export const addRoom = (room) => (dispatch, getState) => {
-    const uid = getState().app.currentUser.uid;
+    const uid = _.get(getState(), 'app.currentUser.uid');
     const name = room.name;
 
     remoteClient
@@ -38,7 +59,7 @@ export const addRoom = (room) => (dispatch, getState) => {
 };
 
 export const removeRoom = (room) => (dispatch, getState) => {
-    const uid = getState().app.currentUser.uid;
+    const uid = _.get(getState(), 'app.currentUser.uid');
     const name = room;
 
     remoteClient
@@ -48,7 +69,7 @@ export const removeRoom = (room) => (dispatch, getState) => {
 };
 
 export const addRemote = (room, remote) => (dispatch, getState) => {
-    const uid = getState().app.currentUser.uid;
+    const uid = _.get(getState(), 'app.currentUser.uid');
 
     remoteClient
         .post('/remote-add', qs({uid, room, remote}))
@@ -57,7 +78,7 @@ export const addRemote = (room, remote) => (dispatch, getState) => {
 };
 
 export const removeRemote = (room, remoteID) => (dispatch, getState) => {
-    const uid = getState().app.currentUser.uid;
+    const uid = _.get(getState(), 'app.currentUser.uid');
 
     remoteClient
         .post('/remote-delete', qs({uid, room, remoteID}))
@@ -66,7 +87,7 @@ export const removeRemote = (room, remoteID) => (dispatch, getState) => {
 };
 
 export const addDevice = (room, deviceID, deviceCode) => (dispatch, getState) => {
-    const uid = getState().app.currentUser.uid;
+    const uid = _.get(getState(), 'app.currentUser.uid');
     const type = 'replus';
 
     remoteClient
@@ -79,7 +100,7 @@ export const addDevice = (room, deviceID, deviceCode) => (dispatch, getState) =>
 };
 
 export const removeDevice = (room, deviceID, deviceCode) => (dispatch, getState) => {
-    const uid = getState().app.currentUser.uid;
+    const uid = _.get(getState(), 'app.currentUser.uid');
     const type = 'replus';
 
     remoteClient
