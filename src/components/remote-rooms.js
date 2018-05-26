@@ -7,8 +7,8 @@ import '@material/mwc-button/mwc-button.js';
 import '@material/mwc-icon/mwc-icon.js';
 import '@polymer/paper-input/paper-input.js';
 
-import {setRooms, addRoom, fetchRooms, fetchDevices} from '../actions/remote';
-import {getNewRoomTemplate} from '../utils';
+import {setRooms, addRoom, addRemote, addDevice, fetchRooms, fetchDevices, setNewDevice, setNewRemote} from '../actions/remote';
+import {getNewRoomTemplate, brandsList, toTitleCase} from '../utils';
 import {store} from '../store.js';
 
 export default class RemoteRooms extends connect(store)(LitElement) {
@@ -22,6 +22,9 @@ export default class RemoteRooms extends connect(store)(LitElement) {
 
     constructor() {
         super();
+        this.rooms = [];
+        this.newDevice = {};
+        this.newRemote = {};
     }
 
     _firstRendered() {
@@ -31,6 +34,8 @@ export default class RemoteRooms extends connect(store)(LitElement) {
 
     _stateChanged(state) {
         this.rooms = _.get(state, 'remote.rooms');
+        this.newDevice = _.get(state, 'remote.newDevice');
+        this.newRemote = _.get(state, 'remote.newRemote');
     }
 
     _toggleOnEdit(roomIndex) {
@@ -89,6 +94,25 @@ export default class RemoteRooms extends connect(store)(LitElement) {
         }
     }
 
+    _handleNewDeviceChange(e, key) {
+        const newDevice = {...this.newDevice, [key]: e.target.name};
+        store.dispatch(setNewDevice(newDevice));
+    }
+
+    _handleNewRemoteChange(e, key) {
+        console.log(e.target.name);
+        const newRemote = {...this.newRemote, [key]: e.target.name};
+        store.dispatch(setNewRemote(newRemote));
+    }
+
+    _handleNewDeviceAdd(room) {
+        store.dispatch(addDevice(room));
+    }
+
+    _handleNewRemoteAdd(room) {
+        store.dispatch(addRemote(room));
+    }
+
     _render({rooms, newRemote, newDevice}) {
         const roomRemotes = (remotes, roomIndex, brandSelected) =>
             _.values(
@@ -115,7 +139,7 @@ export default class RemoteRooms extends connect(store)(LitElement) {
                 })
             );
 
-        const roomDevices = (devices, roomIndex) =>
+        const roomDevices = (devices, roomIndex) => {
             devices.map((device, index) => {
                 const onEdit = rooms[roomIndex].onEdit;
 
@@ -134,10 +158,12 @@ export default class RemoteRooms extends connect(store)(LitElement) {
                     </div>
                 `;
             });
+        };
 
         const roomsValues = _.values(rooms);
         const roomsItems = roomsValues.map((item, roomIndex) => {
-            const onEdit = rooms[roomIndex].onEdit;
+            const room = rooms[roomIndex];
+            const onEdit = room.onEdit;
 
             return html`
                 <paper-dialog id="add-new-device-modal">
@@ -145,16 +171,18 @@ export default class RemoteRooms extends connect(store)(LitElement) {
                         <paper-input
                             label="Device ID"
                             always-float-label
-                            on-input="${(e) => handleAddDeviceChange(e, 'deviceID')}"
+                            value="${_.get(this.newDevice, 'deviceID')}"
+                            on-input="${(e) => this._handleNewDeviceChange(e, 'deviceID')}"
                         >
                         </paper-input>
                         <paper-input
                             label="Device Activation Code"
                             always-float-label
-                            on-input="${(e) => handleAddDeviceChange(e, 'deviceCode')}"
+                            value="${_.get(newDevice, 'deviceCode')}"
+                            on-input="${(e) => this._handleNewDeviceChange(e, 'deviceCode')}"
                         >
                         </paper-input>
-                        <div class="buttons">
+                        <div class="buttons" on-click="${() => this._handleNewDeviceAdd(room)}">
                             <mwc-button dialog-confirm label="Add This Device"></mwc-button>
                         </div>
                     </div>
@@ -162,7 +190,7 @@ export default class RemoteRooms extends connect(store)(LitElement) {
                 <paper-dialog id="add-new-remote-modal">
                     <div class="modal-content">
                         <label id="appliance-type">Appliance Type:</label>
-                        <paper-radio-group aria-labelledby="appliance-type">
+                        <paper-radio-group aria-labelledby="appliance-type" on-change="${(e) => this._handleNewRemoteChange(e, 'type')}">
                             <paper-radio-button name="tv">TV</paper-radio-button>
                             <paper-radio-button name="ac">AC</paper-radio-button>
                         </paper-radio-group>
@@ -170,19 +198,17 @@ export default class RemoteRooms extends connect(store)(LitElement) {
                         <paper-listbox
                             slot="dropdown-content"
                             attr-for-selected="item-name"
-                            selected="${_.get(newRemote, 'brand')}"
-                            on-select="${(event) =>
-                                this._handleBrandSelect(event, roomIndex)}">
-                            <paper-item item-name="samsung">Samsung</paper-item>
-                            <paper-item item-name="lg">LG</paper-item>
-                            <paper-item item-name="panasonic">Panasonic</paper-item>
-                            <paper-item item-name="toshiba">Toshiba</paper-item>
-                            <paper-item item-name="mitsubishi">Mitsubishi</paper-item>
-                            <paper-item item-name="daikin">Daikin</paper-item>
-                            <paper-item item-name="dast">Dast</paper-item>
+                            selected="${_.get(this.newRemote, 'brand')}"
+                            on-select="${(e) => this._handleNewRemoteChange(e, 'brand')}"
+                        >
+                            ${
+                                brandsList.map((brand) => {
+                                    return html`<paper-item item-name="${brand}">${toTitleCase(brand)}</paper-item>`;
+                                })
+                            }
                         </paper-listbox>
                         </paper-dropdown-menu>
-                        <div class="buttons">
+                        <div class="buttons" on-click="${() => this._handleNewRemoteAdd(room)}">
                             <mwc-button dialog-confirm label="Add This Remote"></mwc-button>
                         </div>
                     </div>
@@ -218,7 +244,7 @@ export default class RemoteRooms extends connect(store)(LitElement) {
                         }
                     </div>
                     <div class="room-remotes">
-                        ${roomRemotes(item.remotes, roomIndex)}
+                        ${roomRemotes(_.values(item.remotes), roomIndex)}
                         ${
                             onEdit
                                 ? html`
@@ -232,7 +258,7 @@ export default class RemoteRooms extends connect(store)(LitElement) {
                         }
                     </div>
                     <div class="room-devices">
-                        ${roomDevices(item.devices, roomIndex)}
+                        ${roomDevices(_.values(item.devices), roomIndex)}
                         ${
                             onEdit
                                 ? html`

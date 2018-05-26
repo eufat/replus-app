@@ -2,7 +2,7 @@ export function hideOnClickOutside(element) {
     const outsideClickListener = (event) => {
         if (!element.contains(event.target)) {
             if (isBlock(element)) {
-                element.style.display = 'none.js';
+                element.style.display = 'none';
                 removeClickListener();
             }
         }
@@ -15,13 +15,15 @@ export function hideOnClickOutside(element) {
     document.addEventListener('click', outsideClickListener);
 }
 
-const isBlock = (elem) => elem.style.display == 'block.js';
+const isBlock = (elem) => elem.style.display == 'block';
 
 export const userDataKey = ['uid', 'email', 'displayName', 'photoUrl'];
 
 export const resolutionsList = ['320p', '480p', '720p', '1080p'];
 
 export const rotationsList = ['0°', '90°', '180°', '270°'];
+
+export const brandsList = ['samsung', 'lg', 'panasonic', 'toshiba', 'mitsubishi', 'daikin', 'dast'];
 
 export const pushLocationTo = (location) => {
     window.history.pushState({}, null, location);
@@ -119,4 +121,10 @@ export function qs(obj) {
     }
 
     return params;
+}
+
+export function toTitleCase(str) {
+    return str.replace(/\w\S*/g, function(txt) {
+        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    });
 }

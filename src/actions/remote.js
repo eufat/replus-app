@@ -2,9 +2,25 @@ import {remoteClient} from '../client';
 import {qs} from '../utils';
 
 export const setRooms = (rooms) => (dispatch, getState) => {
+    if (rooms) {
+        dispatch({
+            type: 'SET_ROOMS',
+            rooms,
+        });
+    }
+};
+
+export const setNewDevice = (newDevice) => (dispatch, getState) => {
     dispatch({
-        type: 'SET_ROOMS',
-        rooms,
+        type: 'NEW_DEVICE',
+        newDevice,
+    });
+};
+
+export const setNewRemote = (newRemote) => (dispatch, getState) => {
+    dispatch({
+        type: 'NEW_REMOTE',
+        newRemote,
     });
 };
 
@@ -68,8 +84,11 @@ export const removeRoom = (room) => (dispatch, getState) => {
         .catch((error) => console.log(error));
 };
 
-export const addRemote = (room, remote) => (dispatch, getState) => {
+export const addRemote = (room) => (dispatch, getState) => {
     const uid = _.get(getState(), 'app.currentUser.uid');
+    const remoteType = _.get(getState(), 'remote.newRemote.type');
+    const remoteBrand = _.get(getState(), 'remote.newRemote.brand');
+    const remote = `${remoteType} ${remoteBrand}`;
 
     remoteClient
         .post('/remote-add', qs({uid, room, remote}))
@@ -86,15 +105,20 @@ export const removeRemote = (room, remoteID) => (dispatch, getState) => {
         .catch((error) => console.log(error));
 };
 
-export const addDevice = (room, deviceID, deviceCode) => (dispatch, getState) => {
+export const addDevice = (room) => (dispatch, getState) => {
     const uid = _.get(getState(), 'app.currentUser.uid');
+    const deviceID = _.get(getState(), 'remote.newDevice.deviceID');
+    const deviceCode = _.get(getState(), 'remote.newDevice.deviceCode');
     const type = 'replus';
 
     remoteClient
         .post('/device-register', qs({uid, type, deviceID, deviceCode}))
         .then((response) => {
+            console.log(response);
             remoteClient
-                .post('/device-assign', {uid, room, deviceID});
+                .post('/device-assign', qs({uid, room, deviceID}))
+                .then((response) => console.log(response))
+                .catch((error) => console.log(error));
         })
         .catch((error) => console.log(error));
 };

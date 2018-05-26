@@ -56,7 +56,9 @@ class MainApp extends connect(store)(PolymerElement) {
         });
     }
 
-    _stateChanged(state) {}
+    _stateChanged(state) {
+        console.log(state);
+    }
 }
 
 window.customElements.define('main-app', MainApp);
