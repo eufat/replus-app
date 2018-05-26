@@ -42,8 +42,7 @@ export default class RemoteRooms extends connect(store)(LitElement) {
     _saveChanges(roomIndex) {
         this._toggleOnEdit(roomIndex);
         const room = this.rooms[roomIndex];
-        const uid = this.uid;
-        store.dispatch(addRoom({uid, room}));
+        store.dispatch(addRoom(room));
     }
 
     _changeRoomName(e, roomIndex) {
@@ -86,10 +85,6 @@ export default class RemoteRooms extends connect(store)(LitElement) {
                 e.target
             );
         }
-    }
-
-    _handleBrandSelect(e) {
-        store.dispatch(setRooms(newRooms));
     }
 
     _render({rooms, newRemote, newDevice}) {
@@ -147,9 +142,17 @@ export default class RemoteRooms extends connect(store)(LitElement) {
             return html`
                 <paper-dialog id="add-new-device-modal">
                     <div class="modal-content">
-                        <paper-input label="Device ID" always-float-label>
+                        <paper-input
+                            label="Device ID"
+                            always-float-label
+                            on-input="${(e) => handleAddDeviceChange(e, 'deviceID')}"
+                        >
                         </paper-input>
-                        <paper-input label="Device Activation Code" always-float-label>
+                        <paper-input
+                            label="Device Activation Code"
+                            always-float-label
+                            on-input="${(e) => handleAddDeviceChange(e, 'deviceCode')}"
+                        >
                         </paper-input>
                         <div class="buttons">
                             <mwc-button dialog-confirm label="Add This Device"></mwc-button>
