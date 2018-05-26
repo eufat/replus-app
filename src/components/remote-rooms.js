@@ -8,14 +8,13 @@ import '@material/mwc-icon/mwc-icon.js';
 import '@polymer/paper-input/paper-input.js';
 
 import {setRooms, addRoom} from '../actions/remote';
-import {getNewRoomTemplate, getRoomsDummy} from '../utils';
+import {getNewRoomTemplate} from '../utils';
 import {store} from '../store.js';
 
 export default class RemoteRooms extends connect(store)(LitElement) {
     static get properties() {
         return {
             rooms: Array,
-            uid: String,
             newDevice: Object,
             newRemote: Object,
         };
@@ -23,12 +22,10 @@ export default class RemoteRooms extends connect(store)(LitElement) {
 
     constructor() {
         super();
-        store.dispatch(setRooms(getRoomsDummy()));
     }
 
     _stateChanged(state) {
         this.rooms = _.get(state, 'remote.rooms');
-        this.uid = _.get(state, 'app.currentUser.uid');
     }
 
     _toggleOnEdit(roomIndex) {

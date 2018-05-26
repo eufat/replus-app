@@ -86,8 +86,6 @@ export const setCurrentUser = (user) => (dispatch, getState) => {
         device_list: {},
     };
 
-    console.log(payload);
-
     visionClient
         .post('/profile', payload)
         .then((response) => {

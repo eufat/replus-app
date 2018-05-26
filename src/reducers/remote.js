@@ -1,5 +1,5 @@
 const initialState = {
-    rooms: {},
+    rooms: [],
 };
 
 const remote = (state = initialState, action) => {

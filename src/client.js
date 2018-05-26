@@ -1,6 +1,6 @@
 export const remoteClient = axios.create({
-    baseURL: `http://core.replus.co/api/`,
-    headers: {'Content-Type': 'text/plain'},
+    baseURL: `https://core.replus.co/api/`,
+    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
 });
 
 export const visionClient = axios.create({
