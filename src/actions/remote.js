@@ -48,7 +48,7 @@ export const fetchDevices = () => (dispatch, getState) => {
     remoteClient
         .post('/get-devices', qs({uid}))
         .then((response) => {
-            dispatch(setDevices(response.data))
+            dispatch(setDevices(response.data));
         })
         .catch((error) => console.log(error));
 };
@@ -74,13 +74,15 @@ export const addRoom = (room) => (dispatch, getState) => {
         .catch((error) => console.log(error));
 };
 
-export const removeRoom = (room) => (dispatch, getState) => {
+export const removeRoom = (roomObj) => (dispatch, getState) => {
     const uid = _.get(getState(), 'app.currentUser.uid');
-    const name = room;
+    const room = roomObj.id;
 
     remoteClient
-        .post('/room-delete', qs({uid, name}))
-        .then((response) => console.log(response))
+        .post('/room-delete', qs({uid, room}))
+        .then((response) => {
+            dispatch(fetchRooms());
+        })
         .catch((error) => console.log(error));
 };
 

@@ -7,7 +7,7 @@ import '@material/mwc-button/mwc-button.js';
 import '@material/mwc-icon/mwc-icon.js';
 import '@polymer/paper-input/paper-input.js';
 
-import {setRooms, addRoom, addRemote, addDevice, fetchRooms, fetchDevices, setNewDevice, setNewRemote} from '../actions/remote';
+import {setRooms, addRoom, removeRoom, addRemote, addDevice, fetchRooms, fetchDevices, setNewDevice, setNewRemote} from '../actions/remote';
 import {getNewRoomTemplate, brandsList, toTitleCase} from '../utils';
 import {store} from '../store.js';
 
@@ -17,6 +17,7 @@ export default class RemoteRooms extends connect(store)(LitElement) {
             rooms: Array,
             newDevice: Object,
             newRemote: Object,
+            uid: String,
         };
     }
 
@@ -27,15 +28,18 @@ export default class RemoteRooms extends connect(store)(LitElement) {
         this.newRemote = {};
     }
 
-    _firstRendered() {
-        store.dispatch(fetchRooms());
-        store.dispatch(fetchDevices());
-    }
+    _didRender(props, changedProps, prevProps) {
+        if (changedProps.uid) {
+            store.dispatch(fetchRooms());
+            store.dispatch(fetchDevices());
+        }
+    };
 
     _stateChanged(state) {
         this.rooms = _.get(state, 'remote.rooms');
         this.newDevice = _.get(state, 'remote.newDevice');
         this.newRemote = _.get(state, 'remote.newRemote');
+        this.uid = _.get(state, 'app.currentUser.uid');
     }
 
     _toggleOnEdit(roomIndex) {
@@ -60,10 +64,7 @@ export default class RemoteRooms extends connect(store)(LitElement) {
     }
 
     _removeRoom(roomIndex) {
-        let newRooms = [...this.rooms];
-        newRooms.splice(roomIndex, 1);
-
-        store.dispatch(setRooms(newRooms));
+        store.dispatch(removeRoom(this.rooms[roomIndex]));
     }
 
     _removeRemote(roomIndex, remoteKey) {
@@ -94,13 +95,16 @@ export default class RemoteRooms extends connect(store)(LitElement) {
         }
     }
 
+    getIndexOf(array, element) {
+        return array.indexOf(element);
+    }
+
     _handleNewDeviceChange(e, key) {
         const newDevice = {...this.newDevice, [key]: e.target.name};
         store.dispatch(setNewDevice(newDevice));
     }
 
     _handleNewRemoteChange(e, key) {
-        console.log(e.target.name);
         const newRemote = {...this.newRemote, [key]: e.target.name};
         store.dispatch(setNewRemote(newRemote));
     }
@@ -198,8 +202,8 @@ export default class RemoteRooms extends connect(store)(LitElement) {
                         <paper-listbox
                             slot="dropdown-content"
                             attr-for-selected="item-name"
-                            selected="${_.get(this.newRemote, 'brand')}"
-                            on-select="${(e) => this._handleNewRemoteChange(e, 'brand')}"
+                            selected="${this.getIndexOf(brandsList, _.get(this.newRemote, 'brand'))}"
+                            on-iron-items-changed="${(e) => this._handleNewRemoteChange(e, 'brand')}"
                         >
                             ${
                                 brandsList.map((brand) => {
