@@ -7,7 +7,7 @@ import '@material/mwc-button/mwc-button.js';
 import '@material/mwc-icon/mwc-icon.js';
 import '@polymer/paper-input/paper-input.js';
 
-import {setRooms, addRoom, removeRoom, addRemote, addDevice, fetchRooms, fetchDevices, setNewDevice, setNewRemote} from '../actions/remote';
+import {setRooms, fetchRooms, fetchDevices, addRoom, removeRoom, setNewRemote, addRemote, removeRemote, addDevice, setNewDevice} from '../actions/remote';
 import {getNewRoomTemplate, brandsList, toTitleCase} from '../utils';
 import {store} from '../store.js';
 
@@ -50,12 +50,6 @@ export default class RemoteRooms extends connect(store)(LitElement) {
         store.dispatch(setRooms(newRooms));
     }
 
-    _saveChanges(roomIndex) {
-        this._toggleOnEdit(roomIndex);
-        const room = this.rooms[roomIndex];
-        store.dispatch(addRoom(room));
-    }
-
     _changeRoomName(e, roomIndex) {
         let newRooms = [...this.rooms];
 
@@ -68,10 +62,10 @@ export default class RemoteRooms extends connect(store)(LitElement) {
     }
 
     _removeRemote(roomIndex, remoteKey) {
-        let newRooms = [...this.rooms];
-        delete newRooms[roomIndex].remotes[remoteKey];
-
-        store.dispatch(setRooms(newRooms));
+        const room = this.rooms[roomIndex];
+        const roomID = room.id;
+        const remoteID = remoteKey;
+        store.dispatch(removeRemote(roomID, remoteID));
     }
 
     _removeDevice(roomIndex, deviceIndex) {
@@ -105,7 +99,8 @@ export default class RemoteRooms extends connect(store)(LitElement) {
     }
 
     _handleNewRemoteChange(e, key) {
-        const newRemote = {...this.newRemote, [key]: e.target.name};
+        const value = key == 'brand' ? e.target.value : e.target.name;
+        const newRemote = {...this.newRemote, [key]: value};
         store.dispatch(setNewRemote(newRemote));
     }
 
@@ -113,38 +108,37 @@ export default class RemoteRooms extends connect(store)(LitElement) {
         store.dispatch(addDevice(room));
     }
 
-    _handleNewRemoteAdd(room) {
-        store.dispatch(addRemote(room));
+    _handleNewRemoteAdd(roomID) {
+        store.dispatch(addRemote(roomID));
     }
 
     _render({rooms, newRemote, newDevice}) {
-        const roomRemotes = (remotes, roomIndex, brandSelected) =>
-            _.values(
-                _.mapValues(remotes, (remoteValue, remoteKey) => {
-                    const onEdit = rooms[roomIndex].onEdit;
-                    const applicanceType = remoteValue.split(' ')[0].toLowerCase();
+        const roomRemotes = (remotes, roomIndex) => {
+            return _.mapValues(remotes, (remoteValue, remoteKey, remoteObj) => {
+                const onEdit = rooms[roomIndex].onEdit;
+                const applicanceType = remoteValue.split(' ')[0].toLowerCase();
 
-                    return html`
-                        <div class="remote-item">
-                            ${
-                                onEdit
-                                    ? html`
-                                        <mwc-button
-                                            label="Remove"
-                                            icon="close"
-                                            on-click="${() => this._removeRemote(roomIndex, remoteKey)}">
-                                        </mwc-button>`
-                                    : null
-                            }
-                            <img class="appliance-icon" src="images/${applicanceType}-icon.png"/>
-                            <p>${remoteValue}</p>
-                        </div>
-                    `;
-                })
-            );
+                return html`
+                    <div class="remote-item">
+                        ${
+                            onEdit
+                                ? html`
+                                    <mwc-button
+                                        label="Remove"
+                                        icon="close"
+                                        on-click="${() => this._removeRemote(roomIndex, remoteKey)}">
+                                    </mwc-button>`
+                                : null
+                        }
+                        <img class="appliance-icon" src="images/${applicanceType}-icon.png"/>
+                        <p>${toTitleCase(remoteValue)}</p>
+                    </div>
+                `;
+            });
+        };
 
         const roomDevices = (devices, roomIndex) => {
-            devices.map((device, index) => {
+            return devices.map((device, index) => {
                 const onEdit = rooms[roomIndex].onEdit;
 
                 return html`
@@ -170,7 +164,7 @@ export default class RemoteRooms extends connect(store)(LitElement) {
             const onEdit = room.onEdit;
 
             return html`
-                <paper-dialog id="add-new-device-modal">
+                <paper-dialog id="add-new-device-modal-${roomIndex}">
                     <div class="modal-content">
                         <paper-input
                             label="Device ID"
@@ -191,28 +185,33 @@ export default class RemoteRooms extends connect(store)(LitElement) {
                         </div>
                     </div>
                 </paper-dialog>
-                <paper-dialog id="add-new-remote-modal">
+                <paper-dialog id="add-new-remote-modal-${roomIndex}">
                     <div class="modal-content">
-                        <label id="appliance-type">Appliance Type:</label>
-                        <paper-radio-group aria-labelledby="appliance-type" on-change="${(e) => this._handleNewRemoteChange(e, 'type')}">
+                        <label id="appliance-type">Choose Remote:</label>
+                        <paper-radio-group
+                            aria-labelledby="appliance-type"
+                            selected="${_.get(this.newRemote, 'type')}"
+                            on-change="${(e) => this._handleNewRemoteChange(e, 'type')}"
+                        >
                             <paper-radio-button name="tv">TV</paper-radio-button>
                             <paper-radio-button name="ac">AC</paper-radio-button>
                         </paper-radio-group>
-                        <paper-dropdown-menu label="Brand">
-                        <paper-listbox
-                            slot="dropdown-content"
-                            attr-for-selected="item-name"
-                            selected="${this.getIndexOf(brandsList, _.get(this.newRemote, 'brand'))}"
-                            on-iron-items-changed="${(e) => this._handleNewRemoteChange(e, 'brand')}"
+                        <select
+                            selected="${_.get(this.newRemote, 'brand')}"
+                            on-change="${(e) => this._handleNewRemoteChange(e, 'brand')}"
                         >
                             ${
                                 brandsList.map((brand) => {
-                                    return html`<paper-item item-name="${brand}">${toTitleCase(brand)}</paper-item>`;
+                                    return html`
+                                        <option
+                                            value="${brand}"
+                                        >
+                                                ${toTitleCase(brand)}
+                                        </option>`;
                                 })
                             }
-                        </paper-listbox>
-                        </paper-dropdown-menu>
-                        <div class="buttons" on-click="${() => this._handleNewRemoteAdd(room)}">
+                        </select>
+                        <div class="buttons" on-click="${() => this._handleNewRemoteAdd(item.id)}">
                             <mwc-button dialog-confirm label="Add This Remote"></mwc-button>
                         </div>
                     </div>
@@ -229,9 +228,9 @@ export default class RemoteRooms extends connect(store)(LitElement) {
                                         always-float-label>
                                     </paper-input>
                                     <mwc-button
-                                        label="Save Changes"
-                                        icon="save"
-                                        on-click="${() => this._saveChanges(roomIndex)}">
+                                        label="Close Edit"
+                                        icon="close"
+                                        on-click="${() => this._toggleOnEdit(roomIndex)}">
                                     </mwc-button>
                                     <mwc-button
                                         label="Delete Room"
@@ -248,13 +247,13 @@ export default class RemoteRooms extends connect(store)(LitElement) {
                         }
                     </div>
                     <div class="room-remotes">
-                        ${roomRemotes(_.values(item.remotes), roomIndex)}
+                        ${_.values(roomRemotes(item.remotes, roomIndex))}
                         ${
                             onEdit
                                 ? html`
                                     <div
                                         class="remote-item"
-                                        on-click="${() => this.shadowRoot.getElementById('add-new-remote-modal').open()}">
+                                        on-click="${() => this.shadowRoot.getElementById(`add-new-remote-modal-${roomIndex}`).open()}">
                                         <img class="appliance-icon" src="images/add-plus-button.png"/>
                                         <p>Add Remote</p>
                                     </div>`
@@ -269,7 +268,7 @@ export default class RemoteRooms extends connect(store)(LitElement) {
                                     <mwc-button
                                         label="Add device"
                                         icon="add"
-                                        on-click="${() => this.shadowRoot.getElementById('add-new-device-modal').open()}">
+                                        on-click="${() => this.shadowRoot.getElementById(`add-new-device-modal-${roomIndex}`).open()}">
                                     </mwc-button>`
                                 : null
                         }

@@ -74,14 +74,14 @@ export const addRoom = (room) => (dispatch, getState) => {
         .catch((error) => console.log(error));
 };
 
-export const removeRoom = (roomObj) => (dispatch, getState) => {
+export const removeRoom = (room) => (dispatch, getState) => {
     const uid = _.get(getState(), 'app.currentUser.uid');
-    const room = roomObj.id;
 
     remoteClient
-        .post('/room-delete', qs({uid, room}))
+        .post('/room-delete', qs({uid, room: room.id}))
         .then((response) => {
             dispatch(fetchRooms());
+            console.log(response);
         })
         .catch((error) => console.log(error));
 };
@@ -94,7 +94,10 @@ export const addRemote = (room) => (dispatch, getState) => {
 
     remoteClient
         .post('/remote-add', qs({uid, room, remote}))
-        .then((response) => console.log(response))
+        .then((response) => {
+            dispatch(fetchRooms());
+            console.log(response);
+        })
         .catch((error) => console.log(error));
 };
 
@@ -103,7 +106,10 @@ export const removeRemote = (room, remoteID) => (dispatch, getState) => {
 
     remoteClient
         .post('/remote-delete', qs({uid, room, remoteID}))
-        .then((response) => console.log(response))
+        .then((response) => {
+            dispatch(fetchRooms());
+            console.log(response);
+        })
         .catch((error) => console.log(error));
 };
 

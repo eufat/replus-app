@@ -1,7 +1,10 @@
 const initialState = {
     rooms: [],
     newDevice: {},
-    newRemote: {}
+    newRemote: {
+        type: 'tv',
+        brand: 'samsung',
+    },
 };
 
 const remote = (state = initialState, action) => {

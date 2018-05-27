@@ -1,3 +1,13 @@
+export const userDataKey = ['uid', 'email', 'displayName', 'photoUrl'];
+
+export const resolutionsList = ['320p', '480p', '720p', '1080p'];
+
+export const rotationsList = ['0°', '90°', '180°', '270°'];
+
+export const brandsList = ['samsung', 'lg', 'panasonic', 'toshiba', 'mitsubishi', 'daikin', 'dast'];
+
+export const upperCases = ['lg', 'tv', 'ac'];
+
 export function hideOnClickOutside(element) {
     const outsideClickListener = (event) => {
         if (!element.contains(event.target)) {
@@ -16,14 +26,6 @@ export function hideOnClickOutside(element) {
 }
 
 const isBlock = (elem) => elem.style.display == 'block';
-
-export const userDataKey = ['uid', 'email', 'displayName', 'photoUrl'];
-
-export const resolutionsList = ['320p', '480p', '720p', '1080p'];
-
-export const rotationsList = ['0°', '90°', '180°', '270°'];
-
-export const brandsList = ['samsung', 'lg', 'panasonic', 'toshiba', 'mitsubishi', 'daikin', 'dast'];
 
 export const pushLocationTo = (location) => {
     window.history.pushState({}, null, location);
@@ -125,6 +127,12 @@ export function qs(obj) {
 
 export function toTitleCase(str) {
     return str.replace(/\w\S*/g, function(txt) {
-        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+        const shouldUpperCase = upperCases.indexOf(txt) > -1;
+
+        if (shouldUpperCase) {
+            return txt.toUpperCase();
+        } else {
+            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+        }
     });
 }
