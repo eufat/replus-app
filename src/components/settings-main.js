@@ -7,38 +7,45 @@ import '@polymer/paper-dialog/paper-dialog.js';
 import '@polymer/paper-radio-group/paper-radio-group.js';
 import '@polymer/paper-radio-button/paper-radio-button.js';
 
+import {rotationsList, resolutionsList} from '../utils';
 import {store} from '../store.js';
-import {setSettings} from '../actions/vision.js';
+import {setSettings, saveSettings} from '../actions/vision.js';
 import {connect} from 'pwa-helpers/connect-mixin.js';
 
-export default class RemoteSettings extends connect(store)(LitElement) {
+export default class SettingsMain extends connect(store)(LitElement) {
     static get properties() {
         return {
+            deviceName: '',
             resolutions: Array,
             rotations: Array,
             settingsIsDisabled: Boolean,
             off: Boolean,
             restart: Boolean,
             settings: Object,
+            uid: String,
         };
     }
 
     constructor() {
         super();
-        this.resolutions = ['320p', '480p', '720p', '1080p'];
-        this.rotations = ['0°', '90°', '180°', '270°'];
+        this.resolutions = resolutionsList;
+        this.rotations = rotationsList;
         this.settingsIsDisabled = false;
-        this.off = false;
         this.settings = {
             resolution: 0,
             rotation: 0,
             lamp: false,
             motion: false,
             update: false,
+            deviceName: 'd3v2',
         };
+
+        store.dispatch(setSettings(this.settings));
     }
 
-    _stateChanged(state) {}
+    _stateChanged(state) {
+        this.settings = _.get(state, 'vision.settings');
+    }
 
     getResolution(resolution) {
         return this.resolutions[resolution];
@@ -57,41 +64,22 @@ export default class RemoteSettings extends connect(store)(LitElement) {
     }
 
     handleSaveSettings() {
+        store.dispatch(saveSettings());
+    }
+
+    toggleSettings(key) {
+        this.settings = {...this.settings, [key]: !this.settings[key]};
         store.dispatch(setSettings(this.settings));
     }
 
-    openResolutionDialog() {
-        this.shadowRoot.getElementById('resolutionDialog').open();
-    }
-
-    openRotationDialog() {
-        this.shadowRoot.getElementById('rotationDialog').open();
-    }
-
-    openTurnOffDialog() {
-        this.shadowRoot.getElementById('turnOffDialog').open();
-    }
-
-    openRestartDialog() {
-        this.shadowRoot.getElementById('restartDialog').open();
-    }
-
-    onTurnOffDevice() {
-        this.off = true;
-        this.handleSaveSettings();
-    }
-
-    onRestartDevice() {
-        this.restart = true;
-        this.handleSaveSettings();
+    changeSettings(event, key) {
+        const value = event.target.name;
+        this.settings = {...this.settings, [key]: value};
+        store.dispatch(setSettings(this.settings));
     }
 
     _render({settings, resolutions, settingsIsDisabled, rotations}) {
         const {
-            openTurnOffDialog,
-            openRestartDialog,
-            openResolutionDialog,
-            openRotationDialog,
             getIndexOf,
             onTurnOffDevice,
             handleSaveSettings,
@@ -103,9 +91,6 @@ export default class RemoteSettings extends connect(store)(LitElement) {
 
         return html`
         <style>
-            .command {
-                border-bottom: 1px solid #ECEFF1;
-            }
             .settings {
                 border-bottom: 1px solid #ECEFF1;
             }
@@ -127,50 +112,36 @@ export default class RemoteSettings extends connect(store)(LitElement) {
                 margin: 0;
             }
         </style>
-        <div role="listbox" class="command">
-            <paper-item on-="${(e) => openTurnOffDialog(e)}">
-                <paper-item-body>
-                    <div>Turn Off Device</div>
-                </paper-item-body>
-            </paper-item>
-            <paper-item  on-="${(e) => openRestartDialog(e)}">
-                <paper-item-body>
-                    <div>Restart Device</div>
-                </paper-item-body>
-            </paper-item>
-        </div>
         <div role="listbox" class="settings">
-            <paper-item>
+            <paper-item on-click="${() => this.toggleSettings('lamp')}">
                 <paper-item-body>
-                    <div>Light</div>
+                    <div>Lamp</div>
                 </paper-item-body>
                 <paper-toggle-button
-                    disabled$="${settingsIsDisabled}"
                     checked="${settings.lamp}"
                     class="settings-right">
                 </paper-toggle-button>
             </paper-item>
-            <paper-item>
+            <paper-item on-click="${() => this.toggleSettings('motion')}">
                 <paper-item-body>
                     <div>Motion Detection</div>
                 </paper-item-body>
                 <paper-toggle-button
-                    disabled$="${settingsIsDisabled}"
                     checked="${settings.motion}"
                     class="settings-right">
                 </paper-toggle-button>
             </paper-item>
-            <paper-item>
+            <paper-item on-click="${() => this.toggleSettings('update')}">
                 <paper-item-body>
                     <div>Auto Update</div>
                 </paper-item-body>
                 <paper-toggle-button
-                    disabled$="${settingsIsDisabled}"
                     checked="${settings.update}"
                     class="settings-right">
                 </paper-toggle-button>
             </paper-item>
-            <paper-item on-="${(e) => openResolutionDialog(e)}">
+            <paper-item on-click="${() =>
+                this.shadowRoot.getElementById('resolutionDialog').open()}">
                 <paper-item-body>
                     <div>Image Resolution</div>
                 </paper-item-body>
@@ -178,7 +149,8 @@ export default class RemoteSettings extends connect(store)(LitElement) {
                     ${settingsResolution}
                 </div>
             </paper-item>
-            <paper-item on-="${(e) => openRotationDialog(e)}">
+            <paper-item on-click="${() =>
+                this.shadowRoot.getElementById('rotationDialog').open()}">
                 <paper-item-body>
                     <div>Image Rotation</div>
                 </paper-item-body>
@@ -187,19 +159,20 @@ export default class RemoteSettings extends connect(store)(LitElement) {
                 </div>
             </paper-item>
             <paper-button
-                disabled$="${(e) => settingsIsDisabled(e)}"
                 class="save"
                 raised
-                on-="${(e) => handleSaveSettings(e)}">
+                on-click="${() => handleSaveSettings()}">
                     Save Settings
             </paper-button>
         </div>
         <paper-dialog id="resolutionDialog">
-            <paper-radio-group selected="${settings.resolution}">
+            <paper-radio-group
+                selected="${settings.resolution}"
+                on-change="${(e) => this.changeSettings(e, 'resolution')}"
+            >
                 ${resolutions.map(
                     (item) => html`
                         <paper-radio-button
-                            disabled$="${settingsIsDisabled}"
                             name="${this.getIndexOf(resolutions, item)}">
                                 ${item}
                         </paper-radio-button>
@@ -208,11 +181,13 @@ export default class RemoteSettings extends connect(store)(LitElement) {
             </paper-radio-group>
         </paper-dialog>
         <paper-dialog id="rotationDialog">
-            <paper-radio-group selected="${settings.rotation}">
+            <paper-radio-group
+                selected="${settings.rotation}"
+                on-change="${(e) => this.changeSettings(e, 'rotation')}"
+            >
             ${rotations.map(
                 (item) => html`
                         <paper-radio-button
-                            disabled$="${settingsIsDisabled}"
                             name="${getIndexOf(rotations, item)}">
                                 ${item}
                         </paper-radio-button>
@@ -227,7 +202,7 @@ export default class RemoteSettings extends connect(store)(LitElement) {
                 <paper-button
                     dialog-confirm
                     autofocus
-                    on-="${(e) => onTurnOffDevice(e)}">
+                    on-click="${() => onTurnOffDevice()}">
                         Turn Off
                 </paper-button>
             </div>
@@ -239,7 +214,7 @@ export default class RemoteSettings extends connect(store)(LitElement) {
                 <paper-button
                     dialog-confirm
                     autofocus
-                    on-="${(e) => onRestartDevice(e)}">
+                    on-click="${() => onRestartDevice()}">
                         Turn Off
                 </paper-button>
             </div>
@@ -248,4 +223,4 @@ export default class RemoteSettings extends connect(store)(LitElement) {
     }
 }
 
-customElements.define('remote-settings', RemoteSettings);
+customElements.define('settings-main', SettingsMain);

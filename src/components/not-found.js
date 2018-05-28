@@ -11,4 +11,4 @@ export default class NotFound extends LitElement {
     }
 }
 
-customElements.define('main-not-found', NotFound);
+customElements.define('not-found', NotFound);

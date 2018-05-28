@@ -11,7 +11,7 @@ import {setRooms, fetchRooms, fetchDevices, addRoom, removeRoom, setNewRemote, a
 import {getNewRoomTemplate, brandsList, toTitleCase} from '../utils';
 import {store} from '../store.js';
 
-export default class RemoteRooms extends connect(store)(LitElement) {
+export default class RoomsMain extends connect(store)(LitElement) {
     static get properties() {
         return {
             rooms: Array,
@@ -444,4 +444,4 @@ export default class RemoteRooms extends connect(store)(LitElement) {
     }
 }
 
-customElements.define('remote-rooms', RemoteRooms);
+customElements.define('rooms-main', RoomsMain);

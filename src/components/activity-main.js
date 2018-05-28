@@ -8,7 +8,7 @@ const HOST_ADDRESS = env.HOST_ADDRESS;
 let EVENTS_PORT = env.EVENTS_PORT;
 EVENTS_PORT = EVENTS_PORT ? `:${EVENTS_PORT}` : '';
 
-export default class VisionEvents extends LitElement {
+export default class activityMain extends LitElement {
     static get properties() {
         return {
             realtimeStatus: String,
@@ -107,4 +107,4 @@ export default class VisionEvents extends LitElement {
     }
 }
 
-customElements.define('vision-events', VisionEvents);
+customElements.define('activity-main', activityMain);

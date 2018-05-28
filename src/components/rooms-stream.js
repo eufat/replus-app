@@ -6,7 +6,7 @@ const HOST_ADDRESS = env.HOST_ADDRESS;
 let STREAM_PORT = env.STREAM_PORT;
 STREAM_PORT = STREAM_PORT ? `:${STREAM_PORT}` : '';
 
-export default class VisionStreams extends LitElement {
+export default class RoomsStream extends LitElement {
     _firstRendered() {
         const canvas = null;
         const url = `ws://${HOST_ADDRESS}${STREAM_PORT}/`;
@@ -20,4 +20,4 @@ export default class VisionStreams extends LitElement {
     }
 }
 
-customElements.define('vision-streams', VisionStreams);
+customElements.define('rooms-stream', RoomsStream);

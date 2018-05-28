@@ -35,15 +35,12 @@ import {
 } from '../actions/app.js';
 
 import './main-help.js';
-import './main-not-found.js';
+import './not-found.js';
 import './main-account.js';
 
-import './remote-rooms.js';
-import './remote-settings.js';
-
-import './vision-events.js';
-import './vision-settings.js';
-import './vision-streams.js';
+import './activity-main.js';
+import './rooms-main.js';
+import './settings-main.js';
 
 class MainDashboard extends connect(store)(PolymerElement) {
     static get template() {
@@ -88,12 +85,6 @@ class MainDashboard extends connect(store)(PolymerElement) {
                 route="[[route]]"
                 pattern="/:page"
                 data="{{containerRoute}}"
-                tail="{{subroute}}">
-            </app-route>
-            <app-route
-                route="{{subroute}}"
-                pattern="/:page"
-                data="{{pageRoute}}">
             </app-route>
             <app-drawer-layout fullbleed>
 
@@ -110,19 +101,13 @@ class MainDashboard extends connect(store)(PolymerElement) {
 
                   <!-- Dashboard content pages -->
                   <iron-pages selected="[[containerRoute.page]]" attr-for-selected="container-name" fallback-selection="fallback">
-                      <iron-pages container-name="vision" selected="[[pageRoute.page]]" attr-for-selected="page-name" fallback-selection="fallback">
-                          <div page-name="streams"><vision-streams /></div>
-                          <div page-name="events"><vision-events /></div>
-                          <div page-name="settings"><vision-settings /></div>
-                          <div page-name="fallback"><main-not-found /></div>
-                      </iron-pages>
-                      <iron-pages container-name="remote" selected="[[pageRoute.page]]" attr-for-selected="page-name" fallback-selection="fallback">
-                          <div page-name="rooms"><remote-rooms /></div>
-                          <div page-name="settings"><remote-settings /></div>
-                          <div page-name="fallback"><main-not-found /></div>
-                      </iron-pages>
                       <div container-name="account"><main-account /></div>
-                      <div container-name="fallback"><remote-rooms /></div>
+                      <div container-name="help"><main-help /></div>
+                      <div container-name="account"><main-account /></div>
+                      <div container-name="activity"><activity-main /></div>
+                      <div container-name="rooms"><rooms-main /></div>
+                      <div container-name="settings"><settings-main /></div>
+                      <div container-name="fallback"><activity-main /></div>
                   </iron-pages>
 
                   <!-- Dashboard app bar menu -->
@@ -142,47 +127,26 @@ class MainDashboard extends connect(store)(PolymerElement) {
               </app-header-layout>
 
               <app-drawer id="drawer" slot="drawer">
-
-                  <!-- Dashboard drawer -->
-                  <paper-dropdown-menu class="device-dropdown" label="Choose device"  vertical-offset="40" no-label-float noink no-animations>
-                      <paper-listbox slot="dropdown-content" selected="{{mapDeviceRoute(containerRoute.page)}}">
-                          <a href='/dashboard/remote/rooms' tabindex='-1'>
-                              <paper-item >Replus Remote</paper-item>
-                          </a>
-                          <a href='/dashboard/vision/events' tabindex='-1'>
-                              <paper-item >Replus Vision</paper-item>
-                          </a>
-                      </paper-listbox>
-                  </paper-dropdown-menu>
-                  <template is="dom-if" if="{{isEqualTo(containerRoute.page, 'vision')}}">
-                      <iron-selector
-                          class='nav-menu'
-                          selected="[[pageRoute.page]]"
-                          attr-for-selected='name'
-                          on-iron-activate='drawerSelected'>
-                          <template is='dom-repeat' items='{{visionMenus}}'>
-                          <a name='[[item.name]]' href='/dashboard/vision/[[item.name]]' tabindex='-1'>
-                              <paper-item raised>[[item.title]]</paper-item>
-                          </a>
-                          </template>
-                      </iron-selector>
-                  </template>
-                  <template is="dom-if" if="{{isEqualTo(containerRoute.page, 'remote')}}">
-                      <iron-selector
-                          class='nav-menu'
-                          selected="[[pageRoute.page]]"
-                          attr-for-selected='name'
-                          on-iron-activate='drawerSelected'>
-                          <template is='dom-repeat' items='{{remoteMenus}}'>
-                          <a name='[[item.name]]' href='/dashboard/remote/[[item.name]]' tabindex='-1'>
-                              <paper-item raised>[[item.title]]</paper-item>
-                          </a>
-                          </template>
-                      </iron-selector>
-                  </template>
-
+                    <iron-selector
+                        class='nav-menu'
+                        selected="[[pageRoute.page]]"
+                        attr-for-selected='name'
+                        on-iron-activate='drawerSelected'
+                    >
+                        <a name='activity' href='/dashboard/activity' tabindex='-1'>
+                            <paper-item raised>Activity</paper-item>
+                        </a>
+                        <a name='rooms' href='/dashboard/rooms' tabindex='-1'>
+                            <paper-item raised>Rooms</paper-item>
+                        </a>
+                        <a name='settings' href='/dashboard/settings' tabindex='-1'>
+                            <paper-item raised>Settings</paper-item>
+                        </a>
+                        <a name='help' href='/dashboard/help' tabindex='-1'>
+                            <paper-item raised>Help</paper-item>
+                        </a>
+                    </iron-selector>
               </app-drawer>
-
             </app-drawer-layout>
     `;
     }
@@ -196,40 +160,6 @@ class MainDashboard extends connect(store)(PolymerElement) {
             _offline: Boolean,
             route: Object,
             subRoute: Object,
-            remoteMenus: {
-                type: Array,
-                value() {
-                    return [
-                        {
-                            name: 'rooms',
-                            title: 'Rooms',
-                        },
-                        {
-                            name: 'settings',
-                            title: 'Settings',
-                        },
-                    ];
-                },
-            },
-            visionMenus: {
-                type: Array,
-                value() {
-                    return [
-                        {
-                            name: 'events',
-                            title: 'Events',
-                        },
-                        {
-                            name: 'streams',
-                            title: 'Streams',
-                        },
-                        {
-                            name: 'settings',
-                            title: 'Settings',
-                        },
-                    ];
-                },
-            },
         };
     }
 

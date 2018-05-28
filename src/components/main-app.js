@@ -21,7 +21,7 @@ import {
 
 import './main-auth.js';
 import './main-dashboard.js';
-import './main-not-found.js';
+import './not-found.js';
 
 class MainApp extends connect(store)(PolymerElement) {
     static get template() {
@@ -37,7 +37,7 @@ class MainApp extends connect(store)(PolymerElement) {
                 <iron-pages role="main" selected="{{containerRoute.page}}" attr-for-selected="name"  selected-attribute="visible" fallback-selection="not-found">
                     <main-dashboard name="dashboard" route="{{routeTail}}"></main-dashboard>
                     <main-auth name="auth" route="{{routeTail}}"></main-auth>
-                    <main-not-found name="not-found"></main-not-found>
+                    <not-found name="not-found"></not-found>
                 </iron-pages>
             </main>
     `;
