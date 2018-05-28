@@ -7,6 +7,8 @@ export const UPDATE_OFFLINE = 'UPDATE_OFFLINE';
 export const UPDATE_DRAWER_STATE = 'UPDATE_DRAWER_STATE';
 export const OPEN_SNACKBAR = 'OPEN_SNACKBAR';
 export const CLOSE_SNACKBAR = 'CLOSE_SNACKBAR';
+export const OPEN_PROGRESS = 'OPEN_PROGRESS';
+export const CLOSE_PROGRESS = 'CLOSE_PROGRESS';
 export const SET_CURRENT_USER = 'SET_CURRENT_USER';
 export const AUTHENTICATE_USER = 'AUTHENTICATE_USER';
 export const DEAUTHENTICATE_USER = 'DEAUTHENTICATE_USER';
@@ -18,17 +20,18 @@ export const navigate = (path) => (dispatch) => {
 };
 
 const loadPage = (page) => (dispatch) => {
-    const pageList = ['auth', 'dashboard', 'dashboard/activity', 'dashboard/rooms', 'dashboard/settings', 'dashboard/help'];
+    const pageList = ['auth', 'dashboard', 'dashboard/activity', 'dashboard/rooms', 'dashboard/settings', 'dashboard/help', 'dashboard/account'];
 
     if (pageList.indexOf(page) === -1) {
-        page = 'view404';
+        page = '404';
     }
 
     dispatch(updatePage(page));
 
     const paths = page.split('/');
 
-    paths.forEach(async (path) => {
+    paths.forEach(async (path, index) => {
+        console.log(`loaded path ${index}:`, path);
         switch (page) {
             case 'auth':
                 await import('../components/main-auth.js');
@@ -73,6 +76,18 @@ export const showSnackbar = () => (dispatch) => {
     });
     clearTimeout(snackbarTimer);
     snackbarTimer = setTimeout(() => dispatch({ type: CLOSE_SNACKBAR }), 3000);
+};
+
+export const showProgress = () => (dispatch) => {
+    dispatch({
+        type: OPEN_PROGRESS,
+    });
+};
+
+export const closeProgress = () => (dispatch) => {
+    dispatch({
+        type: CLOSE_PROGRESS,
+    });
 };
 
 export const updateOffline = (offline) => (dispatch, getState) => {
@@ -120,11 +135,14 @@ export const setCurrentUser = (user) => (dispatch, getState) => {
         });
 
     remoteClient
-        .post('/user-register', qs({
-            uid: currentUser.uid,
-            name: currentUser.displayName,
-            email: currentUser.email
-        }))
+        .post(
+            '/user-register',
+            qs({
+                uid: currentUser.uid,
+                name: currentUser.displayName,
+                email: currentUser.email,
+            })
+        )
         .then((response) => {
             console.log(response);
         })

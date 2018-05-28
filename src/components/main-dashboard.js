@@ -1,4 +1,4 @@
-import { LitElement, html } from '@polymer/lit-element';
+import {LitElement, html} from '@polymer/lit-element';
 
 import '@polymer/app-route/app-location.js';
 import '@polymer/iron-icons/iron-icons.js';
@@ -26,24 +26,13 @@ import {installOfflineWatcher} from 'pwa-helpers/network.js';
 import {installMediaQueryWatcher} from 'pwa-helpers/media-query.js';
 
 import {store} from '../store.js';
-import {
-    navigate,
-    updateOffline,
-    updateLayout,
-    deauthenticateUser,
-} from '../actions/app.js';
-
-import './main-help.js';
-import './not-found.js';
-import './main-account.js';
-
-import './activity-main.js';
-import './rooms-main.js';
-import './settings-main.js';
+import {navigate, updateOffline, updateLayout, deauthenticateUser, showProgress, closeProgress} from '../actions/app.js';
+import {hideOnClickOutside} from '../utils';
 
 class MainDashboard extends connect(store)(LitElement) {
     _render({appTitle, _page, _progress}) {
         console.log('main-dashboard page:', _page);
+        console.log('progress:', _progress);
         return html`
             <style>
                 app-header {
@@ -110,18 +99,12 @@ class MainDashboard extends connect(store)(LitElement) {
                             on-click="${() => this._toggleAccountMenu(this.shadowRoot.getElementById('accountMenu'))}"
                         >
                         </paper-icon-button>
-                          ${_progress ? html`<paper-progress value="10" indeterminate bottom-item></paper-progress>` : null}
-                          </template>
+                        ${_progress ? html`<paper-progress value="10" indeterminate bottom-item></paper-progress>` : null}
                       </app-toolbar>
                   </app-header>
 
                   <!-- Dashboard content pages -->
-                <main-account class="page" active?="${_page === 'dashboard/account'}"></main-account>
-                <main-help class="page" active?="${_page === 'dashboard/help'}"></main-help>
-                <main-account class="page" active?="${_page === 'dashboard/account'}"></main-account>
-                <activity-main class="page" active?="${_page === 'dashboard/activity'}"></activity-main>
-                <rooms-main class="page" active?="${_page === 'dashboard/rooms'}"></rooms-main>
-                <settings-main class="page" active?="${_page === 'dashboard/settings'}"></settings-main>
+                  <slot></slot>
 
                   <!-- Dashboard app bar menu -->
                   <paper-material id="accountMenu">
@@ -169,32 +152,25 @@ class MainDashboard extends connect(store)(LitElement) {
             _drawerOpened: Boolean,
             _snackbarOpened: Boolean,
             _offline: Boolean,
-            _progress: {
-                type: Boolean,
-                value: true,
-            },
-            route: Object,
-            subRoute: Object,
+            _progress: Boolean,
         };
     }
 
     constructor() {
         super();
-        this._progress = true;
         setPassiveTouchGestures(true);
     }
 
     _firstRendered() {
         installRouter((location) => store.dispatch(navigate(window.decodeURIComponent(location.pathname))));
         installOfflineWatcher((offline) => store.dispatch(updateOffline(offline)));
-        installMediaQueryWatcher(`(min-width: 460px)`,
-            (matches) => store.dispatch(updateLayout(matches)));
+        installMediaQueryWatcher(`(min-width: 460px)`, (matches) => store.dispatch(updateLayout(matches)));
     }
 
     _stateChanged(state) {
-        this._progress = state.app.progress;
         this._page = state.app.page;
         this._offline = state.app.offline;
+        this._progress = state.app.progressOpened;
         this._snackbarOpened = state.app.snackbarOpened;
         this._drawerOpened = state.app.drawerOpened;
     }

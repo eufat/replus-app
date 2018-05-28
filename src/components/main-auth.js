@@ -109,7 +109,7 @@ class MainAuth extends connect(store)(PolymerElement) {
     loadFirebaseUI() {
         const thisMainAuth = this;
         const uiConfig = {
-            signInSuccessUrl: '/dashboard',
+            signInSuccessUrl: '/dashboard/activity',
             signInOptions: [
                 firebase.auth.GoogleAuthProvider.PROVIDER_ID,
                 {

@@ -87,10 +87,7 @@ export default class RoomsMain extends connect(store)(LitElement) {
 
     _patchOverlay(e) {
         if (e.target.withBackdrop) {
-            e.target.parentNode.insertBefore(
-                e.target.backdropElement,
-                e.target
-            );
+            e.target.parentNode.insertBefore(e.target.backdropElement, e.target);
         }
     }
 
@@ -228,16 +225,14 @@ export default class RoomsMain extends connect(store)(LitElement) {
                             selected="${_.get(this.newRemote, 'brand')}"
                             on-change="${(e) => this._handleNewRemoteChange(e, 'brand')}"
                         >
-                            ${
-                                brandsList.map((brand) => {
-                                    return html`
+                            ${brandsList.map((brand) => {
+                                return html`
                                         <option
                                             value="${brand}"
                                         >
                                                 ${toTitleCase(brand)}
                                         </option>`;
-                                })
-                            }
+                            })}
                         </select>
                         <div class="buttons" on-click="${() => this._handleNewRemoteAdd(item.id)}">
                             <mwc-button dialog-confirm label="Add This Remote"></mwc-button>

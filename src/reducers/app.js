@@ -1,15 +1,6 @@
-import {
-    UPDATE_PAGE,
-    UPDATE_OFFLINE,
-    OPEN_SNACKBAR,
-    CLOSE_SNACKBAR,
-    UPDATE_DRAWER_STATE,
-    AUTHENTICATE_USER,
-    DEAUTHENTICATE_USER,
-    SET_CURRENT_USER,
-} from '../actions/app.js';
+import {UPDATE_PAGE, UPDATE_OFFLINE, OPEN_SNACKBAR, CLOSE_SNACKBAR, OPEN_PROGRESS, CLOSE_PROGRESS, UPDATE_DRAWER_STATE, AUTHENTICATE_USER, DEAUTHENTICATE_USER, SET_CURRENT_USER} from '../actions/app.js';
 
-const app = (state = {drawerOpened: false}, action) => {
+const app = (state = {progressOpened: false}, action) => {
     switch (action.type) {
         case UPDATE_PAGE:
             return {
@@ -35,6 +26,16 @@ const app = (state = {drawerOpened: false}, action) => {
             return {
                 ...state,
                 snackbarOpened: false,
+            };
+        case OPEN_PROGRESS:
+            return {
+                ...state,
+                progressOpened: true,
+            };
+        case CLOSE_PROGRESS:
+            return {
+                ...state,
+                progressOpened: false,
             };
         case AUTHENTICATE_USER:
             return {

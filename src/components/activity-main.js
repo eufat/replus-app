@@ -2,7 +2,7 @@ import {LitElement, html} from '@polymer/lit-element';
 import '@polymer/paper-card/paper-card.js';
 
 import {env} from '../configs.js';
-import { getDateFromFilename} from '../utils.js';
+import {getDateFromFilename} from '../utils.js';
 
 const HOST_ADDRESS = env.HOST_ADDRESS;
 let EVENTS_PORT = env.EVENTS_PORT;
@@ -33,19 +33,13 @@ export default class activityMain extends LitElement {
 
     addFrameRealtime(frame) {
         const newData = `data:frame/jpeg;base64, ${frame.data}`;
-        const frames = [
-            ...this.realtimeEvents,
-            {data: newData, name: frame.name, dev_id: frame.dev_id},
-        ];
+        const frames = [...this.realtimeEvents, {data: newData, name: frame.name, dev_id: frame.dev_id}];
         this.realtimeEvents = frames;
     }
 
     addFrameStored(frame) {
         const newData = `data:frame/jpeg;base64, ${frame.data}`;
-        const frames = [
-            ...this.storedEvents,
-            {data: newData, frame: frame.name, dev_id: frame.dev_id},
-        ];
+        const frames = [...this.storedEvents, {data: newData, frame: frame.name, dev_id: frame.dev_id}];
         this.storedEvents = frames;
     }
 
