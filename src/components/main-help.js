@@ -34,11 +34,6 @@ export default class Help extends LitElement {
 
                 }
 
-                .help-navigation {
-                    padding: 10px 20px;
-                    border-bottom: 1px solid #ccc;
-                }
-
                 section {
                     display: flex;
                     flex-direction: row;
@@ -60,10 +55,6 @@ export default class Help extends LitElement {
             </style>
             <div class="paper-container">
                 <paper-material>
-                    <div class="help-navigation">
-                        <mwc-button icon="chevron_left" label="Back to Welcome Screen" on-click="${() =>
-                            pushLocationTo('/dashboard/welcome')}"></mwc-button>
-                    </div>
                     <div class="help-container">
                     <h1>Help and Guides</h1>
                     <h3>1. Add Replus App to Homescreen</h3>
@@ -87,7 +78,27 @@ export default class Help extends LitElement {
                             </ol>
                         </div>
                     </section>
-                    </div>
+                    <h1>Support</h1>
+                    <section>
+                        <div class="section-content">
+                            <p>Contact Us</p>
+                            <p>
+                                <a href="mail:hello@replus.co">hello@replus.co</a>
+                                <br />
+                                <a href="tel:+62087889620709">(62) 087889620709</a>
+                                <br />
+                                <p>PT POCI Otomasi Cerdas Indonesia</p>
+                                <br /> Ruang Tenant Gedung ILRC Lantai 2
+                                <br /> Universitas Indonesia, Depok, Jawa Barat
+                            </p>
+                        </div>
+                    </section>
+                    <h1>Feedback</h1>
+                    <section>
+                        <div class="section-content">
+                            <mwc-button raised icon="feedback" class="light" label="Fill Feedback Form"></mwc-button>
+                        </div>
+                    </section>
                 </paper-material>
             </div>
     `;

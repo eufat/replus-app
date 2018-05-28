@@ -34,10 +34,7 @@ import {
     deauthenticateUser,
 } from '../actions/app.js';
 
-import './main-welcome.js';
 import './main-help.js';
-import './main-feedback.js';
-import './main-support.js';
 import './main-not-found.js';
 import './main-account.js';
 
@@ -125,10 +122,7 @@ class MainDashboard extends connect(store)(PolymerElement) {
                           <div page-name="fallback"><main-not-found /></div>
                       </iron-pages>
                       <div container-name="account"><main-account /></div>
-                      <div container-name="help"><main-help /></div>
-                      <div container-name="feedback"><main-feedback /></div>
-                      <div container-name="support"><main-support /></div>
-                      <div container-name="fallback"><main-welcome /></div>
+                      <div container-name="fallback"><remote-rooms /></div>
                   </iron-pages>
 
                   <!-- Dashboard app bar menu -->
@@ -137,8 +131,8 @@ class MainDashboard extends connect(store)(PolymerElement) {
                           <a name='account' href='/dashboard/account' tabindex='-1'>
                           <paper-item raised>Account</paper-item>
                           </a>
-                          <a name='account' href='/dashboard/welcome' tabindex='-1'>
-                          <paper-item raised>Welcome</paper-item>
+                          <a name='account' href='/dashboard/help' tabindex='-1'>
+                          <paper-item raised>Help</paper-item>
                           </a>
                           <a name='sign-out' on-tap='handleSignOut' tabindex='-1'>
                           <paper-item raised>Sign Out</paper-item>
