@@ -137,6 +137,29 @@ export default class RemoteRooms extends connect(store)(LitElement) {
             });
         };
 
+        const roomCameras = (cameras, roomIndex) => {
+            return _.mapValues(cameras, (cameraValue, cameraKey, cameraObj) => {
+                const onEdit = rooms[roomIndex].onEdit;
+
+                return html`
+                    <div class="camera-item">
+                        ${
+                            onEdit
+                                ? html`
+                                    <mwc-button
+                                        label="Remove"
+                                        icon="close"
+                                        on-click="${() => this._removeRemote(roomIndex, cameraKey)}">
+                                    </mwc-button>`
+                                : null
+                        }
+                        <img class="appliance-icon" src="images/cam-icon.png"/>
+                        <p>${toTitleCase(cameraValue)}</p>
+                    </div>
+                `;
+            });
+        };
+
         const roomDevices = (devices, roomIndex) => {
             return devices.map((device, index) => {
                 const onEdit = rooms[roomIndex].onEdit;
@@ -216,6 +239,14 @@ export default class RemoteRooms extends connect(store)(LitElement) {
                         </div>
                     </div>
                 </paper-dialog>
+                <paper-dialog id="add-new-camera-modal-${roomIndex}">
+                    <div class="modal-content">
+                        <label id="appliance-type">Add Camera: Replus Vision</label>
+                        <div class="buttons" on-click="${() => this._handleNewCameraAdd(item.id)}">
+                            <mwc-button dialog-confirm label="Add This Camera"></mwc-button>
+                        </div>
+                    </div>
+                </paper-dialog>
                 <paper-material>
                     <div class="room-title">
                         ${
@@ -247,6 +278,7 @@ export default class RemoteRooms extends connect(store)(LitElement) {
                         }
                     </div>
                     <div class="room-remotes">
+                        ${_.values(roomCameras(item.cameras, roomIndex))}
                         ${_.values(roomRemotes(item.remotes, roomIndex))}
                         ${
                             onEdit
@@ -256,6 +288,17 @@ export default class RemoteRooms extends connect(store)(LitElement) {
                                         on-click="${() => this.shadowRoot.getElementById(`add-new-remote-modal-${roomIndex}`).open()}">
                                         <img class="appliance-icon" src="images/add-plus-button.png"/>
                                         <p>Add Remote</p>
+                                    </div>`
+                                : null
+                        }
+                        ${
+                            onEdit
+                                ? html`
+                                    <div
+                                        class="camera-item"
+                                        on-click="${() => this.shadowRoot.getElementById(`add-new-camera-modal-${roomIndex}`).open()}">
+                                        <img class="appliance-icon" src="images/add-plus-button.png"/>
+                                        <p>Add Camera</p>
                                     </div>`
                                 : null
                         }
@@ -307,7 +350,7 @@ export default class RemoteRooms extends connect(store)(LitElement) {
                     display: block;
                 }
 
-                .remote-item {
+                .remote-item, .camera-item {
                     text-align: center;
                     display: inline-block;
                     vertical-align: top;
@@ -321,12 +364,12 @@ export default class RemoteRooms extends connect(store)(LitElement) {
                     border-radius: 10px;
                 }
 
-                .remote-item:hover {
+                .remote-item:hover, .camera-item:hover {
                     background-color: #f5f5f5;
                     cursor: pointer;
                 }
 
-                .remote-item p {
+                .remote-item p, .camera-item p  {
                     margin: 0;
                 }
 
