@@ -18,6 +18,7 @@ export default class RoomsMain extends connect(store)(LitElement) {
             newDevice: Object,
             newRemote: Object,
             uid: String,
+            active: Boolean,
         };
     }
 
@@ -33,7 +34,11 @@ export default class RoomsMain extends connect(store)(LitElement) {
             store.dispatch(fetchRooms());
             store.dispatch(fetchDevices());
         }
-    };
+    }
+
+    _shouldRender(props, changedProps, old) {
+        return props.active;
+    }
 
     _stateChanged(state) {
         this.rooms = _.get(state, 'remote.rooms');

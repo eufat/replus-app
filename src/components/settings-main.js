@@ -23,6 +23,7 @@ export default class SettingsMain extends connect(store)(LitElement) {
             restart: Boolean,
             settings: Object,
             uid: String,
+            active: Boolean,
         };
     }
 
@@ -41,6 +42,10 @@ export default class SettingsMain extends connect(store)(LitElement) {
         };
 
         store.dispatch(setSettings(this.settings));
+    }
+
+    _shouldRender(props, changedProps, old) {
+        return props.active;
     }
 
     _stateChanged(state) {

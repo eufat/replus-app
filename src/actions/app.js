@@ -12,26 +12,50 @@ export const AUTHENTICATE_USER = 'AUTHENTICATE_USER';
 export const DEAUTHENTICATE_USER = 'DEAUTHENTICATE_USER';
 
 export const navigate = (path) => (dispatch) => {
-    // Extract the page name from path.
     const page = path === '/' ? 'auth' : path.slice(1);
 
     dispatch(loadPage(page));
-
-    // Close the drawer - in case the *path* change came from a link in the drawer.
-    dispatch(updateDrawerState(false));
 };
 
-const loadPage = (page) => async (dispatch) => {
-    switch (page) {
-        case 'auth':
-            await import('../components/main-auth.js');
-            break;
-        default:
-            page = '404';
-            await import('../components/main-not-found.js');
+const loadPage = (page) => (dispatch) => {
+    const pageList = ['auth', 'dashboard', 'dashboard/activity', 'dashboard/rooms', 'dashboard/settings', 'dashboard/help'];
+
+    if (pageList.indexOf(page) === -1) {
+        page = 'view404';
     }
 
     dispatch(updatePage(page));
+
+    const paths = page.split('/');
+
+    paths.forEach(async (path) => {
+        switch (page) {
+            case 'auth':
+                await import('../components/main-auth.js');
+                break;
+            case 'dashboard':
+                await import('../components/main-dashboard.js');
+                break;
+            case 'activity':
+                await import('../components/activity-main.js');
+                break;
+            case 'rooms':
+                await import('../components/rooms-main.js');
+                break;
+            case 'settings':
+                await import('../components/settings-main.js');
+                break;
+            case 'help':
+                await import('../components/main-help.js');
+                break;
+            case 'account':
+                await import('../components/main-account.js');
+                break;
+            default:
+                page = '404';
+                await import('../components/not-found.js');
+        }
+    });
 };
 
 const updatePage = (page) => {

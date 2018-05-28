@@ -136,3 +136,7 @@ export function toTitleCase(str) {
         }
     });
 }
+
+export function stringContain(str, target) {
+    return str.indexOf(target) !== -1;
+}

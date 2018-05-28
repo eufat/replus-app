@@ -1,7 +1,6 @@
-import {PolymerElement, html} from '@polymer/polymer/polymer-element';
+import { LitElement, html } from '@polymer/lit-element';
 
 import '@polymer/app-route/app-location.js';
-import '@polymer/app-route/app-route.js';
 import '@polymer/iron-icons/iron-icons.js';
 import '@polymer/iron-pages/iron-pages.js';
 import '@polymer/iron-selector/iron-selector.js';
@@ -18,13 +17,13 @@ import '@polymer/paper-material/paper-material.js';
 import '@polymer/paper-listbox/paper-listbox.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu.js';
+import '@polymer/paper-progress/paper-progress.js';
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings.js';
 
 import {connect} from 'pwa-helpers/connect-mixin.js';
 import {installRouter} from 'pwa-helpers/router.js';
 import {installOfflineWatcher} from 'pwa-helpers/network.js';
 import {installMediaQueryWatcher} from 'pwa-helpers/media-query.js';
-import {updateMetadata} from 'pwa-helpers/metadata.js';
 
 import {store} from '../store.js';
 import {
@@ -42,8 +41,9 @@ import './activity-main.js';
 import './rooms-main.js';
 import './settings-main.js';
 
-class MainDashboard extends connect(store)(PolymerElement) {
-    static get template() {
+class MainDashboard extends connect(store)(LitElement) {
+    _render({appTitle, _page, _progress}) {
+        console.log('main-dashboard page:', _page);
         return html`
             <style>
                 app-header {
@@ -57,6 +57,13 @@ class MainDashboard extends connect(store)(PolymerElement) {
 
                 app-drawer-layout:not([narrow]) [drawer-toggle] {
                     display: none;
+                }
+
+                paper-progress {
+                    display: block;
+                    width: 100%;
+                    --paper-progress-active-color: rgba(255, 255, 255, 0.5);
+                    --paper-progress-container-color: transparent;
                 }
 
                 a {
@@ -80,12 +87,15 @@ class MainDashboard extends connect(store)(PolymerElement) {
                         display: none;
                     };
                 }
+
+                .page {
+                    display: none;
+                }
+
+                .page[active] {
+                    display: block;
+                }
             </style>
-            <app-route
-                route="[[route]]"
-                pattern="/:page"
-                data="{{containerRoute}}"
-            </app-route>
             <app-drawer-layout fullbleed>
 
               <app-header-layout fullbleed>
@@ -95,20 +105,23 @@ class MainDashboard extends connect(store)(PolymerElement) {
                       <app-toolbar>
                           <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
                           <div main-title>Replus App</div>
-                          <paper-icon-button icon="more-vert" on-tap="toggleAccountMenu"></paper-icon-button>
+                        <paper-icon-button
+                            icon="more-vert"
+                            on-click="${() => this._toggleAccountMenu(this.shadowRoot.getElementById('accountMenu'))}"
+                        >
+                        </paper-icon-button>
+                          ${_progress ? html`<paper-progress value="10" indeterminate bottom-item></paper-progress>` : null}
+                          </template>
                       </app-toolbar>
                   </app-header>
 
                   <!-- Dashboard content pages -->
-                  <iron-pages selected="[[containerRoute.page]]" attr-for-selected="container-name" fallback-selection="fallback">
-                      <div container-name="account"><main-account /></div>
-                      <div container-name="help"><main-help /></div>
-                      <div container-name="account"><main-account /></div>
-                      <div container-name="activity"><activity-main /></div>
-                      <div container-name="rooms"><rooms-main /></div>
-                      <div container-name="settings"><settings-main /></div>
-                      <div container-name="fallback"><activity-main /></div>
-                  </iron-pages>
+                <main-account class="page" active?="${_page === 'dashboard/account'}"></main-account>
+                <main-help class="page" active?="${_page === 'dashboard/help'}"></main-help>
+                <main-account class="page" active?="${_page === 'dashboard/account'}"></main-account>
+                <activity-main class="page" active?="${_page === 'dashboard/activity'}"></activity-main>
+                <rooms-main class="page" active?="${_page === 'dashboard/rooms'}"></rooms-main>
+                <settings-main class="page" active?="${_page === 'dashboard/settings'}"></settings-main>
 
                   <!-- Dashboard app bar menu -->
                   <paper-material id="accountMenu">
@@ -119,7 +132,7 @@ class MainDashboard extends connect(store)(PolymerElement) {
                           <a name='account' href='/dashboard/help' tabindex='-1'>
                           <paper-item raised>Help</paper-item>
                           </a>
-                          <a name='sign-out' on-tap='handleSignOut' tabindex='-1'>
+                          <a name='sign-out' on-click='${() => this._handleSignOut()}' tabindex='-1'>
                           <paper-item raised>Sign Out</paper-item>
                           </a>
                       </paper-listbox>
@@ -129,9 +142,7 @@ class MainDashboard extends connect(store)(PolymerElement) {
               <app-drawer id="drawer" slot="drawer">
                     <iron-selector
                         class='nav-menu'
-                        selected="[[pageRoute.page]]"
                         attr-for-selected='name'
-                        on-iron-activate='drawerSelected'
                     >
                         <a name='activity' href='/dashboard/activity' tabindex='-1'>
                             <paper-item raised>Activity</paper-item>
@@ -158,6 +169,10 @@ class MainDashboard extends connect(store)(PolymerElement) {
             _drawerOpened: Boolean,
             _snackbarOpened: Boolean,
             _offline: Boolean,
+            _progress: {
+                type: Boolean,
+                value: true,
+            },
             route: Object,
             subRoute: Object,
         };
@@ -165,68 +180,39 @@ class MainDashboard extends connect(store)(PolymerElement) {
 
     constructor() {
         super();
-        // To force all event listeners for gestures to be passive.
-        // See https://www.polymer-project.org/2.0/docs/devguide/gesture-events#use-passive-gesture-listeners
+        this._progress = true;
         setPassiveTouchGestures(true);
     }
 
-    ready() {
-        super.ready();
-
-        installRouter((location) =>
-            store.dispatch(
-                navigate(window.decodeURIComponent(location.pathname))
-            )
-        );
-        installOfflineWatcher((offline) =>
-            store.dispatch(updateOffline(offline))
-        );
-        installMediaQueryWatcher(`(min-width: 460px)`, (matches) =>
-            store.dispatch(updateLayout(matches))
-        );
-    }
-
-    _didRender(properties, changeList) {
-        if ('_page' in changeList) {
-            const pageTitle = properties.appTitle + ' - ' + changeList._page;
-            updateMetadata({
-                title: pageTitle,
-                description: pageTitle,
-                // This object also takes an image property, that points to an img src.
-            });
-        }
+    _firstRendered() {
+        installRouter((location) => store.dispatch(navigate(window.decodeURIComponent(location.pathname))));
+        installOfflineWatcher((offline) => store.dispatch(updateOffline(offline)));
+        installMediaQueryWatcher(`(min-width: 460px)`,
+            (matches) => store.dispatch(updateLayout(matches)));
     }
 
     _stateChanged(state) {
+        this._progress = state.app.progress;
         this._page = state.app.page;
         this._offline = state.app.offline;
         this._snackbarOpened = state.app.snackbarOpened;
         this._drawerOpened = state.app.drawerOpened;
     }
 
-    handleSignOut() {
+    _handleSignOut() {
         store.dispatch(deauthenticateUser());
     }
 
-    isEqualTo(a, b) {
-        return a === b;
-    }
-
-    toggleAccountMenu(event) {
-        const accountMenuDisplay = this.$.accountMenu.style.display === 'block';
+    _toggleAccountMenu(element) {
+        const accountMenuDisplay = element.style.display === 'block';
 
         if (accountMenuDisplay) {
-            this.$.accountMenu.style.display = 'none';
+            element.style.display = 'none';
             this.accountMenu = false;
         } else {
-            this.$.accountMenu.style.display = 'block';
+            element.style.display = 'block';
             this.accountMenu = true;
         }
-    }
-
-    mapDeviceRoute(route) {
-        const array = ['remote', 'vision'];
-        return array.indexOf(route);
     }
 }
 

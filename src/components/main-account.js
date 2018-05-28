@@ -6,6 +6,16 @@ export default class MainAccount extends LitElement {
       <div>Main Account</div>
     `;
     }
+
+    _shouldRender(props, changedProps, old) {
+        return props.active;
+    }
+
+    static get properties() {
+        return {
+            active: Boolean,
+        };
+    }
 }
 
 customElements.define('main-account', MainAccount);

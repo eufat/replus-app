@@ -15,6 +15,7 @@ export default class activityMain extends LitElement {
             realtimeURL: String,
             realtimeEvents: Array,
             storedEvents: Array,
+            active: Boolean,
         };
     }
 
@@ -24,6 +25,10 @@ export default class activityMain extends LitElement {
         this.realtimeStatus = 'Not available';
         this.realtimeEvents = [];
         this.storedEvents = [];
+    }
+
+    _shouldRender(props, changedProps, old) {
+        return props.active;
     }
 
     addFrameRealtime(frame) {
@@ -86,23 +91,23 @@ export default class activityMain extends LitElement {
         const storedItems = eventsItems(storedEvents);
 
         return html`
-        <style>
-            .event-container {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-            paper-card {
-                width: 480px;
-                margin-bottom: 20px;
-            }
-        </style>
-        <div>
-            <p class="event-container">Listening on: ${realtimeURL}</p>
-            <p class="event-container">Connection status: ${realtimeStatus}</p>
-            ${realtimeItems}
-            ${storedItems}
-        </div>
+            <style>
+                .event-container {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+                paper-card {
+                    width: 480px;
+                    margin-bottom: 20px;
+                }
+            </style>
+            <div>
+                <p class="event-container">Listening on: ${realtimeURL}</p>
+                <p class="event-container">Connection status: ${realtimeStatus}</p>
+                ${realtimeItems}
+                ${storedItems}
+            </div>
     `;
     }
 }
