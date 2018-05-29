@@ -70,12 +70,13 @@ const updatePage = (page) => {
 
 let snackbarTimer;
 
-export const showSnackbar = () => (dispatch) => {
+export const showSnackbar = (text) => (dispatch) => {
     dispatch({
         type: OPEN_SNACKBAR,
+        text,
     });
     clearTimeout(snackbarTimer);
-    snackbarTimer = setTimeout(() => dispatch({ type: CLOSE_SNACKBAR }), 3000);
+    snackbarTimer = setTimeout(() => dispatch({ type: CLOSE_SNACKBAR, text: '' }), 3000);
 };
 
 export const showProgress = () => (dispatch) => {
@@ -93,7 +94,7 @@ export const closeProgress = () => (dispatch) => {
 export const updateOffline = (offline) => (dispatch, getState) => {
     // Show the snackbar, unless this is the first load of the page.
     if (getState().app.offline !== undefined) {
-        dispatch(showSnackbar());
+        dispatch(showSnackbar(`You are now ${offline ? 'offline' : 'online'}.`));
     }
     dispatch({
         type: UPDATE_OFFLINE,

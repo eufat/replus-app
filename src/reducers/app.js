@@ -21,11 +21,13 @@ const app = (state = {progressOpened: false}, action) => {
             return {
                 ...state,
                 snackbarOpened: true,
+                snackbarText: action.text,
             };
         case CLOSE_SNACKBAR:
             return {
                 ...state,
                 snackbarOpened: false,
+                snackbarText: action.text,
             };
         case OPEN_PROGRESS:
             return {

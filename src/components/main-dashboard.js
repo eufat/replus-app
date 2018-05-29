@@ -26,7 +26,7 @@ import {installOfflineWatcher} from 'pwa-helpers/network.js';
 import {installMediaQueryWatcher} from 'pwa-helpers/media-query.js';
 
 import {store} from '../store.js';
-import {navigate, updateOffline, updateLayout, deauthenticateUser, showProgress, closeProgress} from '../actions/app.js';
+import {navigate, updateOffline, updateLayout, deauthenticateUser, showProgress, closeProgress, showSnackbar} from '../actions/app.js';
 import {hideOnClickOutside} from '../utils';
 
 class MainDashboard extends connect(store)(LitElement) {
@@ -165,6 +165,7 @@ class MainDashboard extends connect(store)(LitElement) {
         installRouter((location) => store.dispatch(navigate(window.decodeURIComponent(location.pathname))));
         installOfflineWatcher((offline) => store.dispatch(updateOffline(offline)));
         installMediaQueryWatcher(`(min-width: 460px)`, (matches) => store.dispatch(updateLayout(matches)));
+        store.dispatch(showSnackbar('Hello there.'));
     }
 
     _stateChanged(state) {

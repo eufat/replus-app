@@ -26,8 +26,9 @@ import './rooms-main.js';
 import './settings-main.js';
 
 class MainApp extends connect(store)(LitElement) {
-    _render({appTitle, _page, _drawerOpened, _snackbarOpened, _offline}) {
+    _render({appTitle, _page, _drawerOpened, _snackbarOpened, _snackbarText, _offline}) {
         console.log('main-app page:', _page);
+        console.log('sbt:', _snackbarText);
         return html`
             <style>
                 .page {
@@ -48,9 +49,7 @@ class MainApp extends connect(store)(LitElement) {
                     <main-help class="page" active?="${_.includes(_page, 'help')}"></main-help>
                 </main-dashboard>
             </main>
-            <snack-bar active?="${_snackbarOpened}">
-                You are now ${_offline ? 'offline' : 'online'}.
-            </snack-bar>
+            <snack-bar active?="${_snackbarOpened}" text="${_snackbarText}"></snack-bar>
     `;
     }
 
@@ -60,6 +59,7 @@ class MainApp extends connect(store)(LitElement) {
             _page: String,
             _drawerOpened: Boolean,
             _snackbarOpened: Boolean,
+            _snackbarText: String,
             _offline: Boolean,
         };
     }
@@ -99,6 +99,7 @@ class MainApp extends connect(store)(LitElement) {
         this._page = state.app.page;
         this._offline = state.app.offline;
         this._snackbarOpened = state.app.snackbarOpened;
+        this._snackbarText = state.app.snackbarText;
         this._drawerOpened = state.app.drawerOpened;
     }
 }
