@@ -15,6 +15,7 @@ import {updateMetadata} from 'pwa-helpers/metadata.js';
 import {store} from '../store.js';
 import {setCurrentUser, authenticateUser, deauthenticateUser} from '../actions/app.js';
 import {navigate, updateOffline, updateLayout} from '../actions/app.js';
+import {toTitleCase} from '../utils';
 import './snack-bar.js';
 
 import './main-help.js';
@@ -86,7 +87,7 @@ class MainApp extends connect(store)(LitElement) {
 
     _didRender(properties, changeList) {
         if ('_page' in changeList) {
-            const pageTitle = properties.appTitle + ' - ' + changeList._page;
+            const pageTitle = properties.appTitle + ' - ' + toTitleCase(changeList._page.split('/').join(' '));
             updateMetadata({
                 title: pageTitle,
                 description: pageTitle,
