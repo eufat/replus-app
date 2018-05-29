@@ -6,7 +6,7 @@ import '@polymer/paper-spinner/paper-spinner.js';
 import '@polymer/paper-button/paper-button.js';
 import {connect} from 'pwa-helpers/connect-mixin.js';
 
-import {firebaseConfig} from '../configs.js';
+import firebase from '../firebase.js';
 import {userDataKey} from '../utils.js';
 import {store} from '../store.js';
 
@@ -78,8 +78,6 @@ class MainAuth extends connect(store)(PolymerElement) {
 
     ready() {
         super.ready();
-        firebase.initializeApp(firebaseConfig);
-
         const thisMainAuth = this;
 
         thisMainAuth.setupPosition();
@@ -95,21 +93,18 @@ class MainAuth extends connect(store)(PolymerElement) {
 
     setupPosition() {
         const thisMainAuth = this;
-        thisMainAuth.$.container.style.marginTop =
-            (window.innerHeight - 294) / 2 - 100 + 'px';
-        thisMainAuth.$.container.style.marginLeft =
-            (window.innerWidth - 300) / 2 + 'px';
+        thisMainAuth.$.container.style.marginTop = (window.innerHeight - 294) / 2 - 100 + 'px';
+        thisMainAuth.$.container.style.marginLeft = (window.innerWidth - 300) / 2 + 'px';
 
         if (window.innerWidth < 640) {
-            thisMainAuth.$.container.style.marginTop =
-                (window.innerHeight - 294) / 2 + 'px';
+            thisMainAuth.$.container.style.marginTop = (window.innerHeight - 294) / 2 + 'px';
         }
     }
 
     loadFirebaseUI() {
         const thisMainAuth = this;
         const uiConfig = {
-            signInSuccessUrl: '/dashboard/activity',
+            signInSuccessUrl: '/dashboard',
             signInOptions: [
                 firebase.auth.GoogleAuthProvider.PROVIDER_ID,
                 {

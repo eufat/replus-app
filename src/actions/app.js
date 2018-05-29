@@ -1,6 +1,7 @@
 import { pushLocationTo } from '../utils';
 import { userDataKey, qs } from '../utils';
 import { visionClient, remoteClient } from '../client';
+import firebase from '../firebase.js';
 
 export const UPDATE_PAGE = 'UPDATE_PAGE';
 export const UPDATE_OFFLINE = 'UPDATE_OFFLINE';
@@ -168,8 +169,10 @@ export const authenticateUser = () => (dispatch, getState) => {
 };
 
 export const deauthenticateUser = () => (dispatch, getState) => {
-    pushLocationTo('/auth');
-    firebase.auth().signOut();
+    if (!(window.location.href.indexOf('auth') > -1)) {
+        pushLocationTo('/auth');
+        firebase.auth().signOut();
+    }
 
     dispatch({
         type: DEAUTHENTICATE_USER,

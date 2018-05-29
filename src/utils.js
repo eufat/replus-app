@@ -30,6 +30,8 @@ const isBlock = (elem) => elem.style.display == 'block';
 export const pushLocationTo = (location) => {
     window.history.pushState({}, null, location);
     window.dispatchEvent(new CustomEvent('location-changed'));
+
+    window.location.href = location;
 };
 
 export function getFormattedDate() {
