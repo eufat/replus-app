@@ -48,8 +48,10 @@ export const saveSettings = () => (dispatch, getState) => {
         },
     };
 
-    visionClient
-        .post('/config', payload)
-        .then((response) => console.log(response))
-        .catch((error) => console.log(error));
+    try {
+        const response = await visionClient.post('/config', payload);
+        console.log(response)
+    } catch (error) {
+        console.log(error)
+    }
 };

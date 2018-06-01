@@ -20,7 +20,6 @@ export function getEventsDummy() {
     ];
 }
 
-
 export function getRoomsDummy() {
     return [
         {
