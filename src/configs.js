@@ -1,4 +1,4 @@
-const environment = 'development';
+const prod = process.env.NODE_ENV === 'production';
 
 export const firebaseConfig = {
     apiKey: 'AIzaSyDGCQ24hjwEeQwlus_Knet1_Lnx93Lyy2g',
@@ -10,12 +10,11 @@ export const firebaseConfig = {
 };
 
 export const env = {
-    NODE_ENV: environment,
-    CORE_API: environment === 'production' ? 'https://core.replus.co/api' : 'http://localhost:7000/api',
-    CORE_ACTIVITY: environment === 'production' ? 'https://core.replus.co/activity' : 'http://localhost:7010',
-    VISION_API: environment === 'production' ? 'https://vision.replus.co/api' : 'http://localhost:5000/api',
-    VISION_ACTIVITY: environment === 'production' ? 'https://vision.replus.co/activity' : 'http://localhost:5010',
-    VISION_STREAM: environment === 'production' ? 'https://vision.replus.co/stream' : 'http://localhost:5020',
+    CORE_API: prod ? 'https://core.replus.co/api' : 'http://localhost:7000/api',
+    CORE_ACTIVITY: prod ? 'https://core.replus.co/activity' : 'http://localhost:7010',
+    VISION_API: prod ? 'https://vision.replus.co/api' : 'http://localhost:5000/api',
+    VISION_ACTIVITY: prod ? 'https://vision.replus.co/activity' : 'http://localhost:5010',
+    VISION_STREAM: prod ? 'https://vision.replus.co/stream' : 'http://localhost:5020',
     PROJECT_ENV: 'replus-162509',
     ERROR_KEY: 'AIzaSyBNs1144i3uKRPvqsXlrrAi4hKrijWrqLE',
 };
