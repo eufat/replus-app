@@ -1,4 +1,4 @@
-import {remoteClient} from '../client';
+import {coreClient} from '../client';
 import {qs} from '../utils';
 import errorHandler from '../error';
 const get = _.get; // import from lodash
@@ -47,7 +47,7 @@ export const setDevices = (devices) => (dispatch, getState) => {
 export const fetchDevices = () => async (dispatch, getState) => {
     const uid = get(getState(), 'app.currentUser.uid');
     try {
-        const response = await remoteClient.post('/get-devices', qs({uid}));
+        const response = await coreClient.post('/get-devices', qs({uid}));
         dispatch(setDevices(response.data));
     } catch (error) {
         errorHandler.report(error);
@@ -57,7 +57,7 @@ export const fetchDevices = () => async (dispatch, getState) => {
 export const fetchRooms = () => async (dispatch, getState) => {
     const uid = get(getState(), 'app.currentUser.uid');
     try {
-        const response = await remoteClient.post('/get-rooms', qs({uid}));
+        const response = await coreClient.post('/get-rooms', qs({uid}));
         dispatch(setRooms(response.data.rooms));
     } catch (error) {
         errorHandler.report(error);
@@ -68,7 +68,7 @@ export const addRoom = (room) => async (dispatch, getState) => {
     const uid = get(getState(), 'app.currentUser.uid');
     const name = room.name;
     try {
-        await remoteClient.post('/room-add', qs({uid, name}));
+        await coreClient.post('/room-add', qs({uid, name}));
     } catch (error) {
         errorHandler.report(error);
     }
@@ -77,7 +77,7 @@ export const addRoom = (room) => async (dispatch, getState) => {
 export const removeRoom = (room) => async (dispatch, getState) => {
     const uid = get(getState(), 'app.currentUser.uid');
     try {
-        await remoteClient.post('/room-delete', qs({uid, room: room.id}));
+        await coreClient.post('/room-delete', qs({uid, room: room.id}));
         dispatch(fetchRooms());
     } catch (error) {
         errorHandler.report(error);
@@ -90,7 +90,7 @@ export const addRemote = (room) => async (dispatch, getState) => {
     const remoteBrand = get(getState(), 'remote.newRemote.brand');
     const remote = `${remoteType} ${remoteBrand}`;
     try {
-        await remoteClient.post('/remote-add', qs({uid, room, remote}));
+        await coreClient.post('/remote-add', qs({uid, room, remote}));
         dispatch(fetchRooms());
     } catch (error) {
         errorHandler.report(error);
@@ -100,7 +100,7 @@ export const addRemote = (room) => async (dispatch, getState) => {
 export const removeRemote = (room, remoteID) => async (dispatch, getState) => {
     const uid = get(getState(), 'app.currentUser.uid');
     try {
-        await remoteClient.post('/remote-delete', qs({uid, room, remoteID}));
+        await coreClient.post('/remote-delete', qs({uid, room, remoteID}));
         dispatch(fetchRooms());
     } catch (error) {
         errorHandler.report(error);
@@ -114,7 +114,7 @@ export const addDevice = (room) => async (dispatch, getState) => {
     const type = 'replus';
 
     try {
-        await remoteClient.post('/device-register', qs({uid, type, room, deviceID, deviceCode}));
+        await coreClient.post('/device-register', qs({uid, type, room, deviceID, deviceCode}));
     } catch (error) {
         errorHandler.report(error);
     }
@@ -123,7 +123,7 @@ export const addDevice = (room) => async (dispatch, getState) => {
 export const removeDevice = (room, deviceID, deviceCode) => async (dispatch, getState) => {
     const uid = get(getState(), 'app.currentUser.uid');
     try {
-        remoteClient.post('/device-deregister', qs({uid, deviceID}));
+        coreClient.post('/device-deregister', qs({uid, deviceID}));
     } catch (error) {
         errorHandler.report(error);
     }

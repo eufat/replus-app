@@ -1,6 +1,6 @@
 import { pushLocationTo } from '../utils';
 import { userDataKey, qs } from '../utils';
-import { visionClient, remoteClient } from '../client';
+import { visionClient, coreClient } from '../client';
 import firebase from '../firebase';
 import errorHandler from '../error';
 
@@ -35,7 +35,6 @@ const loadPage = (page) => (dispatch) => {
     const paths = page.split('/');
 
     paths.forEach(async (path, index) => {
-        console.log(`loaded path ${index}:`, path);
         switch (page) {
             case 'auth':
                 await import('../components/main-auth.js');
@@ -131,7 +130,7 @@ export const setCurrentUser = (user) => async (dispatch, getState) => {
     };
 
     try {
-        await remoteClient.post(
+        await coreClient.post(
             '/user-register',
             qs({
                 uid: currentUser.uid,

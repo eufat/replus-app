@@ -1,9 +1,11 @@
-export const remoteClient = axios.create({
-    baseURL: `http://localhost:7000/api/`,
+import {env} from './configs';
+
+export const coreClient = axios.create({
+    baseURL: env.CORE_API,
     headers: {'Content-Type': 'application/x-www-form-urlencoded'},
 });
 
 export const visionClient = axios.create({
-    baseURL: 'http://localhost:5000/',
+    baseURL: env.VISION_API,
     headers: {'Content-Type': 'application/json'},
 });

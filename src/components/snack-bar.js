@@ -3,7 +3,6 @@ import '@polymer/paper-toast/paper-toast.js';
 
 class SnackBar extends LitElement {
     _render({text, active}) {
-        console.log('snackbar-text: ', text);
         return html`
           <paper-toast text="${text}" opened?="${active}"></paper-toast>
     `;

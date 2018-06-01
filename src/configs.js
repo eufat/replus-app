@@ -1,3 +1,5 @@
+const environment = 'development';
+
 export const firebaseConfig = {
     apiKey: 'AIzaSyDGCQ24hjwEeQwlus_Knet1_Lnx93Lyy2g',
     authDomain: 'replus-162509.firebaseapp.com',
@@ -8,12 +10,12 @@ export const firebaseConfig = {
 };
 
 export const env = {
-    NODE_ENV: 'development',
-    REMOTE_API: 'core.replus.co',
-    HOST_ADDRESS: '35.184.71.225',
-    PORT_ADDRESS: '5000',
-    EVENTS_PORT: '5010',
-    STREAM_PORT: '5020',
+    NODE_ENV: environment,
+    CORE_API: environment === 'production' ? 'https://core.replus.co/api' : 'http://localhost:7000/api',
+    CORE_ACTIVITY: environment === 'production' ? 'https://core.replus.co/activity' : 'http://localhost:7010',
+    VISION_API: environment === 'production' ? 'https://vision.replus.co/api' : 'http://localhost:5000/api',
+    VISION_ACTIVITY: environment === 'production' ? 'https://vision.replus.co/activity' : 'http://localhost:5010',
+    VISION_STREAM: environment === 'production' ? 'https://vision.replus.co/stream' : 'http://localhost:5020',
     PROJECT_ENV: 'replus-162509',
     ERROR_KEY: 'AIzaSyBNs1144i3uKRPvqsXlrrAi4hKrijWrqLE',
 };

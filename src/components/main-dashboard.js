@@ -31,8 +31,6 @@ import {hideOnClickOutside} from '../utils';
 
 class MainDashboard extends connect(store)(LitElement) {
     _render({appTitle, _page, _progress}) {
-        console.log('main-dashboard page:', _page);
-        console.log('progress:', _progress);
         return html`
             <style>
                 app-header {
