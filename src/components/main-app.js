@@ -29,8 +29,6 @@ import './settings-main.js';
 
 class MainApp extends connect(store)(LitElement) {
     _render({appTitle, _page, _drawerOpened, _snackbarOpened, _snackbarText, _offline}) {
-        console.log('main-app page:', _page);
-        console.log('sbt:', _snackbarText);
         return html`
             <style>
                 .page {
@@ -75,6 +73,14 @@ class MainApp extends connect(store)(LitElement) {
         installRouter((location) => store.dispatch(navigate(window.decodeURIComponent(location.pathname))));
         installOfflineWatcher((offline) => store.dispatch(updateOffline(offline)));
         installMediaQueryWatcher(`(min-width: 460px)`, (matches) => store.dispatch(updateLayout(matches)));
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const errorHandler = new StackdriverErrorReporter();
+            errorHandler.start({
+                key: '<my-api-key>',
+                projectId: '<my-project-id>',
+            });
+        });
 
         firebase.auth().onAuthStateChanged((firebaseUser) => {
             if (firebaseUser) {

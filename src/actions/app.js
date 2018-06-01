@@ -1,7 +1,10 @@
 import { pushLocationTo } from '../utils';
 import { userDataKey, qs } from '../utils';
 import { visionClient, remoteClient } from '../client';
-import firebase from '../firebase.js';
+import firebase from '../firebase';
+import errorHandler from '../error';
+
+const pick = _.pick;
 
 export const UPDATE_PAGE = 'UPDATE_PAGE';
 export const UPDATE_OFFLINE = 'UPDATE_OFFLINE';
@@ -118,8 +121,8 @@ export const updateDrawerState = (opened) => (dispatch, getState) => {
     }
 };
 
-export const setCurrentUser = (user) => (dispatch, getState) => {
-    const currentUser = _.pick(user, userDataKey);
+export const setCurrentUser = (user) => async (dispatch, getState) => {
+    const currentUser = pick(user, userDataKey);
     const payload = {
         uid: currentUser.uid,
         display_name: currentUser.displayName,
@@ -127,35 +130,23 @@ export const setCurrentUser = (user) => (dispatch, getState) => {
         device_list: {},
     };
 
-    visionClient
-        .post('/profile', payload)
-        .then((response) => {
-            console.log(response);
-        })
-        .catch((error) => {
-            console.log(error);
-        });
-
-    remoteClient
-        .post(
+    try {
+        await remoteClient.post(
             '/user-register',
             qs({
                 uid: currentUser.uid,
                 name: currentUser.displayName,
                 email: currentUser.email,
             })
-        )
-        .then((response) => {
-            console.log(response);
-        })
-        .catch((error) => {
-            console.log(error);
-        });
+        );
 
-    dispatch({
-        type: SET_CURRENT_USER,
-        currentUser,
-    });
+        dispatch({
+            type: SET_CURRENT_USER,
+            currentUser,
+        });
+    } catch (error) {
+        errorHandler.report(error);
+    }
 };
 
 export const authenticateUser = () => (dispatch, getState) => {

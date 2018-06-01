@@ -8,12 +8,14 @@ export const firebaseConfig = {
 };
 
 export const env = {
+    NODE_ENV: 'development',
     REMOTE_API: 'core.replus.co',
     HOST_ADDRESS: '35.184.71.225',
     PORT_ADDRESS: '5000',
     EVENTS_PORT: '5010',
     STREAM_PORT: '5020',
-    GCP_PROJECT: 'replus-162509',
+    PROJECT_ENV: 'replus-162509',
+    ERROR_KEY: 'AIzaSyBNs1144i3uKRPvqsXlrrAi4hKrijWrqLE',
 };
 
 export const loadEnv = () => {

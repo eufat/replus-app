@@ -1,5 +1,7 @@
+/* eslint-disable camelcase */
 import {expandResolution, rotationsList, resolutionsList} from '../utils';
 import {visionClient} from '../client';
+import errorHandler from '../error';
 
 export const setSettings = (settings) => (dispatch, getState) => {
     dispatch({
@@ -17,7 +19,7 @@ export const fetchSettings = (uid, dev_name) => (dispatch, getState) => {
     });
 };
 
-export const saveSettings = () => (dispatch, getState) => {
+export const saveSettings = () => async (dispatch, getState) => {
     const uid = getState().app.currentUser.uid;
     const settings = getState().vision.settings;
 
@@ -49,9 +51,8 @@ export const saveSettings = () => (dispatch, getState) => {
     };
 
     try {
-        const response = await visionClient.post('/config', payload);
-        console.log(response)
+        await visionClient.post('/config', payload);
     } catch (error) {
-        console.log(error)
+        errorHandler.report(error);
     }
 };
