@@ -11,6 +11,8 @@ import {setRooms, fetchRooms, fetchDevices, addRoom, removeRoom, setNewRemote, a
 import {getNewRoomTemplate, brandsList, toTitleCase} from '../utils';
 import {store} from '../store.js';
 
+const get = _.get;
+
 export default class RoomsMain extends connect(store)(LitElement) {
     static get properties() {
         return {
@@ -32,7 +34,6 @@ export default class RoomsMain extends connect(store)(LitElement) {
     _didRender(props, changedProps, prevProps) {
         if (changedProps.uid) {
             store.dispatch(fetchRooms());
-            store.dispatch(fetchDevices());
         }
     }
 
@@ -41,17 +42,27 @@ export default class RoomsMain extends connect(store)(LitElement) {
     }
 
     _stateChanged(state) {
-        this.rooms = _.get(state, 'remote.rooms');
-        this.newDevice = _.get(state, 'remote.newDevice');
-        this.newRemote = _.get(state, 'remote.newRemote');
-        this.uid = _.get(state, 'app.currentUser.uid');
+        this.rooms = get(state, 'remote.rooms');
+        this.newDevice = get(state, 'remote.newDevice');
+        this.newRemote = get(state, 'remote.newRemote');
+        this.uid = get(state, 'app.currentUser.uid');
     }
 
-    _toggleOnEdit(roomIndex) {
-        const prevOnEditState = this.rooms[roomIndex].onEdit;
+    _enterOnEdit(roomIndex) {
         let newRooms = [...this.rooms];
 
-        newRooms[roomIndex].onEdit = !prevOnEditState;
+        newRooms[roomIndex].onEdit = true;
+        store.dispatch(setRooms(newRooms));
+    }
+
+    _exitOnEdit(roomIndex) {
+        let newRooms = [...this.rooms];
+        const newRoom = newRooms[roomIndex];
+        if (newRoom.id === '') {
+            store.dispatch(addRoom(newRoom));
+        }
+
+        newRooms[roomIndex].onEdit = false;
         store.dispatch(setRooms(newRooms));
     }
 
@@ -96,12 +107,12 @@ export default class RoomsMain extends connect(store)(LitElement) {
     }
 
     _handleNewDeviceChange(e, key) {
-        const newDevice = {...this.newDevice, [key]: e.target.name};
+        const newDevice = {...this.newDevice, [key]: e.target.value};
         store.dispatch(setNewDevice(newDevice));
     }
 
     _handleNewRemoteChange(e, key) {
-        const value = key == 'brand' ? e.target.value : e.target.name;
+        const value = key == 'brand' ? e.target.value : e.target.name; // kalau brand ambil valuenya, bukan name
         const newRemote = {...this.newRemote, [key]: value};
         store.dispatch(setNewRemote(newRemote));
     }
@@ -116,9 +127,9 @@ export default class RoomsMain extends connect(store)(LitElement) {
 
     _render({rooms, newRemote, newDevice}) {
         const roomRemotes = (remotes, roomIndex) => {
-            return _.mapValues(remotes, (remoteValue, remoteKey, remoteObj) => {
+            return remotes.map((remote) => {
                 const onEdit = rooms[roomIndex].onEdit;
-                const applicanceType = remoteValue.split(' ')[0].toLowerCase();
+                const applicanceType = remote.name.split(' ')[0].toLowerCase();
 
                 return html`
                     <div class="remote-item">
@@ -128,12 +139,12 @@ export default class RoomsMain extends connect(store)(LitElement) {
                                     <mwc-button
                                         label="Remove"
                                         icon="close"
-                                        on-click="${() => this._removeRemote(roomIndex, remoteKey)}">
+                                        on-click="${() => this._removeRemote(roomIndex, remote.id)}">
                                     </mwc-button>`
                                 : null
                         }
                         <img class="appliance-icon" src="images/${applicanceType}-icon.png"/>
-                        <p>${toTitleCase(remoteValue)}</p>
+                        <p>${toTitleCase(remote.name)}</p>
                     </div>
                 `;
             });
@@ -168,7 +179,7 @@ export default class RoomsMain extends connect(store)(LitElement) {
 
                 return html`
                     <div class="device-pill">
-                        <span class="pill-content">${device.id}</span>
+                        <span class="pill-content">${device.name}</span>
                         ${
                             onEdit
                                 ? html`
@@ -194,14 +205,14 @@ export default class RoomsMain extends connect(store)(LitElement) {
                         <paper-input
                             label="Device ID"
                             always-float-label
-                            value="${_.get(this.newDevice, 'deviceID')}"
+                            value="${get(this.newDevice, 'deviceID')}"
                             on-input="${(e) => this._handleNewDeviceChange(e, 'deviceID')}"
                         >
                         </paper-input>
                         <paper-input
                             label="Device Activation Code"
                             always-float-label
-                            value="${_.get(newDevice, 'deviceCode')}"
+                            value="${get(newDevice, 'deviceCode')}"
                             on-input="${(e) => this._handleNewDeviceChange(e, 'deviceCode')}"
                         >
                         </paper-input>
@@ -215,14 +226,14 @@ export default class RoomsMain extends connect(store)(LitElement) {
                         <label id="appliance-type">Choose Remote:</label>
                         <paper-radio-group
                             aria-labelledby="appliance-type"
-                            selected="${_.get(this.newRemote, 'type')}"
+                            selected="${get(this.newRemote, 'type')}"
                             on-change="${(e) => this._handleNewRemoteChange(e, 'type')}"
                         >
                             <paper-radio-button name="tv">TV</paper-radio-button>
                             <paper-radio-button name="ac">AC</paper-radio-button>
                         </paper-radio-group>
                         <select
-                            selected="${_.get(this.newRemote, 'brand')}"
+                            selected="${get(this.newRemote, 'brand')}"
                             on-change="${(e) => this._handleNewRemoteChange(e, 'brand')}"
                         >
                             ${brandsList.map((brand) => {
@@ -259,9 +270,9 @@ export default class RoomsMain extends connect(store)(LitElement) {
                                         always-float-label>
                                     </paper-input>
                                     <mwc-button
-                                        label="Close Edit"
+                                        label="Exit Edit"
                                         icon="close"
-                                        on-click="${() => this._toggleOnEdit(roomIndex)}">
+                                        on-click="${() => this._exitOnEdit(roomIndex)}">
                                     </mwc-button>
                                     <mwc-button
                                         label="Delete Room"
@@ -273,7 +284,7 @@ export default class RoomsMain extends connect(store)(LitElement) {
                                     <mwc-button
                                         label="Edit"
                                         icon="edit"
-                                        on-click="${() => this._toggleOnEdit(roomIndex)}">
+                                        on-click="${() => this._enterOnEdit(roomIndex)}">
                                     </mwc-button>`
                         }
                     </div>
@@ -430,7 +441,7 @@ export default class RoomsMain extends connect(store)(LitElement) {
             </style>
             <div class="rooms-container">
                 <div class="paper-container">
-                    ${roomsItems}
+                    ${_.values(roomsItems)}
                     <paper-material class="add-new-room">
                         <mwc-button
                             label="Add new room"

@@ -1,5 +1,4 @@
 import {env} from './configs';
-
 export const coreClient = axios.create({
     baseURL: env.CORE_API,
     headers: {'Content-Type': 'application/x-www-form-urlencoded'},

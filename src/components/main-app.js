@@ -12,6 +12,7 @@ import {installOfflineWatcher} from 'pwa-helpers/network.js';
 import {installMediaQueryWatcher} from 'pwa-helpers/media-query.js';
 import {updateMetadata} from 'pwa-helpers/metadata.js';
 
+import {env} from './configs';
 import firebase from '../firebase.js';
 import {store} from '../store.js';
 import {setCurrentUser, authenticateUser, deauthenticateUser} from '../actions/app.js';
@@ -77,8 +78,8 @@ class MainApp extends connect(store)(LitElement) {
         window.addEventListener('DOMContentLoaded', () => {
             const errorHandler = new StackdriverErrorReporter();
             errorHandler.start({
-                key: '<my-api-key>',
-                projectId: '<my-project-id>',
+                key: env.ERROR_KEY,
+                projectId: env.PROJECT_ENV,
             });
         });
 

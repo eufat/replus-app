@@ -1,4 +1,5 @@
-const prod = process.env.NODE_ENV === 'production';
+// const prod = process.env.NODE_ENV === 'production';
+const prod = false;
 
 export const firebaseConfig = {
     apiKey: 'AIzaSyDGCQ24hjwEeQwlus_Knet1_Lnx93Lyy2g',

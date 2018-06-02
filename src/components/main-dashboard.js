@@ -26,8 +26,10 @@ import {installOfflineWatcher} from 'pwa-helpers/network.js';
 import {installMediaQueryWatcher} from 'pwa-helpers/media-query.js';
 
 import {store} from '../store.js';
-import {navigate, updateOffline, updateLayout, deauthenticateUser, showProgress, closeProgress, showSnackbar} from '../actions/app.js';
-import {hideOnClickOutside} from '../utils';
+import {navigate, updateOffline, updateLayout, deauthenticateUser, showSnackbar} from '../actions/app.js';
+import {toTitleCase} from '../utils';
+
+const get = _.get;
 
 class MainDashboard extends connect(store)(LitElement) {
     _render({appTitle, _page, _progress}) {
@@ -146,6 +148,7 @@ class MainDashboard extends connect(store)(LitElement) {
     static get properties() {
         return {
             appTitle: String,
+            _displayName: String,
             _page: String,
             _drawerOpened: Boolean,
             _snackbarOpened: Boolean,
@@ -163,15 +166,16 @@ class MainDashboard extends connect(store)(LitElement) {
         installRouter((location) => store.dispatch(navigate(window.decodeURIComponent(location.pathname))));
         installOfflineWatcher((offline) => store.dispatch(updateOffline(offline)));
         installMediaQueryWatcher(`(min-width: 460px)`, (matches) => store.dispatch(updateLayout(matches)));
-        store.dispatch(showSnackbar('Hello there.'));
+        store.dispatch(showSnackbar(`Hello ${this._displayName ? toTitleCase(this._displayName) : 'there'}.`));
     }
 
     _stateChanged(state) {
-        this._page = state.app.page;
-        this._offline = state.app.offline;
-        this._progress = state.app.progressOpened;
-        this._snackbarOpened = state.app.snackbarOpened;
-        this._drawerOpened = state.app.drawerOpened;
+        this._displayName = get(state, 'app.currentUser.displayName');
+        this._page = get(state, 'app.page');
+        this._offline = get(state, 'app.offline');
+        this._progress = get(state, 'app.progressOpened');
+        this._snackbarOpened = get(state, 'app.snackbarOpened');
+        this._drawerOpened = get(state, 'app.drawerOpened');
     }
 
     _handleSignOut() {

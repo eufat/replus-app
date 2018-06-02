@@ -110,6 +110,7 @@ export function getNewRoomTemplate() {
         devices: {},
         name: 'My Room',
         owner: '',
+        id: '',
         remotes: {},
         onEdit: true,
     };
