@@ -7,7 +7,7 @@ import '@material/mwc-button/mwc-button.js';
 import '@material/mwc-icon/mwc-icon.js';
 import '@polymer/paper-input/paper-input.js';
 
-import {setRooms, fetchRooms, fetchDevices, addRoom, removeRoom, setNewRemote, addRemote, removeRemote, addDevice, setNewDevice} from '../actions/remote';
+import {setRooms, fetchRooms, addRoom, removeRoom, setNewRemote, addRemote, removeRemote, addDevice, setNewDevice} from '../actions/remote';
 import {getNewRoomTemplate, brandsList, toTitleCase} from '../utils';
 import {store} from '../store.js';
 
@@ -441,7 +441,7 @@ export default class RoomsMain extends connect(store)(LitElement) {
             </style>
             <div class="rooms-container">
                 <div class="paper-container">
-                    ${_.values(roomsItems)}
+                    ${roomsItems}
                     <paper-material class="add-new-room">
                         <mwc-button
                             label="Add new room"

@@ -12,7 +12,7 @@ import {installOfflineWatcher} from 'pwa-helpers/network.js';
 import {installMediaQueryWatcher} from 'pwa-helpers/media-query.js';
 import {updateMetadata} from 'pwa-helpers/metadata.js';
 
-import {env} from './configs';
+import {env} from '../configs';
 import firebase from '../firebase.js';
 import {store} from '../store.js';
 import {setCurrentUser, authenticateUser, deauthenticateUser} from '../actions/app.js';
@@ -75,14 +75,6 @@ class MainApp extends connect(store)(LitElement) {
         installOfflineWatcher((offline) => store.dispatch(updateOffline(offline)));
         installMediaQueryWatcher(`(min-width: 460px)`, (matches) => store.dispatch(updateLayout(matches)));
 
-        window.addEventListener('DOMContentLoaded', () => {
-            const errorHandler = new StackdriverErrorReporter();
-            errorHandler.start({
-                key: env.ERROR_KEY,
-                projectId: env.PROJECT_ENV,
-            });
-        });
-
         firebase.auth().onAuthStateChanged((firebaseUser) => {
             if (firebaseUser) {
                 store.dispatch(authenticateUser());
@@ -105,6 +97,7 @@ class MainApp extends connect(store)(LitElement) {
     }
 
     _stateChanged(state) {
+        console.log(state);
         this._page = state.app.page;
         this._offline = state.app.offline;
         this._snackbarOpened = state.app.snackbarOpened;

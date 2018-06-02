@@ -107,11 +107,11 @@ export function expandResolution(resolution) {
 
 export function getNewRoomTemplate() {
     return {
-        devices: {},
+        devices: [],
         name: 'My Room',
         owner: '',
         id: '',
-        remotes: {},
+        remotes: [],
         onEdit: true,
     };
 }
