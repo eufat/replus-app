@@ -12,7 +12,7 @@ import {store} from '../store.js';
 import {setSettings, saveSettings} from '../actions/vision.js';
 import {connect} from 'pwa-helpers/connect-mixin.js';
 
-export default class SettingsMain extends connect(store)(LitElement) {
+export default class SettingsVision extends connect(store)(LitElement) {
     static get properties() {
         return {
             deviceName: '',
@@ -221,4 +221,4 @@ export default class SettingsMain extends connect(store)(LitElement) {
     }
 }
 
-customElements.define('settings-main', SettingsMain);
+customElements.define('settings-vision', SettingsVision);
