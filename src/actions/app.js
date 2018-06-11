@@ -168,3 +168,35 @@ export const deauthenticateUser = () => (dispatch, getState) => {
         type: DEAUTHENTICATE_USER,
     });
 };
+
+export const linkWithProvider = (providerType) => async (dispatch, getState) => {
+    let provider;
+
+    switch (providerType) {
+        case 'google':
+            provider = new firebase.auth.GoogleAuthProvider();
+            break;
+        case 'facebook':
+            provider = new firebase.auth.FacebookAuthProvider();
+            break;
+    }
+
+    const auth = firebase.auth();
+
+    try {
+        auth.currentUser.linkWithRedirect(provider);
+        const result = await firebase.auth().getRedirectResult();
+
+        if (result.credential) {
+            let credential = result.credential;
+            let resultUser = result.user;
+            const user = await auth.signInWithCredential(credential);
+            await user.delete();
+            await resultUser.linkWithCredential(credential);
+            const finalUser = await auth.signInWithCredential(credential);
+            dispatch(setCurrentUser(finalUser));
+        }
+    } catch (error) {
+        errorHandler.report(error);
+    }
+};
