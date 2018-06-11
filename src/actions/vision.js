@@ -1,7 +1,10 @@
 /* eslint-disable camelcase */
-import {expandResolution, rotationsList, resolutionsList} from '../utils';
-import {visionClient} from '../client';
+import {expandResolution, rotationsList, resolutionsList, getCookie} from '../utils';
+import {createClient} from '../client';
 import errorHandler from '../error';
+
+const accessToken = getCookie('accessToken');
+const visionClient = createClient('vision', accessToken);
 
 export const setSettings = (settings) => (dispatch, getState) => {
     dispatch({

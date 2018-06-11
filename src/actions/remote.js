@@ -1,9 +1,12 @@
 import {createClient} from '../client';
-import {qs} from '../utils';
+import {qs, getCookie} from '../utils';
 import errorHandler from '../error';
 import {showSnackbar, showProgress, closeProgress} from '../actions/app';
 import {toTitleCase} from '../utils';
 const get = _.get; // import from lodash
+
+const accessToken = getCookie('accessToken');
+const coreClient = createClient('core', accessToken);
 
 export const setRooms = (rooms) => (dispatch, getState) => {
     if (rooms) {
