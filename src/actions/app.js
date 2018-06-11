@@ -122,26 +122,29 @@ export const updateDrawerState = (opened) => (dispatch, getState) => {
 
 export const setCurrentUser = (user) => async (dispatch, getState) => {
     const currentUser = pick(user, userDataKey);
-    const payload = {
-        uid: currentUser.uid,
-        display_name: currentUser.displayName,
-        email: currentUser.email,
-        device_list: {},
-    };
 
     try {
+        const response = await coreClient.get('/get-token', qs({ uid: currentUser.uid }));
+        const accessToken = response.data;
+
         await coreClient.post(
             '/user-register',
             qs({
                 uid: currentUser.uid,
                 name: currentUser.displayName,
                 email: currentUser.email,
-            })
+            }),
+            {
+                headers: {
+                    accessToken,
+                },
+            }
         );
 
         dispatch({
             type: SET_CURRENT_USER,
             currentUser,
+            accessToken,
         });
     } catch (error) {
         errorHandler.report(error);

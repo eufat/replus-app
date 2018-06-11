@@ -53,6 +53,7 @@ const app = (state = {progressOpened: false}, action) => {
             return {
                 ...state,
                 currentUser: action.currentUser,
+                accessToken: action.accessToken,
             };
         default:
             return state;
