@@ -85,7 +85,7 @@ class MainDashboard extends connect(store)(LitElement) {
                     display: block;
                 }
             </style>
-            <app-drawer-layout fullbleed>
+            <app-drawer-layout id="body" fullbleed>
 
               <app-header-layout fullbleed>
 
@@ -95,6 +95,7 @@ class MainDashboard extends connect(store)(LitElement) {
                           <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
                           <div main-title>Replus App</div>
                         <paper-icon-button
+                            class="more-button"
                             icon="more-vert"
                             on-click="${() => this._toggleAccountMenu(this.shadowRoot.getElementById('accountMenu'))}"
                         >
@@ -192,6 +193,14 @@ class MainDashboard extends connect(store)(LitElement) {
             element.style.display = 'block';
             this.accountMenu = true;
         }
+
+        const body = this.shadowRoot.getElementById('body');
+        body.onclick = function(event) {
+            if (!event.target.matches('.more-button')) {
+                element.style.display = 'none';
+                this.accountMenu = false;
+            }
+        };
     }
 }
 
