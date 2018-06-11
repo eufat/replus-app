@@ -1,4 +1,4 @@
-import {coreClient} from '../client';
+import {createClient} from '../client';
 import {qs} from '../utils';
 import errorHandler from '../error';
 import {showSnackbar, showProgress, closeProgress} from '../actions/app';

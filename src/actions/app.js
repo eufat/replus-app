@@ -1,6 +1,6 @@
 import { pushLocationTo } from '../utils';
-import { userDataKey, qs } from '../utils';
-import { visionClient, coreClient } from '../client';
+import { userDataKey, qs, setCookie } from '../utils';
+import { createClient } from '../client';
 import firebase from '../firebase';
 import errorHandler from '../error';
 
@@ -124,21 +124,23 @@ export const setCurrentUser = (user) => async (dispatch, getState) => {
     const currentUser = pick(user, userDataKey);
 
     try {
+        // Ask token with designated uid
+        let coreClient = createClient('core');
         const response = await coreClient.get('/get-token', qs({ uid: currentUser.uid }));
         const accessToken = response.data;
 
+        // Save access token to cookie in 30 days
+        setCookie('accessToken', accessToken, 30);
+
+        // register with available token
+        coreClient = createClient('core', accessToken);
         await coreClient.post(
             '/user-register',
             qs({
                 uid: currentUser.uid,
                 name: currentUser.displayName,
                 email: currentUser.email,
-            }),
-            {
-                headers: {
-                    accessToken,
-                },
-            }
+            })
         );
 
         dispatch({
