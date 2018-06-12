@@ -34,30 +34,6 @@ export const pushLocationTo = (location) => {
     window.location.href = location;
 };
 
-export function getFormattedDate() {
-    const now = new Date();
-    const Y = `${now.getFullYear()}`;
-    let M = `${now.getMonth() + 1}`;
-    let D = `${now.getDate()}`;
-
-    if (M.length === 1) M = `0${M}`;
-    if (D.length === 1) D = `0${D}`;
-
-    return `${Y}-${M}-${D}`;
-}
-
-export function getFormattedTime(now) {
-    let h = `${now.getHours()}`;
-    let m = `${now.getMinutes()}`;
-    let s = `${now.getSeconds()}`;
-
-    if (h.length === 1) h = `0${h}`;
-    if (m.length === 1) m = `0${m}`;
-    if (s.length === 1) s = `0${s}`;
-
-    return `${h}-${m}-${s}`;
-}
-
 export function getDateFromFilename(name) {
     if (name !== undefined) {
         const filename = name.split('.')[0]; // leave filename, remove extension

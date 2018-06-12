@@ -4,10 +4,9 @@ import '@polymer/paper-material/paper-material.js';
 
 import {env} from '../configs.js';
 import {getDateFromFilename} from '../utils.js';
+import {getEventsDummy} from '../dummy.js';
 
-const HOST_ADDRESS = env.HOST_ADDRESS;
-let EVENTS_PORT = env.EVENTS_PORT;
-EVENTS_PORT = EVENTS_PORT ? `:${EVENTS_PORT}` : '';
+const VISION_ACTIVITY = env.VISION_ACTIVITY;
 
 export default class activityMain extends LitElement {
     static get properties() {
@@ -49,35 +48,42 @@ export default class activityMain extends LitElement {
     }
 
     _didRender() {
-        // const url = `ws://${HOST_ADDRESS}${EVENTS_PORT}/d3v1`;
-        // this.realtimeURL = url;
-        // const socket = io(url);
-        // socket.on('connect', () => {
-        //     this.realtimeStatus = 'Connected';
-        // });
-        // socket.on('disconnect', () => {
-        //     this.realtimeStatus = 'Disconnected';
-        // });
-        // socket.on('frame_now', (data) => {
-        //     this.addFrameRealtime(data);
-        // });
-        // socket.on('frame_before', (data) => {
-        //     this.addFrameStored(data);
-        // });
+        const url = `${VISION_ACTIVITY}/p1z3r02`;
+        this.realtimeURL = url;
+        const socket = io(url);
+        socket.on('connect', () => {
+            this.realtimeStatus = 'Connected';
+        });
+        socket.on('disconnect', () => {
+            this.realtimeStatus = 'Disconnected';
+        });
+        socket.on('frame_now', (data) => {
+            this.addFrameRealtime(data);
+        });
+        socket.on('frame_before', (data) => {
+            this.addFrameStored(data);
+        });
     }
 
     _render({realtimeStatus, realtimeEvents, storedEvents, realtimeURL}) {
+        const activityIcon = html`
+                <svg class="time-icon time-icon-activity" viewBox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M10.86 7c-.45-1.72-2-3-3.86-3-1.86 0-3.41 1.28-3.86 3H0v2h3.14c.45 1.72 2 3 3.86 3 1.86 0 3.41-1.28 3.86-3H14V7h-3.14zM7 10.2c-1.22 0-2.2-.98-2.2-2.2 0-1.22.98-2.2 2.2-2.2 1.22 0 2.2.98 2.2 2.2 0 1.22-.98 2.2-2.2 2.2z"></path>
+                </svg>
+            `;
+
         const eventsItems = (items) => {
             return items.map((item, index) => {
-                const date = getDateFromFilename(item.name);
+                const dateFromFilename = getDateFromFilename(item.name);
+                const formattedDate = dayjs(dateFromFilename).format(' HH:mm:ss A DD MMM YYYY');
                 return html`
-                <div class="event-container">
-                    <paper-card image="${item.data}">
-                        <div class="card-content">
-                            <p>From ${item.dev_id} at ${date}</p>
-                        </div>
-                    </paper-card>
+                <div class="activity-group-title">
+                    ${activityIcon}
+                    Activity from ${item.dev_id} on ${formattedDate}
                 </div>
+                <paper-material class="activity-group" elevation="0">
+                    <img src="${item.data}"></img>
+                </paper-material>
             `;
             });
         };
@@ -92,9 +98,9 @@ export default class activityMain extends LitElement {
                     align-items: center;
                     justify-content: center;
                 }
-                paper-card {
-                    width: 480px;
-                    margin-bottom: 20px;
+
+                img {
+                    height: 300px;
                 }
 
                 .activities-listing::before {
@@ -167,31 +173,13 @@ export default class activityMain extends LitElement {
             </style>
             <div class="container">
                 <div class="activities-listing activities-listing-padded">
-                    <div class="activity-group-title">
-                        <svg class="time-icon time-icon-activity" viewBox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M10.86 7c-.45-1.72-2-3-3.86-3-1.86 0-3.41 1.28-3.86 3H0v2h3.14c.45 1.72 2 3 3.86 3 1.86 0 3.41-1.28 3.86-3H14V7h-3.14zM7 10.2c-1.22 0-2.2-.98-2.2-2.2 0-1.22.98-2.2 2.2-2.2 1.22 0 2.2.98 2.2 2.2 0 1.22-.98 2.2-2.2 2.2z"></path></svg>Activity on Jun 11, 2018
-                    </div>
-                    <paper-material class="activity-group" elevation="0">
-                        <div class="test"></div>
-                    </paper-material>
-                    <div class="activity-group-title">
-                        <svg class="time-icon time-icon-activity" viewBox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M10.86 7c-.45-1.72-2-3-3.86-3-1.86 0-3.41 1.28-3.86 3H0v2h3.14c.45 1.72 2 3 3.86 3 1.86 0 3.41-1.28 3.86-3H14V7h-3.14zM7 10.2c-1.22 0-2.2-.98-2.2-2.2 0-1.22.98-2.2 2.2-2.2 1.22 0 2.2.98 2.2 2.2 0 1.22-.98 2.2-2.2 2.2z"></path></svg>Activity on Jun 11, 2018
-                    </div>
-                    <paper-material class="activity-group" elevation="0">
-                        <div class="test"></div>
-                    </paper-material>
-                    <div class="activity-group-title">
-                        <svg class="time-icon time-icon-activity" viewBox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M10.86 7c-.45-1.72-2-3-3.86-3-1.86 0-3.41 1.28-3.86 3H0v2h3.14c.45 1.72 2 3 3.86 3 1.86 0 3.41-1.28 3.86-3H14V7h-3.14zM7 10.2c-1.22 0-2.2-.98-2.2-2.2 0-1.22.98-2.2 2.2-2.2 1.22 0 2.2.98 2.2 2.2 0 1.22-.98 2.2-2.2 2.2z"></path></svg>Activity on Jun 11, 2018
-                    </div>
-                    <paper-material class="activity-group" elevation="0">
-                        <div class="test"></div>
-                    </paper-material>
+                    ${realtimeItems}
+                    ${storedItems}
                 </div>
             </div>
             <div>
                 <p class="event-container">Listening on: ${realtimeURL}</p>
                 <p class="event-container">Connection status: ${realtimeStatus}</p>
-                ${realtimeItems}
-                ${storedItems}
             </div>
     `;
     }
