@@ -1,12 +1,9 @@
-import {createClient} from '../client';
-import {qs, getCookie} from '../utils';
+import {coreClient} from '../client';
+import {qs} from '../utils';
 import errorHandler from '../error';
 import {showSnackbar, showProgress, closeProgress} from '../actions/app';
 import {toTitleCase} from '../utils';
 const get = _.get; // import from lodash
-
-const accessToken = getCookie('accessToken');
-const coreClient = createClient('core', accessToken);
 
 export const setRooms = (rooms) => (dispatch, getState) => {
     if (rooms) {
@@ -53,7 +50,7 @@ export const fetchDevices = () => async (dispatch, getState) => {
     dispatch(showProgress());
     const uid = get(getState(), 'app.currentUser.uid');
     try {
-        const response = await coreClient.post('/get-devices', qs({uid}));
+        const response = await coreClient().post('/get-devices', qs({uid}));
         dispatch(setDevices(response.data));
         dispatch(closeProgress());
     } catch (error) {
@@ -66,7 +63,7 @@ export const fetchRooms = () => async (dispatch, getState) => {
     dispatch(showProgress());
     const uid = get(getState(), 'app.currentUser.uid');
     try {
-        const response = await coreClient.post('/get-rooms', qs({uid}));
+        const response = await coreClient().post('/get-rooms', qs({uid}));
         dispatch(setRooms(response.data));
         dispatch(fetchDevices());
         dispatch(closeProgress());
@@ -81,7 +78,7 @@ export const addRoom = (room) => async (dispatch, getState) => {
     const uid = get(getState(), 'app.currentUser.uid');
     const name = room.name;
     try {
-        await coreClient.post('/room-add', qs({uid, name}));
+        await coreClient().post('/room-add', qs({uid, name}));
         dispatch(showSnackbar(`Room ${name} added.`));
         dispatch(closeProgress());
     } catch (error) {
@@ -95,7 +92,7 @@ export const removeRoom = (room) => async (dispatch, getState) => {
     const uid = get(getState(), 'app.currentUser.uid');
     const name = room.name;
     try {
-        await coreClient.post('/room-delete', qs({uid, room: room.id}));
+        await coreClient().post('/room-delete', qs({uid, room: room.id}));
         dispatch(showSnackbar(`Room ${name} deleted.`));
         dispatch(fetchRooms());
         dispatch(closeProgress());
@@ -112,7 +109,7 @@ export const addRemote = (room) => async (dispatch, getState) => {
     const remoteBrand = get(getState(), 'remote.newRemote.brand');
     const remote = `${remoteType} ${remoteBrand}`;
     try {
-        await coreClient.post('/remote-add', qs({uid, room, remote}));
+        await coreClient().post('/remote-add', qs({uid, room, remote}));
         dispatch(showSnackbar(`Remote ${toTitleCase(remote)} added.`));
         dispatch(fetchRooms());
         dispatch(closeProgress());
@@ -126,7 +123,7 @@ export const removeRemote = (room, remoteID) => async (dispatch, getState) => {
     dispatch(showProgress());
     const uid = get(getState(), 'app.currentUser.uid');
     try {
-        await coreClient.post('/remote-delete', qs({uid, room, remoteID}));
+        await coreClient().post('/remote-delete', qs({uid, room, remoteID}));
         dispatch(showSnackbar(`Remote deleted.`));
         dispatch(fetchRooms());
         dispatch(closeProgress());
@@ -144,7 +141,7 @@ export const addDevice = (room) => async (dispatch, getState) => {
     const type = 'replus-remote';
 
     try {
-        await coreClient.post('/device-register', qs({uid, type, room: room.id, deviceID, deviceCode}));
+        await coreClient().post('/device-register', qs({uid, type, room: room.id, deviceID, deviceCode}));
         dispatch(showSnackbar(`Device ${deviceID} registered.`));
         dispatch(fetchDevices());
         dispatch(closeProgress());
@@ -159,7 +156,7 @@ export const removeDevice = (room, deviceID, deviceCode) => async (dispatch, get
     dispatch(showProgress());
     const uid = get(getState(), 'app.currentUser.uid');
     try {
-        coreClient.post('/device-deregister', qs({uid, deviceID}));
+        coreClient().post('/device-deregister', qs({uid, deviceID}));
         dispatch(closeProgress());
     } catch (error) {
         errorHandler.report(error);

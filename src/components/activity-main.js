@@ -157,6 +157,7 @@ export default class activityMain extends LitElement {
                     margin-left: 0;
                     padding: 10px 20px;
                     background-color: white;
+                    border-radius: 5px;
                 }
 
                 .activity-group {

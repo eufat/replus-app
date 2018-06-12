@@ -1,6 +1,6 @@
 import { pushLocationTo } from '../utils';
-import { userDataKey, qs, setCookie } from '../utils';
-import { createClient } from '../client';
+import { userDataKey, qs, setCookie, getCookie } from '../utils';
+import { createClient, coreClient } from '../client';
 import firebase from '../firebase';
 import errorHandler from '../error';
 
@@ -124,17 +124,23 @@ export const setCurrentUser = (user) => async (dispatch, getState) => {
     const currentUser = pick(user, userDataKey);
 
     try {
-        // Ask token with designated uid
-        let coreClient = createClient('core');
-        const response = await coreClient.get('/get-token', qs({ uid: currentUser.uid }));
-        const accessToken = response.data;
+        let accessToken = getCookie('accessToken');
 
-        // Save access token to cookie in 30 days
-        setCookie('accessToken', accessToken, 30);
+        if (!accessToken) {
+            // If no token in cookie as api to build token with designated uid
+            const coreClient = createClient('core');
+            const response = await coreClient.get('/get-token', {
+                headers: {
+                    uid: currentUser.uid,
+                },
+            });
+            accessToken = response.data;
+            // Save access token to cookie in 30 days
+            setCookie('accessToken', accessToken, 30);
+        }
 
         // register with available token
-        coreClient = createClient('core', accessToken);
-        await coreClient.post(
+        await coreClient().post(
             '/user-register',
             qs({
                 uid: currentUser.uid,
@@ -146,7 +152,6 @@ export const setCurrentUser = (user) => async (dispatch, getState) => {
         dispatch({
             type: SET_CURRENT_USER,
             currentUser,
-            accessToken,
         });
     } catch (error) {
         errorHandler.report(error);

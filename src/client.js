@@ -1,4 +1,5 @@
 import {env} from './configs';
+import {getCookie} from './utils';
 
 export const createClient = (type, token) => {
     let baseURL = '';
@@ -15,11 +16,24 @@ export const createClient = (type, token) => {
     }
 
     if (token) {
-        headers['accessToken'] = token;
+        headers['accesstoken'] = token;
     }
 
-    return axios.create({
+    const config = {
         baseURL,
         headers,
-    });
+    };
+
+    return axios.create(config);
+};
+
+// Create specific clients with token provided from cookie
+export const coreClient = () => {
+    const accessToken = getCookie('accessToken');
+    return createClient('core', accessToken);
+};
+
+export const visionClient = () => {
+    const accessToken = getCookie('accessToken');
+    return createClient('core', accessToken);
 };

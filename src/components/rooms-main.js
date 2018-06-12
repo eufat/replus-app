@@ -258,7 +258,7 @@ export default class RoomsMain extends connect(store)(LitElement) {
                         </div>
                     </div>
                 </paper-dialog>
-                <paper-material>
+                <paper-material elevation="0">
                     <div class="room-title">
                         ${
                             onEdit
@@ -436,13 +436,14 @@ export default class RoomsMain extends connect(store)(LitElement) {
                     margin: 20px;
                     padding: 10px 20px;
                     background-color: white;
+                    border-radius: 5px;
 
                 }
             </style>
             <div class="rooms-container">
                 <div class="paper-container">
                     ${roomsItems}
-                    <paper-material class="add-new-room">
+                    <paper-material elevation="0" class="add-new-room">
                         <mwc-button
                             label="Add new room"
                             icon="add"

@@ -1,10 +1,7 @@
 /* eslint-disable camelcase */
 import {expandResolution, rotationsList, resolutionsList, getCookie} from '../utils';
-import {createClient} from '../client';
+import {visionClient} from '../client';
 import errorHandler from '../error';
-
-const accessToken = getCookie('accessToken');
-const visionClient = createClient('vision', accessToken);
 
 export const setSettings = (settings) => (dispatch, getState) => {
     dispatch({
@@ -14,7 +11,7 @@ export const setSettings = (settings) => (dispatch, getState) => {
 };
 
 export const fetchSettings = (uid, dev_name) => (dispatch, getState) => {
-    visionClient.get(`/config`, {
+    visionClient().get(`/config`, {
         params: {
             user_uid: uid,
             dev_name,
@@ -54,7 +51,7 @@ export const saveSettings = () => async (dispatch, getState) => {
     };
 
     try {
-        await visionClient.post('/config', payload);
+        await visionClient().post('/config', payload);
     } catch (error) {
         errorHandler.report(error);
     }
