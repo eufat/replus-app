@@ -136,7 +136,7 @@ export const setCurrentUser = (user) => async (dispatch, getState) => {
             });
             accessToken = response.data;
             // Save access token to cookie in 30 days
-            setCookie('accessToken', accessToken, 30);
+            setCookie('accessToken', accessToken, 7);
         }
 
         // register with available token
