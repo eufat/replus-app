@@ -127,7 +127,7 @@ export default class RoomsMain extends connect(store)(LitElement) {
 
     _render({rooms, newRemote, newDevice}) {
         const roomRemotes = (remotes, roomIndex) => {
-            return remotes.map((remote) => {
+            return _.mapValues(remotes, (remote) => {
                 const onEdit = rooms[roomIndex].onEdit;
                 const applicanceType = remote.name.split(' ')[0].toLowerCase();
 

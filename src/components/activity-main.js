@@ -48,21 +48,21 @@ export default class activityMain extends LitElement {
     }
 
     _didRender() {
-        const url = `${VISION_ACTIVITY}/p1z3r02`;
-        this.realtimeURL = url;
-        const socket = io(url);
-        socket.on('connect', () => {
-            this.realtimeStatus = 'Connected';
-        });
-        socket.on('disconnect', () => {
-            this.realtimeStatus = 'Disconnected';
-        });
-        socket.on('frame_now', (data) => {
-            this.addFrameRealtime(data);
-        });
-        socket.on('frame_before', (data) => {
-            this.addFrameStored(data);
-        });
+        // const url = `${VISION_ACTIVITY}/p1z3r02`;
+        // this.realtimeURL = url;
+        // const socket = io(url);
+        // socket.on('connect', () => {
+        //     this.realtimeStatus = 'Connected';
+        // });
+        // socket.on('disconnect', () => {
+        //     this.realtimeStatus = 'Disconnected';
+        // });
+        // socket.on('frame_now', (data) => {
+        //     this.addFrameRealtime(data);
+        // });
+        // socket.on('frame_before', (data) => {
+        //     this.addFrameStored(data);
+        // });
     }
 
     _render({realtimeStatus, realtimeEvents, storedEvents, realtimeURL}) {
