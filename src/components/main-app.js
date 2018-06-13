@@ -28,8 +28,27 @@ import './activity-main.js';
 import './rooms-main.js';
 import './settings-main.js';
 
+const includes = _.includes;
+
 class MainApp extends connect(store)(LitElement) {
     _render({appTitle, _page, _drawerOpened, _snackbarOpened, _snackbarText, _offline}) {
+        const onIndex = (parent) => {
+            if (_page) {
+                // Check if it is only parent. ex: 'dashboard' is only parent.
+                const onlyParent = includes(_page, parent) && !includes(_page, '/');
+
+                let paths = _page.split('/');
+                paths = paths.filter((item) => item !== '');
+
+                // Check either multilevel or not. ex: 'dashboard/test' is multilevel.
+                const notMultilevel = !(paths.length > 1);
+
+                // If only the parent and slash. ex: 'dashboard/' is only parent with slash.
+                const onlyParentAndSlash = includes(_page, parent) && notMultilevel;
+                return onlyParent || onlyParentAndSlash;
+            }
+        };
+
         return html`
             <style>
                 .page {
@@ -41,13 +60,13 @@ class MainApp extends connect(store)(LitElement) {
                 }
             </style>
             <main class="main-content">
-                <main-auth class="page" active?="${_.includes(_page, 'auth')}"></main-auth>
-                <main-dashboard class="page" active?="${_.includes(_page, 'dashboard')}">
-                    <activity-main class="page" active?="${_.includes(_page, 'activity') || !_.includes(_page, '/')}"></activity-main>
-                    <rooms-main class="page" active?="${_.includes(_page, 'rooms')}"></rooms-main>
-                    <settings-main class="page" active?="${_.includes(_page, 'settings')}"></settings-main>
-                    <main-account class="page" active?="${_.includes(_page, 'account')}"></main-account>
-                    <main-help class="page" active?="${_.includes(_page, 'help')}"></main-help>
+                <main-auth class="page" active?="${includes(_page, 'auth')}"></main-auth>
+                <main-dashboard class="page" active?="${includes(_page, 'dashboard')}">
+                    <activity-main class="page" active?="${includes(_page, 'activity') || onIndex('dashboard')}"></activity-main>
+                    <rooms-main class="page" active?="${includes(_page, 'rooms')}"></rooms-main>
+                    <settings-main class="page" active?="${includes(_page, 'settings')}"></settings-main>
+                    <main-account class="page" active?="${includes(_page, 'account')}"></main-account>
+                    <main-help class="page" active?="${includes(_page, 'help')}"></main-help>
                 </main-dashboard>
             </main>
             <snack-bar active?="${_snackbarOpened}" text="${_snackbarText}"></snack-bar>

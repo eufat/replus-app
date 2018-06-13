@@ -7,9 +7,7 @@ import '@polymer/iron-selector/iron-selector.js';
 
 import '@polymer/app-layout/app-header/app-header.js';
 import '@polymer/app-layout/app-toolbar/app-toolbar.js';
-import '@polymer/app-layout/app-drawer/app-drawer.js';
 import '@polymer/app-layout/app-scroll-effects/effects/waterfall.js';
-import '@polymer/app-layout/app-drawer-layout/app-drawer-layout.js';
 import '@polymer/app-layout/app-header-layout/app-header-layout.js';
 import '@polymer/app-layout/app-scroll-effects/app-scroll-effects.js';
 import '@polymer/paper-item/paper-item.js';
@@ -62,7 +60,7 @@ class MainDashboard extends connect(store)(LitElement) {
                     font-size: inherit;
                 }
 
-                #accountMenu {
+                #moreMenu {
                     margin: 0;
                     right: 0;
                     top: auto;
@@ -76,14 +74,6 @@ class MainDashboard extends connect(store)(LitElement) {
                     --paper-input-container-underline:  {
                         display: none;
                     };
-                }
-
-                .page {
-                    display: none;
-                }
-
-                .page[active] {
-                    display: block;
                 }
 
                 paper-tabs {
@@ -171,7 +161,7 @@ class MainDashboard extends connect(store)(LitElement) {
                     </paper-tabs>
 
                   <!-- Dashboard app bar menu -->
-                  <paper-material id="accountMenu">
+                  <paper-material id="moreMenu">
                       <paper-listbox>
                           <a name='account' href='/dashboard/help' tabindex='-1'>
                           <paper-item raised>Help</paper-item>

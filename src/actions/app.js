@@ -23,19 +23,18 @@ export const navigate = (path) => (dispatch) => {
     dispatch(loadPage(page));
 };
 
-const loadPage = (page) => (dispatch) => {
-    const pageList = ['auth', 'dashboard', 'dashboard/activity', 'dashboard/rooms', 'dashboard/settings', 'dashboard/help', 'dashboard/account'];
+const loadPage = (page) => async (dispatch) => {
+    let paths = page.split('/');
+    paths = paths.filter((item) => item !== '');
 
-    if (pageList.indexOf(page) === -1) {
-        page = '404';
-    }
+    const pageList = ['auth', 'dashboard', 'activity', 'rooms', 'settings', 'help', 'account'];
 
-    dispatch(updatePage(page));
+    for (const path of paths) {
+        if (!(pageList.indexOf(path) > -1)) {
+            page = '404';
+        }
 
-    const paths = page.split('/');
-
-    paths.forEach(async (path, index) => {
-        switch (page) {
+        switch (path) {
             case 'auth':
                 await import('../components/main-auth.js');
                 break;
@@ -61,7 +60,9 @@ const loadPage = (page) => (dispatch) => {
                 page = '404';
                 await import('../components/not-found.js');
         }
-    });
+    }
+
+    dispatch(updatePage(page));
 };
 
 const updatePage = (page) => {
