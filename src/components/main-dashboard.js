@@ -105,8 +105,12 @@ class MainDashboard extends connect(store)(LitElement) {
                     width: 100%;
                     text-align: center;
                 }
-            </style>
 
+                .more-menu-icon {
+                    margin-right: 20px;
+                }
+            </style>
+            <div id="body">
               <app-header-layout fullbleed>
 
                   <!-- Dashboard app bar -->
@@ -116,7 +120,7 @@ class MainDashboard extends connect(store)(LitElement) {
                         <paper-icon-button
                             class="more-button"
                             icon="more-vert"
-                            on-click="${() => this._toggleAccountMenu(this.shadowRoot.getElementById('accountMenu'))}"
+                            on-click="${() => this._toggleMoreMenu(this.shadowRoot.getElementById('moreMenu'))}"
                         >
                         </paper-icon-button>
                         ${_progress ? html`<paper-progress value="10" indeterminate bottom-item></paper-progress>` : null}
@@ -163,15 +167,16 @@ class MainDashboard extends connect(store)(LitElement) {
                   <!-- Dashboard app bar menu -->
                   <paper-material id="moreMenu">
                       <paper-listbox>
-                          <a name='account' href='/dashboard/help' tabindex='-1'>
-                          <paper-item raised>Help</paper-item>
+                          <a name='help' href='/dashboard/help' tabindex='-1'>
+                          <paper-item raised><iron-icon icon="icons:help" class="more-menu-icon"></iron-icon>Help</paper-item>
                           </a>
                           <a name='sign-out' on-click='${() => this._handleSignOut()}' tabindex='-1'>
-                          <paper-item raised><iron-icon icon="icons:exit-to-app"></iron-icon>Sign Out</paper-item>
+                          <paper-item raised><iron-icon icon="icons:exit-to-app" class="more-menu-icon"></iron-icon>Sign Out</paper-item>
                           </a>
                       </paper-listbox>
                   </paper-material>
               </app-header-layout>
+            </div>
     `;
     }
 
@@ -212,22 +217,22 @@ class MainDashboard extends connect(store)(LitElement) {
         store.dispatch(deauthenticateUser());
     }
 
-    _toggleAccountMenu(element) {
-        const accountMenuDisplay = element.style.display === 'block';
+    _toggleMoreMenu(element) {
+        const moreMenuDisplay = element.style.display === 'block';
 
-        if (accountMenuDisplay) {
+        if (moreMenuDisplay) {
             element.style.display = 'none';
-            this.accountMenu = false;
+            this.moreMenu = false;
         } else {
             element.style.display = 'block';
-            this.accountMenu = true;
+            this.moreMenu = true;
         }
 
         const body = this.shadowRoot.getElementById('body');
         body.onclick = function(event) {
             if (!event.target.matches('.more-button')) {
                 element.style.display = 'none';
-                this.accountMenu = false;
+                this.moreMenu = false;
             }
         };
     }
