@@ -153,18 +153,18 @@ class MainDashboard extends connect(store)(LitElement) {
                     </a>
                     </paper-tab>
                     <paper-tab>
-                    <a href="/dashboard/settings">
+                    <a href="/dashboard/account">
                         <div class="tab-menu">
-                            <div class="tab-menu-icon"><iron-icon icon="icons:settings"></iron-icon></div>
-                            <p>Settings</p>
+                            <div class="tab-menu-icon"><iron-icon icon="icons:account-circle"></iron-icon></div>
+                            <p>Account</p>
                         </div>
                     </a>
                     </paper-tab>
                     <paper-tab>
-                    <a href="/dashboard/help">
+                    <a href="/dashboard/settings">
                         <div class="tab-menu">
-                            <div class="tab-menu-icon"><iron-icon icon="icons:help"></iron-icon></div>
-                            <p>Help</p>
+                            <div class="tab-menu-icon"><iron-icon icon="icons:settings"></iron-icon></div>
+                            <p>Settings</p>
                         </div>
                     </a>
                     </paper-tab>
@@ -173,14 +173,11 @@ class MainDashboard extends connect(store)(LitElement) {
                   <!-- Dashboard app bar menu -->
                   <paper-material id="accountMenu">
                       <paper-listbox>
-                          <a name='account' href='/dashboard/account' tabindex='-1'>
-                          <paper-item raised>Account</paper-item>
-                          </a>
                           <a name='account' href='/dashboard/help' tabindex='-1'>
                           <paper-item raised>Help</paper-item>
                           </a>
                           <a name='sign-out' on-click='${() => this._handleSignOut()}' tabindex='-1'>
-                          <paper-item raised>Sign Out</paper-item>
+                          <paper-item raised><iron-icon icon="icons:exit-to-app"></iron-icon>Sign Out</paper-item>
                           </a>
                       </paper-listbox>
                   </paper-material>
