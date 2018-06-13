@@ -6,7 +6,7 @@ export default class Help extends LitElement {
     static get properties() {
         return {
             displayName: String,
-            active: Boolean
+            active: Boolean,
         };
     }
 

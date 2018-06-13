@@ -63,13 +63,13 @@ export default class SettingsMain extends connect(store)(LitElement) {
                 <paper-item>
                     <paper-item-body class="text-container">
                         <p class="left">Display Name</p>
-                        <p class="right">${currentUser.displayName}</p>
+                        <p class="right">${get(currentUser, 'displayName')}</p>
                     </paper-item-body>
                 </paper-item>
                 <paper-item>
                     <paper-item-body class="text-container">
                         <p class="left">Email</p>
-                        <p class="right">${currentUser.email}</p>
+                        <p class="right">${get(currentUser, 'email')}</p>
                     </paper-item-body>
                 </paper-item>
                 <paper-item>

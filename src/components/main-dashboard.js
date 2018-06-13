@@ -18,6 +18,7 @@ import '@polymer/paper-listbox/paper-listbox.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu.js';
 import '@polymer/paper-progress/paper-progress.js';
+import '@polymer/paper-tabs';
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings.js';
 
 import {connect} from 'pwa-helpers/connect-mixin.js';
@@ -84,15 +85,43 @@ class MainDashboard extends connect(store)(LitElement) {
                 .page[active] {
                     display: block;
                 }
+
+                paper-tabs {
+                    display: block;
+                    width: 100%;
+                    position: fixed;
+                    border-top: 1px solid #ccc;
+                    height: 50px;
+                    background-color: white;
+                    padding-top: 10px;
+                    bottom: 0;
+                }
+
+                paper-tabs[no-bar] paper-tab.iron-selected {
+                    color: #304ffe;
+                }
+
+                .tab-menu {
+                    display: flex;
+                    flex-direction: column;
+                    text-align: center;
+                }
+
+                .tab-menu p {
+                    margin: 0;
+                }
+
+                .tab-menu-icon {
+                    width: 100%;
+                    text-align: center;
+                }
             </style>
-            <app-drawer-layout id="body" fullbleed>
 
               <app-header-layout fullbleed>
 
                   <!-- Dashboard app bar -->
                   <app-header fixed effects="waterfall" slot="header">
                       <app-toolbar>
-                          <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
                           <div main-title>Replus App</div>
                         <paper-icon-button
                             class="more-button"
@@ -106,6 +135,40 @@ class MainDashboard extends connect(store)(LitElement) {
 
                   <!-- Dashboard content pages -->
                   <slot></slot>
+                  <paper-tabs selected="0" align-bottom no-bar>
+                    <paper-tab>
+                    <a href="/dashboard/activity">
+                        <div class="tab-menu">
+                            <div class="tab-menu-icon"><iron-icon icon="icons:view-day"></iron-icon></div>
+                            <p>Activity</p>
+                        </div>
+                    </a>
+                    </paper-tab>
+                    <paper-tab>
+                    <a href="/dashboard/rooms">
+                        <div class="tab-menu">
+                            <div class="tab-menu-icon"><iron-icon icon="icons:weekend"></iron-icon></div>
+                            <p>Rooms</p>
+                        </div>
+                    </a>
+                    </paper-tab>
+                    <paper-tab>
+                    <a href="/dashboard/settings">
+                        <div class="tab-menu">
+                            <div class="tab-menu-icon"><iron-icon icon="icons:settings"></iron-icon></div>
+                            <p>Settings</p>
+                        </div>
+                    </a>
+                    </paper-tab>
+                    <paper-tab>
+                    <a href="/dashboard/help">
+                        <div class="tab-menu">
+                            <div class="tab-menu-icon"><iron-icon icon="icons:help"></iron-icon></div>
+                            <p>Help</p>
+                        </div>
+                    </a>
+                    </paper-tab>
+                    </paper-tabs>
 
                   <!-- Dashboard app bar menu -->
                   <paper-material id="accountMenu">
@@ -122,27 +185,6 @@ class MainDashboard extends connect(store)(LitElement) {
                       </paper-listbox>
                   </paper-material>
               </app-header-layout>
-
-              <app-drawer id="drawer" slot="drawer">
-                    <iron-selector
-                        class='nav-menu'
-                        attr-for-selected='name'
-                    >
-                        <a name='activity' href='/dashboard/activity' tabindex='-1'>
-                            <paper-item raised>Activity</paper-item>
-                        </a>
-                        <a name='rooms' href='/dashboard/rooms' tabindex='-1'>
-                            <paper-item raised>Rooms</paper-item>
-                        </a>
-                        <a name='settings' href='/dashboard/settings' tabindex='-1'>
-                            <paper-item raised>Settings</paper-item>
-                        </a>
-                        <a name='help' href='/dashboard/help' tabindex='-1'>
-                            <paper-item raised>Help</paper-item>
-                        </a>
-                    </iron-selector>
-              </app-drawer>
-            </app-drawer-layout>
     `;
     }
 
