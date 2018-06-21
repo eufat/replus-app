@@ -28,6 +28,9 @@ import './activity-main.js';
 import './rooms-main.js';
 import './settings-main.js';
 
+import './remote-ac.js';
+import './remote-tv.js';
+
 const includes = _.includes;
 
 class MainApp extends connect(store)(LitElement) {
@@ -67,6 +70,8 @@ class MainApp extends connect(store)(LitElement) {
                     <settings-main class="page" active?="${includes(_page, 'settings')}"></settings-main>
                     <main-account class="page" active?="${includes(_page, 'account')}"></main-account>
                     <main-help class="page" active?="${includes(_page, 'help')}"></main-help>
+                    <remote-ac class="page" active?="${includes(_page, 'remote-ac')}"></remote-ac>
+                    <remote-tv class="page" active?="${includes(_page, 'remote-tv')}"></remote-tv>
                 </main-dashboard>
             </main>
             <snack-bar active?="${_snackbarOpened}" text="${_snackbarText}"></snack-bar>
