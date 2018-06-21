@@ -27,7 +27,7 @@ const loadPage = (page) => async (dispatch) => {
     let paths = page.split('/');
     paths = paths.filter((item) => item !== '');
 
-    const pageList = ['auth', 'dashboard', 'activity', 'rooms', 'settings', 'help', 'account'];
+    const pageList = ['auth', 'dashboard', 'activity', 'rooms', 'settings', 'help', 'account', 'remote-ac', 'remote-tv'];
 
     for (const path of paths) {
         if (!(pageList.indexOf(path) > -1)) {
@@ -55,6 +55,12 @@ const loadPage = (page) => async (dispatch) => {
                 break;
             case 'account':
                 await import('../components/main-account.js');
+                break;
+            case 'remote-ac':
+                await import('../components/remote-ac.js');
+                break;
+            case 'remote-tv':
+                await import('../components/remote-tv.js');
                 break;
             default:
                 page = '404';
