@@ -59,6 +59,7 @@ class RemoteTv extends PolymerElement {
 
                 #menubuttons {
                     padding: 5px;
+                    margin-top: 50px;
                 }
 
                 #menubuttons paper-button {
@@ -72,8 +73,7 @@ class RemoteTv extends PolymerElement {
 
                 #remoteContainer {
                     width: 330px;
-                    margin-left: 30%;
-                    margin-right: 30%;
+                    margin: 50px auto;
                 }
 
                 .shadow-2dp {

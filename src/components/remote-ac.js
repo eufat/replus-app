@@ -73,13 +73,13 @@ class RemoteAc extends PolymerElement {
 
                 #mainContainer {
                     width: 330px;
-                    margin-left: 30%;
-                    margin-right: 30%;
+                    margin-left: auto;
+                    margin-right: auto;
                 }
 
                 #remoteContainer {
-                    margin-left: 0px;   /*35*/
-                    margin-right: 0px;  /*35*/
+                    margin-top: 188px;
+                    margin-bottom: 0px;
                 }
 
                 #textTemp {
