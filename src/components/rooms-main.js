@@ -50,7 +50,6 @@ export default class RoomsMain extends connect(store)(LitElement) {
 
     _enterOnEdit(roomIndex) {
         let newRooms = [...this.rooms];
-
         newRooms[roomIndex].onEdit = true;
         store.dispatch(setRooms(newRooms));
     }
@@ -132,20 +131,27 @@ export default class RoomsMain extends connect(store)(LitElement) {
                 const applicanceType = remote.name.split(' ')[0].toLowerCase();
 
                 return html`
-                    <div class="remote-item">
-                        ${
-                            onEdit
-                                ? html`
-                                    <mwc-button
-                                        label="Remove"
-                                        icon="close"
-                                        on-click="${() => this._removeRemote(roomIndex, remote.id)}">
-                                    </mwc-button>`
-                                : null
+                    <style>
+                        a {
+                            color: black;
                         }
-                        <img class="appliance-icon" src="images/${applicanceType}-icon.png"/>
-                        <p>${toTitleCase(remote.name)}</p>
-                    </div>
+                    </style>
+                    <a href="dashboard/remote-${remote.name.substring(0, 2)}">
+                        <div class="remote-item">
+                            ${
+                                onEdit
+                                    ? html`
+                                        <mwc-button
+                                            label="Remove"
+                                            icon="close"
+                                            on-click="${() => this._removeRemote(roomIndex, remote.id)}">
+                                        </mwc-button>`
+                                    : null
+                            }
+                            <img class="appliance-icon" src="images/${applicanceType}-icon.png"/>
+                            <p>${toTitleCase(remote.name)}</p>
+                        </div>
+                    </a>
                 `;
             });
         };
