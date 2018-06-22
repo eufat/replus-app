@@ -134,24 +134,29 @@ export default class RoomsMain extends connect(store)(LitElement) {
                     <style>
                         a {
                             color: black;
+                            text-decoration: none;
                         }
                     </style>
-                    <a href="dashboard/remote-${remote.name.substring(0, 2)}">
-                        <div class="remote-item">
-                            ${
-                                onEdit
-                                    ? html`
+                        ${
+                            onEdit
+                                ? html`
+                                    <div class="remote-item">
                                         <mwc-button
                                             label="Remove"
                                             icon="close"
                                             on-click="${() => this._removeRemote(roomIndex, remote.id)}">
-                                        </mwc-button>`
-                                    : null
-                            }
-                            <img class="appliance-icon" src="images/${applicanceType}-icon.png"/>
-                            <p>${toTitleCase(remote.name)}</p>
-                        </div>
-                    </a>
+                                        </mwc-button>
+                                        <img class="appliance-icon" src="images/${applicanceType}-icon.png"/>
+                                        <p>${toTitleCase(remote.name)}</p>
+                                    </div>`
+                                : html`
+                                <a href="dashboard/remote-${remote.name.substring(0, 2)}">
+                                    <div class="remote-item">
+                                        <img class="appliance-icon" src="images/${applicanceType}-icon.png"/>
+                                        <p>${toTitleCase(remote.name)}</p>
+                                    </div>
+                                </a>`
+                        }
                 `;
             });
         };
