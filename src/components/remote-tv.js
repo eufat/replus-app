@@ -1,5 +1,6 @@
 import {PolymerElement, html} from '@polymer/polymer/polymer-element';
-//
+import {connect} from 'pwa-helpers/connect-mixin.js';
+
 import '@polymer/paper-fab/paper-fab.js';
 import '@polymer/paper-toast/paper-toast.js';
 import '@polymer/paper-button/paper-button.js';
@@ -17,7 +18,13 @@ import '@polymer/iron-icons/hardware-icons.js';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import '@polymer/iron-flex-layout/iron-flex-layout.js';
 
-class RemoteTv extends PolymerElement {
+import {setRooms, fetchRooms, addRoom, removeRoom, setNewRemote, addRemote, removeRemote, addDevice, setNewDevice} from '../actions/remote';
+import {getNewRoomTemplate, brandsList, toTitleCase} from '../utils';
+import {store} from '../store.js';
+
+const get = _.get;
+
+class RemoteTv extends connect(store)(PolymerElement) {
     static get template() {
         return html`
             <style include="iron-flex iron-flex-alignment">
@@ -59,7 +66,6 @@ class RemoteTv extends PolymerElement {
 
                 #menubuttons {
                     padding: 5px;
-                    margin-top: 50px;
                 }
 
                 #menubuttons paper-button {
@@ -119,7 +125,7 @@ class RemoteTv extends PolymerElement {
                 </div>
             </div>
 
-            <paper-dialog id="dialog" entry-animation="slide-from-bottom-animation" exit-animation="fade-out-animation" on-iron-overlay-closed="_closedDialog">
+            <paper-dialog id="dialog" on-iron-overlay-closed="_closedDialog">
                 <div class="horizontal layout around-justified">
                     <paper-button on-tap="_tapBtn" title="01">1</paper-button>
                     <paper-button on-tap="_tapBtn" title="02">2</paper-button>
@@ -150,89 +156,118 @@ class RemoteTv extends PolymerElement {
                 type: String,
                 observer: '_remoteChanged',
             },
+            command: {
+                type: String,
+            },
+            codeset: {
+                type: String,
+            },
+            rooms: Array,
+            newDevice: Object,
+            newRemote: Object,
+            uid: String,
+            active: Boolean,
         };
     }
 
-    // ready() {
-    //     super.ready();
-    //     const thisRemoteTV = this;
-    //     thisRemoteTV.setupPosition();
-    //     thisRemoteTV.switchOn = true;
+    constructor() {
+        super();
+        this.rooms = [];
+        this.newDevice = {};
+        this.newRemote = {};
+    }
 
-    //     window.addEventListener('resize', function(event) {
-    //         thisRemoteTV.setupPosition();
-    //     });
-    // }
+    _stateChanged(state) {
+        this.rooms = get(state, 'remote.rooms');
+        this.newDevice = get(state, 'remote.newDevice');
+        this.newRemote = get(state, 'remote.newRemote');
+        this.uid = get(state, 'app.currentUser.uid');
+    }
 
-    // setupPosition() {
-    //     if (window.innerHeight > 570) thisRemoteTV.$.menubuttons.style.marginTop = (window.innerHeight - 550) - 20 + 'px';
-    //     else thisRemoteTV.$.menubuttons.style.marginTop = '20px';
+    ready() {
+        super.ready();
+        const thisRemoteTV = this;
+        thisRemoteTV.setupPosition();
+        thisRemoteTV.switchOn = true;
+        window.addEventListener('resize', function(event) {
+            thisRemoteTV.setupPosition();
+        });
+        thisRemoteTV._remoteChanged();
+    }
 
-    //     if (window.innerWidth > 375) {
-    //         thisRemoteTV.$.remoteContainer.style.width = '350px';
-    //         thisRemoteTV.$.remoteContainer.style.marginLeft = (window.innerWidth - 350)/2 + 'px';
-    //     } else {
-    //         thisRemoteTV.$.remoteContainer.style.width = '300px';
-    //         thisRemoteTV.$.remoteContainer.style.marginLeft = (window.innerWidth - 300)/2 + 'px';
-    //         if (window.innerWidth < 325) {
-    //             thisRemoteTV.$.remoteContainer.style.width = '250px';
-    //             thisRemoteTV.$.remoteContainer.style.marginLeft = (window.innerWidth - 250)/2 + 'px';
-    //         }
-    //     }
-    // }
+    setupPosition() {
+        const thisRemoteTV = this;
+        if (window.innerHeight > 570) thisRemoteTV.$.menubuttons.style.marginTop = (window.innerHeight - 550) - 60 + 'px';
+        else thisRemoteTV.$.menubuttons.style.marginTop = '20px';
 
-    // _remoteChanged() {
-    //     var jenis = thisRemoteTV.remote.substring(0, 2);
-    //     var merk = thisRemoteTV.remote.substring(3).toLowerCase();
+        if (window.innerWidth > 375) {
+            thisRemoteTV.$.remoteContainer.style.width = '350px';
+            thisRemoteTV.$.remoteContainer.style.marginLeft = (window.innerWidth - 350)/2 + 'px';
+        } else {
+            thisRemoteTV.$.remoteContainer.style.width = '300px';
+            thisRemoteTV.$.remoteContainer.style.marginLeft = (window.innerWidth - 300)/2 + 'px';
+            if (window.innerWidth < 325) {
+                thisRemoteTV.$.remoteContainer.style.width = '250px';
+                thisRemoteTV.$.remoteContainer.style.marginLeft = (window.innerWidth - 250)/2 + 'px';
+            }
+        }
+    }
 
-    //     if (jenis == "TV") {
-    //         if (merk == "lg") thisRemoteTV.codeset = "1970";
-    //         else if (merk == "samsung") thisRemoteTV.codeset = "0595";
-    //         else if (merk == "panasonic") thisRemoteTV.codeset = "2619";
-    //         else if (merk == "sony") thisRemoteTV.codeset = "1319";
-    //         else if (merk == "sharp") thisRemoteTV.codeset = "T001"; //1429
-    //         else if (merk == "changhong") thisRemoteTV.codeset = "2903";
-    //         else if (merk == "sanyo") thisRemoteTV.codeset = "1430";
-    //         else if (merk == "toshiba") thisRemoteTV.codeset = "0339";
-    //     }
-    // }
+    _remoteChanged() {
+        const thisRemoteTV = this;
+        let jenis = thisRemoteTV.remote.substring(0, 2);
+        let merk = thisRemoteTV.remote.substring(3).toLowerCase();
 
-    // _closedDialog() {
-    //     thisRemoteTV.$.btnNumpad.removeAttribute("disabled");
-    // }
+        if (jenis == 'TV') {
+            if (merk == 'lg') thisRemoteTV.codeset = '1970';
+            else if (merk == 'samsung') thisRemoteTV.codeset = '0595';
+            else if (merk == 'panasonic') thisRemoteTV.codeset = '2619';
+            else if (merk == 'sony') thisRemoteTV.codeset = '1319';
+            else if (merk == 'sharp') thisRemoteTV.codeset = 'T001'; //1429
+            else if (merk == 'changhong') thisRemoteTV.codeset = '2903';
+            else if (merk == 'sanyo') thisRemoteTV.codeset = '1430';
+            else if (merk == 'toshiba') thisRemoteTV.codeset = '0339';
+        }
+    }
 
-    // _showDialog() {
-    //     thisRemoteTV.$.dialog.open();
-    //     thisRemoteTV.$.btnNumpad.setAttribute("disabled", "true");
-    // }
+    _closedDialog() {
+        const thisRemoteTV = this;
+        thisRemoteTV.$.btnNumpad.removeAttribute('disabled');
+    }
 
-    // _tapBtn(e) {
-    //     var command = Polymer.dom(e).path[2].getAttribute('data-command');
+    _showDialog() {
+        const thisRemoteTV = this;
+        thisRemoteTV.$.dialog.open();
+        thisRemoteTV.$.btnNumpad.setAttribute('disabled', 'true');
+    }
 
-    //     if (command == null) {
-    //         command = e.target.title
-    //         if (command == "") {
-    //             // thisRemoteTV.$.toast.show({text: 'Please try another button.', duration: 1000});
-    //             return;
-    //         }
-    //     }
+    _tapBtn(e) {
+        const thisRemoteTV = this;
+        let command = e.path[2].getAttribute('data-command');
 
-    //     else if (command == "15") {
-    //         if (!thisRemoteTV.switchOn) {
-    //             command = "16";
-    //             thisRemoteTV.$.btnPower.setAttribute("icon", "power-settings-new");
-    //         } else {
-    //            thisRemoteTV.$.btnPower.setAttribute("icon", "close");
-    //         }
-    //         thisRemoteTV.switchOn = !thisRemoteTV.switchOn;
-    //     }
+        if (command == null) {
+            command = e.target.title;
+            if (command == '') {
+                // thisRemoteTV.$.toast.show({text: 'Please try another button.', duration: 1000});
+                return;
+            }
+        } else if (command == '15') {
+            if (!thisRemoteTV.switchOn) {
+                command = '16';
+                thisRemoteTV.$.btnPower.setAttribute('icon', 'power-settings-new');
+            } else {
+                thisRemoteTV.$.btnPower.setAttribute('icon', 'close');
+            }
+            thisRemoteTV.switchOn = !thisRemoteTV.switchOn;
+        }
 
-    //     thisRemoteTV.command = thisRemoteTV.codeset + command;
-    //     thisRemoteTV.$.ajax.generateRequest();
-    // }
+        thisRemoteTV.command = thisRemoteTV.codeset + command;
+        // thisRemoteTV.$.ajax.generateRequest();
+    }
 
     // _handleResponse() {
-    //     var response = thisRemoteTV.response;
+    //     const thisRemoteTV = this;
+    //     let response = thisRemoteTV.response;
     //     if (response == 'OK') {
     //         console.log(`Sending command ${thisRemoteTV.command}: ${thisRemoteTV.response}`);
     //     } else if (response == 'NO_DEVICE') {
