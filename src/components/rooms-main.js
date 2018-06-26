@@ -7,7 +7,7 @@ import '@material/mwc-button/mwc-button.js';
 import '@material/mwc-icon/mwc-icon.js';
 import '@polymer/paper-input/paper-input.js';
 
-import {setRooms, fetchRooms, addRoom, removeRoom, setNewRemote, addRemote, removeRemote, addDevice, setNewDevice} from '../actions/remote';
+import {setRooms, fetchRooms, addRoom, removeRoom, setNewRemote, addRemote, removeRemote, addDevice, setNewDevice, setActiveRemote} from '../actions/remote';
 import {getNewRoomTemplate, brandsList, toTitleCase} from '../utils';
 import {store} from '../store.js';
 
@@ -50,7 +50,6 @@ export default class RoomsMain extends connect(store)(LitElement) {
 
     _enterOnEdit(roomIndex) {
         let newRooms = [...this.rooms];
-
         newRooms[roomIndex].onEdit = true;
         store.dispatch(setRooms(newRooms));
     }
@@ -125,6 +124,10 @@ export default class RoomsMain extends connect(store)(LitElement) {
         store.dispatch(addRemote(roomID));
     }
 
+    _activeRemote(remote) {
+        store.dispatch(setActiveRemote(remote));
+    }
+
     _render({rooms, newRemote, newDevice}) {
         const roomRemotes = (remotes, roomIndex) => {
             return _.mapValues(remotes, (remote) => {
@@ -132,20 +135,32 @@ export default class RoomsMain extends connect(store)(LitElement) {
                 const applicanceType = remote.name.split(' ')[0].toLowerCase();
 
                 return html`
-                    <div class="remote-item">
+                    <style>
+                        a {
+                            color: black;
+                            text-decoration: none;
+                        }
+                    </style>
                         ${
                             onEdit
                                 ? html`
-                                    <mwc-button
-                                        label="Remove"
-                                        icon="close"
-                                        on-click="${() => this._removeRemote(roomIndex, remote.id)}">
-                                    </mwc-button>`
-                                : null
+                                    <div class="remote-item">
+                                        <mwc-button
+                                            label="Remove"
+                                            icon="close"
+                                            on-click="${() => this._removeRemote(roomIndex, remote.id)}">
+                                        </mwc-button>
+                                        <img class="appliance-icon" src="images/${applicanceType}-icon.png"/>
+                                        <p>${toTitleCase(remote.name)}</p>
+                                    </div>`
+                                : html`
+                                <a href="dashboard/remote-${remote.name.substring(0, 2)}" on-click="${() => this._activeRemote(remote)}">
+                                    <div class="remote-item">
+                                        <img class="appliance-icon" src="images/${applicanceType}-icon.png"/>
+                                        <p>${toTitleCase(remote.name)}</p>
+                                    </div>
+                                </a>`
                         }
-                        <img class="appliance-icon" src="images/${applicanceType}-icon.png"/>
-                        <p>${toTitleCase(remote.name)}</p>
-                    </div>
                 `;
             });
         };
@@ -423,7 +438,7 @@ export default class RoomsMain extends connect(store)(LitElement) {
                 .paper-container {
                     margin: 0 auto;
                     max-width: 960px;
-
+                    padding-bottom: 50px;
                 }
 
                 paper-dialog {

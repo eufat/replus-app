@@ -17,6 +17,7 @@ import '@polymer/paper-icon-button/paper-icon-button.js';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu.js';
 import '@polymer/paper-progress/paper-progress.js';
 import '@polymer/paper-tabs';
+import '@polymer/paper-fab/paper-fab.js';
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings.js';
 
 import {connect} from 'pwa-helpers/connect-mixin.js';
@@ -126,7 +127,6 @@ class MainDashboard extends connect(store)(LitElement) {
                         ${_progress ? html`<paper-progress value="10" indeterminate bottom-item></paper-progress>` : null}
                       </app-toolbar>
                   </app-header>
-
                   <!-- Dashboard content pages -->
                   <slot></slot>
                   <paper-tabs selected="0" align-bottom no-bar>
