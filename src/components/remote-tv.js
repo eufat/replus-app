@@ -18,8 +18,8 @@ import '@polymer/iron-icons/hardware-icons.js';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import '@polymer/iron-flex-layout/iron-flex-layout.js';
 
-import {setRooms, fetchRooms, addRoom, removeRoom, setNewRemote, addRemote, removeRemote, addDevice, setNewDevice} from '../actions/remote';
-import {getNewRoomTemplate, brandsList, toTitleCase} from '../utils';
+import {fetchRooms} from '../actions/remote';
+import {brandsList, toTitleCase} from '../utils';
 import {store} from '../store.js';
 
 const get = _.get;
@@ -166,7 +166,6 @@ class RemoteTv extends connect(store)(PolymerElement) {
             newDevice: Object,
             newRemote: Object,
             uid: String,
-            active: Boolean,
         };
     }
 
@@ -192,7 +191,7 @@ class RemoteTv extends connect(store)(PolymerElement) {
         window.addEventListener('resize', function(event) {
             thisRemoteTV.setupPosition();
         });
-        thisRemoteTV._remoteChanged();
+        // thisRemoteTV._remoteChanged();
     }
 
     setupPosition() {
