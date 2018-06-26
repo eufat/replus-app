@@ -28,6 +28,13 @@ export const setNewRemote = (newRemote) => (dispatch, getState) => {
     });
 };
 
+export const setActiveRemote = (activeRemote) => (dispatch, getState) => {
+    dispatch({
+        type: 'SET_ACTIVE_REMOTE',
+        activeRemote,
+    });
+};
+
 export const setDevices = (devices) => (dispatch, getState) => {
     const prevRooms = get(getState(), 'remote.rooms');
 
