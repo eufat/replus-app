@@ -1,7 +1,6 @@
-// import {LitElement, html} from '@polymer/lit-element';
 import {PolymerElement, html} from '@polymer/polymer/polymer-element';
-// import {connect} from 'pwa-helpers/connect-mixin.js';
-//
+import {connect} from 'pwa-helpers/connect-mixin.js';
+
 import '@polymer/paper-fab/paper-fab.js';
 import '@polymer/paper-toast/paper-toast.js';
 import '@polymer/iron-icon/iron-icon.js';
@@ -10,13 +9,13 @@ import '@polymer/iron-icons/hardware-icons.js';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import '@polymer/iron-flex-layout/iron-flex-layout.js';
 
-// import {installRouter} from 'pwa-helpers/router.js';
-// import {installOfflineWatcher} from 'pwa-helpers/network.js';
-// import {installMediaQueryWatcher} from 'pwa-helpers/media-query.js';
+import {fetchRooms} from '../actions/remote';
+import {brandsList, toTitleCase} from '../utils';
+import {store} from '../store.js';
 
-// const get = _.get;
+const get = _.get;
 
-class RemoteAc extends PolymerElement {
+class RemoteAc extends connect(store)(PolymerElement) {
     static get template() {
         return html`
             <style include="iron-flex iron-flex-alignment">
@@ -89,6 +88,9 @@ class RemoteAc extends PolymerElement {
             <div id="mainContainer">
                 <div id="displayContainer">
                     <div class="horizontal layout center-justified">
+                        <p>{{title}}</p>
+                    </div>
+                    <div class="horizontal layout center-justified">
                         <p id="displayTemp">{{temp}}<sup><sup>o</sup>C</sup></p>
                     </div>
                     <div class="horizontal layout justified">
@@ -141,7 +143,29 @@ class RemoteAc extends PolymerElement {
             tempIndex: {type: Number, value: null},
             fanIndex: {type: Number, value: 0},
             modeIndex: {type: Number, value: 0},
+
+            rooms: {type: Array},
+            newDevice: {type: Object},
+            newRemote: {type: Object},
+            uid: {type: String},
+            title: {type: String},
         };
+    }
+
+    constructor() {
+        super();
+        this.rooms = [];
+        this.newDevice = {};
+        this.newRemote = {};
+        this.title = '';
+    }
+
+    _stateChanged(state) {
+        this.rooms = get(state, 'remote.rooms');
+        this.newDevice = get(state, 'remote.newDevice');
+        this.newRemote = get(state, 'remote.newRemote');
+        this.activeRemote = get(state, 'remote.activeRemote');
+        this.uid = get(state, 'app.currentUser.uid');
     }
 
     ready() {
@@ -220,7 +244,7 @@ class RemoteAc extends PolymerElement {
 
     setupPosition() {
         const thisRemoteAC = this;
-        if (window.innerHeight > 470) thisRemoteAC.$.remoteContainer.style.marginTop = window.innerHeight - (64+20+120+270) + 'px';
+        if (window.innerHeight > 470) thisRemoteAC.$.remoteContainer.style.marginTop = window.innerHeight - (64+70+120+270) + 'px';
         else thisRemoteAC.$.remoteContainer.style.marginTop = '10px';
 
         if (window.innerWidth > 350) {
@@ -248,6 +272,8 @@ class RemoteAc extends PolymerElement {
 
     _tapPower() {
         const thisRemoteAC = this;
+        // thisRemoteAC.title = thisRemoteAC.rooms[0].remotes[0].name;
+        thisRemoteAC.title = thisRemoteAC.activeRemote.name;
         if (thisRemoteAC.switchedON) {
             thisRemoteAC.stateInitial();
             thisRemoteAC._tapPowerOFF();
