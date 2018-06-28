@@ -92,7 +92,7 @@ class RemoteAc extends connect(store)(PolymerElement) {
             </style>
             <div id="mainContainer">
                 <div class="back-icon">
-                    <a href="/dashboard/rooms"><paper-fab on-tap="_tapPower" icon="arrow-back"></paper-fab></a>
+                    <a href="/dashboard/rooms"><paper-fab on-tap="_tapBack" icon="arrow-back"></paper-fab></a>
                 </div>
                 <div id="displayContainer">
                     <div class="horizontal layout center-justified">
@@ -276,6 +276,12 @@ class RemoteAc extends connect(store)(PolymerElement) {
         thisRemoteAC.$.btnFan.disabled = 'true';
         thisRemoteAC.$.btnTempUp.disabled = 'true';
         thisRemoteAC.$.btnTempDown.disabled = 'true';
+    }
+
+    _tapBack() {
+        const thisRemoteAC = this;
+        thisRemoteAC.stateInitial();
+        thisRemoteAC._tapPowerOFF();
     }
 
     _tapPower() {
