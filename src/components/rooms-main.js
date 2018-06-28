@@ -150,7 +150,7 @@ export default class RoomsMain extends connect(store)(LitElement) {
                                             icon="close"
                                             on-click="${() => this._removeRemote(roomIndex, remote.id)}">
                                         </mwc-button>
-                                        <img class="appliance-icon" src="images/${applicanceType}-icon.png"/>
+                                        <img class="appliance-icon-edit" src="images/${applicanceType}-icon.png"/>
                                         <p>${toTitleCase(remote.name)}</p>
                                     </div>`
                                 : html`
@@ -376,6 +376,28 @@ export default class RoomsMain extends connect(store)(LitElement) {
                     display: block;
                 }
 
+                @media screen and (max-width: 375px) {
+                    .remote-item {
+                        width: 100px !important;
+                        height: 120px !important;
+                    }
+                    .camera-item {
+                        width: 100px !important;
+                        height: 120px !important;
+                    }
+                }
+
+                @media screen and (max-width: 320px) {
+                    .remote-item {
+                        width: 86px !important;
+                        height: 86px !important;
+                    }
+                    .camera-item {
+                        width: 86px !important;
+                        height: 86px !important;
+                    }
+                }
+
                 .remote-item, .camera-item {
                     text-align: center;
                     display: inline-block;
@@ -423,6 +445,11 @@ export default class RoomsMain extends connect(store)(LitElement) {
                 }
 
                 .appliance-icon {
+                    height: 50px;
+                    padding-top: 15px;
+                }
+
+                .appliance-icon-edit {
                     height: 50px;
                 }
 
