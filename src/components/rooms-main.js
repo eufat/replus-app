@@ -396,6 +396,9 @@ export default class RoomsMain extends connect(store)(LitElement) {
                         width: 86px !important;
                         height: 86px !important;
                     }
+                    .appliance-icon {
+                        padding-top: 0px !important;
+                    }
                 }
 
                 .remote-item, .camera-item {
