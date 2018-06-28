@@ -39,6 +39,10 @@ class RemoteTv extends connect(store)(PolymerElement) {
                     };
                 }
 
+                p {
+                    color: #2B5788;
+                }
+
                 paper-dialog paper-button {
                     --paper-button: {
                         background: #f7f7f7;
@@ -79,7 +83,16 @@ class RemoteTv extends connect(store)(PolymerElement) {
 
                 #remoteContainer {
                     width: 330px;
-                    margin: 50px auto;
+                    /*margin: 30px auto;*/
+                }
+
+                .back-icon paper-fab {
+                    position: absolute;
+                }
+
+                .title-header {
+                    margin-top: 10px;
+                    margin-bottom: 10px;
                 }
 
                 .shadow-2dp {
@@ -92,6 +105,16 @@ class RemoteTv extends connect(store)(PolymerElement) {
                 }*/
             </style>
             <div id="remoteContainer">
+                <div class="title-header">
+                    <div class="back-icon">
+                        <a href="/dashboard/rooms">
+                            <paper-fab on-tap="_tapBtn" data-command="5" icon="arrow-back"></paper-fab>
+                        </a>
+                    </div>
+                    <div id="title" class="horizontal layout center-justified">
+                        <p>{{title}}</p>
+                    </div>
+                </div>
                 <div class="horizontal layout justified">
                     <paper-fab on-tap="_tapBtn" data-command="15" icon="power-settings-new" id="btnPower"></paper-fab>
                     <paper-fab on-tap="_tapBtn" data-command="17" icon="input"></paper-fab>
@@ -162,10 +185,11 @@ class RemoteTv extends connect(store)(PolymerElement) {
             codeset: {
                 type: String,
             },
-            rooms: Array,
-            newDevice: Object,
-            newRemote: Object,
-            uid: String,
+            rooms: {type: Array},
+            newDevice: {type: Object},
+            newRemote: {type: Object},
+            uid: {type: String},
+            title: {type: String},
         };
     }
 
@@ -174,12 +198,14 @@ class RemoteTv extends connect(store)(PolymerElement) {
         this.rooms = [];
         this.newDevice = {};
         this.newRemote = {};
+        this.title = 'Remote TV';
     }
 
     _stateChanged(state) {
         this.rooms = get(state, 'remote.rooms');
         this.newDevice = get(state, 'remote.newDevice');
         this.newRemote = get(state, 'remote.newRemote');
+        this.activeRemote = get(state, 'remote.activeRemote');
         this.uid = get(state, 'app.currentUser.uid');
     }
 
@@ -187,6 +213,7 @@ class RemoteTv extends connect(store)(PolymerElement) {
         super.ready();
         const thisRemoteTV = this;
         thisRemoteTV.setupPosition();
+        thisRemoteTV.stateInitial();
         thisRemoteTV.switchOn = true;
         window.addEventListener('resize', function(event) {
             thisRemoteTV.setupPosition();
@@ -210,6 +237,11 @@ class RemoteTv extends connect(store)(PolymerElement) {
                 thisRemoteTV.$.remoteContainer.style.marginLeft = (window.innerWidth - 250)/2 + 'px';
             }
         }
+    }
+
+    stateInitial() {
+        const thisRemoteTV = this;
+        thisRemoteTV.$.title.style.visibility = 'hidden';
     }
 
     _remoteChanged() {
@@ -242,6 +274,9 @@ class RemoteTv extends connect(store)(PolymerElement) {
 
     _tapBtn(e) {
         const thisRemoteTV = this;
+        const remoteType = thisRemoteTV.activeRemote.name.substring(0, 2).toUpperCase();
+        const brand = toTitleCase(thisRemoteTV.activeRemote.name.substring(2, thisRemoteTV.activeRemote.name.length));
+        thisRemoteTV.title = remoteType + ' ' + brand;
         let command = e.path[2].getAttribute('data-command');
 
         if (command == null) {
@@ -251,6 +286,7 @@ class RemoteTv extends connect(store)(PolymerElement) {
                 return;
             }
         } else if (command == '15') {
+            thisRemoteTV.$.title.style.visibility = 'visible';
             if (!thisRemoteTV.switchOn) {
                 command = '16';
                 thisRemoteTV.$.btnPower.setAttribute('icon', 'power-settings-new');
@@ -258,6 +294,10 @@ class RemoteTv extends connect(store)(PolymerElement) {
                 thisRemoteTV.$.btnPower.setAttribute('icon', 'close');
             }
             thisRemoteTV.switchOn = !thisRemoteTV.switchOn;
+        } else if (command == '5') {
+            thisRemoteTV.$.btnPower.setAttribute('icon', 'power-settings-new');
+            thisRemoteTV.switchOn = !thisRemoteTV.switchOn;
+            thisRemoteTV.$.title.style.visibility = 'hidden';
         }
 
         thisRemoteTV.command = thisRemoteTV.codeset + command;
