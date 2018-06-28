@@ -84,8 +84,16 @@ class RemoteAc extends connect(store)(PolymerElement) {
                 #textTemp {
                     margin-top: 25px;
                 }
+
+                .back-icon paper-fab {
+                    position: absolute;
+                    margin-top: 15px;
+                }
             </style>
             <div id="mainContainer">
+                <div class="back-icon">
+                    <a href="/dashboard/rooms"><paper-fab icon="arrow-back"></paper-fab></a>
+                </div>
                 <div id="displayContainer">
                     <div class="horizontal layout center-justified">
                         <p>{{title}}</p>
@@ -272,8 +280,9 @@ class RemoteAc extends connect(store)(PolymerElement) {
 
     _tapPower() {
         const thisRemoteAC = this;
-        // thisRemoteAC.title = thisRemoteAC.rooms[0].remotes[0].name;
-        thisRemoteAC.title = thisRemoteAC.activeRemote.name;
+        const remoteType = thisRemoteAC.activeRemote.name.substring(0, 2).toUpperCase();
+        const brand = toTitleCase(thisRemoteAC.activeRemote.name.substring(2, thisRemoteAC.activeRemote.name.length));
+        thisRemoteAC.title = remoteType + ' ' + brand;
         if (thisRemoteAC.switchedON) {
             thisRemoteAC.stateInitial();
             thisRemoteAC._tapPowerOFF();
