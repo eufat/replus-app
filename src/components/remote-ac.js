@@ -9,7 +9,7 @@ import '@polymer/iron-icons/hardware-icons.js';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import '@polymer/iron-flex-layout/iron-flex-layout.js';
 
-import {fetchRooms, remoteCommand} from '../actions/remote';
+import {remoteCommand} from '../actions/remote';
 import {brandsList, toTitleCase} from '../utils';
 import {store} from '../store.js';
 
