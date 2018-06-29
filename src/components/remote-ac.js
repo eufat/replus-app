@@ -9,7 +9,7 @@ import '@polymer/iron-icons/hardware-icons.js';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import '@polymer/iron-flex-layout/iron-flex-layout.js';
 
-import {fetchRooms} from '../actions/remote';
+import {fetchRooms, remoteCommand} from '../actions/remote';
 import {brandsList, toTitleCase} from '../utils';
 import {store} from '../store.js';
 
@@ -137,12 +137,13 @@ class RemoteAc extends connect(store)(PolymerElement) {
                 type: Array,
                 value: ['Auto', 'Cool', 'Dry', 'Heat'],
             },
-            remote: {
-                type: String,
-                observer: '_changeRemote',
-            },
+            // remote: {
+            //     type: String,
+            //     observer: '_changeRemote',
+            // },
             mode: {type: Number, observer: '_changeMode'},
             fan: {type: Number, observer: '_changeFan'},
+            command: {type: String},
 
             manifestFans: {type: Array, value: [0, 1, 2, 3]},
             manifestModes: {type: Array, value: [1, 2]},
@@ -153,27 +154,20 @@ class RemoteAc extends connect(store)(PolymerElement) {
             modeIndex: {type: Number, value: 0},
 
             rooms: {type: Array},
-            newDevice: {type: Object},
-            newRemote: {type: Object},
-            uid: {type: String},
             title: {type: String},
+            brand: {type: String},
         };
     }
 
     constructor() {
         super();
         this.rooms = [];
-        this.newDevice = {};
-        this.newRemote = {};
         this.title = '';
     }
 
     _stateChanged(state) {
         this.rooms = get(state, 'remote.rooms');
-        this.newDevice = get(state, 'remote.newDevice');
-        this.newRemote = get(state, 'remote.newRemote');
         this.activeRemote = get(state, 'remote.activeRemote');
-        this.uid = get(state, 'app.currentUser.uid');
     }
 
     ready() {
@@ -240,15 +234,15 @@ class RemoteAc extends connect(store)(PolymerElement) {
         thisRemoteAC.$.displayFan.innerHTML = thisRemoteAC.fans[thisRemoteAC.fan];
     }
 
-    _changeRemote() {
-        const thisRemoteAC = this;
-        let jenis = thisRemoteAC.remote.substring(0, 2);
-        thisRemoteAC.brand = thisRemoteAC.remote.substring(3).toLowerCase();
-        if (jenis == 'AC') {
-            thisRemoteAC.stateInitial();
-            thisRemoteAC.$.ajaxManifest.generateRequest();
-        }
-    }
+    // _changeRemote() {
+    //     const thisRemoteAC = this;
+    //     let jenis = thisRemoteAC.remote.substring(0, 2);
+    //     thisRemoteAC.brand = thisRemoteAC.remote.substring(3).toLowerCase();
+    //     if (jenis == 'AC') {
+    //         thisRemoteAC.stateInitial();
+    //         thisRemoteAC.$.ajaxManifest.generateRequest();
+    //     }
+    // }
 
     setupPosition() {
         const thisRemoteAC = this;
@@ -287,20 +281,22 @@ class RemoteAc extends connect(store)(PolymerElement) {
     _tapPower() {
         const thisRemoteAC = this;
         const remoteType = thisRemoteAC.activeRemote.name.substring(0, 2).toUpperCase();
-        const brand = toTitleCase(thisRemoteAC.activeRemote.name.substring(2, thisRemoteAC.activeRemote.name.length));
-        thisRemoteAC.title = remoteType + ' ' + brand;
+        thisRemoteAC.brand = toTitleCase(thisRemoteAC.activeRemote.name.substring(2, thisRemoteAC.activeRemote.name.length));
+        thisRemoteAC.title = remoteType + ' ' + thisRemoteAC.brand;
         if (thisRemoteAC.switchedON) {
             thisRemoteAC.stateInitial();
             thisRemoteAC._tapPowerOFF();
         } else {
             thisRemoteAC.stateEnabled();
-            // thisRemoteAC.send();
+            thisRemoteAC.send();
         }
     }
 
     _tapPowerOFF() {
         const thisRemoteAC = this;
-        thisRemoteAC.command = thisRemoteAC.brand + '-0000';
+        let brandCommand = thisRemoteAC.brand + '';
+        thisRemoteAC.command = brandCommand.toLocaleLowerCase() + '-0000';
+        store.dispatch(remoteCommand(thisRemoteAC.command));
         // thisRemoteAC.$.ajax.generateRequest();
         // thisRemoteAC.parseManifest();
         thisRemoteAC.temp = 18;
@@ -319,8 +315,10 @@ class RemoteAc extends connect(store)(PolymerElement) {
 
     send() {
         const thisRemoteAC = this;
-        thisRemoteAC.command = thisRemoteAC.brand + '-' + thisRemoteAC.mode + thisRemoteAC.fan + thisRemoteAC.temp;
-        // if (thisRemoteAC.switchedON) thisRemoteAC.$.ajax.generateRequest();
+        // thisRemoteAC.brand = thisRemoteAC.activeRemote.name.substring(2, thisRemoteAC.activeRemote.name.length);
+        let brandCommand = thisRemoteAC.brand + '';
+        thisRemoteAC.command = brandCommand.toLocaleLowerCase() + '-' + thisRemoteAC.mode + thisRemoteAC.fan + thisRemoteAC.temp;
+        if (thisRemoteAC.switchedON) store.dispatch(remoteCommand(thisRemoteAC.command));
     }
 
     _tapMode() {

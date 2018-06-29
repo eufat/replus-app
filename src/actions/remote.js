@@ -170,3 +170,17 @@ export const removeDevice = (room, deviceID, deviceCode) => async (dispatch, get
         dispatch(closeProgress());
     }
 };
+
+export const remoteCommand = (command) => (dispatch, getState) => {
+    // dispatch(showProgress());
+    const uid = get(getState(), 'app.currentUser.uid');
+    const room = get(getState(), 'remote.activeRemote.room');
+    console.log(uid, room, command);
+    // try {
+    //     coreClient().post('/remote', qs({uid, room, command}));
+    //     // dispatch(closeProgress());
+    // } catch (error) {
+    //     errorHandler.report(error);
+    //     // dispatch(closeProgress());
+    // }
+};
