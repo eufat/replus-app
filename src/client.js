@@ -10,6 +10,11 @@ export const createClient = (type, token) => {
         headers['Content-Type'] = 'application/x-www-form-urlencoded';
     }
 
+    if (type === 'post') {
+        baseURL = env.CORE_POST;
+        headers['Content-Type'] = 'application/x-www-form-urlencoded';
+    }
+
     if (type === 'vision') {
         baseURL = env.VISION_API;
         headers['Content-Type'] = 'application/json';
@@ -31,6 +36,11 @@ export const createClient = (type, token) => {
 export const coreClient = () => {
     const accessToken = getCookie('accessToken');
     return createClient('core', accessToken);
+};
+
+export const corePostClient = () => {
+    const accessToken = getCookie('accessToken');
+    return createClient('post', accessToken);
 };
 
 export const visionClient = () => {
