@@ -18,7 +18,7 @@ import '@polymer/iron-icons/hardware-icons.js';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import '@polymer/iron-flex-layout/iron-flex-layout.js';
 
-import {fetchRooms} from '../actions/remote';
+import {remoteCommand} from '../actions/remote';
 import {brandsList, toTitleCase} from '../utils';
 import {store} from '../store.js';
 
@@ -175,20 +175,13 @@ class RemoteTv extends connect(store)(PolymerElement) {
 
     static get properties() {
         return {
-            remote: {
-                type: String,
-                observer: '_remoteChanged',
-            },
-            command: {
-                type: String,
-            },
-            codeset: {
-                type: String,
-            },
+            // remote: {
+            //     type: String,
+            //     observer: '_remoteChanged',
+            // },
+            command: {type: String},
+            codeset: {type: String},
             rooms: {type: Array},
-            newDevice: {type: Object},
-            newRemote: {type: Object},
-            uid: {type: String},
             title: {type: String},
         };
     }
@@ -196,17 +189,12 @@ class RemoteTv extends connect(store)(PolymerElement) {
     constructor() {
         super();
         this.rooms = [];
-        this.newDevice = {};
-        this.newRemote = {};
         this.title = 'Remote TV';
     }
 
     _stateChanged(state) {
         this.rooms = get(state, 'remote.rooms');
-        this.newDevice = get(state, 'remote.newDevice');
-        this.newRemote = get(state, 'remote.newRemote');
         this.activeRemote = get(state, 'remote.activeRemote');
-        this.uid = get(state, 'app.currentUser.uid');
     }
 
     ready() {
@@ -218,7 +206,7 @@ class RemoteTv extends connect(store)(PolymerElement) {
         window.addEventListener('resize', function(event) {
             thisRemoteTV.setupPosition();
         });
-        // thisRemoteTV._remoteChanged();
+        // thisRemoteTV.remoteChanged();
     }
 
     setupPosition() {
@@ -244,20 +232,19 @@ class RemoteTv extends connect(store)(PolymerElement) {
         thisRemoteTV.$.title.style.visibility = 'hidden';
     }
 
-    _remoteChanged() {
+    remoteChanged() {
         const thisRemoteTV = this;
-        let jenis = thisRemoteTV.remote.substring(0, 2);
-        let merk = thisRemoteTV.remote.substring(3).toLowerCase();
-
-        if (jenis == 'TV') {
-            if (merk == 'lg') thisRemoteTV.codeset = '1970';
-            else if (merk == 'samsung') thisRemoteTV.codeset = '0595';
-            else if (merk == 'panasonic') thisRemoteTV.codeset = '2619';
-            else if (merk == 'sony') thisRemoteTV.codeset = '1319';
-            else if (merk == 'sharp') thisRemoteTV.codeset = 'T001'; //1429
-            else if (merk == 'changhong') thisRemoteTV.codeset = '2903';
-            else if (merk == 'sanyo') thisRemoteTV.codeset = '1430';
-            else if (merk == 'toshiba') thisRemoteTV.codeset = '0339';
+        const remoteType = thisRemoteTV.activeRemote.name.substring(0, 2);
+        const brand = thisRemoteTV.activeRemote.name.substring(3).toLowerCase();
+        if (remoteType == 'tv') {
+            if (brand == 'lg') thisRemoteTV.codeset = '1970';
+            else if (brand == 'samsung') thisRemoteTV.codeset = '0595';
+            else if (brand == 'panasonic') thisRemoteTV.codeset = '2619';
+            else if (brand == 'sony') thisRemoteTV.codeset = '1319';
+            else if (brand == 'sharp') thisRemoteTV.codeset = 'T001'; // 1429
+            else if (brand == 'changhong') thisRemoteTV.codeset = '2903';
+            else if (brand == 'sanyo') thisRemoteTV.codeset = '1430';
+            else if (brand == 'toshiba') thisRemoteTV.codeset = '0339';
         }
     }
 
@@ -274,6 +261,7 @@ class RemoteTv extends connect(store)(PolymerElement) {
 
     _tapBtn(e) {
         const thisRemoteTV = this;
+        thisRemoteTV.remoteChanged();
         const remoteType = thisRemoteTV.activeRemote.name.substring(0, 2).toUpperCase();
         const brand = toTitleCase(thisRemoteTV.activeRemote.name.substring(2, thisRemoteTV.activeRemote.name.length));
         thisRemoteTV.title = remoteType + ' ' + brand;
@@ -299,8 +287,9 @@ class RemoteTv extends connect(store)(PolymerElement) {
             thisRemoteTV.switchOn = !thisRemoteTV.switchOn;
             thisRemoteTV.$.title.style.visibility = 'hidden';
         }
-
-        thisRemoteTV.command = thisRemoteTV.codeset + command;
+        thisRemoteTV.remoteChanged();
+        thisRemoteTV.command = thisRemoteTV.codeset + '' + command;
+        store.dispatch(remoteCommand(thisRemoteTV.command));
         // thisRemoteTV.$.ajax.generateRequest();
     }
 
