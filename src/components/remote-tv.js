@@ -223,7 +223,7 @@ class RemoteTv extends connect(store)(PolymerElement) {
 
     setupPosition() {
         const thisRemoteTV = this;
-        if (window.innerHeight > 570) thisRemoteTV.$.menubuttons.style.marginTop = (window.innerHeight - 550) - 60 + 'px';
+        if (window.innerHeight > 570) thisRemoteTV.$.menubuttons.style.marginTop = (window.innerHeight - 550) - 90 + 'px';
         else thisRemoteTV.$.menubuttons.style.marginTop = '20px';
 
         if (window.innerWidth > 375) {
