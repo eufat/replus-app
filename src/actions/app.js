@@ -52,12 +52,6 @@ const loadPage = (page) => async (dispatch) => {
             case 'settings':
                 await import('../components/main-devices.js');
                 break;
-            case 'setting-vision':
-                await import('../components/settings-vision.js');
-                break;
-            case 'setting-remote':
-                await import('../components/settings-remote.js');
-                break;
             case 'help':
                 await import('../components/main-help.js');
                 break;
