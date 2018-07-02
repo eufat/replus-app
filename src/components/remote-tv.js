@@ -108,7 +108,7 @@ class RemoteTv extends connect(store)(PolymerElement) {
                 <div class="title-header">
                     <div class="back-icon">
                         <a href="/dashboard/rooms">
-                            <paper-fab on-tap="_tapBtn" data-command="5" icon="arrow-back"></paper-fab>
+                            <paper-fab on-tap="_tapBack" icon="arrow-back"></paper-fab>
                         </a>
                     </div>
                     <div id="title" class="horizontal layout center-justified">
@@ -202,7 +202,6 @@ class RemoteTv extends connect(store)(PolymerElement) {
         const thisRemoteTV = this;
         thisRemoteTV.setupPosition();
         thisRemoteTV.stateInitial();
-        thisRemoteTV.switchOn = true;
         window.addEventListener('resize', function(event) {
             thisRemoteTV.setupPosition();
         });
@@ -230,6 +229,15 @@ class RemoteTv extends connect(store)(PolymerElement) {
     stateInitial() {
         const thisRemoteTV = this;
         thisRemoteTV.$.title.style.visibility = 'hidden';
+        thisRemoteTV.$.btnPower.setAttribute('icon', 'power-settings-new');
+        thisRemoteTV.switchOn = false;
+    }
+
+    stateEnable() {
+        const thisRemoteTV = this;
+        thisRemoteTV.$.title.style.visibility = 'visible';
+        thisRemoteTV.$.btnPower.setAttribute('icon', 'close');
+        thisRemoteTV.switchOn = true;
     }
 
     remoteChanged() {
@@ -274,23 +282,22 @@ class RemoteTv extends connect(store)(PolymerElement) {
                 return;
             }
         } else if (command == '15') {
-            thisRemoteTV.$.title.style.visibility = 'visible';
-            if (!thisRemoteTV.switchOn) {
+            if (thisRemoteTV.switchOn) {
+                thisRemoteTV.stateInitial();
                 command = '16';
-                thisRemoteTV.$.btnPower.setAttribute('icon', 'power-settings-new');
             } else {
-                thisRemoteTV.$.btnPower.setAttribute('icon', 'close');
+                thisRemoteTV.stateEnable();
             }
-            thisRemoteTV.switchOn = !thisRemoteTV.switchOn;
-        } else if (command == '5') {
-            thisRemoteTV.$.btnPower.setAttribute('icon', 'power-settings-new');
-            thisRemoteTV.switchOn = !thisRemoteTV.switchOn;
-            thisRemoteTV.$.title.style.visibility = 'hidden';
         }
-        thisRemoteTV.remoteChanged();
         thisRemoteTV.command = thisRemoteTV.codeset + '' + command;
         store.dispatch(remoteCommand(thisRemoteTV.command));
         // thisRemoteTV.$.ajax.generateRequest();
+    }
+
+    _tapBack() {
+        const thisRemoteTV = this;
+        thisRemoteTV.$.btnPower.setAttribute('icon', 'power-settings-new');
+        this.stateInitial();
     }
 
     // _handleResponse() {
