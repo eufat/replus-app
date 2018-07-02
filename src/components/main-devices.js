@@ -6,6 +6,7 @@ import '@polymer/paper-item/paper-item.js';
 import '@polymer/paper-dialog/paper-dialog.js';
 import '@polymer/paper-radio-group/paper-radio-group.js';
 import '@polymer/paper-radio-button/paper-radio-button.js';
+import '@polymer/iron-icons/iron-icons.js';
 
 import {store} from '../store.js';
 import {connect} from 'pwa-helpers/connect-mixin.js';
@@ -29,15 +30,15 @@ export default class MainDevices extends connect(store)(LitElement) {
         this.rooms = [];
     }
 
-    // _didRender(props, changedProps, prevProps) {
-    //     if (changedProps.uid) {
-    //         store.dispatch(fetchRooms());
-    //     }
-    // }
-
-    _firstRendered() {
-        store.dispatch(fetchRooms());
+    _didRender(props, changedProps, prevProps) {
+        if (changedProps.uid) {
+            store.dispatch(fetchRooms());
+        }
     }
+
+    // _firstRendered() {
+    //     store.dispatch(fetchRooms());
+    // }
 
     _shouldRender(props, changedProps, old) {
         return props.active;
@@ -49,29 +50,45 @@ export default class MainDevices extends connect(store)(LitElement) {
     }
 
     _render({rooms}) {
-        const roomDevices = (devices, roomIndex) => {
+        const remoteDevices = (devices, roomIndex) => {
             return devices.map((device, index) => {
-                return html`
-                    <paper-item>
-                        <paper-item-body>
-                            <p>${device.type}</p>
-                        </paper-item-body>
-                        <div class="settings-right">
-                            <div class="device-pill">
-                                <span class="pill-content">${device.name}</span>
+                if (device.type == 'replus-remote') {
+                    return html`
+                        <style>
+                            .settings-icon {
+                                color: #333333;
+                                padding-bottom: 5px;
+                            }
+                            .remote-icon {
+                                padding-right: 5px;
+                            }
+                            .device-type {
+                                display: inline !important;
+                            }
+                        </style>
+                        <paper-item>
+                            <paper-item-body>
+                                <iron-icon class="remote-icon" src="images/add-device.png"></iron-icon>
+                                <p class="device-type">${device.type}</p>
+                            </paper-item-body>
+                            <div class="settings-right">
+                                <div class="device-pill">
+                                    <span class="pill-content">${device.name}</span>
+                                </div>
+                                <iron-icon class="settings-icon" icon="icons:settings">
                             </div>
-                        </div>
-                    </paper-item>
-                `;
+                        </paper-item>
+                    `;
+                }
             });
         };
 
-        const roomsValues = _.values(rooms);
-        const roomsItems = roomsValues.map((item, roomIndex) => {
+        const remoteValues = _.values(rooms);
+        const remoteItems = remoteValues.map((item, roomIndex) => {
             return html`
                 <paper-material elevation="0">
                     <div class="room-devices">
-                        ${roomDevices(_.values(item.devices), roomIndex)}
+                        ${remoteDevices(_.values(item.devices), roomIndex)}
                     </div>
                 </paper-material>
             `;
@@ -79,9 +96,6 @@ export default class MainDevices extends connect(store)(LitElement) {
 
         return html`
         <style>
-            .settings {
-                border-bottom: 1px solid #ECEFF1;
-            }
             .settings-right {
                 margin-left: auto;
                 margin-right: 0;
@@ -123,7 +137,7 @@ export default class MainDevices extends connect(store)(LitElement) {
                     <div>Replus Remote</div>
                 </paper-item-body>
             </paper-item>
-            ${roomsItems}
+            ${remoteItems}
         </div>
     `;
     }
