@@ -26,7 +26,7 @@ import './main-account.js';
 
 import './activity-main.js';
 import './rooms-main.js';
-import './settings-main.js';
+import './main-devices';
 
 import './remote-ac.js';
 import './remote-tv.js';
@@ -69,7 +69,7 @@ class MainApp extends connect(store)(LitElement) {
                 <main-dashboard class="page" active?="${includes(_page, 'dashboard')}">
                     <activity-main class="page" active?="${includes(_page, 'activity') || onIndex('dashboard')}"></activity-main>
                     <rooms-main class="page" active?="${includes(_page, 'rooms')}"></rooms-main>
-                    <settings-main class="page" active?="${includes(_page, 'settings')}"></settings-main>
+                    <main-devices class="page" active?="${includes(_page, 'settings')}"></main-devices>
                     <main-account class="page" active?="${includes(_page, 'account')}"></main-account>
                     <main-help class="page" active?="${includes(_page, 'help')}"></main-help>
                     <remote-ac class="page" active?="${includes(_page, 'remote-ac')}"></remote-ac>
