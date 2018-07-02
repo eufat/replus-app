@@ -48,7 +48,7 @@ const loadPage = (page) => async (dispatch) => {
                 await import('../components/rooms-main.js');
                 break;
             case 'settings':
-                await import('../components/settings-main.js');
+                await import('../components/main-devices.js');
                 break;
             case 'help':
                 await import('../components/main-help.js');
