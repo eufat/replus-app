@@ -275,7 +275,7 @@ class RemoteAc extends connect(store)(PolymerElement) {
     _tapBack() {
         const thisRemoteAC = this;
         thisRemoteAC.stateInitial();
-        thisRemoteAC._tapPowerOFF();
+        // thisRemoteAC._tapPowerOFF();
     }
 
     _tapPower() {
