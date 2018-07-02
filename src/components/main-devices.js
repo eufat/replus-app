@@ -6,12 +6,11 @@ import '@polymer/paper-item/paper-item.js';
 import '@polymer/paper-dialog/paper-dialog.js';
 import '@polymer/paper-radio-group/paper-radio-group.js';
 import '@polymer/paper-radio-button/paper-radio-button.js';
-import '@polymer/iron-icons/iron-icons.js';
 
 import {store} from '../store.js';
 import {connect} from 'pwa-helpers/connect-mixin.js';
 
-import {fetchRooms, setActiveDevice, setActiveRemotes} from '../actions/remote';
+import {fetchRooms} from '../actions/remote';
 import {brandsList, toTitleCase} from '../utils';
 
 const get = _.get;
@@ -30,15 +29,15 @@ export default class MainDevices extends connect(store)(LitElement) {
         this.rooms = [];
     }
 
-    _didRender(props, changedProps, prevProps) {
-        if (changedProps.uid) {
-            store.dispatch(fetchRooms());
-        }
-    }
-
-    // _firstRendered() {
-    //     store.dispatch(fetchRooms());
+    // _didRender(props, changedProps, prevProps) {
+    //     if (changedProps.uid) {
+    //         store.dispatch(fetchRooms());
+    //     }
     // }
+
+    _firstRendered() {
+        store.dispatch(fetchRooms());
+    }
 
     _shouldRender(props, changedProps, old) {
         return props.active;
@@ -49,58 +48,30 @@ export default class MainDevices extends connect(store)(LitElement) {
         this.uid = _.get(state, 'app.currentUser.uid');
     }
 
-    _activeDevice(device, remotes) {
-        const arrRemotes = [];
-        const remotesValues = _.values(remotes);
-        remotesValues.map((item) => {
-            arrRemotes.push(item.name);
-        });
-        store.dispatch(setActiveDevice(device));
-        store.dispatch(setActiveRemotes(arrRemotes));
-    }
-
     _render({rooms}) {
-        const remoteDevices = (devices, rooms) => {
+        const roomDevices = (devices, roomIndex) => {
             return devices.map((device, index) => {
-                if (device.type == 'replus-remote') {
-                    return html`
-                        <style>
-                            .settings-icon {
-                                color: #333333;
-                                padding-bottom: 5px;
-                            }
-                            .remote-icon {
-                                padding-right: 5px;
-                            }
-                            .device-type {
-                                display: inline !important;
-                            }
-                        </style>
-                        <paper-item>
-                            <paper-item-body>
-                                <iron-icon class="remote-icon" src="images/add-device.png"></iron-icon>
-                                <p class="device-type">${device.type}</p>
-                            </paper-item-body>
-                            <div class="settings-right">
-                                <div class="device-pill">
-                                    <span class="pill-content">${device.name}</span>
-                                </div>
-                                <a href="dashboard/setting-remote" on-click="${() => this._activeDevice(device.name, rooms.remotes)}">
-                                    <iron-icon class="settings-icon" icon="icons:settings">
-                                </a>
+                return html`
+                    <paper-item>
+                        <paper-item-body>
+                            <p>${device.type}</p>
+                        </paper-item-body>
+                        <div class="settings-right">
+                            <div class="device-pill">
+                                <span class="pill-content">${device.name}</span>
                             </div>
-                        </paper-item>
-                    `;
-                }
+                        </div>
+                    </paper-item>
+                `;
             });
         };
 
-        const remoteValues = _.values(rooms);
-        const remoteItems = remoteValues.map((item, roomIndex) => {
+        const roomsValues = _.values(rooms);
+        const roomsItems = roomsValues.map((item, roomIndex) => {
             return html`
                 <paper-material elevation="0">
                     <div class="room-devices">
-                        ${remoteDevices(_.values(item.devices), item)}
+                        ${roomDevices(_.values(item.devices), roomIndex)}
                     </div>
                 </paper-material>
             `;
@@ -108,6 +79,9 @@ export default class MainDevices extends connect(store)(LitElement) {
 
         return html`
         <style>
+            .settings {
+                border-bottom: 1px solid #ECEFF1;
+            }
             .settings-right {
                 margin-left: auto;
                 margin-right: 0;
@@ -149,29 +123,7 @@ export default class MainDevices extends connect(store)(LitElement) {
                     <div>Replus Remote</div>
                 </paper-item-body>
             </paper-item>
-            ${remoteItems}
-            <paper-item>
-                <paper-item-body>
-                    <div>Replus Vision</div>
-                </paper-item-body>
-            </paper-item>
-            <paper-material elevation="0">
-                <div class="room-devices">
-                    <paper-item>
-                        <paper-item-body>
-                            <p class="device-type">replus-vision-dummy</p>
-                        </paper-item-body>
-                        <div class="settings-right">
-                            <div class="device-pill">
-                                <span class="pill-content">345A</span>
-                            </div>
-                            <a href="dashboard/setting-vision">
-                                <iron-icon class="settings-icon" icon="icons:settings">
-                            </a>
-                        </div>
-                    </paper-item>
-                </div>
-            </paper-material>
+            ${roomsItems}
         </div>
     `;
     }
