@@ -6,6 +6,7 @@ const initialState = {
         type: 'tv',
         brand: 'samsung',
     },
+    settings: {},
 };
 
 const remote = (state = initialState, action) => {
@@ -29,6 +30,11 @@ const remote = (state = initialState, action) => {
             return {
                 ...state,
                 activeRemote: action.activeRemote,
+            };
+        case 'SET_SETTINGS':
+            return {
+                ...state,
+                settings: action.settings,
             };
         default:
             return state;
