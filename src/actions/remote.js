@@ -46,6 +46,13 @@ export const setDevices = (devices) => (dispatch, getState) => {
     });
 };
 
+export const setSettings = (settings) => (dispatch, getState) => {
+    dispatch({
+        type: 'SET_SETTINGS',
+        settings,
+    });
+};
+
 export const fetchDevices = () => async (dispatch, getState) => {
     dispatch(showProgress());
     const uid = get(getState(), 'app.currentUser.uid');
