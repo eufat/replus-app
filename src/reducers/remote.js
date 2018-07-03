@@ -53,6 +53,11 @@ const remote = (state = initialState, action) => {
                 ...state,
                 settings: action.settings,
             };
+        case 'SET_SETTINGS':
+            return {
+                ...state,
+                settings: action.settings,
+            };
         default:
             return state;
     }

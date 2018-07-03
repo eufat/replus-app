@@ -69,7 +69,7 @@ export const setDevices = (devices) => (dispatch, getState) => {
 
 export const setSettings = (settings) => (dispatch, getState) => {
     dispatch({
-        type: 'SET_REMOTE_SETTINGS',
+        type: 'SET_SETTINGS',
         settings,
     });
 };
