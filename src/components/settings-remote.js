@@ -31,7 +31,9 @@ export default class SettingsRemote extends connect(store)(LitElement) {
         this.onePushButtons = ['ON', 'OFF'];
         this.settingsIsDisabled = false;
         this.settings = {
-            onePushButton: 0,
+            // onePushButton: 0,
+            acButton: 0,
+            tvButton: 0,
             deviceName: '',
         };
 
@@ -44,6 +46,7 @@ export default class SettingsRemote extends connect(store)(LitElement) {
 
     _stateChanged(state) {
         this.settings = _.get(state, 'remote.settings');
+        this.settings.deviceName = _.get(state, 'remote.activeDevice');
     }
 
     getIndexOf(array, element) {
@@ -73,7 +76,8 @@ export default class SettingsRemote extends connect(store)(LitElement) {
     _render({settings, onePushButtons, settingsIsDisabled}) {
         const {getIndexOf, onTurnOffDevice, handleSaveSettings, onRestartDevice} = this;
 
-        const settingsOnePushButton = onePushButtons[settings.onePushButton];
+        const settingsAcButton = onePushButtons[settings.acButton];
+        const settingsTvButton = onePushButtons[settings.tvButton];
 
         return html`
         <style>
@@ -97,14 +101,35 @@ export default class SettingsRemote extends connect(store)(LitElement) {
                 width: 100%;
                 margin: 0;
             }
+            .pointer {
+                cursor: pointer;
+            }
         </style>
         <div role="listbox" class="settings">
-            <paper-item on-click="${() => this.shadowRoot.getElementById('onePushButtonDialog').open()}">
+            <paper-item>
+                <paper-item-body>
+                    <div>Remote AC</div>
+                </paper-item-body>
+            </paper-item>
+            <paper-item class="pointer" on-click="${() => this.shadowRoot.getElementById('acPushButtonDialog').open()}">
                 <paper-item-body>
                     <div>One Push Button</div>
                 </paper-item-body>
                 <div class="settings-right">
-                    ${settingsOnePushButton}
+                    ${settingsAcButton}
+                </div>
+            </paper-item>
+            <paper-item>
+                <paper-item-body>
+                    <div>Remote TV</div>
+                </paper-item-body>
+            </paper-item>
+            <paper-item class="pointer" on-click="${() => this.shadowRoot.getElementById('tvPushButtonDialog').open()}">
+                <paper-item-body>
+                    <div>One Push Button</div>
+                </paper-item-body>
+                <div class="settings-right">
+                    ${settingsTvButton}
                 </div>
             </paper-item>
             <paper-button
@@ -114,10 +139,25 @@ export default class SettingsRemote extends connect(store)(LitElement) {
                     Save Settings
             </paper-button>
         </div>
-        <paper-dialog id="onePushButtonDialog">
+        <paper-dialog id="acPushButtonDialog">
             <paper-radio-group
-                selected="${settings.onePushButton}"
-                on-change="${(e) => this.changeSettings(e, 'onePushButton')}"
+                selected="${settings.acButton}"
+                on-change="${(e) => this.changeSettings(e, 'acButton')}"
+            >
+                ${onePushButtons.map(
+                    (item) => html`
+                        <paper-radio-button
+                            name="${this.getIndexOf(onePushButtons, item)}">
+                                ${item}
+                        </paper-radio-button>
+                    `
+                )}
+            </paper-radio-group>
+        </paper-dialog>
+        <paper-dialog id="tvPushButtonDialog">
+            <paper-radio-group
+                selected="${settings.tvButton}"
+                on-change="${(e) => this.changeSettings(e, 'tvButton')}"
             >
                 ${onePushButtons.map(
                     (item) => html`
