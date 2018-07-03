@@ -11,7 +11,7 @@ import '@polymer/iron-icons/iron-icons.js';
 import {store} from '../store.js';
 import {connect} from 'pwa-helpers/connect-mixin.js';
 
-import {fetchRooms} from '../actions/remote';
+import {fetchRooms, setActiveDevice} from '../actions/remote';
 import {brandsList, toTitleCase} from '../utils';
 
 const get = _.get;
@@ -49,6 +49,10 @@ export default class MainDevices extends connect(store)(LitElement) {
         this.uid = _.get(state, 'app.currentUser.uid');
     }
 
+    _activeDevice(device) {
+        store.dispatch(setActiveDevice(device));
+    }
+
     _render({rooms}) {
         const remoteDevices = (devices, roomIndex) => {
             return devices.map((device, index) => {
@@ -75,7 +79,7 @@ export default class MainDevices extends connect(store)(LitElement) {
                                 <div class="device-pill">
                                     <span class="pill-content">${device.name}</span>
                                 </div>
-                                <a href="dashboard/setting-remote">
+                                <a href="dashboard/setting-remote" on-click="${() => this._activeDevice(device.name)}">
                                     <iron-icon class="settings-icon" icon="icons:settings">
                                 </a>
                             </div>
