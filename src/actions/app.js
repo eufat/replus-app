@@ -27,7 +27,7 @@ const loadPage = (page) => async (dispatch) => {
     let paths = page.split('/');
     paths = paths.filter((item) => item !== '');
 
-    const pageList = ['auth', 'dashboard', 'activity', 'rooms', 'settings', 'help', 'account', 'remote-ac', 'remote-tv'];
+    const pageList = ['auth', 'dashboard', 'activity', 'rooms', 'settings', 'setting-vision', 'setting-remote', 'help', 'account', 'remote-ac', 'remote-tv'];
 
     for (const path of paths) {
         if (!(pageList.indexOf(path) > -1)) {
@@ -49,6 +49,12 @@ const loadPage = (page) => async (dispatch) => {
                 break;
             case 'settings':
                 await import('../components/main-devices.js');
+                break;
+            case 'setting-vision':
+                await import('../components/settings-vision.js');
+                break;
+            case 'setting-remote':
+                await import('../components/settings-remote.js');
                 break;
             case 'help':
                 await import('../components/main-help.js');
