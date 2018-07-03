@@ -4,7 +4,7 @@ const initialState = {
 
 const vision = (state = initialState, action) => {
     switch (action.type) {
-        case 'SET_SETTINGS':
+        case 'SET_VISION_SETTINGS':
             return {
                 ...state,
                 settings: action.settings,
