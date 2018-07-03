@@ -75,7 +75,9 @@ export default class MainDevices extends connect(store)(LitElement) {
                                 <div class="device-pill">
                                     <span class="pill-content">${device.name}</span>
                                 </div>
-                                <iron-icon class="settings-icon" icon="icons:settings">
+                                <a href="dashboard/setting-remote">
+                                    <iron-icon class="settings-icon" icon="icons:settings">
+                                </a>
                             </div>
                         </paper-item>
                     `;
