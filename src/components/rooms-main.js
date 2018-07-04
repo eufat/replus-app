@@ -301,10 +301,12 @@ export default class RoomsMain extends connect(store)(LitElement) {
                                         icon="edit"
                                         on-click="${() => this._enterOnEdit(roomIndex)}">
                                     </mwc-button>
-                                    <mwc-button
-                                        label="Schedule"
-                                        icon="calendar_today">
-                                    </mwc-button>`
+                                    <a href="dashboard/add-schedule">
+                                        <mwc-button
+                                            label="Schedule"
+                                            icon="calendar_today">
+                                        </mwc-button>
+                                    </a>`
                         }
                     </div>
                     <div class="room-remotes">
