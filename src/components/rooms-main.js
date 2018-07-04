@@ -300,6 +300,10 @@ export default class RoomsMain extends connect(store)(LitElement) {
                                         label="Edit"
                                         icon="edit"
                                         on-click="${() => this._enterOnEdit(roomIndex)}">
+                                    </mwc-button>
+                                    <mwc-button
+                                        label="Schedule"
+                                        icon="calendar_today">
                                     </mwc-button>`
                         }
                     </div>
