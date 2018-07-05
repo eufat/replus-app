@@ -118,9 +118,6 @@ class AddSchedule extends connect(store)(PolymerElement) {
                     }
                 }
             </style>
-            <!-- <div id="container" class="vertical layout">
-                <h1>Add Schedule Component</h1>
-            </div> -->
             <div id="container" class="vertical layout">
                 <div class="horizontal layout justified">
                     <p>One time</p>
@@ -128,37 +125,42 @@ class AddSchedule extends connect(store)(PolymerElement) {
                     <p>Repeated</p>
                 </div>
                 <div id="containerTime" class="horizontal layout">
-                    <paper-dropdown-menu id="dropdownHour" label="Hour">
-                        <paper-listbox class="dropdown-content" attr-for-selected="name" selected="{{choosenHour}}" on-selected-changed="_changeTime">
-                            <template is="dom-repeat" items="{{hours}}" as="hour">
+                    <paper-dropdown-menu id="dropdownHour" label="Hour" noink no-animations>
+                        <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="name" selected="{{choosenHour}}" on-selected-changed="_changeTime">
+                            <dom-repeat items="{{hours}}" as="hour">
+                                <template>
+                                    <paper-item name="{{hour}}">{{hour}}</paper-item>
+                                </template>
+                            </dom-repeat>
+                            <!-- <template is="dom-repeat" items="{{hours}}" as="hour">
                                 <paper-item name="{{hour}}">{{hour}}</paper-item>
-                            </template>
+                            </template> -->
                         </paper-listbox>
                     </paper-dropdown-menu>
-                    <paper-dropdown-menu id="dropdownMinute" label="Minute">
-                        <paper-listbox class="dropdown-content" attr-for-selected="name" selected="{{choosenMinute}}" on-selected-changed="_changeTime">
+                    <paper-dropdown-menu id="dropdownMinute" label="Minute" noink no-animations>
+                        <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="name" selected="{{choosenMinute}}" on-selected-changed="_changeTime">
                             <template is="dom-repeat" items="{{minutes}}" as="minute">
                                 <paper-item name="{{minute}}">{{minute}}</paper-item>
                             </template>
                         </paper-listbox>
                     </paper-dropdown-menu>
-                    <paper-dropdown-menu id="dropdownPeriod" label="AM/PM">
-                        <paper-listbox class="dropdown-content" attr-for-selected="name" selected="{{choosenPeriod}}" on-selected-changed="_changeTime">
+                    <paper-dropdown-menu id="dropdownPeriod" label="AM/PM" noink no-animations>
+                        <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="name" selected="{{choosenPeriod}}" on-selected-changed="_changeTime">
                             <paper-item name="AM">AM</paper-item>
                             <paper-item name="PM">PM</paper-item>
                         </paper-listbox>
                     </paper-dropdown-menu>
                 </div>
                 <div id="containerDate" class="horizontal layout">
-                    <paper-dropdown-menu id="dropdownMonth" label="Month">
-                        <paper-listbox class="dropdown-content" attr-for-selected="name" selected="{{choosenMonth}}" on-selected-changed="calculateYear">
+                    <paper-dropdown-menu id="dropdownMonth" label="Month" noink no-animations>
+                        <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="name" selected="{{choosenMonth}}" on-selected-changed="calculateYear">
                             <template is="dom-repeat" items="{{months}}" as="month">
                                 <paper-item name="{{month}}">{{month}}</paper-item>
                             </template>
                         </paper-listbox>
                     </paper-dropdown-menu>
-                    <paper-dropdown-menu id="dropdownDate" label="Date">
-                        <paper-listbox class="dropdown-content" attr-for-selected="name" selected="{{choosenDate}}" on-selected-changed="calculateYear">
+                    <paper-dropdown-menu id="dropdownDate" label="Date" noink no-animations>
+                        <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="name" selected="{{choosenDate}}" on-selected-changed="calculateYear">
                             <template is="dom-repeat" items="{{dates}}" as="date">
                                 <paper-item name="{{date}}">{{date}}</paper-item>
                             </template>
@@ -175,9 +177,9 @@ class AddSchedule extends connect(store)(PolymerElement) {
                     <div class="vertical layout"><paper-checkbox id="checkbox6" name="6" on-active-changed="_changeDay"></paper-checkbox>Sat</div>
                     <div class="vertical layout"><paper-checkbox id="checkbox7" name="7" on-active-changed="_changeDay"></paper-checkbox>Sun</div>
                 </div>
-                <paper-dropdown-menu id="dropdownAppliance" label="Appliance to schedule">
-                    <paper-listbox class="dropdown-content" attr-for-selected="name" selected="{{choosenAppliance}}" on-selected-changed="_changeAppliance">
-                        <template is="dom-repeat" items="{{remotes}}" as="remote" sort="_sort">
+                <paper-dropdown-menu id="dropdownAppliance" label="Appliance to schedule" noink no-animations>
+                    <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="name" selected="{{choosenAppliance}}" on-selected-changed="_changeAppliance">
+                        <template is="dom-repeat" items="{{remotes}}" as="remote">
                             <paper-item name="{{remote}}">{{remote}}</paper-item>
                         </template>
                     </paper-listbox>
@@ -188,22 +190,22 @@ class AddSchedule extends connect(store)(PolymerElement) {
                 </div>
                 <div id="containerCommand">
                     <div id="containerAC" class="horizontal layout justified">
-                        <paper-dropdown-menu id="dropdownMode" label="Mode">
-                            <paper-listbox class="dropdown-content" attr-for-selected="mode" selected="{{choosenMode}}" on-selected-changed="_changeMode">
+                        <paper-dropdown-menu id="dropdownMode" label="Mode" noink no-animations>
+                            <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="mode" selected="{{choosenMode}}" on-selected-changed="_changeMode">
                                 <template is="dom-repeat" items="{{manifestModes}}" as="mode">
                                     <paper-item mode="{{mode}}">{{getMode(mode)}}</paper-item>
                                 </template>
                             </paper-listbox>
                         </paper-dropdown-menu>
-                        <paper-dropdown-menu id="dropdownFan" label="Fan speed">
-                            <paper-listbox class="dropdown-content" attr-for-selected="fan" selected="{{choosenFan}}" on-selected-changed="">
+                        <paper-dropdown-menu id="dropdownFan" label="Fan speed" noink no-animations>
+                            <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="fan" selected="{{choosenFan}}" on-selected-changed="">
                                 <template is="dom-repeat" items="{{manifestFans}}" as="fan">
                                     <paper-item fan="{{fan}}">{{getFan(fan)}}</paper-item>
                                 </template>
                             </paper-listbox>
                         </paper-dropdown-menu>
-                        <paper-dropdown-menu id="dropdownTemp" label="Temperature">
-                            <paper-listbox class="dropdown-content" attr-for-selected="temp" selected="{{choosenTemp}}" on-selected-changed="">
+                        <paper-dropdown-menu id="dropdownTemp" label="Temperature" noink no-animations>
+                            <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="temp" selected="{{choosenTemp}}" on-selected-changed="">
                                 <template is="dom-repeat" items="{{temps}}" as="temp">
                                     <paper-item temp="{{temp}}">{{temp}}</paper-item>
                                 </template>
@@ -231,7 +233,6 @@ class AddSchedule extends connect(store)(PolymerElement) {
                     '1': false, '2': false, '3': false, '4': false, '5': false, '6': false, '7': false,
                 },
             },
-
             dates: {
                 type: Array,
                 value: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '24', '25', '26', '27', '28', '29', '30', '31'],
@@ -269,15 +270,17 @@ class AddSchedule extends connect(store)(PolymerElement) {
             isRepeated: {
                 type: Boolean,
             },
+            remotes: {type: Array},
         };
     }
 
     constructor() {
         super();
+        this.remotes = [];
     }
 
     _stateChanged(state) {
-
+        this.remotes = get(state, 'remote.activeRemotes');
     }
 
     ready() {
@@ -409,6 +412,49 @@ class AddSchedule extends connect(store)(PolymerElement) {
                 thisRoomAddSchedule.$.containerDate.style.visibility = 'visible';
                 thisRoomAddSchedule.$.containerDay.style.visibility = 'hidden';
                 thisRoomAddSchedule.scheduleType = 'once';
+            }
+        }, 100);
+    }
+
+    _changeTime() {
+        const thisRoomAddSchedule = this;
+        thisRoomAddSchedule.calculateYear();
+        setTimeout(() => {
+            if ((thisRoomAddSchedule.choosenHour != '') && (thisRoomAddSchedule.choosenMinute != '') && (thisRoomAddSchedule.choosenPeriod != '')) thisRoomAddSchedule.OKtime = true;
+            else thisRoomAddSchedule.OKtime = false;
+        }, 100);
+    }
+
+    _changeAppliance() {
+        const thisRoomAddSchedule = this;
+        thisRoomAddSchedule.OKappliance = true;
+        thisRoomAddSchedule.setToggleONState('enabled');
+        thisRoomAddSchedule.setButtonState('enabled');
+        thisRoomAddSchedule.isON = false;
+        setTimeout(() => {
+            const type = thisRoomAddSchedule.choosenAppliance.substring(0, 2);
+            const brand = thisRoomAddSchedule.choosenAppliance.substring(3).toLowerCase();
+            thisRoomAddSchedule.choosenType = type;
+            thisRoomAddSchedule.choosenBrand = brand;
+        }, 100);
+    }
+
+    calculateYear() {
+        const thisRoomAddSchedule = this;
+        setTimeout(() => {
+            if ((thisRoomAddSchedule.choosenHour != '') && (thisRoomAddSchedule.choosenMinute != '') && (thisRoomAddSchedule.choosenPeriod != '') && (thisRoomAddSchedule.choosenDate != '') && (thisRoomAddSchedule.choosenMonth != '')) {
+                const hour = thisRoomAddSchedule.choosenHour;
+                const minute = thisRoomAddSchedule.choosenMinute;
+                const period = thisRoomAddSchedule.choosenPeriod;
+                const date = thisRoomAddSchedule.choosenDate;
+                const month = thisRoomAddSchedule.choosenMonth;
+                const yearNow = (new Date()).getFullYear();
+                const epochNow = (new Date()).getTime();
+                const epoch = (new Date(`${month} ${date}, ${yearNow} ${hour}:${minute} ${period}`)).getTime();
+
+                thisRoomAddSchedule.calculatedYear = (epoch > epochNow ? yearNow : yearNow + 1);
+                thisRoomAddSchedule.OKdate = true;
+                thisRoomAddSchedule.$.dropdownAppliance.removeAttribute('disabled');
             }
         }, 100);
     }
