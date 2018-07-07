@@ -21,6 +21,7 @@ export default class MainAccount extends connect(store)(LitElement) {
         return {
             currentUser: Object,
             active: Boolean,
+            provider: String,
         };
     }
 
@@ -37,7 +38,20 @@ export default class MainAccount extends connect(store)(LitElement) {
         this.currentUser = get(state, 'app.currentUser');
     }
 
-    _render({currentUser}) {
+    _didRender() {
+        let user = firebase.auth().currentUser;
+
+        if (user != null) {
+            user.providerData.forEach((profile) => {
+                this.provider = profile.providerId;
+            });
+        }
+    }
+
+    _render({currentUser, provider}) {
+        const providerIsGoogle = provider === undefined ? true : provider === 'google.com';
+        const providerIsFacebook = provider === undefined ? true : provider === 'facebook.com';
+
         return html`
             <style>
                 .text-container {
@@ -77,6 +91,7 @@ export default class MainAccount extends connect(store)(LitElement) {
                         raised
                         class="light"
                         label="Link to Google"
+                        disabled="${providerIsGoogle}"
                         on-click="${() => store.dispatch(linkWithProvider('google'))}"
                     ></mwc-button>
                 </paper-item>
@@ -85,6 +100,7 @@ export default class MainAccount extends connect(store)(LitElement) {
                         raised
                         class="light"
                         label="Link to Facebook"
+                        disabled="${providerIsFacebook}"
                         on-click="${() => store.dispatch(linkWithProvider('facebook'))}"
                     ></mwc-button>
                 </paper-item>
