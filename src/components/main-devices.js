@@ -11,7 +11,7 @@ import '@polymer/iron-icons/iron-icons.js';
 import {store} from '../store.js';
 import {connect} from 'pwa-helpers/connect-mixin.js';
 
-import {fetchRooms, setActiveDevice} from '../actions/remote';
+import {fetchRooms, setActiveDevice, setActiveRemotes} from '../actions/remote';
 import {brandsList, toTitleCase} from '../utils';
 
 const get = _.get;
@@ -49,12 +49,18 @@ export default class MainDevices extends connect(store)(LitElement) {
         this.uid = _.get(state, 'app.currentUser.uid');
     }
 
-    _activeDevice(device) {
+    _activeDevice(device, remotes) {
+        const arrRemotes = [];
+        const remotesValues = _.values(remotes);
+        remotesValues.map((item) => {
+            arrRemotes.push(item.name);
+        });
         store.dispatch(setActiveDevice(device));
+        store.dispatch(setActiveRemotes(arrRemotes));
     }
 
     _render({rooms}) {
-        const remoteDevices = (devices, roomIndex) => {
+        const remoteDevices = (devices, rooms) => {
             return devices.map((device, index) => {
                 if (device.type == 'replus-remote') {
                     return html`
@@ -79,7 +85,7 @@ export default class MainDevices extends connect(store)(LitElement) {
                                 <div class="device-pill">
                                     <span class="pill-content">${device.name}</span>
                                 </div>
-                                <a href="dashboard/setting-remote" on-click="${() => this._activeDevice(device.name)}">
+                                <a href="dashboard/setting-remote" on-click="${() => this._activeDevice(device.name, rooms.remotes)}">
                                     <iron-icon class="settings-icon" icon="icons:settings">
                                 </a>
                             </div>
@@ -94,7 +100,7 @@ export default class MainDevices extends connect(store)(LitElement) {
             return html`
                 <paper-material elevation="0">
                     <div class="room-devices">
-                        ${remoteDevices(_.values(item.devices), roomIndex)}
+                        ${remoteDevices(_.values(item.devices), item)}
                     </div>
                 </paper-material>
             `;
@@ -144,6 +150,28 @@ export default class MainDevices extends connect(store)(LitElement) {
                 </paper-item-body>
             </paper-item>
             ${remoteItems}
+            <paper-item>
+                <paper-item-body>
+                    <div>Replus Vision</div>
+                </paper-item-body>
+            </paper-item>
+            <paper-material elevation="0">
+                <div class="room-devices">
+                    <paper-item>
+                        <paper-item-body>
+                            <p class="device-type">replus-vision-dummy</p>
+                        </paper-item-body>
+                        <div class="settings-right">
+                            <div class="device-pill">
+                                <span class="pill-content">345A</span>
+                            </div>
+                            <a href="dashboard/setting-vision">
+                                <iron-icon class="settings-icon" icon="icons:settings">
+                            </a>
+                        </div>
+                    </paper-item>
+                </div>
+            </paper-material>
         </div>
     `;
     }
