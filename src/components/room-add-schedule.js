@@ -230,7 +230,13 @@ class AddSchedule extends connect(store)(PolymerElement) {
             choosenDay: {
                 type: Object,
                 value: {
-                    '1': false, '2': false, '3': false, '4': false, '5': false, '6': false, '7': false,
+                    '1': false,
+                    '2': false,
+                    '3': false,
+                    '4': false,
+                    '5': false,
+                    '6': false,
+                    '7': false,
                 },
             },
             dates: {
@@ -420,7 +426,7 @@ class AddSchedule extends connect(store)(PolymerElement) {
         const thisRoomAddSchedule = this;
         thisRoomAddSchedule.calculateYear();
         setTimeout(() => {
-            if ((thisRoomAddSchedule.choosenHour != '') && (thisRoomAddSchedule.choosenMinute != '') && (thisRoomAddSchedule.choosenPeriod != '')) thisRoomAddSchedule.OKtime = true;
+            if (thisRoomAddSchedule.choosenHour != '' && thisRoomAddSchedule.choosenMinute != '' && thisRoomAddSchedule.choosenPeriod != '') thisRoomAddSchedule.OKtime = true;
             else thisRoomAddSchedule.OKtime = false;
         }, 100);
     }
@@ -442,17 +448,17 @@ class AddSchedule extends connect(store)(PolymerElement) {
     calculateYear() {
         const thisRoomAddSchedule = this;
         setTimeout(() => {
-            if ((thisRoomAddSchedule.choosenHour != '') && (thisRoomAddSchedule.choosenMinute != '') && (thisRoomAddSchedule.choosenPeriod != '') && (thisRoomAddSchedule.choosenDate != '') && (thisRoomAddSchedule.choosenMonth != '')) {
+            if (thisRoomAddSchedule.choosenHour != '' && thisRoomAddSchedule.choosenMinute != '' && thisRoomAddSchedule.choosenPeriod != '' && thisRoomAddSchedule.choosenDate != '' && thisRoomAddSchedule.choosenMonth != '') {
                 const hour = thisRoomAddSchedule.choosenHour;
                 const minute = thisRoomAddSchedule.choosenMinute;
                 const period = thisRoomAddSchedule.choosenPeriod;
                 const date = thisRoomAddSchedule.choosenDate;
                 const month = thisRoomAddSchedule.choosenMonth;
-                const yearNow = (new Date()).getFullYear();
-                const epochNow = (new Date()).getTime();
-                const epoch = (new Date(`${month} ${date}, ${yearNow} ${hour}:${minute} ${period}`)).getTime();
+                const yearNow = new Date().getFullYear();
+                const epochNow = new Date().getTime();
+                const epoch = new Date(`${month} ${date}, ${yearNow} ${hour}:${minute} ${period}`).getTime();
 
-                thisRoomAddSchedule.calculatedYear = (epoch > epochNow ? yearNow : yearNow + 1);
+                thisRoomAddSchedule.calculatedYear = epoch > epochNow ? yearNow : yearNow + 1;
                 thisRoomAddSchedule.OKdate = true;
                 thisRoomAddSchedule.$.dropdownAppliance.removeAttribute('disabled');
             }
@@ -479,6 +485,78 @@ class AddSchedule extends connect(store)(PolymerElement) {
                 }
             }, 100);
         }
+    }
+
+    _tapAdd() {
+        const thisRoomAddSchedule = this;
+        let choosenDay = thisRoomAddSchedule.choosenDay;
+        let choosenHour = parseInt(thisRoomAddSchedule.choosenHour);
+        let choosenPeriod = thisRoomAddSchedule.choosenPeriod;
+
+        // convert to 24H format
+        if (choosenHour == 12) choosenHour = 0;
+        if (choosenPeriod == 'PM') choosenHour = choosenHour + 12;
+        if (choosenHour < 10) choosenHour = '0' + choosenHour;
+
+        // get titleTime
+        thisRoomAddSchedule.titleTime = `${choosenHour}:${thisRoomAddSchedule.choosenMinute}`;
+
+        // vary command based on appliance type
+        if (thisRoomAddSchedule.choosenType == 'AC') {
+            thisRoomAddSchedule.command = `${thisRoomAddSchedule.choosenBrand}-${thisRoomAddSchedule.choosenMode}${thisRoomAddSchedule.choosenFan}${thisRoomAddSchedule.choosenTemp}`;
+            thisRoomAddSchedule.titleCommand = `Set to ${thisRoomAddSchedule.choosenTemp}C, ${thisRoomAddSchedule.modes[thisRoomAddSchedule.choosenMode]}, fan ${thisRoomAddSchedule.fans[thisRoomAddSchedule.choosenFan]}`;
+            if (!thisRoomAddSchedule.isON) thisRoomAddSchedule.command = `${thisRoomAddSchedule.choosenBrand}-0000`;
+        } else {
+            thisRoomAddSchedule.titleCommand = 'Turn ON';
+            let merk = thisRoomAddSchedule.choosenBrand;
+            let codeset = '';
+
+            if (merk == 'lg') codeset = '1970';
+            else if (merk == 'samsung') codeset = '0595';
+            else if (merk == 'panasonic') codeset = '2619';
+            else if (merk == 'sony') codeset = '1319';
+            else if (merk == 'sharp') codeset = '1429';
+            else if (merk == 'changhong') codeset = '2903';
+            else if (merk == 'sanyo') codeset = '1430';
+            else if (merk == 'toshiba') codeset = '0339';
+            if (thisRoomAddSchedule.isON) thisRoomAddSchedule.command = `${codeset}15`;
+            else thisRoomAddSchedule.command = `${codeset}16`;
+        }
+
+        // get titleCommand based on ON/OFF
+        if (!thisRoomAddSchedule.isON) thisRoomAddSchedule.titleCommand = 'Turn OFF';
+
+        if (thisRoomAddSchedule.isRepeated) {
+            let days = [];
+            let daysName = [];
+            let daysCount = 0;
+
+            for (let key in choosenDay) {
+                if (choosenDay.hasOwnProperty(key)) {
+                    if (choosenDay[key]) {
+                        days.push(parseInt(key));
+                        daysName.push(thisRoomAddSchedule.days[parseInt(key)]);
+                        daysCount++;
+                    }
+                }
+            }
+
+            // Return 'Everyday' if every day is selected
+            let titleDay = '';
+            if (daysCount == 7) titleDay = 'Everyday';
+            else titleDay = daysName.toString().replace(/,/g, ', ');
+            thisRoomAddSchedule.titleDay = titleDay;
+
+            let cronExp = `0 ${thisRoomAddSchedule.choosenMinute} ${choosenHour} * * ${days.toString()}`;
+            thisRoomAddSchedule.schedule = cronExp;
+        } else {
+            let schedule = `${thisRoomAddSchedule.choosenMonth} ${thisRoomAddSchedule.choosenDate} ${thisRoomAddSchedule.calculatedYear}, ${choosenHour}:${thisRoomAddSchedule.choosenMinute}`;
+            thisRoomAddSchedule.titleDay = schedule;
+            thisRoomAddSchedule.schedule = schedule;
+        }
+
+        // thisRoomAddSchedule.setButtonState('spinner');
+        console.log('state', thisRoomAddSchedule);
     }
 
     _changeIsON() {
