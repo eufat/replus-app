@@ -28,6 +28,6 @@
     },
     "globals": {
         "customElements": false,
-        "Polymer": false,
+        "Polymer": false
     }
 }
