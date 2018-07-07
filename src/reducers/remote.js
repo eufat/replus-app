@@ -1,6 +1,7 @@
 const initialState = {
     activeRemote: {},
     activeRemotes: [],
+    schedule: {},
     rooms: [],
     newDevice: {},
     newRemote: {
@@ -25,6 +26,11 @@ const remote = (state = initialState, action) => {
             return {
                 ...state,
                 newRemote: action.newRemote,
+            };
+        case 'SET_SCHEDULE':
+            return {
+                ...state,
+                schedule: action.schedule,
             };
         case 'SET_ACTIVE_REMOTE':
             return {

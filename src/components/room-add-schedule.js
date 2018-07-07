@@ -25,6 +25,7 @@ import '@polymer/iron-icons/hardware-icons.js';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import '@polymer/iron-flex-layout/iron-flex-layout.js';
 
+import {setSchedule} from '../actions/remote.js';
 import {store} from '../store.js';
 
 const get = _.get;
@@ -286,189 +287,176 @@ class AddSchedule extends connect(store)(PolymerElement) {
     }
 
     _stateChanged(state) {
-        this.remotes = get(state, 'remote.activeRemotes');
+        let stateRemotes = get(state, 'remote.activeRemotes');
+        this.remotes = stateRemotes.map((remote) => remote.toUpperCase());
     }
 
     ready() {
         super.ready();
-        const thisRoomAddSchedule = this;
-        thisRoomAddSchedule.stateInitial();
+        this.stateInitial();
     }
 
     _OKtime(OK) {
-        const thisRoomAddSchedule = this;
-        if (typeof thisRoomAddSchedule != 'undefined') {
-            if (OK) thisRoomAddSchedule.setCheckboxState('enabled');
-            else thisRoomAddSchedule.setCheckboxState('disabled');
+        if (typeof this != 'undefined') {
+            if (OK) this.setCheckboxState('enabled');
+            else this.setCheckboxState('disabled');
         }
     }
 
     _OKdate(OK) {
-        const thisRoomAddSchedule = this;
-        if (typeof thisRoomAddSchedule != 'undefined') {
-            if (OK) thisRoomAddSchedule.$.dropdownAppliance.removeAttribute('disabled');
-            else thisRoomAddSchedule.$.dropdownAppliance.setAttribute('disabled', true);
+        if (typeof this != 'undefined') {
+            if (OK) this.$.dropdownAppliance.removeAttribute('disabled');
+            else this.$.dropdownAppliance.setAttribute('disabled', true);
         }
     }
 
     _OKday(OK) {
-        const thisRoomAddSchedule = this;
-        if (typeof thisRoomAddSchedule != 'undefined') {
-            if (OK) thisRoomAddSchedule.$.dropdownAppliance.removeAttribute('disabled');
+        if (typeof this != 'undefined') {
+            if (OK) this.$.dropdownAppliance.removeAttribute('disabled');
             else {
-                thisRoomAddSchedule.choosenAppliance = '';
-                thisRoomAddSchedule.setToggleONState('disabled');
-                thisRoomAddSchedule.$.dropdownAppliance.setAttribute('disabled', true);
+                this.choosenAppliance = '';
+                this.setToggleONState('disabled');
+                this.$.dropdownAppliance.setAttribute('disabled', true);
             }
         }
     }
 
     stateInitial() {
-        const thisRoomAddSchedule = this;
-        thisRoomAddSchedule.clearAll();
-        thisRoomAddSchedule.setCheckboxState('disabled');
-        thisRoomAddSchedule.$.dropdownAppliance.setAttribute('disabled', true);
-        thisRoomAddSchedule.setToggleONState('disabled');
-        thisRoomAddSchedule.setButtonState('disabled');
+        this.clearAll();
+        this.setCheckboxState('disabled');
+        this.$.dropdownAppliance.setAttribute('disabled', true);
+        this.setToggleONState('disabled');
+        this.setButtonState('disabled');
     }
 
     clearAll() {
-        const thisRoomAddSchedule = this;
-        thisRoomAddSchedule.choosenHour = '';
-        thisRoomAddSchedule.choosenMinute = '';
-        thisRoomAddSchedule.choosenPeriod = '';
-        thisRoomAddSchedule.choosenMonth = '';
-        thisRoomAddSchedule.choosenDate = '';
-        thisRoomAddSchedule.calculatedYear = '';
-        thisRoomAddSchedule.$.checkbox1.active = false;
-        thisRoomAddSchedule.$.checkbox2.active = false;
-        thisRoomAddSchedule.$.checkbox3.active = false;
-        thisRoomAddSchedule.$.checkbox4.active = false;
-        thisRoomAddSchedule.$.checkbox5.active = false;
-        thisRoomAddSchedule.$.checkbox6.active = false;
-        thisRoomAddSchedule.$.checkbox7.active = false;
-        thisRoomAddSchedule.choosenAppliance = '';
-        thisRoomAddSchedule.isON = false;
-        thisRoomAddSchedule.manifestModes = [];
-        thisRoomAddSchedule.manifestFans = [];
-        thisRoomAddSchedule.temps = [];
-        thisRoomAddSchedule.choosenMode = '';
-        thisRoomAddSchedule.choosenFan = '';
-        thisRoomAddSchedule.choosenTemp = '';
+        this.choosenHour = '';
+        this.choosenMinute = '';
+        this.choosenPeriod = '';
+        this.choosenMonth = '';
+        this.choosenDate = '';
+        this.calculatedYear = '';
+        this.$.checkbox1.active = false;
+        this.$.checkbox2.active = false;
+        this.$.checkbox3.active = false;
+        this.$.checkbox4.active = false;
+        this.$.checkbox5.active = false;
+        this.$.checkbox6.active = false;
+        this.$.checkbox7.active = false;
+        this.choosenAppliance = '';
+        this.isON = false;
+        this.manifestModes = [];
+        this.manifestFans = [];
+        this.temps = [];
+        this.choosenMode = '';
+        this.choosenFan = '';
+        this.choosenTemp = '';
     }
 
     setCheckboxState(state) {
-        const thisRoomAddSchedule = this;
         if (state == 'enabled') {
-            thisRoomAddSchedule.$.checkbox1.removeAttribute('disabled');
-            thisRoomAddSchedule.$.checkbox2.removeAttribute('disabled');
-            thisRoomAddSchedule.$.checkbox3.removeAttribute('disabled');
-            thisRoomAddSchedule.$.checkbox4.removeAttribute('disabled');
-            thisRoomAddSchedule.$.checkbox5.removeAttribute('disabled');
-            thisRoomAddSchedule.$.checkbox6.removeAttribute('disabled');
-            thisRoomAddSchedule.$.checkbox7.removeAttribute('disabled');
+            this.$.checkbox1.removeAttribute('disabled');
+            this.$.checkbox2.removeAttribute('disabled');
+            this.$.checkbox3.removeAttribute('disabled');
+            this.$.checkbox4.removeAttribute('disabled');
+            this.$.checkbox5.removeAttribute('disabled');
+            this.$.checkbox6.removeAttribute('disabled');
+            this.$.checkbox7.removeAttribute('disabled');
         } else if (state == 'disabled') {
-            thisRoomAddSchedule.$.checkbox1.setAttribute('disabled', true);
-            thisRoomAddSchedule.$.checkbox2.setAttribute('disabled', true);
-            thisRoomAddSchedule.$.checkbox3.setAttribute('disabled', true);
-            thisRoomAddSchedule.$.checkbox4.setAttribute('disabled', true);
-            thisRoomAddSchedule.$.checkbox5.setAttribute('disabled', true);
-            thisRoomAddSchedule.$.checkbox6.setAttribute('disabled', true);
-            thisRoomAddSchedule.$.checkbox7.setAttribute('disabled', true);
+            this.$.checkbox1.setAttribute('disabled', true);
+            this.$.checkbox2.setAttribute('disabled', true);
+            this.$.checkbox3.setAttribute('disabled', true);
+            this.$.checkbox4.setAttribute('disabled', true);
+            this.$.checkbox5.setAttribute('disabled', true);
+            this.$.checkbox6.setAttribute('disabled', true);
+            this.$.checkbox7.setAttribute('disabled', true);
         }
     }
 
     setToggleONState(state) {
-        const thisRoomAddSchedule = this;
         if (state == 'enabled') {
-            thisRoomAddSchedule.$.textON.style.color = '#000';
-            thisRoomAddSchedule.$.toggleON.removeAttribute('disabled');
+            this.$.textON.style.color = '#000';
+            this.$.toggleON.removeAttribute('disabled');
         } else if (state == 'disabled') {
-            thisRoomAddSchedule.$.textON.style.color = '#bdbdbd';
-            thisRoomAddSchedule.$.toggleON.setAttribute('disabled', 'true');
+            this.$.textON.style.color = '#bdbdbd';
+            this.$.toggleON.setAttribute('disabled', 'true');
         }
     }
 
     setButtonState(state) {
-        const thisRoomAddSchedule = this;
         if (state == 'enabled') {
-            thisRoomAddSchedule.$.spinner.style.display = 'none';
-            thisRoomAddSchedule.$.btnAdd.style.visibility = 'visible';
-            thisRoomAddSchedule.$.btnAdd.removeAttribute('disabled');
+            this.$.spinner.style.display = 'none';
+            this.$.btnAdd.style.visibility = 'visible';
+            this.$.btnAdd.removeAttribute('disabled');
         } else if (state == 'disabled') {
-            thisRoomAddSchedule.$.spinner.style.display = 'none';
-            thisRoomAddSchedule.$.btnAdd.style.visibility = 'visible';
-            thisRoomAddSchedule.$.btnAdd.setAttribute('disabled', 'true');
+            this.$.spinner.style.display = 'none';
+            this.$.btnAdd.style.visibility = 'visible';
+            this.$.btnAdd.setAttribute('disabled', 'true');
         } else if (state == 'spinner') {
-            thisRoomAddSchedule.$.spinner.style.display = 'block';
-            thisRoomAddSchedule.$.btnAdd.style.visibility = 'hidden';
-            thisRoomAddSchedule.$.btnAdd.setAttribute('disabled', 'true');
+            this.$.spinner.style.display = 'block';
+            this.$.btnAdd.style.visibility = 'hidden';
+            this.$.btnAdd.setAttribute('disabled', 'true');
         }
     }
 
     _changeIsRepeated() {
-        const thisRoomAddSchedule = this;
         setTimeout(() => {
-            thisRoomAddSchedule.stateInitial();
-            if (thisRoomAddSchedule.isRepeated) {
-                thisRoomAddSchedule.$.containerDate.style.visibility = 'hidden';
-                thisRoomAddSchedule.$.containerDay.style.visibility = 'visible';
-                thisRoomAddSchedule.scheduleType = 'repeated';
+            this.stateInitial();
+            if (this.isRepeated) {
+                this.$.containerDate.style.visibility = 'hidden';
+                this.$.containerDay.style.visibility = 'visible';
+                this.scheduleType = 'repeated';
             } else {
-                thisRoomAddSchedule.$.containerDate.style.visibility = 'visible';
-                thisRoomAddSchedule.$.containerDay.style.visibility = 'hidden';
-                thisRoomAddSchedule.scheduleType = 'once';
+                this.$.containerDate.style.visibility = 'visible';
+                this.$.containerDay.style.visibility = 'hidden';
+                this.scheduleType = 'once';
             }
         }, 100);
     }
 
     _changeTime() {
-        const thisRoomAddSchedule = this;
-        thisRoomAddSchedule.calculateYear();
+        this.calculateYear();
         setTimeout(() => {
-            if (thisRoomAddSchedule.choosenHour != '' && thisRoomAddSchedule.choosenMinute != '' && thisRoomAddSchedule.choosenPeriod != '') thisRoomAddSchedule.OKtime = true;
-            else thisRoomAddSchedule.OKtime = false;
+            if (this.choosenHour != '' && this.choosenMinute != '' && this.choosenPeriod != '') this.OKtime = true;
+            else this.OKtime = false;
         }, 100);
     }
 
     _changeAppliance() {
-        const thisRoomAddSchedule = this;
-        thisRoomAddSchedule.OKappliance = true;
-        thisRoomAddSchedule.setToggleONState('enabled');
-        thisRoomAddSchedule.setButtonState('enabled');
-        thisRoomAddSchedule.isON = false;
+        this.OKappliance = true;
+        this.setToggleONState('enabled');
+        this.setButtonState('enabled');
+        this.isON = false;
         setTimeout(() => {
-            const type = thisRoomAddSchedule.choosenAppliance.substring(0, 2);
-            const brand = thisRoomAddSchedule.choosenAppliance.substring(3).toLowerCase();
-            thisRoomAddSchedule.choosenType = type;
-            thisRoomAddSchedule.choosenBrand = brand;
+            const type = this.choosenAppliance.substring(0, 2);
+            const brand = this.choosenAppliance.substring(3).toLowerCase();
+            this.choosenType = type;
+            this.choosenBrand = brand;
         }, 100);
     }
 
     calculateYear() {
-        const thisRoomAddSchedule = this;
         setTimeout(() => {
-            if (thisRoomAddSchedule.choosenHour != '' && thisRoomAddSchedule.choosenMinute != '' && thisRoomAddSchedule.choosenPeriod != '' && thisRoomAddSchedule.choosenDate != '' && thisRoomAddSchedule.choosenMonth != '') {
-                const hour = thisRoomAddSchedule.choosenHour;
-                const minute = thisRoomAddSchedule.choosenMinute;
-                const period = thisRoomAddSchedule.choosenPeriod;
-                const date = thisRoomAddSchedule.choosenDate;
-                const month = thisRoomAddSchedule.choosenMonth;
+            if (this.choosenHour != '' && this.choosenMinute != '' && this.choosenPeriod != '' && this.choosenDate != '' && this.choosenMonth != '') {
+                const hour = this.choosenHour;
+                const minute = this.choosenMinute;
+                const period = this.choosenPeriod;
+                const date = this.choosenDate;
+                const month = this.choosenMonth;
                 const yearNow = new Date().getFullYear();
                 const epochNow = new Date().getTime();
                 const epoch = new Date(`${month} ${date}, ${yearNow} ${hour}:${minute} ${period}`).getTime();
 
-                thisRoomAddSchedule.calculatedYear = epoch > epochNow ? yearNow : yearNow + 1;
-                thisRoomAddSchedule.OKdate = true;
-                thisRoomAddSchedule.$.dropdownAppliance.removeAttribute('disabled');
+                this.calculatedYear = epoch > epochNow ? yearNow : yearNow + 1;
+                this.OKdate = true;
+                this.$.dropdownAppliance.removeAttribute('disabled');
             }
         }, 100);
     }
 
     _changeDay(e) {
-        const thisRoomAddSchedule = this;
-        if (typeof thisRoomAddSchedule != 'undefined') {
-            let choosenDay = thisRoomAddSchedule.choosenDay;
+        if (typeof this != 'undefined') {
+            let choosenDay = this.choosenDay;
             choosenDay[e.target.name] = e.detail.value;
 
             setTimeout(() => {
@@ -478,20 +466,19 @@ class AddSchedule extends connect(store)(PolymerElement) {
                 }
 
                 if (checkedCount == 0) {
-                    thisRoomAddSchedule.OKday = false;
-                    if (thisRoomAddSchedule.isRepeated) thisRoomAddSchedule.$.toast.show({text: 'Select at least one day.', duration: 3000});
+                    this.OKday = false;
+                    if (this.isRepeated) this.$.toast.show({text: 'Select at least one day.', duration: 3000});
                 } else {
-                    thisRoomAddSchedule.OKday = true;
+                    this.OKday = true;
                 }
             }, 100);
         }
     }
 
     _tapAdd() {
-        const thisRoomAddSchedule = this;
-        let choosenDay = thisRoomAddSchedule.choosenDay;
-        let choosenHour = parseInt(thisRoomAddSchedule.choosenHour);
-        let choosenPeriod = thisRoomAddSchedule.choosenPeriod;
+        let choosenDay = this.choosenDay;
+        let choosenHour = parseInt(this.choosenHour);
+        let choosenPeriod = this.choosenPeriod;
 
         // convert to 24H format
         if (choosenHour == 12) choosenHour = 0;
@@ -499,16 +486,16 @@ class AddSchedule extends connect(store)(PolymerElement) {
         if (choosenHour < 10) choosenHour = '0' + choosenHour;
 
         // get titleTime
-        thisRoomAddSchedule.titleTime = `${choosenHour}:${thisRoomAddSchedule.choosenMinute}`;
+        this.titleTime = `${choosenHour}:${this.choosenMinute}`;
 
         // vary command based on appliance type
-        if (thisRoomAddSchedule.choosenType == 'AC') {
-            thisRoomAddSchedule.command = `${thisRoomAddSchedule.choosenBrand}-${thisRoomAddSchedule.choosenMode}${thisRoomAddSchedule.choosenFan}${thisRoomAddSchedule.choosenTemp}`;
-            thisRoomAddSchedule.titleCommand = `Set to ${thisRoomAddSchedule.choosenTemp}C, ${thisRoomAddSchedule.modes[thisRoomAddSchedule.choosenMode]}, fan ${thisRoomAddSchedule.fans[thisRoomAddSchedule.choosenFan]}`;
-            if (!thisRoomAddSchedule.isON) thisRoomAddSchedule.command = `${thisRoomAddSchedule.choosenBrand}-0000`;
+        if (this.choosenType == 'AC') {
+            this.command = `${this.choosenBrand}-${this.choosenMode}${this.choosenFan}${this.choosenTemp}`;
+            this.titleCommand = `Set to ${this.choosenTemp}C, ${this.modes[this.choosenMode]}, fan ${this.fans[this.choosenFan]}`;
+            if (!this.isON) this.command = `${this.choosenBrand}-0000`;
         } else {
-            thisRoomAddSchedule.titleCommand = 'Turn ON';
-            let merk = thisRoomAddSchedule.choosenBrand;
+            this.titleCommand = 'Turn ON';
+            let merk = this.choosenBrand;
             let codeset = '';
 
             if (merk == 'lg') codeset = '1970';
@@ -519,14 +506,14 @@ class AddSchedule extends connect(store)(PolymerElement) {
             else if (merk == 'changhong') codeset = '2903';
             else if (merk == 'sanyo') codeset = '1430';
             else if (merk == 'toshiba') codeset = '0339';
-            if (thisRoomAddSchedule.isON) thisRoomAddSchedule.command = `${codeset}15`;
-            else thisRoomAddSchedule.command = `${codeset}16`;
+            if (this.isON) this.command = `${codeset}15`;
+            else this.command = `${codeset}16`;
         }
 
         // get titleCommand based on ON/OFF
-        if (!thisRoomAddSchedule.isON) thisRoomAddSchedule.titleCommand = 'Turn OFF';
+        if (!this.isON) this.titleCommand = 'Turn OFF';
 
-        if (thisRoomAddSchedule.isRepeated) {
+        if (this.isRepeated) {
             let days = [];
             let daysName = [];
             let daysCount = 0;
@@ -535,7 +522,7 @@ class AddSchedule extends connect(store)(PolymerElement) {
                 if (choosenDay.hasOwnProperty(key)) {
                     if (choosenDay[key]) {
                         days.push(parseInt(key));
-                        daysName.push(thisRoomAddSchedule.days[parseInt(key)]);
+                        daysName.push(this.days[parseInt(key)]);
                         daysCount++;
                     }
                 }
@@ -545,35 +532,45 @@ class AddSchedule extends connect(store)(PolymerElement) {
             let titleDay = '';
             if (daysCount == 7) titleDay = 'Everyday';
             else titleDay = daysName.toString().replace(/,/g, ', ');
-            thisRoomAddSchedule.titleDay = titleDay;
+            this.titleDay = titleDay;
 
-            let cronExp = `0 ${thisRoomAddSchedule.choosenMinute} ${choosenHour} * * ${days.toString()}`;
-            thisRoomAddSchedule.schedule = cronExp;
+            let cronExp = `0 ${this.choosenMinute} ${choosenHour} * * ${days.toString()}`;
+            this.schedule = cronExp;
         } else {
-            let schedule = `${thisRoomAddSchedule.choosenMonth} ${thisRoomAddSchedule.choosenDate} ${thisRoomAddSchedule.calculatedYear}, ${choosenHour}:${thisRoomAddSchedule.choosenMinute}`;
-            thisRoomAddSchedule.titleDay = schedule;
-            thisRoomAddSchedule.schedule = schedule;
+            let schedule = `${this.choosenMonth} ${this.choosenDate} ${this.calculatedYear}, ${choosenHour}:${this.choosenMinute}`;
+            this.titleDay = schedule;
+            this.schedule = schedule;
         }
 
-        // thisRoomAddSchedule.setButtonState('spinner');
-        console.log('state', thisRoomAddSchedule);
+        const schedule = {
+            uid: this.uid,
+            room: this.roomKey,
+            command: this.command,
+            scheduleType: this.scheduleType,
+            schedule: this.schedule,
+            titleRemote: this.choosenAppliance,
+            titleCommand: this.titleCommand,
+            titleDay: this.titleDay,
+            titleTime: this.titleTime,
+        };
+
+        store.dispatch(setSchedule(schedule));
     }
 
     _changeIsON() {
-        const thisRoomAddSchedule = this;
         setTimeout(() => {
-            if (thisRoomAddSchedule.isON) {
-                thisRoomAddSchedule.$.containerCommand.style.display = 'block';
-                thisRoomAddSchedule.$.textON.innerHTML = 'Turn appliance ON';
-                if (thisRoomAddSchedule.choosenType == 'AC') {
-                    thisRoomAddSchedule.$.containerAC.style.display = 'block';
-                    thisRoomAddSchedule.$.ajaxManifest.generateRequest();
+            if (this.isON) {
+                this.$.containerCommand.style.display = 'block';
+                this.$.textON.innerHTML = 'Turn appliance ON';
+                if (this.choosenType == 'AC') {
+                    this.$.containerAC.style.display = 'block';
+                    this.$.ajaxManifest.generateRequest();
                 } else {
-                    thisRoomAddSchedule.$.containerAC.style.display = 'none';
+                    this.$.containerAC.style.display = 'none';
                 }
             } else {
-                thisRoomAddSchedule.$.containerCommand.style.display = 'none';
-                thisRoomAddSchedule.$.textON.innerHTML = 'Turn appliance OFF';
+                this.$.containerCommand.style.display = 'none';
+                this.$.textON.innerHTML = 'Turn appliance OFF';
             }
         }, 100);
     }

@@ -178,6 +178,15 @@ export const removeDevice = (room, deviceID, deviceCode) => async (dispatch, get
     }
 };
 
+export const setSchedule = (schedule) => (dispatch, getState) => {
+    dispatch(showProgress());
+    dispatch({
+        type: 'SET_SCHEDULE',
+        schedule,
+    });
+    dispatch(closeProgress());
+};
+
 export const remoteCommand = (command) => (dispatch, getState) => {
     // dispatch(showProgress());
     const uid = get(getState(), 'app.currentUser.uid');
