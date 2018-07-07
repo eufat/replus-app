@@ -1,4 +1,5 @@
 import {LitElement, html} from '@polymer/lit-element';
+import {connect} from 'pwa-helpers/connect-mixin.js';
 
 import '@polymer/paper-toggle-button/paper-toggle-button.js';
 import '@polymer/paper-button/paper-button.js';
@@ -7,20 +8,30 @@ import '@polymer/paper-dialog/paper-dialog.js';
 import '@polymer/paper-radio-group/paper-radio-group.js';
 import '@polymer/paper-radio-button/paper-radio-button.js';
 
+import '@polymer/paper-dropdown-menu/paper-dropdown-menu.js';
+import '@polymer/paper-listbox/paper-listbox.js';
+import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
+import '@polymer/iron-flex-layout/iron-flex-layout.js';
+
 // import {rotationsList, resolutionsList} from '../utils';
 import {store} from '../store.js';
 import {setSettings} from '../actions/remote.js';
-import {connect} from 'pwa-helpers/connect-mixin.js';
+import {brandsList, toTitleCase} from '../utils';
 
 export default class SettingsRemote extends connect(store)(LitElement) {
     static get properties() {
         return {
             deviceName: '',
+            remotes: Array,
+
             onePushButtons: Array,
+            selectedRemote: String,
+            selectedPushButton: String,
+            command: String,
+
             settingsIsDisabled: Boolean,
             off: Boolean,
             restart: Boolean,
-            settings: Object,
             uid: String,
             active: Boolean,
         };
@@ -30,14 +41,9 @@ export default class SettingsRemote extends connect(store)(LitElement) {
         super();
         this.onePushButtons = ['ON', 'OFF'];
         this.settingsIsDisabled = false;
-        this.settings = {
-            // onePushButton: 0,
-            acButton: 0,
-            tvButton: 0,
-            deviceName: '',
-        };
-
-        store.dispatch(setSettings(this.settings));
+        this.deviceName = '';
+        this.command = '';
+        this.remotes = [];
     }
 
     _shouldRender(props, changedProps, old) {
@@ -45,8 +51,8 @@ export default class SettingsRemote extends connect(store)(LitElement) {
     }
 
     _stateChanged(state) {
-        this.settings = _.get(state, 'remote.settings');
-        this.settings.deviceName = _.get(state, 'remote.activeDevice');
+        this.deviceName = _.get(state, 'remote.activeDevice');
+        this.remotes = _.get(state, 'remote.activeRemotes');
     }
 
     getIndexOf(array, element) {
@@ -58,7 +64,8 @@ export default class SettingsRemote extends connect(store)(LitElement) {
     }
 
     handleSaveSettings() {
-        console.log('save settings');
+        console.log('save settings', this.command);
+        this.command = '';
         // store.dispatch(saveSettings());
     }
 
@@ -73,14 +80,24 @@ export default class SettingsRemote extends connect(store)(LitElement) {
         store.dispatch(setSettings(this.settings));
     }
 
-    _render({settings, onePushButtons, settingsIsDisabled}) {
-        const {getIndexOf, onTurnOffDevice, handleSaveSettings, onRestartDevice} = this;
+    setSelectedRemote(remote) {
+        this.selectedRemote = remote;
+    }
 
-        const settingsAcButton = onePushButtons[settings.acButton];
-        const settingsTvButton = onePushButtons[settings.tvButton];
+    setSelectedPushButton(button) {
+        this.selectedPushButton = button;
+    }
 
+    setCommand() {
+        this.command = this.selectedRemote + ' ' + this.selectedPushButton;
+    }
+
+    _render({remotes, onePushButtons, command, settingsIsDisabled}) {
         return html`
-        <style>
+        <style include="iron-flex iron-flex-alignment">
+            :host {
+                display: block;
+            }
             .settings {
                 border-bottom: 1px solid #ECEFF1;
             }
@@ -103,70 +120,78 @@ export default class SettingsRemote extends connect(store)(LitElement) {
             .pointer {
                 cursor: pointer;
             }
+            #container {
+                width: 400px;
+                margin-left: calc((100vw - 400px) / 2);
+                padding-bottom: 150px;
+            }
+            #dropdownType {
+                width: 21%;
+                margin-right: 10px;
+            }
+            #dropdownBrand {
+                width: 75%;
+            }
+            #dropdownPushButton {
+                width: 100%;
+            }
+            #remoteDialog {
+                width: 400px;
+            }
+            @media (max-width: 500px) {
+                #container {
+                    width: 280px;
+                    margin-left: calc((100vw - 280px) / 2);
+                }
+            }
         </style>
         <div role="listbox" class="settings">
-            <paper-item>
-                <paper-item-body>
-                    <div>Remote AC</div>
-                </paper-item-body>
-            </paper-item>
-            <paper-item class="pointer" on-click="${() => this.shadowRoot.getElementById('acPushButtonDialog').open()}">
+            <paper-item class="pointer" on-click="${() => this.shadowRoot.getElementById('remoteDialog').open()}">
                 <paper-item-body>
                     <div>One Push Button</div>
                 </paper-item-body>
                 <div class="settings-right">
-                    ${settingsAcButton}
-                </div>
-            </paper-item>
-            <paper-item>
-                <paper-item-body>
-                    <div>Remote TV</div>
-                </paper-item-body>
-            </paper-item>
-            <paper-item class="pointer" on-click="${() => this.shadowRoot.getElementById('tvPushButtonDialog').open()}">
-                <paper-item-body>
-                    <div>One Push Button</div>
-                </paper-item-body>
-                <div class="settings-right">
-                    ${settingsTvButton}
+                    ${toTitleCase(command)}
                 </div>
             </paper-item>
             <paper-button
                 class="save"
                 raised
-                on-click="${() => handleSaveSettings()}">
+                on-click="${() => this.handleSaveSettings()}">
                     Save Settings
             </paper-button>
         </div>
-        <paper-dialog id="acPushButtonDialog">
-            <paper-radio-group
-                selected="${settings.acButton}"
-                on-change="${(e) => this.changeSettings(e, 'acButton')}"
-            >
-                ${onePushButtons.map(
-                    (item) => html`
-                        <paper-radio-button
-                            name="${this.getIndexOf(onePushButtons, item)}">
-                                ${item}
-                        </paper-radio-button>
-                    `
-                )}
-            </paper-radio-group>
-        </paper-dialog>
-        <paper-dialog id="tvPushButtonDialog">
-            <paper-radio-group
-                selected="${settings.tvButton}"
-                on-change="${(e) => this.changeSettings(e, 'tvButton')}"
-            >
-                ${onePushButtons.map(
-                    (item) => html`
-                        <paper-radio-button
-                            name="${this.getIndexOf(onePushButtons, item)}">
-                                ${item}
-                        </paper-radio-button>
-                    `
-                )}
-            </paper-radio-group>
+        <paper-dialog id="remoteDialog">
+            <div class="horizontal layout">
+                <paper-dropdown-menu id="dropdownPushButton" label="Remote" noink no-animations>
+                    <paper-listbox slot="dropdown-content" class="dropdown-content">
+                        ${remotes.map(
+                            (item) => html`
+                                <paper-item on-click="${() => this.setSelectedRemote(item)}" item-name="${this.getIndexOf(remotes, item)}">
+                                    ${toTitleCase(item)}
+                                </paper-item>
+                            `
+                        )}
+                    </paper-listbox>
+                </paper-dropdown-menu>
+                <paper-dropdown-menu id="dropdownPushButton" label="One Push Button" noink no-animations>
+                    <paper-listbox slot="dropdown-content" class="dropdown-content">
+                        ${onePushButtons.map(
+                            (item) => html`
+                                <paper-item on-click="${() => this.setSelectedPushButton(item)}">
+                                    ${item}
+                                </paper-item>
+                            `
+                        )}
+                    </paper-listbox>
+                </paper-dropdown-menu>
+            </div>
+            <div class="buttons">
+                <mwc-button on-click="${() => this.setCommand()}" dialog-confirm label="Add This Setting"></mwc-button>
+            </div>
+            <div class="horizontal layout center-justified">
+                <paper-spinner id="spinner" active></paper-spinner>
+            </div>
         </paper-dialog>
     `;
     }
