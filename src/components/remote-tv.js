@@ -86,10 +86,6 @@ class RemoteTv extends connect(store)(PolymerElement) {
                     /*margin: 30px auto;*/
                 }
 
-                .back-icon paper-fab {
-                    position: absolute;
-                }
-
                 .title-header {
                     margin-top: 10px;
                     margin-bottom: 10px;
@@ -106,11 +102,6 @@ class RemoteTv extends connect(store)(PolymerElement) {
             </style>
             <div id="remoteContainer">
                 <div class="title-header">
-                    <div class="back-icon">
-                        <a href="/dashboard/rooms">
-                            <paper-fab on-tap="_tapBack" icon="arrow-back"></paper-fab>
-                        </a>
-                    </div>
                     <div id="title" class="horizontal layout center-justified">
                         <p>{{title}}</p>
                     </div>
@@ -210,18 +201,18 @@ class RemoteTv extends connect(store)(PolymerElement) {
 
     setupPosition() {
         const thisRemoteTV = this;
-        if (window.innerHeight > 570) thisRemoteTV.$.menubuttons.style.marginTop = (window.innerHeight - 550) - 90 + 'px';
+        if (window.innerHeight > 570) thisRemoteTV.$.menubuttons.style.marginTop = window.innerHeight - 550 - 90 + 'px';
         else thisRemoteTV.$.menubuttons.style.marginTop = '20px';
 
         if (window.innerWidth > 375) {
             thisRemoteTV.$.remoteContainer.style.width = '350px';
-            thisRemoteTV.$.remoteContainer.style.marginLeft = (window.innerWidth - 350)/2 + 'px';
+            thisRemoteTV.$.remoteContainer.style.marginLeft = (window.innerWidth - 350) / 2 + 'px';
         } else {
             thisRemoteTV.$.remoteContainer.style.width = '300px';
-            thisRemoteTV.$.remoteContainer.style.marginLeft = (window.innerWidth - 300)/2 + 'px';
+            thisRemoteTV.$.remoteContainer.style.marginLeft = (window.innerWidth - 300) / 2 + 'px';
             if (window.innerWidth < 325) {
                 thisRemoteTV.$.remoteContainer.style.width = '250px';
-                thisRemoteTV.$.remoteContainer.style.marginLeft = (window.innerWidth - 250)/2 + 'px';
+                thisRemoteTV.$.remoteContainer.style.marginLeft = (window.innerWidth - 250) / 2 + 'px';
             }
         }
     }
@@ -249,7 +240,8 @@ class RemoteTv extends connect(store)(PolymerElement) {
             else if (brand == 'samsung') thisRemoteTV.codeset = '0595';
             else if (brand == 'panasonic') thisRemoteTV.codeset = '2619';
             else if (brand == 'sony') thisRemoteTV.codeset = '1319';
-            else if (brand == 'sharp') thisRemoteTV.codeset = 'T001'; // 1429
+            else if (brand == 'sharp') thisRemoteTV.codeset = 'T001';
+            // 1429
             else if (brand == 'changhong') thisRemoteTV.codeset = '2903';
             else if (brand == 'sanyo') thisRemoteTV.codeset = '1430';
             else if (brand == 'toshiba') thisRemoteTV.codeset = '0339';

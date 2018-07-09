@@ -1,6 +1,11 @@
-import {UPDATE_PAGE, UPDATE_OFFLINE, OPEN_SNACKBAR, CLOSE_SNACKBAR, OPEN_PROGRESS, CLOSE_PROGRESS, UPDATE_DRAWER_STATE, AUTHENTICATE_USER, DEAUTHENTICATE_USER, SET_CURRENT_USER} from '../actions/app.js';
+import {UPDATE_PAGE, UPDATE_OFFLINE, OPEN_SNACKBAR, CLOSE_SNACKBAR, OPEN_PROGRESS, CLOSE_PROGRESS, UPDATE_DRAWER_STATE, AUTHENTICATE_USER, DEAUTHENTICATE_USER, SET_CURRENT_USER, OPEN_BACK, CLOSE_BACK} from '../actions/app.js';
 
-const app = (state = {progressOpened: false}, action) => {
+const initialState = {
+    progressOpened: false,
+    backable: false,
+};
+
+const app = (state = initialState, action) => {
     switch (action.type) {
         case UPDATE_PAGE:
             return {
@@ -38,6 +43,16 @@ const app = (state = {progressOpened: false}, action) => {
             return {
                 ...state,
                 progressOpened: false,
+            };
+        case OPEN_BACK:
+            return {
+                ...state,
+                backable: true,
+            };
+        case CLOSE_BACK:
+            return {
+                ...state,
+                backable: false,
             };
         case AUTHENTICATE_USER:
             return {

@@ -1,7 +1,7 @@
 import {coreClient, corePostClient} from '../client';
 import {qs} from '../utils';
 import errorHandler from '../error';
-import {showSnackbar, showProgress, closeProgress} from '../actions/app';
+import {showSnackbar, showProgress, closeProgress, showBack, closeBack} from '../actions/app';
 import {toTitleCase} from '../utils';
 const get = _.get; // import from lodash
 
@@ -165,6 +165,7 @@ export const removeDevice = (room, deviceID, deviceCode) => async (dispatch, get
 };
 
 export const setActiveRemote = (activeRemote) => (dispatch, getState) => {
+    dispatch(showBack());
     dispatch({
         type: 'SET_ACTIVE_REMOTE',
         activeRemote,
@@ -172,6 +173,7 @@ export const setActiveRemote = (activeRemote) => (dispatch, getState) => {
 };
 
 export const setActiveRoom = (activeRoom) => (dispatch, getState) => {
+    dispatch(showBack());
     dispatch({
         type: 'SET_ACTIVE_ROOM',
         activeRoom,
@@ -195,7 +197,6 @@ export const remoteCommand = (command) => (dispatch, getState) => {
     // dispatch(showProgress());
     const uid = get(getState(), 'app.currentUser.uid');
     const room = get(getState(), 'remote.activeRemote.room');
-    console.log(uid, room, command);
     try {
         corePostClient().post('/remote', qs({uid, room, command}));
         // dispatch(closeProgress());
