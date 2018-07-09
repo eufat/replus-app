@@ -31,6 +31,8 @@ import './settings-main.js';
 import './remote-ac.js';
 import './remote-tv.js';
 
+import './room-add-schedule.js';
+
 const includes = _.includes;
 
 class MainApp extends connect(store)(LitElement) {
@@ -72,6 +74,7 @@ class MainApp extends connect(store)(LitElement) {
                     <main-help class="page" active?="${includes(_page, 'help')}"></main-help>
                     <remote-ac class="page" active?="${includes(_page, 'remote-ac')}"></remote-ac>
                     <remote-tv class="page" active?="${includes(_page, 'remote-tv')}"></remote-tv>
+                    <room-add-schedule class="page" active?="${includes(_page, 'add-schedule')}"></room-add-schedule>
                 </main-dashboard>
             </main>
             <snack-bar active?="${_snackbarOpened}" text="${_snackbarText}"></snack-bar>
