@@ -287,8 +287,13 @@ class AddSchedule extends connect(store)(PolymerElement) {
     }
 
     _stateChanged(state) {
-        let stateRemotes = get(state, 'remote.activeRemotes');
-        this.remotes = stateRemotes.map((remote) => remote.toUpperCase());
+        let stateRemotes = get(state, 'remote.activeRoom.remotes') || [];
+        stateRemotes = stateRemotes.map((remote) => {
+            const name = get(remote, 'name');
+            const nameUpperCased = name.toUpperCase();
+            return nameUpperCased;
+        });
+        this.remotes = stateRemotes;
     }
 
     ready() {

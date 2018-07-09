@@ -7,7 +7,7 @@ import '@material/mwc-button/mwc-button.js';
 import '@material/mwc-icon/mwc-icon.js';
 import '@polymer/paper-input/paper-input.js';
 
-import {setRooms, fetchRooms, addRoom, removeRoom, setNewRemote, addRemote, removeRemote, addDevice, setNewDevice, setActiveRemote, setActiveRemotes} from '../actions/remote';
+import {setRooms, fetchRooms, addRoom, removeRoom, setNewRemote, addRemote, removeRemote, addDevice, setNewDevice, setActiveRemote, setActiveRoom} from '../actions/remote';
 import {getNewRoomTemplate, brandsList, toTitleCase} from '../utils';
 import {store} from '../store.js';
 
@@ -128,13 +128,8 @@ export default class RoomsMain extends connect(store)(LitElement) {
         store.dispatch(setActiveRemote(remote));
     }
 
-    _activeRemotes(remotes) {
-        const arrRemotes = [];
-        const remotesValues = _.values(remotes);
-        remotesValues.map((item) => {
-            arrRemotes.push(item.name);
-        });
-        store.dispatch(setActiveRemotes(arrRemotes));
+    _activeRoom(room) {
+        store.dispatch(setActiveRoom(room));
     }
 
     _render({rooms, newRemote, newDevice}) {
@@ -310,7 +305,7 @@ export default class RoomsMain extends connect(store)(LitElement) {
                                         icon="edit"
                                         on-click="${() => this._enterOnEdit(roomIndex)}">
                                     </mwc-button>
-                                    <a href="dashboard/add-schedule" on-click="${() => this._activeRemotes(room.remotes)}">
+                                    <a href="dashboard/add-schedule" on-click="${() => this._activeRoom(room)}">
                                         <mwc-button
                                             label="Schedule"
                                             icon="calendar_today">

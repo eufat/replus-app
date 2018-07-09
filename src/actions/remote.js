@@ -28,20 +28,6 @@ export const setNewRemote = (newRemote) => (dispatch, getState) => {
     });
 };
 
-export const setActiveRemote = (activeRemote) => (dispatch, getState) => {
-    dispatch({
-        type: 'SET_ACTIVE_REMOTE',
-        activeRemote,
-    });
-};
-
-export const setActiveRemotes = (activeRemotes) => (dispatch, getState) => {
-    dispatch({
-        type: 'SET_ACTIVE_REMOTES',
-        activeRemotes,
-    });
-};
-
 export const setDevices = (devices) => (dispatch, getState) => {
     const prevRooms = get(getState(), 'remote.rooms');
 
@@ -178,11 +164,29 @@ export const removeDevice = (room, deviceID, deviceCode) => async (dispatch, get
     }
 };
 
+export const setActiveRemote = (activeRemote) => (dispatch, getState) => {
+    dispatch({
+        type: 'SET_ACTIVE_REMOTE',
+        activeRemote,
+    });
+};
+
+export const setActiveRoom = (activeRoom) => (dispatch, getState) => {
+    dispatch({
+        type: 'SET_ACTIVE_ROOM',
+        activeRoom,
+    });
+};
+
 export const setSchedule = (schedule) => (dispatch, getState) => {
     dispatch(showProgress());
+    const uid = get(getState(), 'app.currentUser.uid');
+    const room = get(getState(), 'remote.activeRoom.id');
+
+    const newSchedule = {...schedule, uid, room};
     dispatch({
         type: 'SET_SCHEDULE',
-        schedule,
+        schedule: newSchedule,
     });
     dispatch(closeProgress());
 };
