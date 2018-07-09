@@ -84,16 +84,8 @@ class RemoteAc extends connect(store)(PolymerElement) {
                 #textTemp {
                     margin-top: 25px;
                 }
-
-                .back-icon paper-fab {
-                    position: absolute;
-                    margin-top: 15px;
-                }
             </style>
             <div id="mainContainer">
-                <div class="back-icon">
-                    <a href="/dashboard/rooms"><paper-fab on-tap="_tapBack" icon="arrow-back"></paper-fab></a>
-                </div>
                 <div id="displayContainer">
                     <div class="horizontal layout center-justified">
                         <p>{{title}}</p>
@@ -186,11 +178,7 @@ class RemoteAc extends connect(store)(PolymerElement) {
     }
 
     static get observers() {
-        return [
-            'parseFans(mode)',
-            'parseTemps(mode, fan)',
-            'resetTimeout(mode, fan, temp)',
-        ];
+        return ['parseFans(mode)', 'parseTemps(mode, fan)', 'resetTimeout(mode, fan, temp)'];
     }
 
     parseFans() {
@@ -246,18 +234,18 @@ class RemoteAc extends connect(store)(PolymerElement) {
 
     setupPosition() {
         const thisRemoteAC = this;
-        if (window.innerHeight > 470) thisRemoteAC.$.remoteContainer.style.marginTop = window.innerHeight - (64+70+120+270) + 'px';
+        if (window.innerHeight > 470) thisRemoteAC.$.remoteContainer.style.marginTop = window.innerHeight - (64 + 70 + 120 + 270) + 'px';
         else thisRemoteAC.$.remoteContainer.style.marginTop = '10px';
 
         if (window.innerWidth > 350) {
             thisRemoteAC.$.mainContainer.style.width = '330px';
-            thisRemoteAC.$.mainContainer.style.marginLeft = (window.innerWidth - 330)/2 + 'px';
+            thisRemoteAC.$.mainContainer.style.marginLeft = (window.innerWidth - 330) / 2 + 'px';
             // if (window.innerWidth > 640) {
             //     thisRemoteAC.$.mainContainer.style.marginLeft = ((window.innerWidth - 330)/2 - 128) + 'px';
             // }
         } else {
             thisRemoteAC.$.mainContainer.style.width = '250px';
-            thisRemoteAC.$.mainContainer.style.marginLeft = (window.innerWidth - 250)/2 + 'px';
+            thisRemoteAC.$.mainContainer.style.marginLeft = (window.innerWidth - 250) / 2 + 'px';
         }
     }
 

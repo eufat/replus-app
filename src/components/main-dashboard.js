@@ -26,13 +26,13 @@ import {installOfflineWatcher} from 'pwa-helpers/network.js';
 import {installMediaQueryWatcher} from 'pwa-helpers/media-query.js';
 
 import {store} from '../store.js';
-import {navigate, updateOffline, updateLayout, deauthenticateUser, showSnackbar} from '../actions/app.js';
+import {navigate, updateOffline, updateLayout, deauthenticateUser, showSnackbar, closeBack} from '../actions/app.js';
 import {toTitleCase} from '../utils';
 
 const get = _.get;
 
 class MainDashboard extends connect(store)(LitElement) {
-    _render({appTitle, _page, _progress}) {
+    _render({appTitle, _page, _progress, _backable}) {
         return html`
             <style>
                 app-header {
@@ -117,6 +117,7 @@ class MainDashboard extends connect(store)(LitElement) {
                   <!-- Dashboard app bar -->
                   <app-header fixed effects="waterfall" slot="header">
                       <app-toolbar>
+                        ${_backable ? html`<paper-icon-button on-click="${() => this._onBack()}" icon="arrow-back"></paper-icon-button>` : null}
                           <div main-title>Replus App</div>
                         <paper-icon-button
                             class="more-button"
@@ -189,12 +190,18 @@ class MainDashboard extends connect(store)(LitElement) {
             _snackbarOpened: Boolean,
             _offline: Boolean,
             _progress: Boolean,
+            _backable: Boolean,
         };
     }
 
     constructor() {
         super();
         setPassiveTouchGestures(true);
+    }
+
+    _onBack() {
+        history.back();
+        store.dispatch(closeBack());
     }
 
     _firstRendered() {
@@ -209,6 +216,7 @@ class MainDashboard extends connect(store)(LitElement) {
         this._page = get(state, 'app.page');
         this._offline = get(state, 'app.offline');
         this._progress = get(state, 'app.progressOpened');
+        this._backable = get(state, 'app.backable');
         this._snackbarOpened = get(state, 'app.snackbarOpened');
         this._drawerOpened = get(state, 'app.drawerOpened');
     }

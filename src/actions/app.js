@@ -13,6 +13,8 @@ export const OPEN_SNACKBAR = 'OPEN_SNACKBAR';
 export const CLOSE_SNACKBAR = 'CLOSE_SNACKBAR';
 export const OPEN_PROGRESS = 'OPEN_PROGRESS';
 export const CLOSE_PROGRESS = 'CLOSE_PROGRESS';
+export const OPEN_BACK = 'OPEN_BACK';
+export const CLOSE_BACK = 'CLOSE_BACK';
 export const SET_CURRENT_USER = 'SET_CURRENT_USER';
 export const AUTHENTICATE_USER = 'AUTHENTICATE_USER';
 export const DEAUTHENTICATE_USER = 'DEAUTHENTICATE_USER';
@@ -101,6 +103,18 @@ export const showProgress = () => (dispatch) => {
 export const closeProgress = () => (dispatch) => {
     dispatch({
         type: CLOSE_PROGRESS,
+    });
+};
+
+export const showBack = () => (dispatch) => {
+    dispatch({
+        type: OPEN_BACK,
+    });
+};
+
+export const closeBack = () => (dispatch) => {
+    dispatch({
+        type: CLOSE_BACK,
     });
 };
 
