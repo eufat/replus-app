@@ -27,14 +27,6 @@ export const setNewRemote = (newRemote) => (dispatch, getState) => {
         newRemote,
     });
 };
-
-export const setActiveRemote = (activeRemote) => (dispatch, getState) => {
-    dispatch({
-        type: 'SET_ACTIVE_REMOTE',
-        activeRemote,
-    });
-};
-
 export const setActiveRemotes = (activeRemotes) => (dispatch, getState) => {
     dispatch({
         type: 'SET_ACTIVE_REMOTES',
