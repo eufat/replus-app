@@ -56,13 +56,11 @@ const remote = (state = initialState, action) => {
                 settings: action.settings,
             };
         case 'SET_SETTINGS':
-=======
         case 'SET_ACTIVE_REMOTES':
             return {
                 ...state,
                 activeRemotes: action.activeRemotes,
             };
->>>>>>> add active remotes state
         case 'SET_ACTIVE_DEVICE':
             return {
                 ...state,
