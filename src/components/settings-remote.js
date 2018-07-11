@@ -42,6 +42,8 @@ export default class SettingsRemote extends connect(store)(LitElement) {
         this.onePushButtons = ['ON', 'OFF'];
         this.settingsIsDisabled = false;
         this.deviceName = '';
+        this.selectedRemote = '';
+        this.selectedPushButton = '';
         this.command = '';
         this.remotes = [];
     }
@@ -66,6 +68,8 @@ export default class SettingsRemote extends connect(store)(LitElement) {
     handleSaveSettings() {
         store.dispatch(addSetting(this.command, this.deviceName));
         this.command = '';
+        this.selectedRemote = '';
+        this.selectedPushButton = '';
     }
 
     // toggleSettings(key) {
@@ -87,8 +91,12 @@ export default class SettingsRemote extends connect(store)(LitElement) {
         this.selectedPushButton = button;
     }
 
-    setCommand() {
+    setCommand(element) {
         this.command = this.selectedRemote + ' ' + this.selectedPushButton;
+        const listboxButton = element.getElementById('listbox-button');
+        const listboxRemote = element.getElementById('listbox-remote');
+        listboxButton.selected = null;
+        listboxRemote.selected = null;
     }
 
     _render({remotes, onePushButtons, command, settingsIsDisabled}) {
@@ -163,7 +171,7 @@ export default class SettingsRemote extends connect(store)(LitElement) {
         <paper-dialog id="remoteDialog">
             <div class="horizontal layout">
                 <paper-dropdown-menu id="dropdownPushButton" label="Remote" noink no-animations>
-                    <paper-listbox slot="dropdown-content" class="dropdown-content">
+                    <paper-listbox id="listbox-remote" slot="dropdown-content" class="dropdown-content">
                         ${remotes.map(
                             (item) => html`
                                 <paper-item on-click="${() => this.setSelectedRemote(item)}" item-name="${this.getIndexOf(remotes, item)}">
@@ -174,7 +182,7 @@ export default class SettingsRemote extends connect(store)(LitElement) {
                     </paper-listbox>
                 </paper-dropdown-menu>
                 <paper-dropdown-menu id="dropdownPushButton" label="One Push Button" noink no-animations>
-                    <paper-listbox slot="dropdown-content" class="dropdown-content">
+                    <paper-listbox id="listbox-button" slot="dropdown-content" class="dropdown-content">
                         ${onePushButtons.map(
                             (item) => html`
                                 <paper-item on-click="${() => this.setSelectedPushButton(item)}">
@@ -186,7 +194,7 @@ export default class SettingsRemote extends connect(store)(LitElement) {
                 </paper-dropdown-menu>
             </div>
             <div class="buttons">
-                <mwc-button on-click="${() => this.setCommand()}" dialog-confirm label="Add This Setting"></mwc-button>
+                <mwc-button on-click="${() => this.setCommand(this.shadowRoot)}" dialog-confirm label="Add This Setting"></mwc-button>
             </div>
         </paper-dialog>
     `;
