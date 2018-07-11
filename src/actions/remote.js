@@ -100,6 +100,7 @@ export const addRoom = (room) => async (dispatch, getState) => {
     try {
         await coreClient().post('/room-add', qs({uid, name}));
         dispatch(showSnackbar(`Room ${name} added.`));
+        dispatch(fetchRooms());
         dispatch(closeProgress());
     } catch (error) {
         errorHandler.report(error);
