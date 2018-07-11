@@ -225,3 +225,13 @@ export const remoteCommand = (command) => (dispatch, getState) => {
         // dispatch(closeProgress());
     }
 };
+
+export const addSetting = (command, deviceID) => (dispatch, getState) => {
+    console.log(command, deviceID);
+    const uid = get(getState(), 'app.currentUser.uid');
+    try {
+        coreClient().post('/device-setup', qs({uid, deviceID}));
+    } catch (error) {
+        errorHandler.report(error);
+    }
+};
