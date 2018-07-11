@@ -13,6 +13,8 @@ export const OPEN_SNACKBAR = 'OPEN_SNACKBAR';
 export const CLOSE_SNACKBAR = 'CLOSE_SNACKBAR';
 export const OPEN_PROGRESS = 'OPEN_PROGRESS';
 export const CLOSE_PROGRESS = 'CLOSE_PROGRESS';
+export const OPEN_BACK = 'OPEN_BACK';
+export const CLOSE_BACK = 'CLOSE_BACK';
 export const SET_CURRENT_USER = 'SET_CURRENT_USER';
 export const AUTHENTICATE_USER = 'AUTHENTICATE_USER';
 export const DEAUTHENTICATE_USER = 'DEAUTHENTICATE_USER';
@@ -27,7 +29,7 @@ const loadPage = (page) => async (dispatch) => {
     let paths = page.split('/');
     paths = paths.filter((item) => item !== '');
 
-    const pageList = ['auth', 'dashboard', 'activity', 'rooms', 'settings', 'setting-vision', 'setting-remote', 'help', 'account', 'remote-ac', 'remote-tv'];
+    const pageList = ['auth', 'dashboard', 'activity', 'rooms', 'settings', 'setting-vision', 'setting-remote', 'help', 'account', 'remote-ac', 'remote-tv', 'add-schedule'];
 
     for (const path of paths) {
         if (!(pageList.indexOf(path) > -1)) {
@@ -68,6 +70,9 @@ const loadPage = (page) => async (dispatch) => {
             case 'remote-tv':
                 await import('../components/remote-tv.js');
                 break;
+            case 'add-schedule':
+                await import('../components/room-add-schedule.js');
+                break;
             default:
                 page = '404';
                 await import('../components/not-found.js');
@@ -104,6 +109,18 @@ export const showProgress = () => (dispatch) => {
 export const closeProgress = () => (dispatch) => {
     dispatch({
         type: CLOSE_PROGRESS,
+    });
+};
+
+export const showBack = () => (dispatch) => {
+    dispatch({
+        type: OPEN_BACK,
+    });
+};
+
+export const closeBack = () => (dispatch) => {
+    dispatch({
+        type: CLOSE_BACK,
     });
 };
 

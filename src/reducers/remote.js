@@ -1,5 +1,10 @@
 const initialState = {
     activeRemote: {},
+<<<<<<< HEAD
+=======
+    activeRoom: {},
+    schedule: {},
+>>>>>>> 829c354f3fe0d2689ee08a9c72180a7e3bdedda9
     activeRemotes: [],
     activeDevice: {},
     rooms: [],
@@ -28,11 +33,25 @@ const remote = (state = initialState, action) => {
                 ...state,
                 newRemote: action.newRemote,
             };
+        case 'SET_SCHEDULE':
+            return {
+                ...state,
+                schedule: action.schedule,
+            };
         case 'SET_ACTIVE_REMOTE':
             return {
                 ...state,
                 activeRemote: action.activeRemote,
             };
+<<<<<<< HEAD
+=======
+        case 'SET_ACTIVE_ROOM':
+            return {
+                ...state,
+                activeRoom: action.activeRoom,
+            };
+        case 'SET_SETTINGS':
+>>>>>>> 829c354f3fe0d2689ee08a9c72180a7e3bdedda9
         case 'SET_ACTIVE_REMOTES':
             return {
                 ...state,
