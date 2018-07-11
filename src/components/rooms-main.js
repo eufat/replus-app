@@ -158,7 +158,7 @@ export default class RoomsMain extends connect(store)(LitElement) {
                                         <p>${toTitleCase(remote.name)}</p>
                                     </div>`
                                 : html`
-                                <a href="dashboard/remote-${remote.name.substring(0, 2)}" on-click="${() => this._activeRemote(remote)}">
+                                <a href="/dashboard/remote-${remote.name.substring(0, 2)}" on-click="${() => this._activeRemote(remote)}">
                                     <div class="remote-item">
                                         <img class="appliance-icon" src="images/${applicanceType}-icon.png"/>
                                         <p>${toTitleCase(remote.name)}</p>
@@ -305,7 +305,7 @@ export default class RoomsMain extends connect(store)(LitElement) {
                                         icon="edit"
                                         on-click="${() => this._enterOnEdit(roomIndex)}">
                                     </mwc-button>
-                                    <a href="dashboard/add-schedule" on-click="${() => this._activeRoom(room)}">
+                                    <a href="/dashboard/add-schedule" on-click="${() => this._activeRoom(room)}">
                                         <mwc-button
                                             label="Schedule"
                                             icon="calendar_today">

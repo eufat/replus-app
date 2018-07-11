@@ -189,9 +189,6 @@ export default class SettingsRemote extends connect(store)(LitElement) {
             <div class="buttons">
                 <mwc-button on-click="${() => this.setCommand()}" dialog-confirm label="Add This Setting"></mwc-button>
             </div>
-            <div class="horizontal layout center-justified">
-                <paper-spinner id="spinner" active></paper-spinner>
-            </div>
         </paper-dialog>
     `;
     }

@@ -85,7 +85,7 @@ export default class MainDevices extends connect(store)(LitElement) {
                                 <div class="device-pill">
                                     <span class="pill-content">${device.name}</span>
                                 </div>
-                                <a href="dashboard/setting-remote" on-click="${() => this._activeDevice(device.name, rooms.remotes)}">
+                                <a href="/dashboard/setting-remote" on-click="${() => this._activeDevice(device.name, rooms.remotes)}">
                                     <iron-icon class="settings-icon" icon="icons:settings">
                                 </a>
                             </div>
@@ -112,7 +112,6 @@ export default class MainDevices extends connect(store)(LitElement) {
                 margin-left: auto;
                 margin-right: 0;
             }
-
             paper-button.save {
                 margin: 1em;
                 background-color: white;
@@ -137,10 +136,19 @@ export default class MainDevices extends connect(store)(LitElement) {
                 line-height: 30px;
                 margin-right: 5px;
             }
-
             .device-pill .pill-content, .device-pill mwc-icon {
                 vertical-align: top;
                 display: inline-block;
+            }
+            .settings-icon {
+                color: #333333;
+                padding-bottom: 5px;
+            }
+            .remote-icon {
+                padding-right: 5px;
+            }
+            .device-type {
+                display: inline !important;
             }
         </style>
         <div role="listbox" class="settings">
@@ -150,6 +158,24 @@ export default class MainDevices extends connect(store)(LitElement) {
                 </paper-item-body>
             </paper-item>
             ${remoteItems}
+            <paper-material elevation="0">
+                <div class="room-devices">
+                <paper-item>
+                    <paper-item-body>
+                        <iron-icon class="remote-icon" src="images/add-device.png"></iron-icon>
+                        <p class="device-type">replus-remote-dummy</p>
+                    </paper-item-body>
+                    <div class="settings-right">
+                        <div class="device-pill">
+                            <span class="pill-content">111A</span>
+                        </div>
+                        <a href="/dashboard/setting-remote" on-click="${() => this._activeDevice(device.name, rooms.remotes)}">
+                            <iron-icon class="settings-icon" icon="icons:settings">
+                        </a>
+                    </div>
+                </paper-item>
+                </div>
+            </paper-material>
             <paper-item>
                 <paper-item-body>
                     <div>Replus Vision</div>
@@ -165,7 +191,7 @@ export default class MainDevices extends connect(store)(LitElement) {
                             <div class="device-pill">
                                 <span class="pill-content">345A</span>
                             </div>
-                            <a href="dashboard/setting-vision">
+                            <a href="/dashboard/setting-vision">
                                 <iron-icon class="settings-icon" icon="icons:settings">
                             </a>
                         </div>
