@@ -15,7 +15,7 @@ import '@polymer/iron-flex-layout/iron-flex-layout.js';
 
 // import {rotationsList, resolutionsList} from '../utils';
 import {store} from '../store.js';
-import {setSettings} from '../actions/remote.js';
+import {addSetting, setSettings} from '../actions/remote.js';
 import {brandsList, toTitleCase} from '../utils';
 
 export default class SettingsRemote extends connect(store)(LitElement) {
@@ -64,9 +64,8 @@ export default class SettingsRemote extends connect(store)(LitElement) {
     }
 
     handleSaveSettings() {
-        console.log('save settings', this.command);
+        store.dispatch(addSetting(this.command, this.deviceName));
         this.command = '';
-        // store.dispatch(saveSettings());
     }
 
     // toggleSettings(key) {
