@@ -1,9 +1,9 @@
 const initialState = {
+    activeDevice: {},
     activeRemote: {},
+    activeRemotes: [],
     activeRoom: {},
     schedule: {},
-    activeRemotes: [],
-    activeDevice: {},
     rooms: [],
     newDevice: {},
     newRemote: {
@@ -11,6 +11,7 @@ const initialState = {
         brand: 'samsung',
     },
     settings: {},
+    manifest: {},
 };
 
 const remote = (state = initialState, action) => {
@@ -43,7 +44,7 @@ const remote = (state = initialState, action) => {
         case 'SET_ACTIVE_ROOM':
             return {
                 ...state,
-                activeRemotes: action.activeRemotes,
+                activeRoom: action.activeRoom,
             };
         case 'SET_ACTIVE_DEVICE':
             return {
@@ -60,6 +61,11 @@ const remote = (state = initialState, action) => {
             return {
                 ...state,
                 activeRemotes: action.activeRemotes,
+            };
+        case 'SET_MANIFEST':
+            return {
+                ...state,
+                manifest: action.manifest,
             };
         default:
             return state;
