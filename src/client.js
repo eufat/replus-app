@@ -15,6 +15,11 @@ export const createClient = (type, token) => {
         headers['Content-Type'] = 'application/x-www-form-urlencoded';
     }
 
+    if (type === 'ir') {
+        baseURL = env.CORE_IR;
+        headers['Content-Type'] = 'application/x-www-form-urlencoded';
+    }
+
     if (type === 'vision') {
         baseURL = env.VISION_API;
         headers['Content-Type'] = 'application/json';
@@ -41,6 +46,11 @@ export const coreClient = () => {
 export const corePostClient = () => {
     const accessToken = getCookie('accessToken');
     return createClient('post', accessToken);
+};
+
+export const coreIR = () => {
+    // const accessToken = getCookie('accessToken');
+    return createClient('ir', '');
 };
 
 export const visionClient = () => {

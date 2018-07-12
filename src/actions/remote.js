@@ -1,4 +1,4 @@
-import {coreClient, corePostClient} from '../client';
+import {coreClient, corePostClient, coreIR} from '../client';
 import {qs} from '../utils';
 import errorHandler from '../error';
 import {showSnackbar, showProgress, closeProgress, showBack, closeBack} from '../actions/app';
@@ -66,6 +66,13 @@ export const setSettings = (settings) => (dispatch, getState) => {
     });
 };
 
+export const setManifest = (manifest) => (dispatch, getState) => {
+    dispatch({
+        type: 'SET_MANIFEST',
+        manifest,
+    });
+};
+
 export const fetchDevices = () => async (dispatch, getState) => {
     dispatch(showProgress());
     const uid = get(getState(), 'app.currentUser.uid');
@@ -86,6 +93,18 @@ export const fetchRooms = () => async (dispatch, getState) => {
         const response = await coreClient().post('/get-rooms', qs({uid}));
         dispatch(setRooms(response.data));
         dispatch(fetchDevices());
+        dispatch(closeProgress());
+    } catch (error) {
+        errorHandler.report(error);
+        dispatch(closeProgress());
+    }
+};
+
+export const fetchIR = (brand) => async (dispatch, getState) => {
+    // dispatch(showProgress());
+    try {
+        const response = await coreIR().get(`${brand}/manifest.json`);
+        dispatch(setManifest(response.data));
         dispatch(closeProgress());
     } catch (error) {
         errorHandler.report(error);
@@ -191,6 +210,9 @@ export const setActiveRemote = (activeRemote) => (dispatch, getState) => {
         type: 'SET_ACTIVE_REMOTE',
         activeRemote,
     });
+    let brand = get(getState(), 'remote.activeRemote.name');
+    brand = brand.substring(3);
+    dispatch(fetchIR(brand));
 };
 
 export const setActiveRoom = (activeRoom) => (dispatch, getState) => {
