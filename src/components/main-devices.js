@@ -158,24 +158,6 @@ export default class MainDevices extends connect(store)(LitElement) {
                 </paper-item-body>
             </paper-item>
             ${remoteItems}
-            <paper-material elevation="0">
-                <div class="room-devices">
-                <paper-item>
-                    <paper-item-body>
-                        <iron-icon class="remote-icon" src="images/add-device.png"></iron-icon>
-                        <p class="device-type">replus-remote-dummy</p>
-                    </paper-item-body>
-                    <div class="settings-right">
-                        <div class="device-pill">
-                            <span class="pill-content">111A</span>
-                        </div>
-                        <a href="/dashboard/setting-remote" on-click="${() => this._activeDevice(device.name, rooms.remotes)}">
-                            <iron-icon class="settings-icon" icon="icons:settings">
-                        </a>
-                    </div>
-                </paper-item>
-                </div>
-            </paper-material>
             <paper-item>
                 <paper-item-body>
                     <div>Replus Vision</div>
