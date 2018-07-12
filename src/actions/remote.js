@@ -27,6 +27,19 @@ export const setNewRemote = (newRemote) => (dispatch, getState) => {
         newRemote,
     });
 };
+export const setActiveRemotes = (activeRemotes) => (dispatch, getState) => {
+    dispatch({
+        type: 'SET_ACTIVE_REMOTES',
+        activeRemotes,
+    });
+};
+
+export const setActiveDevice = (activeDevice) => (dispatch, getState) => {
+    dispatch({
+        type: 'SET_ACTIVE_DEVICE',
+        activeDevice,
+    });
+};
 
 export const setDevices = (devices) => (dispatch, getState) => {
     const prevRooms = get(getState(), 'remote.rooms');
@@ -43,6 +56,13 @@ export const setDevices = (devices) => (dispatch, getState) => {
     dispatch({
         type: 'SET_ROOMS',
         rooms: newRooms,
+    });
+};
+
+export const setSettings = (settings) => (dispatch, getState) => {
+    dispatch({
+        type: 'SET_REMOTE_SETTINGS',
+        settings,
     });
 };
 
@@ -80,6 +100,7 @@ export const addRoom = (room) => async (dispatch, getState) => {
     try {
         await coreClient().post('/room-add', qs({uid, name}));
         dispatch(showSnackbar(`Room ${name} added.`));
+        dispatch(fetchRooms());
         dispatch(closeProgress());
     } catch (error) {
         errorHandler.report(error);
@@ -203,5 +224,15 @@ export const remoteCommand = (command) => (dispatch, getState) => {
     } catch (error) {
         errorHandler.report(error);
         // dispatch(closeProgress());
+    }
+};
+
+export const addSetting = (command, deviceID) => (dispatch, getState) => {
+    console.log(command, deviceID);
+    const uid = get(getState(), 'app.currentUser.uid');
+    try {
+        coreClient().post('/device-setup', qs({uid, deviceID}));
+    } catch (error) {
+        errorHandler.report(error);
     }
 };

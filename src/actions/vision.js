@@ -5,7 +5,7 @@ import errorHandler from '../error';
 
 export const setSettings = (settings) => (dispatch, getState) => {
     dispatch({
-        type: 'SET_SETTINGS',
+        type: 'SET_VISION_SETTINGS',
         settings,
     });
 };
