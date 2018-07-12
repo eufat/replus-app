@@ -569,7 +569,7 @@ class AddSchedule extends connect(store)(PolymerElement) {
                 this.$.textON.innerHTML = 'Turn appliance ON';
                 if (this.choosenType == 'AC') {
                     this.$.containerAC.style.display = 'block';
-                    this.$.ajaxManifest.generateRequest();
+                    // this.$.ajaxManifest.generateRequest();
                 } else {
                     this.$.containerAC.style.display = 'none';
                 }
