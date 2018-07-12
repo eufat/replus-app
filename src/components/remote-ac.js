@@ -9,7 +9,7 @@ import '@polymer/iron-icons/hardware-icons.js';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import '@polymer/iron-flex-layout/iron-flex-layout.js';
 
-import {remoteCommand} from '../actions/remote';
+import {remoteCommand, fetchIR} from '../actions/remote';
 import {brandsList, toTitleCase} from '../utils';
 import {store} from '../store.js';
 
@@ -94,8 +94,8 @@ class RemoteAc extends connect(store)(PolymerElement) {
                         <p id="displayTemp">{{temp}}<sup><sup>o</sup>C</sup></p>
                     </div>
                     <div class="horizontal layout justified">
-                        <p id="displayMode"></p>
-                        <p id="displayFan"></p>
+                        <p id="displayMode">{{testMode}}</p>
+                        <p id="displayFan">{{testFan}}</p>
                     </div>
                 </div>
                 <div id="remoteContainer">
@@ -129,16 +129,12 @@ class RemoteAc extends connect(store)(PolymerElement) {
                 type: Array,
                 value: ['Auto', 'Cool', 'Dry', 'Heat'],
             },
-            // remote: {
-            //     type: String,
-            //     observer: '_changeRemote',
-            // },
-            mode: {type: Number, observer: '_changeMode'},
-            fan: {type: Number, observer: '_changeFan'},
+            mode: {type: Number},
+            fan: {type: Number},
             command: {type: String},
 
-            manifestFans: {type: Array, value: [0, 1, 2, 3]},
-            manifestModes: {type: Array, value: [1, 2]},
+            manifestModes: {type: Array, value: [1]},
+            manifestFans: {type: Array, value: [0]},
             manifestTemps: {type: Array, value: [18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30]},
 
             tempIndex: {type: Number, value: null},
@@ -148,6 +144,17 @@ class RemoteAc extends connect(store)(PolymerElement) {
             rooms: {type: Array},
             title: {type: String},
             brand: {type: String},
+
+            manifest: Object,
+            activeRemote: Object,
+
+            // test
+            testMode: String,
+            testModeIndex: Number,
+            testFan: String,
+            testFanIndex: Number,
+            testTemp: String,
+            testTempIndex: Number,
         };
     }
 
@@ -155,11 +162,14 @@ class RemoteAc extends connect(store)(PolymerElement) {
         super();
         this.rooms = [];
         this.title = '';
+        this.manifest = {};
+        this.activeRemote = {};
     }
 
     _stateChanged(state) {
         this.rooms = get(state, 'remote.rooms');
         this.activeRemote = get(state, 'remote.activeRemote');
+        this.manifest = get(state, 'remote.manifest');
     }
 
     ready() {
@@ -171,8 +181,8 @@ class RemoteAc extends connect(store)(PolymerElement) {
             thisRemoteAC.setupPosition();
         });
 
-        thisRemoteAC._changeMode();
-        thisRemoteAC._changeFan();
+        // thisRemoteAC._changeMode();
+        // thisRemoteAC._changeFan();
         thisRemoteAC.parseFans();
         thisRemoteAC.parseTemps();
     }
@@ -212,24 +222,14 @@ class RemoteAc extends connect(store)(PolymerElement) {
         }, 1000);
     }
 
-    _changeMode() {
-        const thisRemoteAC = this;
-        thisRemoteAC.$.displayMode.innerHTML = thisRemoteAC.modes[thisRemoteAC.mode];
-    }
-
-    _changeFan() {
-        const thisRemoteAC = this;
-        thisRemoteAC.$.displayFan.innerHTML = thisRemoteAC.fans[thisRemoteAC.fan];
-    }
-
-    // _changeRemote() {
+    // _changeMode() {
     //     const thisRemoteAC = this;
-    //     let jenis = thisRemoteAC.remote.substring(0, 2);
-    //     thisRemoteAC.brand = thisRemoteAC.remote.substring(3).toLowerCase();
-    //     if (jenis == 'AC') {
-    //         thisRemoteAC.stateInitial();
-    //         thisRemoteAC.$.ajaxManifest.generateRequest();
-    //     }
+    //     thisRemoteAC.$.displayMode.innerHTML = thisRemoteAC.modes[thisRemoteAC.mode];
+    // }
+
+    // _changeFan() {
+    //     const thisRemoteAC = this;
+    //     thisRemoteAC.$.displayFan.innerHTML = thisRemoteAC.fans[thisRemoteAC.fan];
     // }
 
     setupPosition() {
@@ -266,11 +266,52 @@ class RemoteAc extends connect(store)(PolymerElement) {
         // thisRemoteAC._tapPowerOFF();
     }
 
+    getMode() {
+        // [0,1,2,3] -> manifestModes
+        // ['Auto', 'Cool', 'Dry', 'Heat'] -> modes, mapping dari index manifestModes
+        // modeIndex -> pointer, yg increment
+
+        const arrModes = [];
+        const manifestValues = _.values(this.manifest);
+        manifestValues.map((item, index) => {
+            const key = parseInt(Object.keys(this.manifest)[index]);
+            arrModes.push(key);
+        });
+
+        this.manifestModes = arrModes;
+        this.testModeIndex = this.manifestModes[this.modeIndex];
+        this.testMode = this.modes[this.testModeIndex];
+        this.getFan();
+        this.getTemp();
+    }
+
+    getFan() {
+        // [0,1,2,3] -> manifestFans
+        // ['Auto', 'Low', 'Medium', 'High'] -> fans
+
+        const arrFans = [];
+        const fanValues = _.values(this.manifest[`${this.testModeIndex}`]);
+        fanValues.map((item, index) => {
+            const key = parseInt(Object.keys(this.manifest[`${this.testModeIndex}`])[index]);
+            arrFans.push(key);
+        });
+        this.manifestFans = arrFans;
+        this.testFanIndex = this.manifestFans[this.fanIndex];
+        this.testFan = this.fans[this.fanIndex];
+    }
+
+    getTemp() {
+        const temp = this.manifest[`${this.testModeIndex}`][`${this.testFanIndex}`];
+        this.manifestTemps = temp;
+    }
+
     _tapPower() {
         const thisRemoteAC = this;
         const remoteType = thisRemoteAC.activeRemote.name.substring(0, 2).toUpperCase();
         thisRemoteAC.brand = toTitleCase(thisRemoteAC.activeRemote.name.substring(2, thisRemoteAC.activeRemote.name.length));
         thisRemoteAC.title = remoteType + ' ' + thisRemoteAC.brand;
+        this.getMode();
+
         if (thisRemoteAC.switchedON) {
             thisRemoteAC.stateInitial();
             thisRemoteAC._tapPowerOFF();
@@ -287,6 +328,9 @@ class RemoteAc extends connect(store)(PolymerElement) {
         store.dispatch(remoteCommand(thisRemoteAC.command));
         // thisRemoteAC.$.ajax.generateRequest();
         // thisRemoteAC.parseManifest();
+        this.modeIndex = 0;
+        this.fanIndex = 0;
+        this.tempIndex = 0;
         thisRemoteAC.temp = 18;
     }
 
@@ -305,15 +349,23 @@ class RemoteAc extends connect(store)(PolymerElement) {
         const thisRemoteAC = this;
         // thisRemoteAC.brand = thisRemoteAC.activeRemote.name.substring(2, thisRemoteAC.activeRemote.name.length);
         let brandCommand = thisRemoteAC.brand + '';
-        thisRemoteAC.command = brandCommand.toLocaleLowerCase() + '-' + thisRemoteAC.mode + thisRemoteAC.fan + thisRemoteAC.temp;
+        thisRemoteAC.command = brandCommand.toLocaleLowerCase() + '-' + thisRemoteAC.mode + thisRemoteAC.fan + thisRemoteAC.temp; // ganti
         if (thisRemoteAC.switchedON) store.dispatch(remoteCommand(thisRemoteAC.command));
     }
 
     _tapMode() {
         const thisRemoteAC = this;
-        if (thisRemoteAC.modeIndex < thisRemoteAC.manifestModes.length - 1) thisRemoteAC.modeIndex++;
-        else thisRemoteAC.modeIndex = 0;
+        // if (thisRemoteAC.modeIndex < thisRemoteAC.manifestModes.length - 1) thisRemoteAC.modeIndex++;
+        // else thisRemoteAC.modeIndex = 0;
+        if (thisRemoteAC.modeIndex < thisRemoteAC.manifestModes.length - 1) {
+            // console.log(this.modeIndex, this.manifestModes.length-1);
+            thisRemoteAC.modeIndex++;
+        } else {
+            thisRemoteAC.modeIndex = 0;
+            console.log('reset');
+        }
         thisRemoteAC.mode = thisRemoteAC.manifestModes[thisRemoteAC.modeIndex];
+        this.getMode();
     }
 
     _tapFan() {
@@ -321,6 +373,7 @@ class RemoteAc extends connect(store)(PolymerElement) {
         if (thisRemoteAC.fanIndex < thisRemoteAC.manifestFans.length - 1) thisRemoteAC.fanIndex++;
         else thisRemoteAC.fanIndex = 0;
         thisRemoteAC.fan = thisRemoteAC.manifestFans[thisRemoteAC.fanIndex];
+        this.getFan();
     }
 
     _tapUp() {
