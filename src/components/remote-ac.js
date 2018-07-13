@@ -9,7 +9,7 @@ import '@polymer/iron-icons/hardware-icons.js';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import '@polymer/iron-flex-layout/iron-flex-layout.js';
 
-import {remoteCommand, fetchIR} from '../actions/remote';
+import {remoteCommand} from '../actions/remote';
 import {brandsList, toTitleCase} from '../utils';
 import {store} from '../store.js';
 
@@ -94,8 +94,8 @@ class RemoteAc extends connect(store)(PolymerElement) {
                         <p id="displayTemp">{{temp}}<sup><sup>o</sup>C</sup></p>
                     </div>
                     <div class="horizontal layout justified">
-                        <p id="displayMode">{{testMode}}</p>
-                        <p id="displayFan">{{testFan}}</p>
+                        <p id="displayMode">{{modeName}}</p>
+                        <p id="displayFan">{{fanName}}</p>
                     </div>
                 </div>
                 <div id="remoteContainer">
@@ -129,32 +129,26 @@ class RemoteAc extends connect(store)(PolymerElement) {
                 type: Array,
                 value: ['Auto', 'Cool', 'Dry', 'Heat'],
             },
-            mode: {type: Number},
-            fan: {type: Number},
-            command: {type: String},
+            mode: Number,
+            fan: Number,
 
-            manifestModes: {type: Array, value: [1]},
-            manifestFans: {type: Array, value: [0]},
-            manifestTemps: {type: Array, value: [18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30]},
+            manifest: Object,
+            manifestModes: Array,
+            manifestFans: Array,
+            manifestTemps: Array,
 
-            tempIndex: {type: Number, value: null},
+            tempIndex: {type: Number, value: 0},
             fanIndex: {type: Number, value: 0},
             modeIndex: {type: Number, value: 0},
 
-            rooms: {type: Array},
-            title: {type: String},
-            brand: {type: String},
+            modeName: String,
+            fanName: String,
 
-            manifest: Object,
             activeRemote: Object,
-
-            // test
-            testMode: String,
-            testModeIndex: Number,
-            testFan: String,
-            testFanIndex: Number,
-            testTemp: String,
-            testTempIndex: Number,
+            rooms: Array,
+            title: String,
+            brand: String,
+            command: String,
         };
     }
 
@@ -180,38 +174,6 @@ class RemoteAc extends connect(store)(PolymerElement) {
         window.addEventListener('resize', () => {
             thisRemoteAC.setupPosition();
         });
-
-        // thisRemoteAC._changeMode();
-        // thisRemoteAC._changeFan();
-        thisRemoteAC.parseFans();
-        thisRemoteAC.parseTemps();
-    }
-
-    static get observers() {
-        return ['parseFans(mode)', 'parseTemps(mode, fan)', 'resetTimeout(mode, fan, temp)'];
-    }
-
-    parseFans() {
-        const thisRemoteAC = this;
-        // thisRemoteAC.manifestFans = [];
-        // let mode = thisRemoteAC.manifest[thisRemoteAC.mode];
-        // for (let fan in mode) {
-        //     if (mode.hasOwnProperty(fan)) {
-        //         thisRemoteAC.push('manifestFans', parseInt(fan));
-        //     }
-        // }
-        thisRemoteAC.fanIndex = 0;
-        thisRemoteAC.fan = thisRemoteAC.manifestFans[thisRemoteAC.fanIndex];
-        thisRemoteAC.mode = thisRemoteAC.manifestModes[thisRemoteAC.modeIndex];
-    }
-
-    parseTemps() {
-        const thisRemoteAC = this;
-        // thisRemoteAC.manifestTemps = thisRemoteAC.manifest[thisRemoteAC.mode][thisRemoteAC.fan];
-        if (typeof thisRemoteAC.manifestTemps[thisRemoteAC.tempIndex] == 'undefined') {
-            thisRemoteAC.tempIndex = 0;
-            thisRemoteAC.temp = thisRemoteAC.manifestTemps[thisRemoteAC.tempIndex];
-        }
     }
 
     resetTimeout() {
@@ -221,16 +183,6 @@ class RemoteAc extends connect(store)(PolymerElement) {
             thisRemoteAC.send();
         }, 1000);
     }
-
-    // _changeMode() {
-    //     const thisRemoteAC = this;
-    //     thisRemoteAC.$.displayMode.innerHTML = thisRemoteAC.modes[thisRemoteAC.mode];
-    // }
-
-    // _changeFan() {
-    //     const thisRemoteAC = this;
-    //     thisRemoteAC.$.displayFan.innerHTML = thisRemoteAC.fans[thisRemoteAC.fan];
-    // }
 
     setupPosition() {
         const thisRemoteAC = this;
@@ -267,42 +219,41 @@ class RemoteAc extends connect(store)(PolymerElement) {
     }
 
     getMode() {
-        // [0,1,2,3] -> manifestModes
-        // ['Auto', 'Cool', 'Dry', 'Heat'] -> modes, mapping dari index manifestModes
-        // modeIndex -> pointer, yg increment
-
         const arrModes = [];
         const manifestValues = _.values(this.manifest);
         manifestValues.map((item, index) => {
             const key = parseInt(Object.keys(this.manifest)[index]);
             arrModes.push(key);
         });
-
         this.manifestModes = arrModes;
-        this.testModeIndex = this.manifestModes[this.modeIndex];
-        this.testMode = this.modes[this.testModeIndex];
+        this.mode = this.manifestModes[this.modeIndex];
+        this.modeName = this.modes[this.mode];
         this.getFan();
         this.getTemp();
     }
 
     getFan() {
-        // [0,1,2,3] -> manifestFans
-        // ['Auto', 'Low', 'Medium', 'High'] -> fans
-
         const arrFans = [];
-        const fanValues = _.values(this.manifest[`${this.testModeIndex}`]);
+        const fanValues = _.values(this.manifest[`${this.mode}`]);
+
         fanValues.map((item, index) => {
-            const key = parseInt(Object.keys(this.manifest[`${this.testModeIndex}`])[index]);
+            const key = parseInt(Object.keys(this.manifest[`${this.mode}`])[index]);
             arrFans.push(key);
         });
         this.manifestFans = arrFans;
-        this.testFanIndex = this.manifestFans[this.fanIndex];
-        this.testFan = this.fans[this.fanIndex];
+        this.fan = this.manifestFans[this.fanIndex];
+        this.fanName = this.fans[this.fan];
     }
 
     getTemp() {
-        const temp = this.manifest[`${this.testModeIndex}`][`${this.testFanIndex}`];
+        const temp = this.manifest[`${this.mode}`][`${this.fan}`];
         this.manifestTemps = temp;
+        if (typeof this.manifestTemps[this.tempIndex] == 'undefined') {
+            this.tempIndex = 0;
+            this.temp = this.manifestTemps[this.tempIndex];
+        } else {
+            this.temp = this.manifestTemps[this.tempIndex];
+        }
     }
 
     _tapPower() {
@@ -326,8 +277,6 @@ class RemoteAc extends connect(store)(PolymerElement) {
         let brandCommand = thisRemoteAC.brand + '';
         thisRemoteAC.command = brandCommand.toLocaleLowerCase() + '-0000';
         store.dispatch(remoteCommand(thisRemoteAC.command));
-        // thisRemoteAC.$.ajax.generateRequest();
-        // thisRemoteAC.parseManifest();
         this.modeIndex = 0;
         this.fanIndex = 0;
         this.tempIndex = 0;
@@ -349,70 +298,42 @@ class RemoteAc extends connect(store)(PolymerElement) {
         const thisRemoteAC = this;
         // thisRemoteAC.brand = thisRemoteAC.activeRemote.name.substring(2, thisRemoteAC.activeRemote.name.length);
         let brandCommand = thisRemoteAC.brand + '';
-        thisRemoteAC.command = brandCommand.toLocaleLowerCase() + '-' + thisRemoteAC.mode + thisRemoteAC.fan + thisRemoteAC.temp; // ganti
+        thisRemoteAC.command = brandCommand.toLocaleLowerCase() + '-' + thisRemoteAC.mode + thisRemoteAC.fan + thisRemoteAC.temp;
         if (thisRemoteAC.switchedON) store.dispatch(remoteCommand(thisRemoteAC.command));
     }
 
     _tapMode() {
         const thisRemoteAC = this;
-        // if (thisRemoteAC.modeIndex < thisRemoteAC.manifestModes.length - 1) thisRemoteAC.modeIndex++;
-        // else thisRemoteAC.modeIndex = 0;
-        if (thisRemoteAC.modeIndex < thisRemoteAC.manifestModes.length - 1) {
-            // console.log(this.modeIndex, this.manifestModes.length-1);
-            thisRemoteAC.modeIndex++;
-        } else {
-            thisRemoteAC.modeIndex = 0;
-            console.log('reset');
-        }
-        thisRemoteAC.mode = thisRemoteAC.manifestModes[thisRemoteAC.modeIndex];
+        if (thisRemoteAC.modeIndex < thisRemoteAC.manifestModes.length - 1) thisRemoteAC.modeIndex++;
+        else thisRemoteAC.modeIndex = 0;
+        this.fanIndex = 0;
+        this.fan = this.manifestFans[this.fanIndex];
+        this.fanName = this.fans[this.fan];
         this.getMode();
+        this.send();
     }
 
     _tapFan() {
         const thisRemoteAC = this;
         if (thisRemoteAC.fanIndex < thisRemoteAC.manifestFans.length - 1) thisRemoteAC.fanIndex++;
         else thisRemoteAC.fanIndex = 0;
-        thisRemoteAC.fan = thisRemoteAC.manifestFans[thisRemoteAC.fanIndex];
         this.getFan();
+        this.send();
     }
 
     _tapUp() {
         const thisRemoteAC = this;
         if (thisRemoteAC.tempIndex < thisRemoteAC.manifestTemps.length - 1) thisRemoteAC.tempIndex++;
         thisRemoteAC.temp = thisRemoteAC.manifestTemps[thisRemoteAC.tempIndex];
+        this.send();
     }
 
     _tapDown() {
         const thisRemoteAC = this;
         if (thisRemoteAC.tempIndex > 0) thisRemoteAC.tempIndex--;
         thisRemoteAC.temp = thisRemoteAC.manifestTemps[thisRemoteAC.tempIndex];
+        this.send();
     }
-
-    // parseManifest() {
-    //     const thisRemoteAC = this;
-    //     thisRemoteAC.manifestModes = [];
-    //     let manifest = thisRemoteAC.manifest;
-    //     for (let mode in manifest) {
-    //         if (manifest.hasOwnProperty(mode)) {
-    //             thisRemoteAC.push('manifestModes', parseInt(mode));
-    //         }
-    //     }
-    //     thisRemoteAC.modeIndex = 0;
-    //     thisRemoteAC.mode = thisRemoteAC.manifestModes[thisRemoteAC.modeIndex];
-    // }
-
-    // _handleResponse() {
-    //     var response = thisRemoteAC.response;
-    //     if (response == 'OK') {
-    //         thisRemoteAC.$.toast.show({text: 'Command sent.', duration: 500});
-    //     } else if (response == 'NO_DEVICE') {
-    //         thisRemoteAC.$.toast.show({text: 'No device is assigned for this room.', duration: 3000});
-    //     } else if (response == 'NO_RESPONSE') {
-    //         thisRemoteAC.$.toast.show({text: 'Device is offline.', duration: 1000});
-    //     } else {
-    //         thisRemoteAC.$.toast.show({text: 'Unknown error.', duration: 1000});
-    //     }
-    // }
 }
 
 window.customElements.define('remote-ac', RemoteAc);
