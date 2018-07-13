@@ -88,6 +88,8 @@ export function getNewRoomTemplate() {
         owner: '',
         id: '',
         remotes: [],
+        cameras: [],
+        test: '',
         onEdit: true,
     };
 }
