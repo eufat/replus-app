@@ -190,119 +190,110 @@ class RemoteTv extends connect(store)(PolymerElement) {
 
     ready() {
         super.ready();
-        const thisRemoteTV = this;
-        thisRemoteTV.setupPosition();
-        thisRemoteTV.stateInitial();
-        window.addEventListener('resize', function(event) {
-            thisRemoteTV.setupPosition();
+        this.setupPosition();
+        this.stateInitial();
+        window.addEventListener('resize', () => {
+            this.setupPosition();
         });
-        // thisRemoteTV.remoteChanged();
+        // this.remoteChanged();
     }
 
     setupPosition() {
-        const thisRemoteTV = this;
-        if (window.innerHeight > 570) thisRemoteTV.$.menubuttons.style.marginTop = window.innerHeight - 550 - 90 + 'px';
-        else thisRemoteTV.$.menubuttons.style.marginTop = '20px';
+        if (window.innerHeight > 570) this.$.menubuttons.style.marginTop = window.innerHeight - 550 - 90 + 'px';
+        else this.$.menubuttons.style.marginTop = '20px';
 
         if (window.innerWidth > 375) {
-            thisRemoteTV.$.remoteContainer.style.width = '350px';
-            thisRemoteTV.$.remoteContainer.style.marginLeft = (window.innerWidth - 350) / 2 + 'px';
+            this.$.remoteContainer.style.width = '350px';
+            this.$.remoteContainer.style.marginLeft = (window.innerWidth - 350) / 2 + 'px';
         } else {
-            thisRemoteTV.$.remoteContainer.style.width = '300px';
-            thisRemoteTV.$.remoteContainer.style.marginLeft = (window.innerWidth - 300) / 2 + 'px';
+            this.$.remoteContainer.style.width = '300px';
+            this.$.remoteContainer.style.marginLeft = (window.innerWidth - 300) / 2 + 'px';
             if (window.innerWidth < 325) {
-                thisRemoteTV.$.remoteContainer.style.width = '250px';
-                thisRemoteTV.$.remoteContainer.style.marginLeft = (window.innerWidth - 250) / 2 + 'px';
+                this.$.remoteContainer.style.width = '250px';
+                this.$.remoteContainer.style.marginLeft = (window.innerWidth - 250) / 2 + 'px';
             }
         }
     }
 
     stateInitial() {
-        const thisRemoteTV = this;
-        thisRemoteTV.$.title.style.visibility = 'hidden';
-        thisRemoteTV.$.btnPower.setAttribute('icon', 'power-settings-new');
-        thisRemoteTV.switchOn = false;
+        this.$.title.style.visibility = 'hidden';
+        this.$.btnPower.setAttribute('icon', 'power-settings-new');
+        this.switchOn = false;
     }
 
     stateEnable() {
-        const thisRemoteTV = this;
-        thisRemoteTV.$.title.style.visibility = 'visible';
-        thisRemoteTV.$.btnPower.setAttribute('icon', 'close');
-        thisRemoteTV.switchOn = true;
+        this.$.title.style.visibility = 'visible';
+        this.$.btnPower.setAttribute('icon', 'close');
+        this.switchOn = true;
     }
 
     remoteChanged() {
-        const thisRemoteTV = this;
-        const remoteType = thisRemoteTV.activeRemote.name.substring(0, 2);
-        const brand = thisRemoteTV.activeRemote.name.substring(3).toLowerCase();
+        const remoteType = this.activeRemote.name.substring(0, 2);
+        const brand = this.activeRemote.name.substring(3).toLowerCase();
         if (remoteType == 'tv') {
-            if (brand == 'lg') thisRemoteTV.codeset = '1970';
-            else if (brand == 'samsung') thisRemoteTV.codeset = '0595';
-            else if (brand == 'panasonic') thisRemoteTV.codeset = '2619';
-            else if (brand == 'sony') thisRemoteTV.codeset = '1319';
-            else if (brand == 'sharp') thisRemoteTV.codeset = 'T001';
+            if (brand == 'lg') this.codeset = '1970';
+            else if (brand == 'samsung') this.codeset = '0595';
+            else if (brand == 'panasonic') this.codeset = '2619';
+            else if (brand == 'sony') this.codeset = '1319';
+            else if (brand == 'sharp') this.codeset = 'T001';
             // 1429
-            else if (brand == 'changhong') thisRemoteTV.codeset = '2903';
-            else if (brand == 'sanyo') thisRemoteTV.codeset = '1430';
-            else if (brand == 'toshiba') thisRemoteTV.codeset = '0339';
+            else if (brand == 'changhong') this.codeset = '2903';
+            else if (brand == 'sanyo') this.codeset = '1430';
+            else if (brand == 'toshiba') this.codeset = '0339';
         }
     }
 
     _closedDialog() {
-        const thisRemoteTV = this;
-        thisRemoteTV.$.btnNumpad.removeAttribute('disabled');
+        this.$.btnNumpad.removeAttribute('disabled');
     }
 
     _showDialog() {
-        const thisRemoteTV = this;
-        thisRemoteTV.$.dialog.open();
-        thisRemoteTV.$.btnNumpad.setAttribute('disabled', 'true');
+        this.$.dialog.open();
+        this.$.btnNumpad.setAttribute('disabled', 'true');
     }
 
     _tapBtn(e) {
-        const thisRemoteTV = this;
-        thisRemoteTV.remoteChanged();
-        const remoteType = thisRemoteTV.activeRemote.name.substring(0, 2).toUpperCase();
-        const brand = toTitleCase(thisRemoteTV.activeRemote.name.substring(2, thisRemoteTV.activeRemote.name.length));
-        thisRemoteTV.title = remoteType + ' ' + brand;
+        this.remoteChanged();
+        const remoteType = this.activeRemote.name.substring(0, 2).toUpperCase();
+        const brand = toTitleCase(this.activeRemote.name.substring(2, this.activeRemote.name.length));
+        this.title = remoteType + ' ' + brand;
         let command = e.path[2].getAttribute('data-command');
 
         if (command == null) {
             command = e.target.title;
             if (command == '') {
-                // thisRemoteTV.$.toast.show({text: 'Please try another button.', duration: 1000});
+                // this.$.toast.show({text: 'Please try another button.', duration: 1000});
                 return;
             }
         } else if (command == '15') {
-            if (thisRemoteTV.switchOn) {
-                thisRemoteTV.stateInitial();
+            if (this.switchOn) {
+                this.stateInitial();
                 command = '16';
             } else {
-                thisRemoteTV.stateEnable();
+                this.stateEnable();
             }
         }
-        thisRemoteTV.command = thisRemoteTV.codeset + '' + command;
-        store.dispatch(remoteCommand(thisRemoteTV.command));
-        // thisRemoteTV.$.ajax.generateRequest();
+        this.command = this.codeset + '' + command;
+        store.dispatch(remoteCommand(this.command));
+        // this.$.ajax.generateRequest();
     }
 
     _tapBack() {
-        const thisRemoteTV = this;
-        thisRemoteTV.$.btnPower.setAttribute('icon', 'power-settings-new');
+        this.$.btnPower.setAttribute('icon', 'power-settings-new');
         this.stateInitial();
     }
 
     // _handleResponse() {
-    //     const thisRemoteTV = this;
-    //     let response = thisRemoteTV.response;
+    //  
+    //     let response = this.response;
     //     if (response == 'OK') {
-    //         console.log(`Sending command ${thisRemoteTV.command}: ${thisRemoteTV.response}`);
+    //         console.log(`Sending command ${this.command}: ${this.response}`);
     //     } else if (response == 'NO_DEVICE') {
-    //         thisRemoteTV.$.toast.show({text: 'No device is assigned for this room.', duration: 3000});
+    //         this.$.toast.show({text: 'No device is assigned for this room.', duration: 3000});
     //     } else if (response == 'NO_RESPONSE') {
     //         thisRemoteAC.$.toast.show({text: 'Device is offline.', duration: 1000});
     //     } else {
-    //         thisRemoteTV.$.toast.show({text: 'Unknown error.', duration: 1000});
+    //         this.$.toast.show({text: 'Unknown error.', duration: 1000});
     //     }
     // }
 }
