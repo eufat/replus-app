@@ -7,7 +7,7 @@ import '@material/mwc-button';
 import '@material/mwc-icon';
 import '@polymer/paper-input/paper-input';
 
-import {setRooms, fetchRooms, addRoom, removeRoom, setNewRemote, addRemote, removeRemote, addDevice, setNewDevice, setActiveRemote, setActiveRoom} from '../actions/remote';
+import {setRooms, fetchRooms, addRoom, removeRoom, setNewRemote, addRemote, removeRemote, addDevice, addCamera, setNewDevice, setActiveRemote, setActiveRoom} from '../actions/remote';
 import {getNewRoomTemplate, brandsList, toTitleCase} from '../utils';
 import {store} from '../store';
 
@@ -122,6 +122,10 @@ export default class MainRooms extends connect(store)(LitElement) {
 
     _handleNewRemoteAdd(roomID) {
         store.dispatch(addRemote(roomID));
+    }
+
+    _handleNewCameraAdd(roomID) {
+        store.dispatch(addCamera(roomID));
     }
 
     _activeRemote(remote) {
@@ -272,6 +276,20 @@ export default class MainRooms extends connect(store)(LitElement) {
                 <paper-dialog id="add-new-camera-modal-${roomIndex}">
                     <div class="modal-content">
                         <label id="appliance-type">Add Camera: Replus Vision</label>
+                        <paper-input
+                            label="Device ID"
+                            always-float-label
+                            value="${get(this.newDevice, 'deviceID')}"
+                            on-input="${(e) => this._handleNewDeviceChange(e, 'deviceID')}"
+                        >
+                        </paper-input>
+                        <paper-input
+                            label="Device Activation Code"
+                            always-float-label
+                            value="${get(newDevice, 'deviceCode')}"
+                            on-input="${(e) => this._handleNewDeviceChange(e, 'deviceCode')}"
+                        >
+                        </paper-input>
                         <div class="buttons" on-click="${() => this._handleNewCameraAdd(item.id)}">
                             <mwc-button dialog-confirm label="Add This Camera"></mwc-button>
                         </div>
