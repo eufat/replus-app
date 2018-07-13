@@ -25,7 +25,7 @@ import '@polymer/iron-icons/hardware-icons.js';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import '@polymer/iron-flex-layout/iron-flex-layout.js';
 
-import {setSchedule, createSchedule} from '../actions/remote.js';
+import {setSchedule, createSchedule, fetchIR} from '../actions/remote.js';
 import {store} from '../store.js';
 
 const get = _.get;
@@ -193,15 +193,15 @@ class AddSchedule extends connect(store)(PolymerElement) {
                     <div id="containerAC" class="horizontal layout justified">
                         <paper-dropdown-menu id="dropdownMode" label="Mode" noink no-animations>
                             <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="mode" selected="{{choosenMode}}" on-selected-changed="_changeMode">
-                                <template is="dom-repeat" items="{{manifestModes}}" as="mode">
-                                    <paper-item mode="{{mode}}">{{getMode(mode)}}</paper-item>
+                                <template is="dom-repeat" items="{{modeTitle}}" as="mode">
+                                    <paper-item mode="{{mode}}">{{mode}}</paper-item>
                                 </template>
                             </paper-listbox>
                         </paper-dropdown-menu>
                         <paper-dropdown-menu id="dropdownFan" label="Fan speed" noink no-animations>
                             <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="fan" selected="{{choosenFan}}" on-selected-changed="">
-                                <template is="dom-repeat" items="{{manifestFans}}" as="fan">
-                                    <paper-item fan="{{fan}}">{{getFan(fan)}}</paper-item>
+                                <template is="dom-repeat" items="{{fanTitle}}" as="fan">
+                                    <paper-item fan="{{fan}}">{{fan}}</paper-item>
                                 </template>
                             </paper-listbox>
                         </paper-dropdown-menu>
@@ -269,6 +269,15 @@ class AddSchedule extends connect(store)(PolymerElement) {
                 value: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
             },
 
+            manifest: Object,
+            mode: Number,
+            manifestModes: Array,
+            modeTitle: Array,
+
+            fan: Number,
+            manifestFans: Array,
+            fanTitle: Array,
+
             OKtime: {type: Boolean, value: false, observer: '_OKtime'},
             OKdate: {type: Boolean, value: false, observer: '_OKdate'},
             OKday: {type: Boolean, value: false, observer: '_OKday'},
@@ -284,6 +293,7 @@ class AddSchedule extends connect(store)(PolymerElement) {
     constructor() {
         super();
         this.remotes = [];
+        this.manifest = {};
     }
 
     _stateChanged(state) {
@@ -294,6 +304,7 @@ class AddSchedule extends connect(store)(PolymerElement) {
             return nameUpperCased;
         });
         this.remotes = stateRemotes;
+        this.manifest = get(state, 'remote.manifest');
     }
 
     ready() {
@@ -325,6 +336,21 @@ class AddSchedule extends connect(store)(PolymerElement) {
             }
         }
     }
+
+    // _changeMode() {
+    //     setTimeout(() => {
+    //         this.manifestFans = [];
+    //         let mode = this.manifest[this.choosenMode];
+    //         for (let fan in mode) {
+    //             if (mode.hasOwnProperty(fan)) {
+    //                 this.push('manifestFans', parseInt(fan));
+    //             }
+    //         }
+    //         this.choosenFan = this.manifestFans[0];
+    //         this.temps = this.manifest[this.choosenMode][this.choosenFan];
+    //         this.choosenTemp = this.temps[0];
+    //     }, 100);
+    // }
 
     stateInitial() {
         this.clearAll();
@@ -435,6 +461,9 @@ class AddSchedule extends connect(store)(PolymerElement) {
         setTimeout(() => {
             const type = this.choosenAppliance.substring(0, 2);
             const brand = this.choosenAppliance.substring(3).toLowerCase();
+            if (type == 'AC') {
+                store.dispatch(fetchIR(brand));
+            }
             this.choosenType = type;
             this.choosenBrand = brand;
         }, 100);
@@ -562,7 +591,22 @@ class AddSchedule extends connect(store)(PolymerElement) {
         store.dispatch(createSchedule(schedule));
     }
 
+    getMode() {
+        const arrModes = [];
+        const modeName = [];
+        const manifestValues = _.values(this.manifest);
+        manifestValues.map((item, index) => {
+            const key = parseInt(Object.keys(this.manifest)[index]);
+            arrModes.push(key);
+            modeName.push(this.modes[arrModes[index]]);
+        });
+        this.manifestModes = arrModes;
+        this.modeTitle = modeName;
+    }
+
     _changeIsON() {
+        this.manifest = store.getState().remote.manifest;
+        this.getMode();
         setTimeout(() => {
             if (this.isON) {
                 this.$.containerCommand.style.display = 'block';
