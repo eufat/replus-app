@@ -14,6 +14,7 @@ export const env = {
     CORE_API: prod ? 'https://core.replus.co/api' : 'http://localhost:7000/api',
     CORE_POST: 'https://core.replus.co/post',
     CORE_IR: 'https://core.replus.co/ir/',
+    CORE_SCHEDULE: prod ? 'https://core.replus.co/schedule' : 'http://localhost:7000/schedule',
     CORE_ACTIVITY: prod ? 'https://core.replus.co/activity' : 'ws://localhost:7010',
     VISION_API: prod ? 'https://vision.replus.co/api' : 'http://localhost:5000/api',
     VISION_ACTIVITY: prod ? 'https://vision.replus.co/activity' : 'ws://localhost:5010',
