@@ -168,54 +168,49 @@ class RemoteAc extends connect(store)(PolymerElement) {
 
     ready() {
         super.ready();
-        const thisRemoteAC = this;
-        thisRemoteAC.setupPosition();
-        thisRemoteAC.stateInitial();
+        this.setupPosition();
+        this.stateInitial();
         window.addEventListener('resize', () => {
-            thisRemoteAC.setupPosition();
+            this.setupPosition();
         });
     }
 
     resetTimeout() {
-        const thisRemoteAC = this;
-        clearTimeout(thisRemoteAC.timeout);
-        thisRemoteAC.timeout = setTimeout(() => {
-            thisRemoteAC.send();
+        clearTimeout(this.timeout);
+        this.timeout = setTimeout(() => {
+            this.send();
         }, 1000);
     }
 
     setupPosition() {
-        const thisRemoteAC = this;
-        if (window.innerHeight > 470) thisRemoteAC.$.remoteContainer.style.marginTop = window.innerHeight - (64 + 70 + 120 + 270) + 'px';
-        else thisRemoteAC.$.remoteContainer.style.marginTop = '10px';
+        if (window.innerHeight > 470) this.$.remoteContainer.style.marginTop = window.innerHeight - (64 + 70 + 120 + 270) + 'px';
+        else this.$.remoteContainer.style.marginTop = '10px';
 
         if (window.innerWidth > 350) {
-            thisRemoteAC.$.mainContainer.style.width = '330px';
-            thisRemoteAC.$.mainContainer.style.marginLeft = (window.innerWidth - 330) / 2 + 'px';
+            this.$.mainContainer.style.width = '330px';
+            this.$.mainContainer.style.marginLeft = (window.innerWidth - 330) / 2 + 'px';
             // if (window.innerWidth > 640) {
-            //     thisRemoteAC.$.mainContainer.style.marginLeft = ((window.innerWidth - 330)/2 - 128) + 'px';
+            //     this.$.mainContainer.style.marginLeft = ((window.innerWidth - 330)/2 - 128) + 'px';
             // }
         } else {
-            thisRemoteAC.$.mainContainer.style.width = '250px';
-            thisRemoteAC.$.mainContainer.style.marginLeft = (window.innerWidth - 250) / 2 + 'px';
+            this.$.mainContainer.style.width = '250px';
+            this.$.mainContainer.style.marginLeft = (window.innerWidth - 250) / 2 + 'px';
         }
     }
 
     stateInitial() {
-        const thisRemoteAC = this;
-        thisRemoteAC.switchedON = false;
-        thisRemoteAC.$.displayContainer.style.visibility = 'hidden';
-        thisRemoteAC.$.btnPower.setAttribute('icon', 'power-settings-new');
-        thisRemoteAC.$.btnMode.disabled = 'true';
-        thisRemoteAC.$.btnFan.disabled = 'true';
-        thisRemoteAC.$.btnTempUp.disabled = 'true';
-        thisRemoteAC.$.btnTempDown.disabled = 'true';
+        this.switchedON = false;
+        this.$.displayContainer.style.visibility = 'hidden';
+        this.$.btnPower.setAttribute('icon', 'power-settings-new');
+        this.$.btnMode.disabled = 'true';
+        this.$.btnFan.disabled = 'true';
+        this.$.btnTempUp.disabled = 'true';
+        this.$.btnTempDown.disabled = 'true';
     }
 
     _tapBack() {
-        const thisRemoteAC = this;
-        thisRemoteAC.stateInitial();
-        // thisRemoteAC._tapPowerOFF();
+        this.stateInitial();
+        // this._tapPowerOFF();
     }
 
     getMode() {
@@ -257,55 +252,50 @@ class RemoteAc extends connect(store)(PolymerElement) {
     }
 
     _tapPower() {
-        const thisRemoteAC = this;
-        const remoteType = thisRemoteAC.activeRemote.name.substring(0, 2).toUpperCase();
-        thisRemoteAC.brand = toTitleCase(thisRemoteAC.activeRemote.name.substring(2, thisRemoteAC.activeRemote.name.length));
-        thisRemoteAC.title = remoteType + ' ' + thisRemoteAC.brand;
+        const remoteType = this.activeRemote.name.substring(0, 2).toUpperCase();
+        this.brand = toTitleCase(this.activeRemote.name.substring(2, this.activeRemote.name.length));
+        this.title = remoteType + ' ' + this.brand;
         this.getMode();
 
-        if (thisRemoteAC.switchedON) {
-            thisRemoteAC.stateInitial();
-            thisRemoteAC._tapPowerOFF();
+        if (this.switchedON) {
+            this.stateInitial();
+            this._tapPowerOFF();
         } else {
-            thisRemoteAC.stateEnabled();
-            thisRemoteAC.send();
+            this.stateEnabled();
+            this.send();
         }
     }
 
     _tapPowerOFF() {
-        const thisRemoteAC = this;
-        let brandCommand = thisRemoteAC.brand + '';
-        thisRemoteAC.command = brandCommand.toLocaleLowerCase() + '-0000';
-        store.dispatch(remoteCommand(thisRemoteAC.command));
+        let brandCommand = this.brand + '';
+        this.command = brandCommand.toLocaleLowerCase() + '-0000';
+        store.dispatch(remoteCommand(this.command));
         this.modeIndex = 0;
         this.fanIndex = 0;
         this.tempIndex = 0;
-        thisRemoteAC.temp = 18;
+        this.temp = 18;
     }
 
     stateEnabled() {
-        const thisRemoteAC = this;
-        thisRemoteAC.switchedON = true;
-        thisRemoteAC.$.displayContainer.style.visibility = 'visible';
-        thisRemoteAC.$.btnPower.setAttribute('icon', 'close');
-        thisRemoteAC.$.btnMode.removeAttribute('disabled');
-        thisRemoteAC.$.btnFan.removeAttribute('disabled');
-        thisRemoteAC.$.btnTempUp.removeAttribute('disabled');
-        thisRemoteAC.$.btnTempDown.removeAttribute('disabled');
+        this.switchedON = true;
+        this.$.displayContainer.style.visibility = 'visible';
+        this.$.btnPower.setAttribute('icon', 'close');
+        this.$.btnMode.removeAttribute('disabled');
+        this.$.btnFan.removeAttribute('disabled');
+        this.$.btnTempUp.removeAttribute('disabled');
+        this.$.btnTempDown.removeAttribute('disabled');
     }
 
     send() {
-        const thisRemoteAC = this;
-        // thisRemoteAC.brand = thisRemoteAC.activeRemote.name.substring(2, thisRemoteAC.activeRemote.name.length);
-        let brandCommand = thisRemoteAC.brand + '';
-        thisRemoteAC.command = brandCommand.toLocaleLowerCase() + '-' + thisRemoteAC.mode + thisRemoteAC.fan + thisRemoteAC.temp;
-        if (thisRemoteAC.switchedON) store.dispatch(remoteCommand(thisRemoteAC.command));
+        // this.brand = this.activeRemote.name.substring(2, this.activeRemote.name.length);
+        let brandCommand = this.brand + '';
+        this.command = brandCommand.toLocaleLowerCase() + '-' + this.mode + this.fan + this.temp;
+        if (this.switchedON) store.dispatch(remoteCommand(this.command));
     }
 
     _tapMode() {
-        const thisRemoteAC = this;
-        if (thisRemoteAC.modeIndex < thisRemoteAC.manifestModes.length - 1) thisRemoteAC.modeIndex++;
-        else thisRemoteAC.modeIndex = 0;
+        if (this.modeIndex < this.manifestModes.length - 1) this.modeIndex++;
+        else this.modeIndex = 0;
         this.fanIndex = 0;
         this.fan = this.manifestFans[this.fanIndex];
         this.fanName = this.fans[this.fan];
@@ -314,24 +304,21 @@ class RemoteAc extends connect(store)(PolymerElement) {
     }
 
     _tapFan() {
-        const thisRemoteAC = this;
-        if (thisRemoteAC.fanIndex < thisRemoteAC.manifestFans.length - 1) thisRemoteAC.fanIndex++;
-        else thisRemoteAC.fanIndex = 0;
+        if (this.fanIndex < this.manifestFans.length - 1) this.fanIndex++;
+        else this.fanIndex = 0;
         this.getFan();
         this.send();
     }
 
     _tapUp() {
-        const thisRemoteAC = this;
-        if (thisRemoteAC.tempIndex < thisRemoteAC.manifestTemps.length - 1) thisRemoteAC.tempIndex++;
-        thisRemoteAC.temp = thisRemoteAC.manifestTemps[thisRemoteAC.tempIndex];
+        if (this.tempIndex < this.manifestTemps.length - 1) this.tempIndex++;
+        this.temp = this.manifestTemps[this.tempIndex];
         this.send();
     }
 
     _tapDown() {
-        const thisRemoteAC = this;
-        if (thisRemoteAC.tempIndex > 0) thisRemoteAC.tempIndex--;
-        thisRemoteAC.temp = thisRemoteAC.manifestTemps[thisRemoteAC.tempIndex];
+        if (this.tempIndex > 0) this.tempIndex--;
+        this.temp = this.manifestTemps[this.tempIndex];
         this.send();
     }
 }
