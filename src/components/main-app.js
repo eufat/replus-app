@@ -23,7 +23,6 @@ import './snack-bar.js';
 import './main-help.js';
 import './not-found.js';
 import './main-account.js';
-
 import './activity-main.js';
 import './rooms-main.js';
 import './main-devices';

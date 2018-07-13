@@ -12,7 +12,7 @@ import {store} from '../store.js';
 import {connect} from 'pwa-helpers/connect-mixin.js';
 
 import {fetchRooms, setActiveDevice, setActiveRemotes} from '../actions/remote';
-import {brandsList, toTitleCase} from '../utils';
+import {showBack} from '../actions/app.js';
 
 const get = _.get;
 
@@ -36,10 +36,6 @@ export default class MainDevices extends connect(store)(LitElement) {
         }
     }
 
-    // _firstRendered() {
-    //     store.dispatch(fetchRooms());
-    // }
-
     _shouldRender(props, changedProps, old) {
         return props.active;
     }
@@ -55,10 +51,15 @@ export default class MainDevices extends connect(store)(LitElement) {
         remotesValues.map((item) => {
             arrRemotes.push(item.name);
         });
+
+        store.dispatch(showBack());
         store.dispatch(setActiveDevice(device));
         store.dispatch(setActiveRemotes(arrRemotes));
     }
 
+    _handleDeviceClick() {
+        store.dispatch(showBack());
+    }
     _render({rooms}) {
         const remoteDevices = (devices, rooms) => {
             return devices.map((device, index) => {
@@ -173,7 +174,7 @@ export default class MainDevices extends connect(store)(LitElement) {
                             <div class="device-pill">
                                 <span class="pill-content">345A</span>
                             </div>
-                            <a href="/dashboard/setting-vision">
+                            <a href="/dashboard/setting-vision" on-click="${() => this._handleDeviceClick()}">
                                 <iron-icon class="settings-icon" icon="icons:settings">
                             </a>
                         </div>
