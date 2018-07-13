@@ -46,6 +46,9 @@ export const setDevices = (devices) => (dispatch, getState) => {
 
     const newRooms = prevRooms.map((room) => {
         const roomDevices = devices.filter((device) => {
+            if (device.type === 'replus-vision') {
+                return true;
+            }
             return device.room === room.id;
         });
 
@@ -179,6 +182,25 @@ export const addDevice = (room) => async (dispatch, getState) => {
     const deviceID = get(getState(), 'remote.newDevice.deviceID');
     const deviceCode = get(getState(), 'remote.newDevice.deviceCode');
     const type = 'replus-remote';
+
+    try {
+        await coreClient().post('/device-register', qs({uid, type, room: room.id, deviceID, deviceCode}));
+        dispatch(showSnackbar(`Device ${deviceID} registered.`));
+        dispatch(fetchDevices());
+        dispatch(closeProgress());
+    } catch (error) {
+        errorHandler.report(error);
+        dispatch(showSnackbar(`Failed to register ${deviceID}.`));
+        dispatch(closeProgress());
+    }
+};
+
+export const addCamera = (room) => async (dispatch, getState) => {
+    dispatch(showProgress());
+    const uid = get(getState(), 'app.currentUser.uid');
+    const deviceID = get(getState(), 'remote.newDevice.deviceID');
+    const deviceCode = get(getState(), 'remote.newDevice.deviceCode');
+    const type = 'replus-vision';
 
     try {
         await coreClient().post('/device-register', qs({uid, type, room: room.id, deviceID, deviceCode}));
