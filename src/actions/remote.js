@@ -1,4 +1,4 @@
-import {coreClient, corePostClient, coreIR} from '../client';
+import {coreClient, corePost, coreIR, coreSchedule} from '../client';
 import {qs} from '../utils';
 import errorHandler from '../error';
 import {showSnackbar, showProgress, closeProgress, showBack, closeBack} from '../actions/app';
@@ -236,12 +236,34 @@ export const setSchedule = (schedule) => (dispatch, getState) => {
     dispatch(closeProgress());
 };
 
+export const createSchedule = (schedules) => (dispatch, getState) => {
+    dispatch(showProgress());
+    dispatch(setSchedule(schedules));
+    const uid = get(getState(), 'app.currentUser.uid');
+    const room = get(getState(), 'remote.activeRoom.id');
+    const command = get(getState(), 'remote.schedule.command');
+    const scheduleType = get(getState(), 'remote.schedule.scheduleType');
+    const schedule = get(getState(), 'remote.schedule.schedule');
+    const titleRemote = get(getState(), 'remote.schedule.titleRemote');
+    const titleCommand = get(getState(), 'remote.schedule.titleCommand');
+    const titleDay = get(getState(), 'remote.schedule.titleDay');
+    const titleTime = get(getState(), 'remote.schedule.titleTime');
+    console.log(uid, room, command, scheduleType, schedule, titleRemote, titleCommand, titleDay, titleTime);
+
+    try {
+        coreSchedule().post('/schedule-create', qs({uid, room, command, scheduleType, schedule, titleRemote, titleCommand, titleDay, titleTime}));
+    } catch (error) {
+        errorHandler.report(error);
+    }
+    dispatch(closeProgress());
+};
+
 export const remoteCommand = (command) => (dispatch, getState) => {
     // dispatch(showProgress());
     const uid = get(getState(), 'app.currentUser.uid');
     const room = get(getState(), 'remote.activeRemote.room');
     try {
-        corePostClient().post('/remote', qs({uid, room, command}));
+        corePost().post('/remote', qs({uid, room, command}));
         // dispatch(closeProgress());
     } catch (error) {
         errorHandler.report(error);

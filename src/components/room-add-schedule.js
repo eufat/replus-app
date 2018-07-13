@@ -25,7 +25,7 @@ import '@polymer/iron-icons/hardware-icons.js';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
 import '@polymer/iron-flex-layout/iron-flex-layout.js';
 
-import {setSchedule} from '../actions/remote.js';
+import {setSchedule, createSchedule} from '../actions/remote.js';
 import {store} from '../store.js';
 
 const get = _.get;
@@ -559,7 +559,7 @@ class AddSchedule extends connect(store)(PolymerElement) {
             titleTime: this.titleTime,
         };
 
-        store.dispatch(setSchedule(schedule));
+        store.dispatch(createSchedule(schedule));
     }
 
     _changeIsON() {
