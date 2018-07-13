@@ -1,10 +1,10 @@
-import {PolymerElement, html} from '@polymer/polymer/polymer-element';
+import {PolymerElement, html} from '@polymer/polymer';
 
-import '@polymer/iron-ajax/iron-ajax.js';
-import '@polymer/paper-material/paper-material.js';
-import '@polymer/paper-spinner/paper-spinner.js';
-import '@polymer/paper-button/paper-button.js';
-import {connect} from 'pwa-helpers/connect-mixin.js';
+import '@polymer/iron-ajax';
+import '@polymer/paper-material';
+import '@polymer/paper-spinner/paper-spinner';
+import '@polymer/paper-button';
+import {connect} from 'pwa-helpers/connect-mixin';
 
 import firebase from '../firebase.js';
 import {userDataKey} from '../utils.js';

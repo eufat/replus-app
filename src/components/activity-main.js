@@ -1,7 +1,7 @@
 import {LitElement, html} from '@polymer/lit-element';
-import '@polymer/paper-card/paper-card.js';
-import '@polymer/paper-material/paper-material.js';
-import '@polymer/paper-icon-button/paper-icon-button.js';
+import '@polymer/paper-card';
+import '@polymer/paper-material';
+import '@polymer/paper-icon-button';
 
 import {env} from '../configs.js';
 import {getDateFromFilename} from '../utils.js';

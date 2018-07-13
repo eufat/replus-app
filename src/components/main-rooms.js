@@ -1,19 +1,19 @@
 import {LitElement, html} from '@polymer/lit-element';
-import {connect} from 'pwa-helpers/connect-mixin.js';
+import {connect} from 'pwa-helpers/connect-mixin';
 
-import '@polymer/paper-item/paper-item.js';
-import '@polymer/paper-dialog/paper-dialog.js';
-import '@material/mwc-button/mwc-button.js';
-import '@material/mwc-icon/mwc-icon.js';
-import '@polymer/paper-input/paper-input.js';
+import '@polymer/paper-item/paper-item';
+import '@polymer/paper-dialog';
+import '@material/mwc-button';
+import '@material/mwc-icon';
+import '@polymer/paper-input/paper-input';
 
 import {setRooms, fetchRooms, addRoom, removeRoom, setNewRemote, addRemote, removeRemote, addDevice, setNewDevice, setActiveRemote, setActiveRoom} from '../actions/remote';
 import {getNewRoomTemplate, brandsList, toTitleCase} from '../utils';
-import {store} from '../store.js';
+import {store} from '../store';
 
 const get = _.get;
 
-export default class RoomsMain extends connect(store)(LitElement) {
+export default class MainRooms extends connect(store)(LitElement) {
     static get properties() {
         return {
             rooms: Array,
@@ -511,4 +511,4 @@ export default class RoomsMain extends connect(store)(LitElement) {
     }
 }
 
-customElements.define('rooms-main', RoomsMain);
+customElements.define('main-rooms', MainRooms);

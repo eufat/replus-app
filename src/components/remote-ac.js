@@ -1,17 +1,17 @@
-import {PolymerElement, html} from '@polymer/polymer/polymer-element';
-import {connect} from 'pwa-helpers/connect-mixin.js';
+import {PolymerElement, html} from '@polymer/polymer';
+import {connect} from 'pwa-helpers/connect-mixin';
 
-import '@polymer/paper-fab/paper-fab.js';
-import '@polymer/paper-toast/paper-toast.js';
-import '@polymer/iron-icon/iron-icon.js';
-import '@polymer/iron-icons/iron-icons.js';
-import '@polymer/iron-icons/hardware-icons.js';
-import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
-import '@polymer/iron-flex-layout/iron-flex-layout.js';
+import '@polymer/paper-fab';
+import '@polymer/paper-toast';
+import '@polymer/iron-icon';
+import '@polymer/iron-icons/iron-icons';
+import '@polymer/iron-icons/hardware-icons';
+import '@polymer/iron-flex-layout/iron-flex-layout-classes';
+import '@polymer/iron-flex-layout/iron-flex-layout';
 
 import {remoteCommand} from '../actions/remote';
 import {brandsList, toTitleCase} from '../utils';
-import {store} from '../store.js';
+import {store} from '../store';
 
 const get = _.get;
 

@@ -38,44 +38,44 @@ const loadPage = (page) => async (dispatch) => {
 
         switch (path) {
             case 'auth':
-                await import('../components/main-auth.js');
+                await import('../components/main-auth');
                 break;
             case 'dashboard':
-                await import('../components/main-dashboard.js');
+                await import('../components/main-dashboard');
                 break;
             case 'activity':
-                await import('../components/activity-main.js');
+                await import('../components/activity-main');
                 break;
             case 'rooms':
-                await import('../components/rooms-main.js');
+                await import('../components/main-rooms');
                 break;
             case 'settings':
-                await import('../components/main-devices.js');
+                await import('../components/main-settings.js');
                 break;
             case 'setting-vision':
-                await import('../components/settings-vision.js');
+                await import('../components/settings-vision');
                 break;
             case 'setting-remote':
-                await import('../components/settings-remote.js');
+                await import('../components/settings-remote');
                 break;
             case 'help':
-                await import('../components/main-help.js');
+                await import('../components/main-help');
                 break;
             case 'account':
-                await import('../components/main-account.js');
+                await import('../components/main-account');
                 break;
             case 'remote-ac':
-                await import('../components/remote-ac.js');
+                await import('../components/remote-ac');
                 break;
             case 'remote-tv':
-                await import('../components/remote-tv.js');
+                await import('../components/remote-tv');
                 break;
             case 'add-schedule':
-                await import('../components/room-add-schedule.js');
+                await import('../components/room-add-schedule');
                 break;
             default:
                 page = '404';
-                await import('../components/not-found.js');
+                await import('../components/not-found');
         }
     }
 

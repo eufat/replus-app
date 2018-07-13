@@ -1,5 +1,5 @@
 import {LitElement, html} from '@polymer/lit-element';
-import {Button} from '@material/mwc-button/mwc-button.js';
+import {Button} from '@material/mwc-button';
 import {pushLocationTo} from '../utils';
 
 export default class Help extends LitElement {

@@ -1,22 +1,22 @@
 import {LitElement, html} from '@polymer/lit-element';
 
-import '@polymer/paper-toggle-button/paper-toggle-button.js';
-import '@polymer/paper-button/paper-button.js';
-import '@polymer/paper-item/paper-item.js';
-import '@polymer/paper-dialog/paper-dialog.js';
-import '@polymer/paper-radio-group/paper-radio-group.js';
-import '@polymer/paper-radio-button/paper-radio-button.js';
-import '@polymer/iron-icons/iron-icons.js';
+import '@polymer/paper-toggle-button';
+import '@polymer/paper-button';
+import '@polymer/paper-item/paper-item';
+import '@polymer/paper-dialog';
+import '@polymer/paper-radio-group';
+import '@polymer/paper-radio-button';
+import '@polymer/iron-icons/iron-icons';
 
 import {store} from '../store.js';
-import {connect} from 'pwa-helpers/connect-mixin.js';
+import {connect} from 'pwa-helpers/connect-mixin';
 
-import {fetchRooms, setActiveDevice, setActiveRemotes} from '../actions/remote';
+import {fetchRooms, setActiveDevice, setActiveRemotes} from '../actions/remote.js';
 import {showBack} from '../actions/app.js';
 
 const get = _.get;
 
-export default class MainDevices extends connect(store)(LitElement) {
+export default class MainSettings extends connect(store)(LitElement) {
     static get properties() {
         return {
             uid: String,
@@ -186,4 +186,4 @@ export default class MainDevices extends connect(store)(LitElement) {
     }
 }
 
-customElements.define('main-devices', MainDevices);
+customElements.define('main-settings', MainSettings);

@@ -1,5 +1,5 @@
 import {LitElement, html} from '@polymer/lit-element';
-import '@polymer/paper-toast/paper-toast.js';
+import '@polymer/paper-toast';
 
 class SnackBar extends LitElement {
     _render({text, active}) {

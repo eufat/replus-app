@@ -1,16 +1,16 @@
 import {LitElement, html} from '@polymer/lit-element';
 
-import '@polymer/paper-toggle-button/paper-toggle-button.js';
-import '@polymer/paper-button/paper-button.js';
-import '@polymer/paper-item/paper-item.js';
-import '@polymer/paper-dialog/paper-dialog.js';
-import '@polymer/paper-radio-group/paper-radio-group.js';
-import '@polymer/paper-radio-button/paper-radio-button.js';
-import {Button} from '@material/mwc-button/mwc-button.js';
+import '@polymer/paper-toggle-button';
+import '@polymer/paper-button';
+import '@polymer/paper-item/paper-item';
+import '@polymer/paper-dialog';
+import '@polymer/paper-radio-group';
+import '@polymer/paper-radio-button';
+import {Button} from '@material/mwc-button';
 
 import firebase from '../firebase.js';
 import {store} from '../store.js';
-import {connect} from 'pwa-helpers/connect-mixin.js';
+import {connect} from 'pwa-helpers/connect-mixin';
 import {linkWithProvider} from '../actions/app.js';
 
 // Import from lodash

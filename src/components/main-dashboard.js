@@ -1,33 +1,33 @@
 import {LitElement, html} from '@polymer/lit-element';
 
-import '@polymer/app-route/app-location.js';
-import '@polymer/iron-icons/iron-icons.js';
-import '@polymer/iron-pages/iron-pages.js';
-import '@polymer/iron-selector/iron-selector.js';
+import '@polymer/app-route/app-location';
+import '@polymer/iron-icons/iron-icons';
+import '@polymer/iron-pages';
+import '@polymer/iron-selector/iron-selector';
 
-import '@polymer/app-layout/app-header/app-header.js';
-import '@polymer/app-layout/app-toolbar/app-toolbar.js';
-import '@polymer/app-layout/app-scroll-effects/effects/waterfall.js';
-import '@polymer/app-layout/app-header-layout/app-header-layout.js';
-import '@polymer/app-layout/app-scroll-effects/app-scroll-effects.js';
-import '@polymer/paper-item/paper-item.js';
-import '@polymer/paper-material/paper-material.js';
-import '@polymer/paper-listbox/paper-listbox.js';
-import '@polymer/paper-icon-button/paper-icon-button.js';
-import '@polymer/paper-dropdown-menu/paper-dropdown-menu.js';
-import '@polymer/paper-progress/paper-progress.js';
+import '@polymer/app-layout/app-header/app-header';
+import '@polymer/app-layout/app-toolbar/app-toolbar';
+import '@polymer/app-layout/app-scroll-effects/effects/waterfall';
+import '@polymer/app-layout/app-header-layout/app-header-layout';
+import '@polymer/app-layout/app-scroll-effects/app-scroll-effects';
+import '@polymer/paper-item/paper-item';
+import '@polymer/paper-material';
+import '@polymer/paper-listbox';
+import '@polymer/paper-icon-button';
+import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
+import '@polymer/paper-progress';
 import '@polymer/paper-tabs';
-import '@polymer/paper-fab/paper-fab.js';
-import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings.js';
+import '@polymer/paper-fab';
+import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
 
-import {connect} from 'pwa-helpers/connect-mixin.js';
-import {installRouter} from 'pwa-helpers/router.js';
-import {installOfflineWatcher} from 'pwa-helpers/network.js';
-import {installMediaQueryWatcher} from 'pwa-helpers/media-query.js';
+import {connect} from 'pwa-helpers/connect-mixin';
+import {installRouter} from 'pwa-helpers/router';
+import {installOfflineWatcher} from 'pwa-helpers/network';
+import {installMediaQueryWatcher} from 'pwa-helpers/media-query';
 
 import {store} from '../store.js';
 import {navigate, updateOffline, updateLayout, deauthenticateUser, showSnackbar, closeBack} from '../actions/app.js';
-import {toTitleCase} from '../utils';
+import {toTitleCase} from '../utils.js';
 
 const get = _.get;
 

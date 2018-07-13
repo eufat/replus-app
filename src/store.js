@@ -5,7 +5,7 @@ import {
     combineReducers,
 } from 'redux';
 import thunk from 'redux-thunk';
-import {lazyReducerEnhancer} from 'pwa-helpers/lazy-reducer-enhancer.js';
+import {lazyReducerEnhancer} from 'pwa-helpers/lazy-reducer-enhancer';
 
 import app from './reducers/app.js';
 import vision from './reducers/vision.js';
