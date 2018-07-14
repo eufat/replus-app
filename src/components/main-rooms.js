@@ -8,6 +8,7 @@ import '@material/mwc-icon';
 import '@polymer/paper-input/paper-input';
 
 import {setRooms, fetchRooms, addRoom, removeRoom, setNewRemote, addRemote, removeRemote, addDevice, addCamera, setNewDevice, setActiveRemote, setActiveRoom} from '../actions/remote';
+import {setActiveVision} from '../action/vision';
 import {getNewRoomTemplate, brandsList, toTitleCase} from '../utils';
 import {store} from '../store';
 
@@ -128,12 +129,16 @@ export default class MainRooms extends connect(store)(LitElement) {
         store.dispatch(addCamera(roomID));
     }
 
-    _activeRemote(remote) {
+    _handleActiveRemote(remote) {
         store.dispatch(setActiveRemote(remote));
     }
 
-    _activeRoom(room) {
+    _handleActiveRoom(room) {
         store.dispatch(setActiveRoom(room));
+    }
+
+    _handleActiveVision(vision) {
+        store.dispatch(setActiveVision(vision));
     }
 
     _render({rooms, newRemote, newDevice}) {
@@ -162,7 +167,7 @@ export default class MainRooms extends connect(store)(LitElement) {
                                         <p>${toTitleCase(remote.name)}</p>
                                     </div>`
                                 : html`
-                                <a href="/dashboard/remote-${remote.name.substring(0, 2)}" on-click="${() => this._activeRemote(remote)}">
+                                <a href="/dashboard/remote-${remote.name.substring(0, 2)}" on-click="${() => this._handleActiveRemote(remote)}">
                                     <div class="remote-item">
                                         <img class="appliance-icon" src="images/${applicanceType}-icon.png"/>
                                         <p>${toTitleCase(remote.name)}</p>
@@ -173,26 +178,34 @@ export default class MainRooms extends connect(store)(LitElement) {
             });
         };
 
-        const roomCameras = (cameras, roomIndex) => {
-            return _.mapValues(cameras, (cameraValue, cameraKey, cameraObj) => {
+        const roomCameras = (devices, roomIndex) => {
+            return devices.map((device) => {
                 const onEdit = rooms[roomIndex].onEdit;
 
-                return html`
-                    <div class="camera-item">
-                        ${
-                            onEdit
-                                ? html`
-                                    <mwc-button
-                                        label="Remove"
-                                        icon="close"
-                                        on-click="${() => this._removeRemote(roomIndex, cameraKey)}">
-                                    </mwc-button>`
-                                : null
-                        }
-                        <img class="appliance-icon" src="images/cam-icon.png"/>
-                        <p>${toTitleCase(cameraValue)}</p>
-                    </div>
-                `;
+                if (device.type === 'replus-vision') {
+                    return html`
+                            ${
+                                onEdit
+                                    ? html`
+                                        <div class="remote-item">
+                                            <mwc-button
+                                                label="Remove"
+                                                icon="close"
+                                                on-click="${() => this._removeDevice(roomIndex, roomIndex)}">
+                                            </mwc-button>
+                                            <img class="appliance-icon" src="images/cam-icon.png"/>
+                                            <p>Camera ${device.name}</p>
+                                        </div>`
+                                    : html`
+                                    <a href="/dashboard/camera"  on-click="${() => this._activeVision(device.name)}">
+                                        <div class="remote-item">
+                                            <img class="appliance-icon" src="images/cam-icon.png"/>
+                                            <p>Camera ${device.name}</p>
+                                        </div>
+                                    </a>`
+                            }
+                    `;
+                }
             });
         };
 
@@ -332,7 +345,7 @@ export default class MainRooms extends connect(store)(LitElement) {
                         }
                     </div>
                     <div class="room-remotes">
-                        ${_.values(roomCameras(item.cameras, roomIndex))}
+                        ${_.values(roomCameras(item.devices, roomIndex))}
                         ${_.values(roomRemotes(item.remotes, roomIndex))}
                         ${
                             onEdit

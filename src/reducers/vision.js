@@ -1,5 +1,6 @@
 const initialState = {
     settings: {},
+    activeVision: '',
 };
 
 const vision = (state = initialState, action) => {
@@ -8,6 +9,11 @@ const vision = (state = initialState, action) => {
             return {
                 ...state,
                 settings: action.settings,
+            };
+        case 'SET_ACTIVE_VISION':
+            return {
+                ...state,
+                activeVision: action.activeVision,
             };
         default:
             return state;

@@ -46,9 +46,6 @@ export const setDevices = (devices) => (dispatch, getState) => {
 
     const newRooms = prevRooms.map((room) => {
         const roomDevices = devices.filter((device) => {
-            if (device.type === 'replus-vision') {
-                return true;
-            }
             return device.room === room.id;
         });
 
