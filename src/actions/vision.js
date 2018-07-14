@@ -19,7 +19,7 @@ export const fetchSettings = (uid, dev_name) => (dispatch, getState) => {
     });
 };
 
-export const activeVision = (name) => (dispatch, getState) => {
+export const setActiveVision = (name) => (dispatch, getState) => {
     dispatch({
         type: 'SET_ACTIVE_VISION',
         activeVision: name,

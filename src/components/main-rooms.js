@@ -8,7 +8,7 @@ import '@material/mwc-icon';
 import '@polymer/paper-input/paper-input';
 
 import {setRooms, fetchRooms, addRoom, removeRoom, setNewRemote, addRemote, removeRemote, addDevice, addCamera, setNewDevice, setActiveRemote, setActiveRoom} from '../actions/remote';
-import {setActiveVision} from '../action/vision';
+import {setActiveVision} from '../actions/vision';
 import {getNewRoomTemplate, brandsList, toTitleCase} from '../utils';
 import {store} from '../store';
 
@@ -197,7 +197,7 @@ export default class MainRooms extends connect(store)(LitElement) {
                                             <p>Camera ${device.name}</p>
                                         </div>`
                                     : html`
-                                    <a href="/dashboard/camera"  on-click="${() => this._activeVision(device.name)}">
+                                    <a href="/dashboard/remote-vision"  on-click="${() => this._handleActiveVision(device.name)}">
                                         <div class="remote-item">
                                             <img class="appliance-icon" src="images/cam-icon.png"/>
                                             <p>Camera ${device.name}</p>
@@ -336,7 +336,7 @@ export default class MainRooms extends connect(store)(LitElement) {
                                         icon="edit"
                                         on-click="${() => this._enterOnEdit(roomIndex)}">
                                     </mwc-button>
-                                    <a href="/dashboard/add-schedule" on-click="${() => this._activeRoom(room)}">
+                                    <a href="/dashboard/add-schedule" on-click="${() => this._handleActiveRoom(room)}">
                                         <mwc-button
                                             label="Schedule"
                                             icon="calendar_today">
