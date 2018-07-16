@@ -258,6 +258,18 @@ export const createSchedule = (schedules) => (dispatch, getState) => {
     dispatch(closeProgress());
 };
 
+export const removeSchedule = (scheduleID) => (dispatch, getState) => {
+    dispatch(showProgress());
+    const uid = get(getState(), 'app.currentUser.uid');
+    try {
+        coreSchedule().post('/schedule-delete', qs({uid, scheduleID}));
+        dispatch(closeProgress());
+    } catch (error) {
+        errorHandler.report(error);
+        dispatch(closeProgress());
+    }
+};
+
 export const remoteCommand = (command) => (dispatch, getState) => {
     // dispatch(showProgress());
     const uid = get(getState(), 'app.currentUser.uid');
