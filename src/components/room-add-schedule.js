@@ -11,6 +11,7 @@ import '@polymer/paper-material/paper-material-shared-styles';
 import '@polymer/paper-button';
 import '@polymer/paper-spinner/paper-spinner';
 import '@polymer/paper-toast';
+import '@polymer/paper-card';
 
 import '@polymer/paper-fab';
 import '@polymer/paper-icon-button';
@@ -25,7 +26,10 @@ import '@polymer/iron-icons/hardware-icons';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes';
 import '@polymer/iron-flex-layout/iron-flex-layout';
 
-import {setSchedule, createSchedule, fetchIR} from '../actions/remote.js';
+import '@material/mwc-button';
+import '@material/mwc-icon';
+
+import {setSchedule, createSchedule, fetchIR, removeSchedule} from '../actions/remote.js';
 import {store} from '../store.js';
 
 const get = _.get;
@@ -47,8 +51,8 @@ class AddSchedule extends connect(store)(PolymerElement) {
 
                 #container {
                     width: 400px;
-                    margin-left: calc((100vw - 400px) / 2);
-                    padding-bottom: 150px;
+                    /* margin-left: calc((100vw - 400px) / 2); */
+                    /* padding-bottom: 150px; */
                 }
 
                 #containerDay {
@@ -112,116 +116,191 @@ class AddSchedule extends connect(store)(PolymerElement) {
                     --paper-toggle-button-unchecked-ink-color: var(--primary-color);
                 }
 
+                .paper-container {
+                    margin: 0 auto;
+                    max-width: 960px;
+                    padding-bottom: 50px;
+                }
+
+                .add-new-schedule {
+                    text-align: center;
+                }
+
+                paper-material {
+                    display: block;
+                    margin: 20px;
+                    padding: 10px 20px;
+                    background-color: white;
+                    border-radius: 5px;
+
+                }
+
+                paper-card {
+                    display: block;
+                    margin: 20px 20px 0;
+                }
+
+                .card-heading {
+                    @apply(--paper-font-headline);
+                    color: #777;
+                }
+
+                .card-time {
+                    background: var(--paper-grey-400);
+                    border-radius: 10px;
+                    color: #fff;
+                    padding: 5px;
+                    text-align: center;
+                    width: 70px;
+                }
+
+                paper-button#btnDeleteSchedule {
+                    background: #fff;
+                    color: #c0392b;
+                    font-weight: normal;
+                    margin: auto;
+                }
+
                 @media (max-width: 500px) {
                     #container {
                         width: 280px;
-                        margin-left: calc((100vw - 280px) / 2);
+                        /* margin-left: calc((100vw - 280px) / 2); */
                     }
                 }
             </style>
-            <div id="container" class="vertical layout">
-                <div class="horizontal layout justified">
-                    <p>One time</p>
-                    <paper-toggle-button id="toggleRepeated" checked="{{isRepeated}}" on-active-changed="_changeIsRepeated"></paper-toggle-button>
-                    <p>Repeated</p>
-                </div>
-                <div id="containerTime" class="horizontal layout">
-                    <paper-dropdown-menu id="dropdownHour" label="Hour" noink no-animations>
-                        <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="name" selected="{{choosenHour}}" on-selected-changed="_changeTime">
-                            <dom-repeat items="{{hours}}" as="hour">
-                                <template>
+            <paper-dialog id="scheduleDialog">
+                <div id="container" class="vertical layout">
+                    <div class="horizontal layout justified">
+                        <p>One time</p>
+                        <paper-toggle-button id="toggleRepeated" checked="{{isRepeated}}" on-active-changed="_changeIsRepeated"></paper-toggle-button>
+                        <p>Repeated</p>
+                    </div>
+                    <div id="containerTime" class="horizontal layout">
+                        <paper-dropdown-menu id="dropdownHour" label="Hour" noink no-animations>
+                            <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="name" selected="{{choosenHour}}" on-selected-changed="_changeTime">
+                                <template is="dom-repeat" items="{{hours}}" as="hour">
                                     <paper-item name="{{hour}}">{{hour}}</paper-item>
                                 </template>
-                            </dom-repeat>
-                            <!-- <template is="dom-repeat" items="{{hours}}" as="hour">
-                                <paper-item name="{{hour}}">{{hour}}</paper-item>
-                            </template> -->
-                        </paper-listbox>
-                    </paper-dropdown-menu>
-                    <paper-dropdown-menu id="dropdownMinute" label="Minute" noink no-animations>
-                        <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="name" selected="{{choosenMinute}}" on-selected-changed="_changeTime">
-                            <template is="dom-repeat" items="{{minutes}}" as="minute">
-                                <paper-item name="{{minute}}">{{minute}}</paper-item>
-                            </template>
-                        </paper-listbox>
-                    </paper-dropdown-menu>
-                    <paper-dropdown-menu id="dropdownPeriod" label="AM/PM" noink no-animations>
-                        <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="name" selected="{{choosenPeriod}}" on-selected-changed="_changeTime">
-                            <paper-item name="AM">AM</paper-item>
-                            <paper-item name="PM">PM</paper-item>
-                        </paper-listbox>
-                    </paper-dropdown-menu>
-                </div>
-                <div id="containerDate" class="horizontal layout">
-                    <paper-dropdown-menu id="dropdownMonth" label="Month" noink no-animations>
-                        <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="name" selected="{{choosenMonth}}" on-selected-changed="calculateYear">
-                            <template is="dom-repeat" items="{{months}}" as="month">
-                                <paper-item name="{{month}}">{{month}}</paper-item>
-                            </template>
-                        </paper-listbox>
-                    </paper-dropdown-menu>
-                    <paper-dropdown-menu id="dropdownDate" label="Date" noink no-animations>
-                        <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="name" selected="{{choosenDate}}" on-selected-changed="calculateYear">
-                            <template is="dom-repeat" items="{{dates}}" as="date">
-                                <paper-item name="{{date}}">{{date}}</paper-item>
-                            </template>
-                        </paper-listbox>
-                    </paper-dropdown-menu>
-                    <paper-input disabled id="inputYear" label="Year" value="{{calculatedYear}}"></paper-input>
-                </div>
-                <div id="containerDay" class="horizontal layout justified">
-                    <div class="vertical layout"><paper-checkbox id="checkbox1" name="1" on-active-changed="_changeDay"></paper-checkbox>Mon</div>
-                    <div class="vertical layout"><paper-checkbox id="checkbox2" name="2" on-active-changed="_changeDay"></paper-checkbox>Tue</div>
-                    <div class="vertical layout"><paper-checkbox id="checkbox3" name="3" on-active-changed="_changeDay"></paper-checkbox>Wed</div>
-                    <div class="vertical layout"><paper-checkbox id="checkbox4" name="4" on-active-changed="_changeDay"></paper-checkbox>Thu</div>
-                    <div class="vertical layout"><paper-checkbox id="checkbox5" name="5" on-active-changed="_changeDay"></paper-checkbox>Fri</div>
-                    <div class="vertical layout"><paper-checkbox id="checkbox6" name="6" on-active-changed="_changeDay"></paper-checkbox>Sat</div>
-                    <div class="vertical layout"><paper-checkbox id="checkbox7" name="7" on-active-changed="_changeDay"></paper-checkbox>Sun</div>
-                </div>
-                <paper-dropdown-menu id="dropdownAppliance" label="Appliance to schedule" noink no-animations>
-                    <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="name" selected="{{choosenAppliance}}" on-selected-changed="_changeAppliance">
-                        <template is="dom-repeat" items="{{remotes}}" as="remote">
-                            <paper-item name="{{remote}}">{{remote}}</paper-item>
-                        </template>
-                    </paper-listbox>
-                </paper-dropdown-menu>
-                <div class="horizontal layout justified">
-                    <p id="textON">Turn appliance OFF</p>
-                    <paper-toggle-button id="toggleON" checked="{{isON}}" on-active-changed="_changeIsON"></paper-toggle-button>
-                </div>
-                <div id="containerCommand">
-                    <div id="containerAC" class="horizontal layout justified">
-                        <paper-dropdown-menu id="dropdownMode" label="Mode" noink no-animations>
-                            <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="mode" selected="{{choosenMode}}" on-selected-changed="_changeMode">
-                                <template is="dom-repeat" items="{{modeTitle}}" as="mode">
-                                    <paper-item mode="{{mode}}">{{mode}}</paper-item>
+                            </paper-listbox>
+                        </paper-dropdown-menu>
+                        <paper-dropdown-menu id="dropdownMinute" label="Minute" noink no-animations>
+                            <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="name" selected="{{choosenMinute}}" on-selected-changed="_changeTime">
+                                <template is="dom-repeat" items="{{minutes}}" as="minute">
+                                    <paper-item name="{{minute}}">{{minute}}</paper-item>
                                 </template>
                             </paper-listbox>
                         </paper-dropdown-menu>
-                        <paper-dropdown-menu id="dropdownFan" label="Fan speed" noink no-animations>
-                            <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="fan" selected="{{choosenFan}}" on-selected-changed="">
-                                <template is="dom-repeat" items="{{fanTitle}}" as="fan">
-                                    <paper-item fan="{{fan}}">{{fan}}</paper-item>
-                                </template>
-                            </paper-listbox>
-                        </paper-dropdown-menu>
-                        <paper-dropdown-menu id="dropdownTemp" label="Temperature" noink no-animations>
-                            <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="temp" selected="{{choosenTemp}}" on-selected-changed="">
-                                <template is="dom-repeat" items="{{temps}}" as="temp">
-                                    <paper-item temp="{{temp}}">{{temp}}</paper-item>
-                                </template>
+                        <paper-dropdown-menu id="dropdownPeriod" label="AM/PM" noink no-animations>
+                            <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="name" selected="{{choosenPeriod}}" on-selected-changed="_changeTime">
+                                <paper-item name="AM">AM</paper-item>
+                                <paper-item name="PM">PM</paper-item>
                             </paper-listbox>
                         </paper-dropdown-menu>
                     </div>
+                    <div id="containerDate" class="horizontal layout">
+                        <paper-dropdown-menu id="dropdownMonth" label="Month" noink no-animations>
+                            <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="name" selected="{{choosenMonth}}" on-selected-changed="calculateYear">
+                                <template is="dom-repeat" items="{{months}}" as="month">
+                                    <paper-item name="{{month}}">{{month}}</paper-item>
+                                </template>
+                            </paper-listbox>
+                        </paper-dropdown-menu>
+                        <paper-dropdown-menu id="dropdownDate" label="Date" noink no-animations>
+                            <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="name" selected="{{choosenDate}}" on-selected-changed="calculateYear">
+                                <template is="dom-repeat" items="{{dates}}" as="date">
+                                    <paper-item name="{{date}}">{{date}}</paper-item>
+                                </template>
+                            </paper-listbox>
+                        </paper-dropdown-menu>
+                        <paper-input disabled id="inputYear" label="Year" value="{{calculatedYear}}"></paper-input>
+                    </div>
+                    <div id="containerDay" class="horizontal layout justified">
+                        <div class="vertical layout"><paper-checkbox id="checkbox1" name="1" on-active-changed="_changeDay"></paper-checkbox>Mon</div>
+                        <div class="vertical layout"><paper-checkbox id="checkbox2" name="2" on-active-changed="_changeDay"></paper-checkbox>Tue</div>
+                        <div class="vertical layout"><paper-checkbox id="checkbox3" name="3" on-active-changed="_changeDay"></paper-checkbox>Wed</div>
+                        <div class="vertical layout"><paper-checkbox id="checkbox4" name="4" on-active-changed="_changeDay"></paper-checkbox>Thu</div>
+                        <div class="vertical layout"><paper-checkbox id="checkbox5" name="5" on-active-changed="_changeDay"></paper-checkbox>Fri</div>
+                        <div class="vertical layout"><paper-checkbox id="checkbox6" name="6" on-active-changed="_changeDay"></paper-checkbox>Sat</div>
+                        <div class="vertical layout"><paper-checkbox id="checkbox7" name="7" on-active-changed="_changeDay"></paper-checkbox>Sun</div>
+                    </div>
+                    <paper-dropdown-menu id="dropdownAppliance" label="Appliance to schedule" noink no-animations>
+                        <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="name" selected="{{choosenAppliance}}" on-selected-changed="_changeAppliance">
+                            <template is="dom-repeat" items="{{remotes}}" as="remote">
+                                <paper-item name="{{remote}}">{{remote}}</paper-item>
+                            </template>
+                        </paper-listbox>
+                    </paper-dropdown-menu>
+                    <div class="horizontal layout justified">
+                        <p id="textON">Turn appliance OFF</p>
+                        <paper-toggle-button id="toggleON" checked="{{isON}}" on-active-changed="_changeIsON"></paper-toggle-button>
+                    </div>
+                    <div id="containerCommand">
+                        <div id="containerAC" class="horizontal layout justified">
+                            <paper-dropdown-menu id="dropdownMode" label="Mode" noink no-animations>
+                                <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="mode" selected="{{choosenMode}}" on-selected-changed="_changeMode">
+                                    <template is="dom-repeat" items="{{modeTitle}}" as="mode">
+                                        <paper-item mode="{{mode}}">{{mode}}</paper-item>
+                                    </template>
+                                </paper-listbox>
+                            </paper-dropdown-menu>
+                            <paper-dropdown-menu id="dropdownFan" label="Fan speed" noink no-animations>
+                                <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="fan" selected="{{choosenFan}}" on-selected-changed="">
+                                    <template is="dom-repeat" items="{{fanTitle}}" as="fan">
+                                        <paper-item fan="{{fan}}">{{fan}}</paper-item>
+                                    </template>
+                                </paper-listbox>
+                            </paper-dropdown-menu>
+                            <paper-dropdown-menu id="dropdownTemp" label="Temperature" noink no-animations>
+                                <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="temp" selected="{{choosenTemp}}" on-selected-changed="">
+                                    <template is="dom-repeat" items="{{temps}}" as="temp">
+                                        <paper-item temp="{{temp}}">{{temp}}</paper-item>
+                                    </template>
+                                </paper-listbox>
+                            </paper-dropdown-menu>
+                        </div>
+                    </div>
+                    <paper-material id="materialNote">
+                        <p>All schedule is (currently) set to GMT+7 timezone.</p>
+                    </paper-material>
+                    <paper-button id="btnAdd" raised on-tap="_tapAdd">Save schedule</paper-button>
+                    <div class="horizontal layout center-justified">
+                        <paper-spinner id="spinner" active></paper-spinner>
+                    </div>
                 </div>
-                <paper-material id="materialNote">
-                    <p>All schedule is (currently) set to GMT+7 timezone.</p>
-                </paper-material>
-                <paper-button id="btnAdd" raised on-tap="_tapAdd">Add schedule</paper-button>
-                <div class="horizontal layout center-justified">
-                    <paper-spinner id="spinner" active></paper-spinner>
+            </paper-dialog>
+            <template is="dom-repeat" items="{{schedules}}" as="schedule">
+                <paper-card>
+                    <div class="card-content">
+                        <div class="horizontal layout justified">
+                            <div class="card-heading">[[schedule.titleRemote]]</div>
+                            <div class="card-time">[[schedule.titleTime]]</div>
+                        </div>
+                        <div>[[schedule.titleCommand]]</div>
+                        <div>[[schedule.titleDay]]</div>
+                    </div>
+                    <div class="card-actions horizontal layout end-justified">
+                        <paper-button title="[[schedule.id]]" id="btnDeleteSchedule" on-tap="_tapDeleteSchedule">Delete</paper-button>
+                    </div>
+                </paper-card>
+            </template>
+            <div class="rooms-container">
+                <div class="paper-container">
+                    <paper-material elevation="0" class="add-new-schedule">
+                        <mwc-button
+                            label="Add new schedule"
+                            icon="add"
+                            on-click="_showSchedule">
+                        </mwc-button>
+                    </paper-material>
                 </div>
             </div>
+            <paper-dialog id="test">
+                <div class="horizontal layout around-justified">
+                    <paper-button title="01">1</paper-button>
+                    <paper-button title="02">2</paper-button>
+                    <paper-button title="03">3</paper-button>
+                </div>
+            </paper-dialog>
             <paper-toast id="toast"></paper-toast>
         `;
     }
@@ -268,6 +347,25 @@ class AddSchedule extends connect(store)(PolymerElement) {
                 type: Array,
                 value: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
             },
+            schedules: {
+                type: Array,
+                value: [
+                    {
+                        id: '-LHXCq_MsS_323O4vVTr',
+                        titleCommand: 'Turn ON',
+                        titleDay: 'January 01 2019, 01:00',
+                        titleRemote: 'TV Sony Dummy',
+                        titleTime: '01:00',
+                    },
+                    {
+                        id: '-LHXk-abfalkkPfozw-5',
+                        titleCommand: 'Turn ON',
+                        titleDay: 'January 01 2019, 10:00',
+                        titleRemote: 'TV Samsung Dummy',
+                        titleTime: '10:00',
+                    }
+                ],
+            },
 
             manifest: Object,
             mode: Number,
@@ -310,6 +408,15 @@ class AddSchedule extends connect(store)(PolymerElement) {
     ready() {
         super.ready();
         this.stateInitial();
+    }
+
+    _showSchedule() {
+        this.$.scheduleDialog.open();
+    }
+
+    _tapDeleteSchedule(e) {
+        const scheduleID = e.target.title;
+        store.dispatch(removeSchedule(scheduleID));
     }
 
     _OKtime(OK) {
