@@ -163,7 +163,7 @@ class AddSchedule extends connect(store)(PolymerElement) {
 
                 @media (max-width: 500px) {
                     #container {
-                        width: 280px;
+                        width: 250px;
                         /* margin-left: calc((100vw - 280px) / 2); */
                     }
                 }
