@@ -12,7 +12,6 @@ import {installOfflineWatcher} from 'pwa-helpers/network';
 import {installMediaQueryWatcher} from 'pwa-helpers/media-query';
 import {updateMetadata} from 'pwa-helpers/metadata';
 
-import {env} from '../configs';
 import firebase from '../firebase';
 import {store} from '../store';
 import {setCurrentUser, authenticateUser, deauthenticateUser} from '../actions/app';
@@ -23,7 +22,8 @@ import './snack-bar';
 import './main-help';
 import './not-found';
 import './main-account';
-import './activity-main';
+import './main-activity';
+import './main-metrics';
 import './main-rooms';
 import './main-settings';
 import './settings-vision';
@@ -31,6 +31,7 @@ import './settings-remote';
 
 import './remote-ac';
 import './remote-tv';
+import './remote-vision';
 
 import './room-add-schedule';
 
@@ -68,8 +69,9 @@ class MainApp extends connect(store)(LitElement) {
             <main class="main-content">
                 <main-auth class="page" active?="${includes(_page, 'auth')}"></main-auth>
                 <main-dashboard class="page" active?="${includes(_page, 'dashboard')}">
-                    <activity-main class="page" active?="${includes(_page, 'activity') || onIndex('dashboard')}"></activity-main>
-                    <main-rooms class="page" active?="${includes(_page, 'rooms')}"></main-rooms>
+                    <main-rooms class="page" active?="${includes(_page, 'rooms') || onIndex('dashboard')}"></main-rooms>
+                    <main-activity class="page" active?="${includes(_page, 'activity')}"></main-activity>
+                    <main-metrics class="page" active?="${includes(_page, 'metrics')}"></main-metrics>
                     <main-settings class="page" active?="${includes(_page, 'settings')}"></main-settings>
                     <settings-vision class="page" active?="${includes(_page, 'setting-vision')}"></settings-vision>
                     <settings-remote class="page" active?="${includes(_page, 'setting-remote')}"></settings-remote>
@@ -77,6 +79,7 @@ class MainApp extends connect(store)(LitElement) {
                     <main-help class="page" active?="${includes(_page, 'help')}"></main-help>
                     <remote-ac class="page" active?="${includes(_page, 'remote-ac')}"></remote-ac>
                     <remote-tv class="page" active?="${includes(_page, 'remote-tv')}"></remote-tv>
+                    <remote-vision class="page" active?="${includes(_page, 'remote-vision')}"></remote-vision>
                     <room-add-schedule class="page" active?="${includes(_page, 'add-schedule')}"></room-add-schedule>
                 </main-dashboard>
             </main>

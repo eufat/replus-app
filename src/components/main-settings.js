@@ -96,12 +96,58 @@ export default class MainSettings extends connect(store)(LitElement) {
             });
         };
 
+        const cameraDevices = (devices, rooms) => {
+            return devices.map((device, index) => {
+                if (device.type == 'replus-vision') {
+                    return html`
+                        <style>
+                            .settings-icon {
+                                color: #333333;
+                                padding-bottom: 5px;
+                            }
+                            .remote-icon {
+                                padding-right: 5px;
+                            }
+                            .device-type {
+                                display: inline !important;
+                            }
+                        </style>
+                        <paper-item>
+                            <paper-item-body>
+                                <iron-icon class="remote-icon" src=""></iron-icon>
+                                <p class="device-type">${device.type}</p>
+                            </paper-item-body>
+                            <div class="settings-right">
+                                <div class="device-pill">
+                                    <span class="pill-content">${device.name}</span>
+                                </div>
+                                <a href="/dashboard/setting-vision">
+                                    <iron-icon class="settings-icon" icon="icons:settings">
+                                </a>
+                            </div>
+                        </paper-item>
+                    `;
+                }
+            });
+        };
+
         const remoteValues = _.values(rooms);
         const remoteItems = remoteValues.map((item, roomIndex) => {
             return html`
                 <paper-material elevation="0">
                     <div class="room-devices">
                         ${remoteDevices(_.values(item.devices), item)}
+                    </div>
+                </paper-material>
+            `;
+        });
+
+        const cameraValues = _.values(rooms);
+        const cameraItems = cameraValues.map((item, roomIndex) => {
+            return html`
+                <paper-material elevation="0">
+                    <div class="room-devices">
+                        ${cameraDevices(_.values(item.devices), item)}
                     </div>
                 </paper-material>
             `;
@@ -164,23 +210,7 @@ export default class MainSettings extends connect(store)(LitElement) {
                     <div>Replus Vision</div>
                 </paper-item-body>
             </paper-item>
-            <paper-material elevation="0">
-                <div class="room-devices">
-                    <paper-item>
-                        <paper-item-body>
-                            <p class="device-type">replus-vision-dummy</p>
-                        </paper-item-body>
-                        <div class="settings-right">
-                            <div class="device-pill">
-                                <span class="pill-content">345A</span>
-                            </div>
-                            <a href="/dashboard/setting-vision" on-click="${() => this._handleDeviceClick()}">
-                                <iron-icon class="settings-icon" icon="icons:settings">
-                            </a>
-                        </div>
-                    </paper-item>
-                </div>
-            </paper-material>
+            ${cameraItems}
         </div>
     `;
     }

@@ -27,7 +27,7 @@ import {installMediaQueryWatcher} from 'pwa-helpers/media-query';
 
 import {store} from '../store.js';
 import {navigate, updateOffline, updateLayout, deauthenticateUser, showSnackbar, closeBack} from '../actions/app.js';
-import {toTitleCase} from '../utils.js';
+import {toTitleCase, pageToTitle} from '../utils.js';
 
 const get = _.get;
 
@@ -82,7 +82,7 @@ class MainDashboard extends connect(store)(LitElement) {
                     width: 100%;
                     position: fixed;
                     border-top: 1px solid #ccc;
-                    height: 50px;
+                    height: 40px;
                     background-color: white;
                     padding-top: 10px;
                     bottom: 0;
@@ -118,7 +118,7 @@ class MainDashboard extends connect(store)(LitElement) {
                   <app-header fixed effects="waterfall" slot="header">
                       <app-toolbar>
                         ${_backable ? html`<paper-icon-button on-click="${() => this._onBack()}" icon="arrow-back"></paper-icon-button>` : null}
-                          <div main-title>Replus App</div>
+                          <div main-title>${toTitleCase(pageToTitle(_page))}</div>
                         <paper-icon-button
                             class="more-button"
                             icon="more-vert"
@@ -132,18 +132,23 @@ class MainDashboard extends connect(store)(LitElement) {
                   <slot></slot>
                   <paper-tabs selected="0" align-bottom no-bar>
                     <paper-tab>
-                    <a href="/dashboard/activity">
+                    <a href="/dashboard/rooms">
                         <div class="tab-menu">
-                            <div class="tab-menu-icon"><iron-icon icon="icons:view-day"></iron-icon></div>
-                            <p>Activity</p>
+                            <div class="tab-menu-icon"><iron-icon icon="icons:weekend"></iron-icon></div>
                         </div>
                     </a>
                     </paper-tab>
                     <paper-tab>
-                    <a href="/dashboard/rooms">
+                    <a href="/dashboard/activity">
                         <div class="tab-menu">
-                            <div class="tab-menu-icon"><iron-icon icon="icons:weekend"></iron-icon></div>
-                            <p>Rooms</p>
+                            <div class="tab-menu-icon"><iron-icon icon="icons:view-day"></iron-icon></div>
+                        </div>
+                    </a>
+                    </paper-tab>
+                    <paper-tab>
+                    <a href="/dashboard/metrics">
+                        <div class="tab-menu">
+                            <div class="tab-menu-icon"><iron-icon icon="icons:timeline"></iron-icon></div>
                         </div>
                     </a>
                     </paper-tab>
@@ -151,7 +156,6 @@ class MainDashboard extends connect(store)(LitElement) {
                     <a href="/dashboard/account">
                         <div class="tab-menu">
                             <div class="tab-menu-icon"><iron-icon icon="icons:account-circle"></iron-icon></div>
-                            <p>Account</p>
                         </div>
                     </a>
                     </paper-tab>
@@ -159,7 +163,6 @@ class MainDashboard extends connect(store)(LitElement) {
                     <a href="/dashboard/settings">
                         <div class="tab-menu">
                             <div class="tab-menu-icon"><iron-icon icon="icons:settings"></iron-icon></div>
-                            <p>Settings</p>
                         </div>
                     </a>
                     </paper-tab>

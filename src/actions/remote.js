@@ -192,6 +192,25 @@ export const addDevice = (room) => async (dispatch, getState) => {
     }
 };
 
+export const addCamera = (room) => async (dispatch, getState) => {
+    dispatch(showProgress());
+    const uid = get(getState(), 'app.currentUser.uid');
+    const deviceID = get(getState(), 'remote.newDevice.deviceID');
+    const deviceCode = get(getState(), 'remote.newDevice.deviceCode');
+    const type = 'replus-vision';
+
+    try {
+        await coreClient().post('/device-register', qs({uid, type, room: room.id, deviceID, deviceCode}));
+        dispatch(showSnackbar(`Device ${deviceID} registered.`));
+        dispatch(fetchDevices());
+        dispatch(closeProgress());
+    } catch (error) {
+        errorHandler.report(error);
+        dispatch(showSnackbar(`Failed to register ${deviceID}.`));
+        dispatch(closeProgress());
+    }
+};
+
 export const removeDevice = (room, deviceID, deviceCode) => async (dispatch, getState) => {
     dispatch(showProgress());
     const uid = get(getState(), 'app.currentUser.uid');

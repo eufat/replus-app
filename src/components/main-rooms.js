@@ -7,7 +7,8 @@ import '@material/mwc-button';
 import '@material/mwc-icon';
 import '@polymer/paper-input/paper-input';
 
-import {setRooms, fetchRooms, addRoom, removeRoom, setNewRemote, addRemote, removeRemote, addDevice, setNewDevice, setActiveRemote, setActiveRoom} from '../actions/remote';
+import {setRooms, fetchRooms, addRoom, removeRoom, setNewRemote, addRemote, removeRemote, addDevice, addCamera, setNewDevice, setActiveRemote, setActiveRoom} from '../actions/remote';
+import {setActiveVision} from '../actions/vision';
 import {getNewRoomTemplate, brandsList, toTitleCase} from '../utils';
 import {store} from '../store';
 
@@ -124,12 +125,20 @@ export default class MainRooms extends connect(store)(LitElement) {
         store.dispatch(addRemote(roomID));
     }
 
-    _activeRemote(remote) {
+    _handleNewCameraAdd(roomID) {
+        store.dispatch(addCamera(roomID));
+    }
+
+    _handleActiveRemote(remote) {
         store.dispatch(setActiveRemote(remote));
     }
 
-    _activeRoom(room) {
+    _handleActiveRoom(room) {
         store.dispatch(setActiveRoom(room));
+    }
+
+    _handleActiveVision(vision) {
+        store.dispatch(setActiveVision(vision));
     }
 
     _render({rooms, newRemote, newDevice}) {
@@ -158,7 +167,7 @@ export default class MainRooms extends connect(store)(LitElement) {
                                         <p>${toTitleCase(remote.name)}</p>
                                     </div>`
                                 : html`
-                                <a href="/dashboard/remote-${remote.name.substring(0, 2)}" on-click="${() => this._activeRemote(remote)}">
+                                <a href="/dashboard/remote-${remote.name.substring(0, 2)}" on-click="${() => this._handleActiveRemote(remote)}">
                                     <div class="remote-item">
                                         <img class="appliance-icon" src="images/${applicanceType}-icon.png"/>
                                         <p>${toTitleCase(remote.name)}</p>
@@ -169,26 +178,34 @@ export default class MainRooms extends connect(store)(LitElement) {
             });
         };
 
-        const roomCameras = (cameras, roomIndex) => {
-            return _.mapValues(cameras, (cameraValue, cameraKey, cameraObj) => {
+        const roomCameras = (devices, roomIndex) => {
+            return devices.map((device) => {
                 const onEdit = rooms[roomIndex].onEdit;
 
-                return html`
-                    <div class="camera-item">
-                        ${
-                            onEdit
-                                ? html`
-                                    <mwc-button
-                                        label="Remove"
-                                        icon="close"
-                                        on-click="${() => this._removeRemote(roomIndex, cameraKey)}">
-                                    </mwc-button>`
-                                : null
-                        }
-                        <img class="appliance-icon" src="images/cam-icon.png"/>
-                        <p>${toTitleCase(cameraValue)}</p>
-                    </div>
-                `;
+                if (device.type === 'replus-vision') {
+                    return html`
+                            ${
+                                onEdit
+                                    ? html`
+                                        <div class="remote-item">
+                                            <mwc-button
+                                                label="Remove"
+                                                icon="close"
+                                                on-click="${() => this._removeDevice(roomIndex, roomIndex)}">
+                                            </mwc-button>
+                                            <img class="appliance-icon" src="images/cam-icon.png"/>
+                                            <p>Camera ${device.name}</p>
+                                        </div>`
+                                    : html`
+                                    <a href="/dashboard/remote-vision"  on-click="${() => this._handleActiveVision(device.name)}">
+                                        <div class="remote-item">
+                                            <img class="appliance-icon" src="images/cam-icon.png"/>
+                                            <p>Camera ${device.name}</p>
+                                        </div>
+                                    </a>`
+                            }
+                    `;
+                }
             });
         };
 
@@ -272,12 +289,26 @@ export default class MainRooms extends connect(store)(LitElement) {
                 <paper-dialog id="add-new-camera-modal-${roomIndex}">
                     <div class="modal-content">
                         <label id="appliance-type">Add Camera: Replus Vision</label>
+                        <paper-input
+                            label="Device ID"
+                            always-float-label
+                            value="${get(this.newDevice, 'deviceID')}"
+                            on-input="${(e) => this._handleNewDeviceChange(e, 'deviceID')}"
+                        >
+                        </paper-input>
+                        <paper-input
+                            label="Device Activation Code"
+                            always-float-label
+                            value="${get(newDevice, 'deviceCode')}"
+                            on-input="${(e) => this._handleNewDeviceChange(e, 'deviceCode')}"
+                        >
+                        </paper-input>
                         <div class="buttons" on-click="${() => this._handleNewCameraAdd(item.id)}">
                             <mwc-button dialog-confirm label="Add This Camera"></mwc-button>
                         </div>
                     </div>
                 </paper-dialog>
-                <paper-material elevation="0">
+                <paper-material elevation="1">
                     <div class="room-title">
                         ${
                             onEdit
@@ -305,7 +336,7 @@ export default class MainRooms extends connect(store)(LitElement) {
                                         icon="edit"
                                         on-click="${() => this._enterOnEdit(roomIndex)}">
                                     </mwc-button>
-                                    <a href="/dashboard/add-schedule" on-click="${() => this._activeRoom(room)}">
+                                    <a href="/dashboard/add-schedule" on-click="${() => this._handleActiveRoom(room)}">
                                         <mwc-button
                                             label="Schedule"
                                             icon="calendar_today">
@@ -314,7 +345,7 @@ export default class MainRooms extends connect(store)(LitElement) {
                         }
                     </div>
                     <div class="room-remotes">
-                        ${_.values(roomCameras(item.cameras, roomIndex))}
+                        ${_.values(roomCameras(item.devices, roomIndex))}
                         ${_.values(roomRemotes(item.remotes, roomIndex))}
                         ${
                             onEdit
@@ -452,11 +483,6 @@ export default class MainRooms extends connect(store)(LitElement) {
                     display: inline-block;
                 }
 
-                .add-new-room {
-                    text-align: center;
-
-                }
-
                 .appliance-icon {
                     height: 50px;
                     padding-top: 15px;
@@ -488,17 +514,22 @@ export default class MainRooms extends connect(store)(LitElement) {
 
                 paper-material {
                     display: block;
-                    margin: 20px;
-                    padding: 10px 20px;
+                    margin: 0 0 20px;
+                    padding: 10px 20px 20px;
                     background-color: white;
-                    border-radius: 5px;
+                }
 
+                paper-material.add-new-room {
+                    text-align: center;
+                    margin: 20px;
+                    padding: 10px !important;
+                    border-radius: 5px;
                 }
             </style>
             <div class="rooms-container">
                 <div class="paper-container">
                     ${roomsItems}
-                    <paper-material elevation="0" class="add-new-room">
+                    <paper-material elevation="1" class="add-new-room">
                         <mwc-button
                             label="Add new room"
                             icon="add"

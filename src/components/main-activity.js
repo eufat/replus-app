@@ -5,7 +5,8 @@ import '@polymer/paper-icon-button';
 
 import {env} from '../configs.js';
 import {getDateFromFilename} from '../utils.js';
-import {getEventsDummy} from '../dummy.js';
+import '@polymer/iron-icons/iron-icons';
+import {getEventsDummy, getRemoteActivityDummy} from '../dummy.js';
 
 const VISION_ACTIVITY = env.VISION_ACTIVITY;
 
@@ -89,8 +90,46 @@ export default class activityMain extends LitElement {
             });
         };
 
-        const activityItems = eventsItems(activityEvents);
-        const storedItems = eventsItems(storedEvents);
+        const data = [];
+
+        // activityStatus = 'Connected';
+        // const data = getRemoteActivityDummy();
+
+        const activityItems = data.map((item) => {
+            const messageIcon = () => {
+                switch (item.event) {
+                    case 'increase_temp':
+                        return html`<iron-icon icon="icons:icons:arrow-upward" />`;
+                    case 'decrease_temp':
+                        return html`<iron-icon icon="icons:icons:arrow-downward" />`;
+                    case 'turn_on':
+                        return html`<iron-icon icon="icons:power-settings-new" />`;
+                    case 'turn_off':
+                        return html`<iron-icon icon="icons:power-settings-new" />`;
+                    case 'add_schedule':
+                        return html`<iron-icon icon="icons:date-range" />`;
+                    case 'remove_schedule':
+                        return html`<iron-icon icon="icons:date-range" />`;
+                }
+            };
+
+            const formattedDate = dayjs(getDateFromFilename(item.date)).format('HH:mm:ss A DD MMM YYYY');
+
+            return html`
+                <div class="activity-group-title">
+                    ${activityIcon}
+                    <iron-icon icon="icons:schedule"></iron-icon>
+                    ${formattedDate}
+                </div>
+                <paper-material class="activity-group">
+                    <h4>${messageIcon()} ${item.message}</h4>
+                    <p>at ${item.room}</p>
+                </paper-material>
+            `;
+        });
+
+        // const activityItems = eventsItems(activityEvents);
+        // const storedItems = eventsItems(storedEvents);
 
         return html`
             <style>
@@ -178,6 +217,10 @@ export default class activityMain extends LitElement {
                     margin-top: 10px;
                     list-style-type: none;
                 }
+
+                p {
+                    margin: 0;
+                }
             </style>
             <div class="container">
                     ${
@@ -194,4 +237,4 @@ export default class activityMain extends LitElement {
     }
 }
 
-customElements.define('activity-main', activityMain);
+customElements.define('main-activity', activityMain);

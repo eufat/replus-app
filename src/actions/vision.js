@@ -19,6 +19,13 @@ export const fetchSettings = (uid, dev_name) => (dispatch, getState) => {
     });
 };
 
+export const setActiveVision = (name) => (dispatch, getState) => {
+    dispatch({
+        type: 'SET_ACTIVE_VISION',
+        activeVision: name,
+    });
+};
+
 export const saveSettings = () => async (dispatch, getState) => {
     const uid = getState().app.currentUser.uid;
     const settings = getState().vision.settings;

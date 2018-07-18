@@ -20,6 +20,29 @@ export function getEventsDummy() {
     ];
 }
 
+export function getRemoteActivityDummy() {
+    return [
+        {
+            message: 'AC Panasonic temp increased to 24°C',
+            event: 'increase_temp',
+            room: 'Mom Room',
+            date: '11-08-06',
+        },
+        {
+            message: 'AC Panasonic has been turned on',
+            event: 'turn_on',
+            room: 'Mom Room',
+            date: '11-08-06',
+        },
+        {
+            message: 'Schedule was added to AC Panasonic',
+            room: 'Mom Room',
+            event: 'add_schedule',
+            date: '11-08-06',
+        },
+    ];
+}
+
 export function getRoomsDummy() {
     return [
         {
