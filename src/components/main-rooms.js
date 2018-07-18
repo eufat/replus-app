@@ -308,7 +308,7 @@ export default class MainRooms extends connect(store)(LitElement) {
                         </div>
                     </div>
                 </paper-dialog>
-                <paper-material elevation="0">
+                <paper-material elevation="1">
                     <div class="room-title">
                         ${
                             onEdit
@@ -483,11 +483,6 @@ export default class MainRooms extends connect(store)(LitElement) {
                     display: inline-block;
                 }
 
-                .add-new-room {
-                    text-align: center;
-
-                }
-
                 .appliance-icon {
                     height: 50px;
                     padding-top: 15px;
@@ -519,17 +514,22 @@ export default class MainRooms extends connect(store)(LitElement) {
 
                 paper-material {
                     display: block;
-                    margin: 20px;
-                    padding: 10px 20px;
+                    margin: 0 0 20px;
+                    padding: 10px 20px 20px;
                     background-color: white;
-                    border-radius: 5px;
+                }
 
+                paper-material.add-new-room {
+                    text-align: center;
+                    margin: 20px;
+                    padding: 10px !important;
+                    border-radius: 5px;
                 }
             </style>
             <div class="rooms-container">
                 <div class="paper-container">
                     ${roomsItems}
-                    <paper-material elevation="0" class="add-new-room">
+                    <paper-material elevation="1" class="add-new-room">
                         <mwc-button
                             label="Add new room"
                             icon="add"

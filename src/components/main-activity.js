@@ -90,6 +90,9 @@ export default class activityMain extends LitElement {
             });
         };
 
+        const data = [];
+
+        // activityStatus = 'Connected';
         // const data = getRemoteActivityDummy();
 
         const activityItems = data.map((item) => {
