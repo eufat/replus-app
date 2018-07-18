@@ -90,7 +90,7 @@ export default class activityMain extends LitElement {
             });
         };
 
-        const data = getRemoteActivityDummy();
+        // const data = getRemoteActivityDummy();
 
         const activityItems = data.map((item) => {
             const messageIcon = () => {
@@ -104,6 +104,8 @@ export default class activityMain extends LitElement {
                     case 'turn_off':
                         return html`<iron-icon icon="icons:power-settings-new" />`;
                     case 'add_schedule':
+                        return html`<iron-icon icon="icons:date-range" />`;
+                    case 'remove_schedule':
                         return html`<iron-icon icon="icons:date-range" />`;
                 }
             };
@@ -219,7 +221,7 @@ export default class activityMain extends LitElement {
             </style>
             <div class="container">
                     ${
-                        activityStatus !== 'Connected'
+                        activityStatus === 'Connected'
                             ? html`
                                 <div class="activities-listing activities-listing-padded">${activityItems}</div>`
                             : html`

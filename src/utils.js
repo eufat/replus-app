@@ -107,15 +107,16 @@ export function qs(obj) {
 }
 
 export function toTitleCase(str) {
-    return str.replace(/\w\S*/g, function(txt) {
-        const shouldUpperCase = upperCases.indexOf(txt) > -1;
-
-        if (shouldUpperCase) {
-            return txt.toUpperCase();
-        } else {
-            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-        }
-    });
+    if (str) {
+        return str.replace(/\w\S*/g, function(txt) {
+            const shouldUpperCase = upperCases.indexOf(txt) > -1;
+            if (shouldUpperCase) {
+                return txt.toUpperCase();
+            } else {
+                return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+            }
+        });
+    }
 }
 
 export function stringContain(str, target) {
@@ -142,4 +143,14 @@ export function getCookie(cname) {
         }
     }
     return '';
+}
+
+export function pageToTitle(page) {
+    if (page) {
+        let title = page.split('/')[1];
+        if (!title) {
+            title = 'rooms';
+        }
+        return title;
+    }
 }

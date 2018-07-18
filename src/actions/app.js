@@ -29,7 +29,7 @@ const loadPage = (page) => async (dispatch) => {
     let paths = page.split('/');
     paths = paths.filter((item) => item !== '');
 
-    const pageList = ['auth', 'dashboard', 'activity', 'rooms', 'settings', 'setting-vision', 'setting-remote', 'help', 'account', 'remote-ac', 'remote-tv', 'add-schedule'];
+    const pageList = ['auth', 'dashboard', 'activity', 'metrics', 'rooms', 'settings', 'setting-vision', 'setting-remote', 'help', 'account', 'remote-ac', 'remote-tv', 'add-schedule'];
 
     for (const path of paths) {
         if (!(pageList.indexOf(path) > -1)) {
@@ -45,6 +45,9 @@ const loadPage = (page) => async (dispatch) => {
                 break;
             case 'activity':
                 await import('../components/main-activity');
+                break;
+            case 'metrics':
+                await import('../components/main-metrics');
                 break;
             case 'rooms':
                 await import('../components/main-rooms');

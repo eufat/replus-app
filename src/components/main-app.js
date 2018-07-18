@@ -23,6 +23,7 @@ import './main-help';
 import './not-found';
 import './main-account';
 import './main-activity';
+import './main-metrics';
 import './main-rooms';
 import './main-settings';
 import './settings-vision';
@@ -68,8 +69,9 @@ class MainApp extends connect(store)(LitElement) {
             <main class="main-content">
                 <main-auth class="page" active?="${includes(_page, 'auth')}"></main-auth>
                 <main-dashboard class="page" active?="${includes(_page, 'dashboard')}">
-                    <main-activity class="page" active?="${includes(_page, 'activity') || onIndex('dashboard')}"></main-activity>
-                    <main-rooms class="page" active?="${includes(_page, 'rooms')}"></main-rooms>
+                    <main-rooms class="page" active?="${includes(_page, 'rooms') || onIndex('dashboard')}"></main-rooms>
+                    <main-activity class="page" active?="${includes(_page, 'activity')}"></main-activity>
+                    <main-metrics class="page" active?="${includes(_page, 'metrics')}"></main-metrics>
                     <main-settings class="page" active?="${includes(_page, 'settings')}"></main-settings>
                     <settings-vision class="page" active?="${includes(_page, 'setting-vision')}"></settings-vision>
                     <settings-remote class="page" active?="${includes(_page, 'setting-remote')}"></settings-remote>
