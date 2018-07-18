@@ -232,4 +232,4 @@ export default class activityMain extends LitElement {
     }
 }
 
-customElements.define('activity-main', activityMain);
+customElements.define('main-activity', activityMain);
