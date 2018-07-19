@@ -30,6 +30,10 @@ export const createClient = (type, token) => {
         headers['Content-Type'] = 'application/json';
     }
 
+    if (type === 'map') {
+        baseURL = env.GOOGLE_MAPS;
+    }
+
     if (token) {
         headers['accesstoken'] = token;
     }
@@ -66,4 +70,8 @@ export const coreSchedule = () => {
 export const visionClient = () => {
     const accessToken = getCookie('accessToken');
     return createClient('core', accessToken);
+};
+
+export const googleMaps = () => {
+    return createClient('map', '');
 };
