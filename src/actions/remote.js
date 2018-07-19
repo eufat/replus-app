@@ -1,4 +1,4 @@
-import {coreClient, corePost, coreIR, coreSchedule} from '../client';
+import {coreClient, corePost, coreIR, coreSchedule, googleMaps} from '../client';
 import {qs} from '../utils';
 import errorHandler from '../error';
 import {showSnackbar, showProgress, closeProgress, showBack, closeBack} from './app';
@@ -288,6 +288,26 @@ export const addSetting = (command, deviceID) => (dispatch, getState) => {
     const uid = get(getState(), 'app.currentUser.uid');
     try {
         coreClient().post('/device-setup', qs({uid, deviceID}));
+    } catch (error) {
+        errorHandler.report(error);
+    }
+};
+
+export const setLocation = (location) => async (dispatch, getState) => {
+    dispatch({
+        type: 'SET_LOCATION',
+        location,
+    });
+}
+
+export const getLocation = (address) => async (dispatch, getState) => {
+    try {
+        const response = await googleMaps().get('', {
+            params: {
+                address: address,
+            }
+        });
+        dispatch(setLocation(response.data));
     } catch (error) {
         errorHandler.report(error);
     }
