@@ -12,6 +12,7 @@ const initialState = {
     },
     settings: {},
     manifest: {},
+    location: {},
 };
 
 const remote = (state = initialState, action) => {
@@ -66,6 +67,11 @@ const remote = (state = initialState, action) => {
             return {
                 ...state,
                 manifest: action.manifest,
+            };
+        case 'SET_LOCATION':
+            return {
+                ...state,
+                location: action.location,
             };
         default:
             return state;
