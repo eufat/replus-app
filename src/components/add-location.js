@@ -11,6 +11,7 @@ import '@em-polymer/google-map/google-map';
 import {store} from '../store.js';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {getLocation} from '../actions/remote.js';
+import {env} from '../configs';
 
 // Import from lodash
 const get = _.get;
@@ -27,7 +28,34 @@ export default class Location extends connect(store)(LitElement) {
     constructor() {
         super();
         this.currentUser = {};
-        this.location = [];
+        this.location = [-6.3627638, 106.8270482];
+        this.rendered = false;
+    }
+
+    _didRender() {
+        const mapElement = this.shadowRoot.getElementById('map');
+
+        mapboxgl.accessToken = env.MAPBOX;
+        const map = new mapboxgl.Map({
+            container: mapElement,
+            style: 'mapbox://styles/mapbox/streets-v10',
+            center: this.location,
+            zoom: 12,
+        });
+
+        /*
+        const marker = new mapboxgl.Marker({
+            draggable: true,
+        })
+            .setLngLat([0, 0])
+            .addTo(map);
+
+        const onDragEnd = () => {
+            this.location = marker.getLngLat();
+        };
+
+        marker.on('dragend', onDragEnd);
+        */
     }
 
     _shouldRender(props, changedProps, old) {
@@ -38,43 +66,6 @@ export default class Location extends connect(store)(LitElement) {
         this.location = get(state, 'remote.location.results[0].geometry.location');
     }
 
-    // _didRender() {
-    //     let user = firebase.auth().currentUser;
-
-    //     if (user != null) {
-    //         user.providerData.forEach((profile) => {
-    //             this.provider = profile.providerId;
-    //         });
-    //     }
-    // }
-
-    initMap() {
-        const map = new google.maps.Map(this.shadowRoot.getElementById('map'), {
-            zoom: 8,
-            center: {lat: -34.397, lng: 150.644}
-        });
-        const geocoder = new google.maps.Geocoder();
-
-        this.shadowRoot.getElementById('submit').addEventListener('click', function() {
-            geocodeAddress(geocoder, map);
-        });
-    }
-
-    geocodeAddress(geocoder, resultsMap) {
-        const address = this.shadowRoot.getElementById('address').value;
-        geocoder.geocode({'address': address}, function(results, status) {
-            if (status === 'OK') {
-                resultsMap.setCenter(results[0].geometry.location);
-                const marker = new google.maps.Marker({
-                    map: resultsMap,
-                    position: results[0].geometry.location,
-                });
-            } else {
-                alert('Geocode was not successful for the following reason: ' + status);
-            }
-        });
-    }
-
     getLocation(element) {
         const address = element.getElementById('address').value;
         store.dispatch(getLocation(address));
@@ -83,12 +74,6 @@ export default class Location extends connect(store)(LitElement) {
     }
 
     _render({location, address}) {
-        // const tag = document.createElement('script');
-        // tag.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyCfGVFRrYf89QiMaQCiXUb-D_uDjUPCsCc&callback=initMap';
-        // tag.defer = true;
-        // const firstScriptTag = document.getElementsByTagName('script')[0];
-        // firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
         return html`
             <style>
                 .text-container {
@@ -113,8 +98,10 @@ export default class Location extends connect(store)(LitElement) {
                 paper-input {
                     width: 100%;
                 }
+                #mapid { height: 180px; }
             </style>
             <div role="listbox" class="settings">
+            <div id='map' style='width: 100%; height: 300px;'></div>
                 <paper-item>
                     <paper-input
                         id="address"
