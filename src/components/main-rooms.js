@@ -7,7 +7,7 @@ import '@material/mwc-button';
 import '@material/mwc-icon';
 import '@polymer/paper-input/paper-input';
 
-import {setRooms, fetchRooms, editRoom, addRoom, removeRoom, setNewRemote, addRemote, removeRemote, addDevice, addCamera, setNewDevice, setActiveRemote, setActiveRoom} from '../actions/remote';
+import {setRooms, removeDevice, editRoom, addRoom, removeRoom, setNewRemote, addRemote, removeRemote, addDevice, addCamera, setNewDevice, setActiveRemote, setActiveRoom} from '../actions/remote';
 import {setActiveVision} from '../actions/vision';
 import {getNewRoomTemplate, brandsList, toTitleCase} from '../utils';
 import {store} from '../store';
@@ -73,18 +73,12 @@ export default class MainRooms extends connect(store)(LitElement) {
         store.dispatch(removeRoom(this.rooms[roomIndex]));
     }
 
-    _removeRemote(roomIndex, remoteKey) {
-        const room = this.rooms[roomIndex];
-        const roomID = room.id;
-        const remoteID = remoteKey;
-        store.dispatch(removeRemote(roomID, remoteID));
+    _removeRemote(remoteID) {
+        store.dispatch(removeRemote(remoteID));
     }
 
-    _removeDevice(roomIndex, deviceIndex) {
-        let newRooms = [...this.rooms];
-        delete newRooms[roomIndex].devices[deviceIndex];
-
-        store.dispatch(setRooms(newRooms));
+    _removeDevice(device) {
+        store.dispatch(removeDevice(device));
     }
 
     _addNewRoom() {
@@ -157,7 +151,7 @@ export default class MainRooms extends connect(store)(LitElement) {
                                         <mwc-button
                                             label="Remove"
                                             icon="close"
-                                            on-click="${() => this._removeRemote(roomIndex, remote.id)}">
+                                            on-click="${() => this._removeRemote(remote.id)}">
                                         </mwc-button>
                                         <img class="appliance-icon-edit" src="images/${applicanceType}-icon.png"/>
                                         <p>${toTitleCase(remote.name)}</p>
@@ -187,7 +181,7 @@ export default class MainRooms extends connect(store)(LitElement) {
                                             <mwc-button
                                                 label="Remove"
                                                 icon="close"
-                                                on-click="${() => this._removeDevice(roomIndex, roomIndex)}">
+                                                on-click="${() => this._removeDevice(device.name)}">
                                             </mwc-button>
                                             <img class="appliance-icon" src="images/cam-icon.png"/>
                                             <p>Camera ${device.name}</p>
@@ -206,7 +200,7 @@ export default class MainRooms extends connect(store)(LitElement) {
         };
 
         const roomDevices = (devices, roomIndex) => {
-            return devices.map((device, index) => {
+            return devices.map((device) => {
                 const onEdit = rooms[roomIndex].onEdit;
 
                 return html`
@@ -216,7 +210,7 @@ export default class MainRooms extends connect(store)(LitElement) {
                             onEdit
                                 ? html`
                                     <mwc-icon
-                                        on-click="${() => this._removeDevice(roomIndex, index)}">
+                                        on-click="${() => this._removeDevice(device.name)}">
                                         close
                                     </mwc-icon>`
                                 : null

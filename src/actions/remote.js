@@ -148,7 +148,7 @@ export const removeRoom = (room) => async (dispatch, getState) => {
     const uid = get(getState(), 'app.currentUser.uid');
     const name = room.name;
     try {
-        await coreClient().delete('/room-delete', {params: {uid, room: room.id}});
+        await coreClient().delete('/room-delete', {params: {uid, roomID: room.id}});
         dispatch(showSnackbar(`Room ${name} deleted.`));
         dispatch(fetchRooms());
         dispatch(closeProgress());
@@ -175,11 +175,11 @@ export const addRemote = (room) => async (dispatch, getState) => {
     }
 };
 
-export const removeRemote = (room, remoteID) => async (dispatch, getState) => {
+export const removeRemote = (remoteID) => async (dispatch, getState) => {
     dispatch(showProgress());
     const uid = get(getState(), 'app.currentUser.uid');
     try {
-        await coreClient().delete('/remote-delete', {params: {uid, room, remoteID}});
+        await coreClient().delete('/remote-delete', {params: {uid, remoteID}});
         dispatch(showSnackbar(`Remote deleted.`));
         dispatch(fetchRooms());
         dispatch(closeProgress());
@@ -208,6 +208,20 @@ export const addDevice = (room) => async (dispatch, getState) => {
     }
 };
 
+export const removeDevice = (device) => async (dispatch, getState) => {
+    dispatch(showProgress());
+    const uid = get(getState(), 'app.currentUser.uid');
+    try {
+        await coreClient().delete('/device-delete', {params: {uid, device}});
+        dispatch(showSnackbar(`Device ${device} deleted.`));
+        dispatch(fetchRooms());
+        dispatch(closeProgress());
+    } catch (error) {
+        errorHandler.report(error);
+        dispatch(closeProgress());
+    }
+};
+
 export const addCamera = (room) => async (dispatch, getState) => {
     dispatch(showProgress());
     const uid = get(getState(), 'app.currentUser.uid');
@@ -223,18 +237,6 @@ export const addCamera = (room) => async (dispatch, getState) => {
     } catch (error) {
         errorHandler.report(error);
         dispatch(showSnackbar(`Failed to register ${deviceID}.`));
-        dispatch(closeProgress());
-    }
-};
-
-export const removeDevice = (room, deviceID, deviceCode) => async (dispatch, getState) => {
-    dispatch(showProgress());
-    const uid = get(getState(), 'app.currentUser.uid');
-    try {
-        coreClient().delete('/device-deregister', {params: {uid, deviceID}});
-        dispatch(closeProgress());
-    } catch (error) {
-        errorHandler.report(error);
         dispatch(closeProgress());
     }
 };
