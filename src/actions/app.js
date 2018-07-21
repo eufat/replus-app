@@ -3,6 +3,7 @@ import { userDataKey, qs, setCookie, getCookie } from '../utils';
 import { createClient, coreClient } from '../client';
 import firebase from '../firebase';
 import errorHandler from '../error';
+import { fetchRooms } from './remote';
 
 const pick = _.pick;
 
@@ -158,19 +159,26 @@ export const setCurrentUser = (user) => async (dispatch, getState) => {
 
     try {
         let accessToken = getCookie('accessToken');
-
         if (!accessToken) {
             // If no token in cookie as api to build token with designated uid
             const coreClient = createClient('core');
             const response = await coreClient.get('/get-token', {
-                headers: {
+                params: {
                     uid: currentUser.uid,
                 },
             });
+
             accessToken = response.data;
             // Save access token to cookie in 30 days
             setCookie('accessToken', accessToken, 7);
         }
+
+        dispatch({
+            type: SET_CURRENT_USER,
+            currentUser,
+        });
+
+        dispatch(fetchRooms());
 
         // register with available token
         await coreClient().post(
@@ -181,11 +189,6 @@ export const setCurrentUser = (user) => async (dispatch, getState) => {
                 email: currentUser.email,
             })
         );
-
-        dispatch({
-            type: SET_CURRENT_USER,
-            currentUser,
-        });
     } catch (error) {
         errorHandler.report(error);
     }

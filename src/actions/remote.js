@@ -77,7 +77,7 @@ export const fetchDevices = () => async (dispatch, getState) => {
     dispatch(showProgress());
     const uid = get(getState(), 'app.currentUser.uid');
     try {
-        const response = await coreClient().post('/get-devices', qs({uid}));
+        const response = await coreClient().get('/get-devices', {params: {uid}});
         dispatch(setDevices(response.data));
         dispatch(closeProgress());
     } catch (error) {
@@ -90,7 +90,7 @@ export const fetchRooms = () => async (dispatch, getState) => {
     dispatch(showProgress());
     const uid = get(getState(), 'app.currentUser.uid');
     try {
-        const response = await coreClient().post('/get-rooms', qs({uid}));
+        const response = await coreClient().get('/get-rooms', {params: {uid}});
         dispatch(setRooms(response.data));
         dispatch(fetchDevices());
         dispatch(closeProgress());
@@ -127,12 +127,28 @@ export const addRoom = (room) => async (dispatch, getState) => {
     }
 };
 
+export const editRoom = (room) => async (dispatch, getState) => {
+    dispatch(showProgress());
+    const uid = get(getState(), 'app.currentUser.uid');
+    const name = room.name;
+    const roomID = room.id;
+    try {
+        await coreClient().put('/room-edit', qs({uid, roomID, name}));
+        dispatch(showSnackbar(`Room ${name} saved.`));
+        dispatch(fetchRooms());
+        dispatch(closeProgress());
+    } catch (error) {
+        errorHandler.report(error);
+        dispatch(closeProgress());
+    }
+};
+
 export const removeRoom = (room) => async (dispatch, getState) => {
     dispatch(showProgress());
     const uid = get(getState(), 'app.currentUser.uid');
     const name = room.name;
     try {
-        await coreClient().post('/room-delete', qs({uid, room: room.id}));
+        await coreClient().delete('/room-delete', {params: {uid, room: room.id}});
         dispatch(showSnackbar(`Room ${name} deleted.`));
         dispatch(fetchRooms());
         dispatch(closeProgress());
@@ -163,7 +179,7 @@ export const removeRemote = (room, remoteID) => async (dispatch, getState) => {
     dispatch(showProgress());
     const uid = get(getState(), 'app.currentUser.uid');
     try {
-        await coreClient().post('/remote-delete', qs({uid, room, remoteID}));
+        await coreClient().delete('/remote-delete', {params: {uid, room, remoteID}});
         dispatch(showSnackbar(`Remote deleted.`));
         dispatch(fetchRooms());
         dispatch(closeProgress());
@@ -215,7 +231,7 @@ export const removeDevice = (room, deviceID, deviceCode) => async (dispatch, get
     dispatch(showProgress());
     const uid = get(getState(), 'app.currentUser.uid');
     try {
-        coreClient().post('/device-deregister', qs({uid, deviceID}));
+        coreClient().delete('/device-deregister', {params: {uid, deviceID}});
         dispatch(closeProgress());
     } catch (error) {
         errorHandler.report(error);
@@ -281,7 +297,7 @@ export const removeSchedule = (scheduleID) => (dispatch, getState) => {
     dispatch(showProgress());
     const uid = get(getState(), 'app.currentUser.uid');
     try {
-        coreSchedule().post('/schedule-delete', qs({uid, scheduleID}));
+        coreSchedule().delete('/schedule-delete', {params: {uid, scheduleID}});
         dispatch(closeProgress());
     } catch (error) {
         errorHandler.report(error);

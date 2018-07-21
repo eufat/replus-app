@@ -7,7 +7,7 @@ import '@material/mwc-button';
 import '@material/mwc-icon';
 import '@polymer/paper-input/paper-input';
 
-import {setRooms, fetchRooms, addRoom, removeRoom, setNewRemote, addRemote, removeRemote, addDevice, addCamera, setNewDevice, setActiveRemote, setActiveRoom} from '../actions/remote';
+import {setRooms, fetchRooms, editRoom, addRoom, removeRoom, setNewRemote, addRemote, removeRemote, addDevice, addCamera, setNewDevice, setActiveRemote, setActiveRoom} from '../actions/remote';
 import {setActiveVision} from '../actions/vision';
 import {getNewRoomTemplate, brandsList, toTitleCase} from '../utils';
 import {store} from '../store';
@@ -32,12 +32,6 @@ export default class MainRooms extends connect(store)(LitElement) {
         this.newRemote = {};
     }
 
-    _didRender(props, changedProps, prevProps) {
-        if (changedProps.uid) {
-            store.dispatch(fetchRooms());
-        }
-    }
-
     _shouldRender(props, changedProps, old) {
         return props.active;
     }
@@ -60,6 +54,8 @@ export default class MainRooms extends connect(store)(LitElement) {
         const newRoom = newRooms[roomIndex];
         if (newRoom.id === '') {
             store.dispatch(addRoom(newRoom));
+        } else {
+            store.dispatch(editRoom(newRoom));
         }
 
         newRooms[roomIndex].onEdit = false;
