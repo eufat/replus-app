@@ -308,15 +308,15 @@ export const removeSchedule = (scheduleID) => (dispatch, getState) => {
 };
 
 export const remoteCommand = (command) => (dispatch, getState) => {
-    // dispatch(showProgress());
+    dispatch(showProgress());
     const uid = get(getState(), 'app.currentUser.uid');
     const room = get(getState(), 'remote.activeRemote.room');
     try {
         corePost().post('/remote', qs({uid, room, command}));
-        // dispatch(closeProgress());
+        dispatch(closeProgress());
     } catch (error) {
         errorHandler.report(error);
-        // dispatch(closeProgress());
+        dispatch(closeProgress());
     }
 };
 

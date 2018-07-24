@@ -11,11 +11,13 @@ export const firebaseConfig = {
 };
 
 export const env = {
-    CORE_API: prod ? 'https://core.replus.co/api' : 'http://localhost:7000/api',
-    CORE_POST: 'https://core.replus.co/post',
     CORE_IR: 'https://core.replus.co/ir/',
-    CORE_SCHEDULE: prod ? 'https://core.replus.co/schedule' : 'http://localhost:7000/schedule',
-    CORE_ACTIVITY: prod ? 'https://core.replus.co/activity' : 'ws://localhost:7010',
+    CORE_API: prod ? 'https://core.replus.co/api' : 'http://localhost:7000/api',
+    CORE_POST: prod ? 'https://core.replus.co/post' : 'http://localhost:7010/post',
+    CORE_SCHEDULE: prod ? 'https://core.replus.co/schedule' : 'http://localhost:7020/schedule',
+    CORE_ACTIVITY: prod ? 'https://core.replus.co/activity' : 'http://localhost:7030/activity',
+    CORE_GEOSENSE: prod ? 'https://core.replus.co/geosense' : 'http://localhost:7040/geosense',
+    CORE_FORECAST: prod ? 'https://core.replus.co/forecast' : 'http://localhost:7050/forecast',
     VISION_API: prod ? 'https://vision.replus.co/api' : 'http://localhost:5000/api',
     VISION_ACTIVITY: prod ? 'https://vision.replus.co/activity' : 'ws://localhost:5010',
     VISION_STREAM: prod ? 'https://vision.replus.co/stream' : 'http://localhost:5020',

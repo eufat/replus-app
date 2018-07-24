@@ -206,7 +206,7 @@ export default class activityMain extends LitElement {
                     border-radius: 5px;
                 }
 
-                .no-activity {
+                .center-vh {
                     width: 100%;
                     height: 80vh;
                     text-align: center;
@@ -228,7 +228,7 @@ export default class activityMain extends LitElement {
                             ? html`
                                 <div class="activities-listing activities-listing-padded">${activityItems}</div>`
                             : html`
-                                <div class="no-activity">
+                                <div class="center-vh">
                                     <p>Your activity is empty.<p>
                                 </div>`
                     }

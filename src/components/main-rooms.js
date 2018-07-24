@@ -17,6 +17,7 @@ const get = _.get;
 export default class MainRooms extends connect(store)(LitElement) {
     static get properties() {
         return {
+            _progress: Boolean,
             rooms: Array,
             newDevice: Object,
             newRemote: Object,
@@ -41,6 +42,7 @@ export default class MainRooms extends connect(store)(LitElement) {
         this.newDevice = get(state, 'remote.newDevice');
         this.newRemote = get(state, 'remote.newRemote');
         this.uid = get(state, 'app.currentUser.uid');
+        this._progress = get(state, 'app.progressOpened');
     }
 
     _enterOnEdit(roomIndex) {
@@ -131,7 +133,7 @@ export default class MainRooms extends connect(store)(LitElement) {
         store.dispatch(setActiveVision(vision));
     }
 
-    _render({rooms, newRemote, newDevice}) {
+    _render({rooms, newRemote, newDevice, _progress}) {
         const roomRemotes = (remotes, roomIndex) => {
             return _.mapValues(remotes, (remote) => {
                 const onEdit = rooms[roomIndex].onEdit;
@@ -515,18 +517,28 @@ export default class MainRooms extends connect(store)(LitElement) {
                     padding: 10px !important;
                     border-radius: 5px;
                 }
+
+                .center-vh {
+                    width: 100%;
+                    height: 80vh;
+                    text-align: center;
+                    line-height: 80vh;
+                }
             </style>
             <div class="rooms-container">
-                <div class="paper-container">
-                    ${roomsItems}
-                    <paper-material elevation="1" class="add-new-room">
-                        <mwc-button
-                            label="Add new room"
-                            icon="add"
-                            on-click="${() => this._addNewRoom()}">
-                        </mwc-button>
-                    </paper-material>
-                </div>
+                ${
+                    _progress
+                        ? html`
+                                <div class="center-vh">
+                                    <p>Loading your rooms<p>
+                                </div>`
+                        : html`<div class="paper-container">
+                            ${roomsItems}
+                            <paper-material elevation="1" class="add-new-room">
+                                <mwc-button label="Add new room" icon="add" on-click="${() => this._addNewRoom()}" />
+                            </paper-material>
+                        </div>`
+                }
             </div>
     `;
     }
