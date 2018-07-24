@@ -312,3 +312,23 @@ export const getLocation = (address) => async (dispatch, getState) => {
         errorHandler.report(error);
     }
 };
+
+export const setReverseGeocode = (latlng) => async (dispatch, getState) => {
+    dispatch({
+        type: 'SET_LOCATION',
+        location: latlng,
+    });
+}
+
+export const reverseGeocode = (latlng) => async (dispatch, getState) => {
+    try {
+        const response = await googleMaps().get('', {
+            params: {
+                latlng: latlng,
+            }
+        });
+        dispatch(setReverseGeocode(response.data));
+    } catch (error) {
+        errorHandler.report(error);
+    }
+};
