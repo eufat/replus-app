@@ -118,7 +118,7 @@ class MainDashboard extends connect(store)(LitElement) {
                   <app-header fixed effects="waterfall" slot="header">
                       <app-toolbar>
                         ${_backable ? html`<paper-icon-button on-click="${() => this._onBack()}" icon="arrow-back"></paper-icon-button>` : null}
-                          <div main-title>${toTitleCase(pageToTitle(_page))}</div>
+                          <div main-title>${pageToTitle(_page)}</div>
                         <paper-icon-button
                             class="more-button"
                             icon="more-vert"

@@ -147,10 +147,20 @@ export function getCookie(cname) {
 
 export function pageToTitle(page) {
     if (page) {
+        // Take the last subpage
         let title = page.split('/')[1];
+
         if (!title) {
+            // Because default page is rooms
             title = 'rooms';
         }
+
+        // Fix upercases like Room-tv or Room-ac
+        title = title
+            .split('-')
+            .map((item) => toTitleCase(item))
+            .join(' ');
+
         return title;
     }
 }
