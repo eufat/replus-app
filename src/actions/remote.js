@@ -369,3 +369,18 @@ export const reverseGeocode = (latlng) => async (dispatch, getState) => {
         errorHandler.report(error);
     }
 };
+
+export const saveLocation = (roomID, geosenseInRange, geosenseOutRange, location) => (dispatch, getState) => {
+    dispatch(showProgress());
+    const uid = get(getState(), 'app.currentUser.uid');
+    const lat = location.lat;
+    const long = location.lng;
+    const forecast = geosenseInRange;
+    try {
+        coreClient().put('/save-location', qs({geosenseInRange, geosenseOutRange, forecast, lat, long}), {params: {uid, roomID}});
+        dispatch(closeProgress());
+    } catch (error) {
+        errorHandler.report(error);
+        dispatch(closeProgress());
+    }
+};
