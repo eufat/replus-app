@@ -10,7 +10,7 @@ import '@em-polymer/google-map/google-map';
 
 import {store} from '../store.js';
 import {connect} from 'pwa-helpers/connect-mixin';
-import {getLocation, reverseGeocode} from '../actions/remote.js';
+import {getLocation, reverseGeocode, saveLocation} from '../actions/remote.js';
 import {env} from '../configs';
 
 // Import from lodash
@@ -23,6 +23,13 @@ export default class Location extends connect(store)(LitElement) {
             location: Array,
             address: String,
             zoom: Number,
+            remotes: Array,
+            selectedRemote: String,
+            onePushButtons: Array,
+            commandIn: String,
+            commandOut: String,
+            codeset: String,
+            roomID: String,
         };
     }
 
@@ -31,6 +38,12 @@ export default class Location extends connect(store)(LitElement) {
         this.currentUser = {};
         this.location = [106.8270482, -6.3627638];
         this.zoom = 15;
+        this.remotes = [];
+        this.selectedRemote = '';
+        this.onePushButtons = ['ON', 'OFF'];
+        this.commandIn = '';
+        this.commandOut = '';
+        this.roomID = '';
         this.rendered = false;
     }
 
@@ -76,6 +89,69 @@ export default class Location extends connect(store)(LitElement) {
     _stateChanged(state) {
         this.location = get(state, 'remote.location.results[0].geometry.location');
         this.address = get(state, 'remote.location.results[0].formatted_address');
+        let stateRemotes = get(state, 'remote.activeRoom.remotes') || [];
+        stateRemotes = stateRemotes.map((remote) => {
+            const name = get(remote, 'name');
+            const nameUpperCased = name.toUpperCase();
+            return nameUpperCased;
+        });
+        this.remotes = stateRemotes;
+        this.roomID = get(state, 'remote.activeRoom.id');
+    }
+
+    getIndexOf(array, element) {
+        return array.indexOf(element);
+    }
+
+    setSelectedRemote(remote) {
+        this.selectedRemote = remote;
+    }
+
+    setSelectedPushButton(button) {
+        this.selectedPushButton = button;
+    }
+
+    setCommandIn(element) {
+        this.commandIn = this.selectedRemote + ' ' + this.selectedPushButton;
+        const listboxButton = element.getElementById('listbox-button');
+        const listboxRemote = element.getElementById('listbox-remote');
+        listboxButton.selected = null;
+        listboxRemote.selected = null;
+    }
+
+    setCommandOut(element) {
+        this.commandOut = this.selectedRemote + ' ' + this.selectedPushButton;
+        const listboxButton = element.getElementById('listbox-button');
+        const listboxRemote = element.getElementById('listbox-remote');
+        listboxButton.selected = null;
+        listboxRemote.selected = null;
+    }
+
+    setRemoteCode(remote) {
+        const list = remote.split(' ');
+        const remoteType = list[0].toLowerCase();
+        const brand = list[1].toLowerCase();
+        const command = list[2].toLowerCase();
+
+        let codeBrand = '';
+        let codeCommand = '';
+        if (remoteType == 'tv') {
+            if (brand == 'lg') codeBrand = '1970';
+            else if (brand == 'samsung') codeBrand = '0595';
+            else if (brand == 'panasonic') codeBrand = '2619';
+            else if (brand == 'sony') codeBrand = '1319';
+            else if (brand == 'sharp') codeBrand = 'T001'; // 1429
+            else if (brand == 'changhong') codeBrand = '2903';
+            else if (brand == 'sanyo') codeBrand = '1430';
+            else if (brand == 'toshiba') codeBrand = '0339';
+            if(command == 'on') codeCommand ='15';
+            else if(command == 'off') codeCommand = '16';
+            this.codeset = codeBrand + codeCommand;
+        } else if (remoteType == 'ac') {
+            if(command == 'on') codeCommand = '1018';
+            else if(command == 'off') codeCommand = '0000';
+            this.codeset = brand + '-' + codeCommand;
+        }
     }
 
     getLocation(element) {
@@ -85,7 +161,17 @@ export default class Location extends connect(store)(LitElement) {
         element.getElementById('address').value = null;
     }
 
-    _render({location, address}) {
+    saveLocation() {
+        this.setRemoteCode(this.commandIn);
+        const codesetInRange = this.codeset;
+        this.setRemoteCode(this.commandOut);
+        const codesetOutRange = this.codeset;
+        store.dispatch(saveLocation(this.roomID, codesetInRange, codesetOutRange, this.location));
+        this.commandIn = '';
+        this.commandOut = '';
+    }
+
+    _render({location, address, remotes, onePushButtons, commandIn, commandOut}) {
         return html`
             <style>
                 .mapboxgl-map {
@@ -622,6 +708,30 @@ export default class Location extends connect(store)(LitElement) {
                     width: 100%;
                 }
                 #mapid { height: 180px; }
+
+                #dropdownType {
+                    width: 21%;
+                    margin-right: 10px;
+                }
+
+                #dropdownBrand {
+                    width: 75%;
+                }
+
+                #dropdownPushButton {
+                    width: 100%;
+                }
+
+                .command-right {
+                    margin-left: auto;
+                    margin-right: 0;
+                    position: absolute;
+                    right: 20px;
+                }
+
+                .pointer {
+                    cursor: pointer;
+                }
             </style>
             <div id='map' style='width: 100%; height: 300px;'></div>
             <div role="listbox" class="settings">
@@ -658,11 +768,90 @@ export default class Location extends connect(store)(LitElement) {
                         <p class="right">${get(location, 'lng')}</p>
                     </paper-item-body>
                 </paper-item>
+                <paper-item class="pointer" on-click="${() => this.shadowRoot.getElementById('geoInDialog').open()}">
+                    <paper-item-body class="text-container">
+                        <p class="left">Geosense in range</p>
+                    </paper-item-body>
+                    <div class="command-right">
+                        ${commandIn}
+                    </div>
+                </paper-item>
+                <paper-item class="pointer" on-click="${() => this.shadowRoot.getElementById('geoOutDialog').open()}">
+                    <paper-item-body class="text-container">
+                        <p class="left">Geosense out range</p>
+                    </paper-item-body>
+                    <div class="command-right">
+                        ${commandOut}
+                    </div>
+                </paper-item>
+                <paper-item>
+                    <mwc-button
+                        raised
+                        class="light"
+                        label="save location"
+                        on-click="${() => this.saveLocation()}"
+                    ></mwc-button>
+                </paper-item>
             </div>
-            <!-- <google-map fit-to-markers api-key="AIzaSyCfGVFRrYf89QiMaQCiXUb-D_uDjUPCsCc">
-                <google-map-marker latitude="37.78" longitude="-122.4" draggable="true"></google-map-marker>
-            </google-map> -->
-    `;
+            <paper-dialog id="geoInDialog">
+                <div class="horizontal layout">
+                    <paper-dropdown-menu id="dropdownPushButton" label="Remote" noink no-animations>
+                        <paper-listbox id="listbox-remote" slot="dropdown-content" class="dropdown-content">
+                            ${remotes.map(
+                                (item) => html`
+                                    <paper-item on-click="${() => this.setSelectedRemote(item)}" item-name="${this.getIndexOf(remotes, item)}">
+                                        ${item}
+                                    </paper-item>
+                                `
+                            )}
+                        </paper-listbox>
+                    </paper-dropdown-menu>
+                    <paper-dropdown-menu id="dropdownPushButton" label="One Push Button" noink no-animations>
+                        <paper-listbox id="listbox-button" slot="dropdown-content" class="dropdown-content">
+                            ${onePushButtons.map(
+                                (item) => html`
+                                    <paper-item on-click="${() => this.setSelectedPushButton(item)}">
+                                        ${item}
+                                    </paper-item>
+                                `
+                            )}
+                        </paper-listbox>
+                    </paper-dropdown-menu>
+                </div>
+                <div class="buttons">
+                    <mwc-button on-click="${() => this.setCommandIn(this.shadowRoot)}" dialog-confirm label="Add This Setting"></mwc-button>
+                </div>
+            </paper-dialog>
+            <paper-dialog id="geoOutDialog">
+                <div class="horizontal layout">
+                    <paper-dropdown-menu id="dropdownPushButton" label="Remote" noink no-animations>
+                        <paper-listbox id="listbox-remote" slot="dropdown-content" class="dropdown-content">
+                            ${remotes.map(
+                                (item) => html`
+                                    <paper-item on-click="${() => this.setSelectedRemote(item)}" item-name="${this.getIndexOf(remotes, item)}">
+                                        ${item}
+                                    </paper-item>
+                                `
+                            )}
+                        </paper-listbox>
+                    </paper-dropdown-menu>
+                    <paper-dropdown-menu id="dropdownPushButton" label="One Push Button" noink no-animations>
+                        <paper-listbox id="listbox-button" slot="dropdown-content" class="dropdown-content">
+                            ${onePushButtons.map(
+                                (item) => html`
+                                    <paper-item on-click="${() => this.setSelectedPushButton(item)}">
+                                        ${item}
+                                    </paper-item>
+                                `
+                            )}
+                        </paper-listbox>
+                    </paper-dropdown-menu>
+                </div>
+                <div class="buttons">
+                    <mwc-button on-click="${() => this.setCommandOut(this.shadowRoot)}" dialog-confirm label="Add This Setting"></mwc-button>
+                </div>
+            </paper-dialog
+        `;
     }
 }
 

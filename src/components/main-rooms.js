@@ -334,7 +334,7 @@ export default class MainRooms extends connect(store)(LitElement) {
                                             icon="calendar_today">
                                         </mwc-button>
                                     </a>
-                                    <a href="/dashboard/add-location" on-click="${() => this._activeRoom(room)}">
+                                    <a href="/dashboard/add-location" on-click="${() => this._handleActiveRoom(room)}">
                                         <mwc-button
                                             label="Location"
                                             icon="location_on">
