@@ -29,7 +29,7 @@ import '@polymer/iron-flex-layout/iron-flex-layout';
 import '@material/mwc-button';
 import '@material/mwc-icon';
 
-import {setSchedule, createSchedule, fetchIR, removeSchedule} from '../actions/remote.js';
+import {createSchedule, fetchIR, removeSchedule} from '../actions/remote.js';
 import {store} from '../store.js';
 
 const get = _.get;
@@ -294,13 +294,6 @@ class AddSchedule extends connect(store)(PolymerElement) {
                     </paper-material>
                 </div>
             </div>
-            <paper-dialog id="test">
-                <div class="horizontal layout around-justified">
-                    <paper-button title="01">1</paper-button>
-                    <paper-button title="02">2</paper-button>
-                    <paper-button title="03">3</paper-button>
-                </div>
-            </paper-dialog>
             <paper-toast id="toast"></paper-toast>
         `;
     }
