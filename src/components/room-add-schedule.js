@@ -237,22 +237,22 @@ class AddSchedule extends connect(store)(PolymerElement) {
                     <div id="containerCommand">
                         <div id="containerAC" class="horizontal layout justified">
                             <paper-dropdown-menu id="dropdownMode" label="Mode" noink no-animations>
-                                <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="mode" selected="{{choosenMode}}" on-selected-changed="_changeMode">
+                                <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="mode" selected="{{choosenMode}}">
                                     <template is="dom-repeat" items="{{modeTitle}}" as="mode">
-                                        <paper-item mode="{{mode}}">{{mode}}</paper-item>
+                                        <paper-item mode="{{mode}}" on-click="selectedMode">{{mode}}</paper-item>
                                     </template>
                                 </paper-listbox>
                             </paper-dropdown-menu>
                             <paper-dropdown-menu id="dropdownFan" label="Fan speed" noink no-animations>
-                                <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="fan" selected="{{choosenFan}}" on-selected-changed="">
+                                <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="fan" selected="{{choosenFan}}">
                                     <template is="dom-repeat" items="{{fanTitle}}" as="fan">
-                                        <paper-item fan="{{fan}}">{{fan}}</paper-item>
+                                        <paper-item fan="{{fan}}" on-click="selectedFan">{{fan}}</paper-item>
                                     </template>
                                 </paper-listbox>
                             </paper-dropdown-menu>
                             <paper-dropdown-menu id="dropdownTemp" label="Temperature" noink no-animations>
-                                <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="temp" selected="{{choosenTemp}}" on-selected-changed="">
-                                    <template is="dom-repeat" items="{{temps}}" as="temp">
+                                <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="temp" selected="{{choosenTemp}}">
+                                    <template is="dom-repeat" items="{{tempTitle}}" as="temp">
                                         <paper-item temp="{{temp}}">{{temp}}</paper-item>
                                     </template>
                                 </paper-listbox>
@@ -368,6 +368,7 @@ class AddSchedule extends connect(store)(PolymerElement) {
             fan: Number,
             manifestFans: Array,
             fanTitle: Array,
+            tempTitle: Array,
 
             OKtime: {type: Boolean, value: false, observer: '_OKtime'},
             OKdate: {type: Boolean, value: false, observer: '_OKdate'},
@@ -436,21 +437,6 @@ class AddSchedule extends connect(store)(PolymerElement) {
             }
         }
     }
-
-    // _changeMode() {
-    //     setTimeout(() => {
-    //         this.manifestFans = [];
-    //         let mode = this.manifest[this.choosenMode];
-    //         for (let fan in mode) {
-    //             if (mode.hasOwnProperty(fan)) {
-    //                 this.push('manifestFans', parseInt(fan));
-    //             }
-    //         }
-    //         this.choosenFan = this.manifestFans[0];
-    //         this.temps = this.manifest[this.choosenMode][this.choosenFan];
-    //         this.choosenTemp = this.temps[0];
-    //     }, 100);
-    // }
 
     stateInitial() {
         this.clearAll();
@@ -624,8 +610,10 @@ class AddSchedule extends connect(store)(PolymerElement) {
 
         // vary command based on appliance type
         if (this.choosenType == 'AC') {
-            this.command = `${this.choosenBrand}-${this.choosenMode}${this.choosenFan}${this.choosenTemp}`;
-            this.titleCommand = `Set to ${this.choosenTemp}C, ${this.modes[this.choosenMode]}, fan ${this.fans[this.choosenFan]}`;
+            // this.command = `${this.choosenBrand}-${this.choosenMode}${this.choosenFan}${this.choosenTemp}`;
+            // this.titleCommand = `Set to ${this.choosenTemp}C, ${this.modes[this.choosenMode]}, fan ${this.fans[this.choosenFan]}`;
+            this.command = `${this.choosenBrand}-${this.mode}${this.fan}${this.choosenTemp}`;
+            this.titleCommand = `Set to ${this.choosenTemp}C, ${this.modes[this.mode]}, fan ${this.fans[this.mode]}`;
             if (!this.isON) this.command = `${this.choosenBrand}-0000`;
         } else {
             this.titleCommand = 'Turn ON';
@@ -689,6 +677,8 @@ class AddSchedule extends connect(store)(PolymerElement) {
         };
 
         store.dispatch(createSchedule(schedule));
+        this.$.scheduleDialog.close();
+        this.stateInitial();
     }
 
     getMode() {
@@ -702,6 +692,53 @@ class AddSchedule extends connect(store)(PolymerElement) {
         });
         this.manifestModes = arrModes;
         this.modeTitle = modeName;
+    }
+
+    selectedMode(e) {
+        const modeName = e.target.mode;
+        if (modeName == 'Auto') {
+            this.mode = 0;
+        } else if (modeName == 'Cool') {
+            this.mode = 1;
+        } else if (modeName == 'Dry') {
+            this.mode = 2;
+        } else if (modeName == 'Heat') {
+            this.mode = 3;
+        }
+        this.getFan();
+    }
+
+    getFan() {
+        const arrFans = [];
+        const fanName = [];
+        const fanValues = _.values(this.manifest[`${this.mode}`]);
+
+        fanValues.map((item, index) => {
+            const key = parseInt(Object.keys(this.manifest[`${this.mode}`])[index]);
+            arrFans.push(key);
+            fanName.push(this.fans[arrFans[index]]);
+        });
+        this.manifestFans = arrFans;
+        this.fanTitle = fanName;
+    }
+
+    selectedFan(e) {
+        const fanName = e.target.fan;
+        if (fanName == 'Auto') {
+            this.fan = 0;
+        } else if (fanName == 'Low') {
+            this.fan = 1;
+        } else if (fanName == 'Medium') {
+            this.fan = 2;
+        } else if (fanName == 'High') {
+            this.fan = 3;
+        }
+        this.getTemp();
+    }
+
+    getTemp() {
+        const temp = this.manifest[`${this.mode}`][`${this.fan}`];
+        this.tempTitle = temp;
     }
 
     _changeIsON() {
