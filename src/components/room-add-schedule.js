@@ -279,7 +279,7 @@ class AddSchedule extends connect(store)(PolymerElement) {
                         <div>[[schedule.titleDay]]</div>
                     </div>
                     <div class="card-actions horizontal layout end-justified">
-                        <paper-button title="[[schedule.id]]" id="btnDeleteSchedule" on-tap="_tapDeleteSchedule">Delete</paper-button>
+                        <paper-button title="[[schedule.titleRemote]]" id="btnDeleteSchedule" on-tap="_tapDeleteSchedule">Delete</paper-button>
                     </div>
                 </paper-card>
             </template>
@@ -300,6 +300,7 @@ class AddSchedule extends connect(store)(PolymerElement) {
 
     static get properties() {
         return {
+            uid: String,
             choosenDay: {
                 type: Object,
                 value: {
@@ -342,24 +343,26 @@ class AddSchedule extends connect(store)(PolymerElement) {
             },
             schedules: {
                 type: Array,
-                value: [
-                    {
-                        id: '-LHXCq_MsS_323O4vVTr',
-                        titleCommand: 'Turn ON',
-                        titleDay: 'January 01 2019, 01:00',
-                        titleRemote: 'TV Sony Dummy',
-                        titleTime: '01:00',
-                    },
-                    {
-                        id: '-LHXk-abfalkkPfozw-5',
-                        titleCommand: 'Turn ON',
-                        titleDay: 'January 01 2019, 10:00',
-                        titleRemote: 'TV Samsung Dummy',
-                        titleTime: '10:00',
-                    }
-                ],
+                // value: [
+                //     {
+                //         id: '-LHXCq_MsS_323O4vVTr',
+                //         titleCommand: 'Turn ON',
+                //         titleDay: 'January 01 2019, 01:00',
+                //         titleRemote: 'TV Sony Dummy',
+                //         titleTime: '01:00',
+                //     },
+                //     {
+                //         id: '-LHXk-abfalkkPfozw-5',
+                //         titleCommand: 'Turn ON',
+                //         titleDay: 'January 01 2019, 10:00',
+                //         titleRemote: 'TV Samsung Dummy',
+                //         titleTime: '10:00',
+                //     }
+                // ],
             },
-
+            scheduleList: {
+                type: Array,
+            },
             manifest: Object,
             mode: Number,
             manifestModes: Array,
@@ -386,9 +389,11 @@ class AddSchedule extends connect(store)(PolymerElement) {
         super();
         this.remotes = [];
         this.manifest = {};
+        this.scheduleList = [];
     }
 
     _stateChanged(state) {
+        this.uid = get(state, 'app.currentUser.uid');
         let stateRemotes = get(state, 'remote.activeRoom.remotes') || [];
         stateRemotes = stateRemotes.map((remote) => {
             const name = get(remote, 'name');
@@ -409,8 +414,18 @@ class AddSchedule extends connect(store)(PolymerElement) {
     }
 
     _tapDeleteSchedule(e) {
-        const scheduleID = e.target.title;
-        store.dispatch(removeSchedule(scheduleID));
+        // const scheduleID = e.target.title;
+        const scheduleTitle = e.target.title;
+        let i;
+        for (i=0; i<this.scheduleList.length; i++) {
+            if (this.scheduleList[i].titleRemote == scheduleTitle) {
+                // delete this.scheduleList[i];
+                this.scheduleList.splice(i, i+1);
+            }
+        }
+        this.schedules = [];
+        this.schedules = this.scheduleList;
+        // store.dispatch(removeSchedule(scheduleID));
     }
 
     _OKtime(OK) {
@@ -676,7 +691,19 @@ class AddSchedule extends connect(store)(PolymerElement) {
             titleTime: this.titleTime,
         };
 
-        store.dispatch(createSchedule(schedule));
+        const schedules = {
+            id: '-LIPYX14LutGJe1fKJwZ',
+            titleCommand: this.titleCommand,
+            titleDay: this.titleDay,
+            titleRemote: this.choosenAppliance,
+            titleTime: this.titleTime,
+        };
+
+        this.schedules = [];
+        this.scheduleList.push(schedules);
+        this.schedules = this.scheduleList;
+
+        // store.dispatch(createSchedule(schedule));
         this.$.scheduleDialog.close();
         this.stateInitial();
     }
