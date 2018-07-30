@@ -167,6 +167,18 @@ class AddSchedule extends connect(store)(PolymerElement) {
                         /* margin-left: calc((100vw - 280px) / 2); */
                     }
                 }
+
+                input {
+                    border: 1px solid #ccc;
+                    color: #888;
+                    margin-top: 0.5em;
+                    margin-bottom: 0.5em;
+                    vertical-align: middle;
+                    outline: 0;
+                    padding: 0.5em 1em;
+                    border-radius: 4px;
+                    /* width: calc(100% - 3em - 2px); */
+                }
             </style>
             <paper-dialog id="scheduleDialog">
                 <div id="container" class="vertical layout">
@@ -175,7 +187,9 @@ class AddSchedule extends connect(store)(PolymerElement) {
                         <paper-toggle-button id="toggleRepeated" checked="{{isRepeated}}" on-active-changed="_changeIsRepeated"></paper-toggle-button>
                         <p>Repeated</p>
                     </div>
-                    <div id="containerTime" class="horizontal layout">
+                    <input id="inputTime" type="time" name="time" value="{{choosenTime}}">
+                    <!-- <input id="inputDate" type="date" name="date"> -->
+                    <!-- <div id="containerTime" class="horizontal layout">
                         <paper-dropdown-menu id="dropdownHour" label="Hour" noink no-animations>
                             <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="name" selected="{{choosenHour}}" on-selected-changed="_changeTime">
                                 <template is="dom-repeat" items="{{hours}}" as="hour">
@@ -196,7 +210,7 @@ class AddSchedule extends connect(store)(PolymerElement) {
                                 <paper-item name="PM">PM</paper-item>
                             </paper-listbox>
                         </paper-dropdown-menu>
-                    </div>
+                    </div> -->
                     <div id="containerDate" class="horizontal layout">
                         <paper-dropdown-menu id="dropdownMonth" label="Month" noink no-animations>
                             <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="name" selected="{{choosenMonth}}" on-selected-changed="calculateYear">
@@ -459,6 +473,7 @@ class AddSchedule extends connect(store)(PolymerElement) {
         this.$.dropdownAppliance.setAttribute('disabled', true);
         this.setToggleONState('disabled');
         this.setButtonState('disabled');
+        this.$.inputTime.value = '';
     }
 
     clearAll() {
@@ -572,6 +587,23 @@ class AddSchedule extends connect(store)(PolymerElement) {
 
     calculateYear() {
         setTimeout(() => {
+            // untuk waktu menggunakan input type time
+            const time = this.$.inputTime.value;
+            const timeSplit = time.split(':');
+            let timeHour = timeSplit[0];
+            let timeMinute = timeSplit[1];
+            let timeMeridian;
+            if (timeHour > 12) {
+                timeMeridian = 'PM';
+            } else if (timeHour < 12) {
+                timeMeridian = 'AM';
+            } else {
+                timeMeridian = 'PM';
+            }
+            this.choosenHour = timeHour;
+            this.choosenMinute = timeMinute;
+            this.choosenPeriod = timeMeridian;
+
             if (this.choosenHour != '' && this.choosenMinute != '' && this.choosenPeriod != '' && this.choosenDate != '' && this.choosenMonth != '') {
                 const hour = this.choosenHour;
                 const minute = this.choosenMinute;
