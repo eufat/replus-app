@@ -36,7 +36,7 @@ class MainDashboard extends connect(store)(LitElement) {
         return html`
             <style>
                 app-header {
-                    background-color: #4285f4;
+                    background-color: #4664ae;
                     color: #fff;
                 }
 
@@ -89,7 +89,7 @@ class MainDashboard extends connect(store)(LitElement) {
                 }
 
                 paper-tabs[no-bar] paper-tab.iron-selected {
-                    color: #304ffe;
+                    color: #4664ae;
                 }
 
                 .tab-menu {
@@ -115,7 +115,7 @@ class MainDashboard extends connect(store)(LitElement) {
               <app-header-layout fullbleed>
 
                   <!-- Dashboard app bar -->
-                  <app-header fixed effects="waterfall" slot="header">
+                  <app-header slot="header">
                       <app-toolbar>
                         ${_backable ? html`<paper-icon-button on-click="${() => this._onBack()}" icon="arrow-back"></paper-icon-button>` : null}
                           <div main-title>${pageToTitle(_page)}</div>

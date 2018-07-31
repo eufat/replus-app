@@ -532,19 +532,12 @@ export default class MainRooms extends connect(store)(LitElement) {
                 }
             </style>
             <div class="rooms-container">
-                ${
-                    _progress
-                        ? html`
-                                <div class="center-vh">
-                                    <p>Loading your rooms<p>
-                                </div>`
-                        : html`<div class="paper-container">
-                            ${roomsItems}
-                            <paper-material elevation="1" class="add-new-room">
-                                <mwc-button label="Add new room" icon="add" on-click="${() => this._addNewRoom()}" />
-                            </paper-material>
-                        </div>`
-                }
+                <div class="paper-container">
+                    ${roomsItems}
+                    <paper-material elevation="1" class="add-new-room">
+                        <mwc-button label="Add new room" icon="add" on-click="${() => this._addNewRoom()}" />
+                    </paper-material>
+                </div>
             </div>
     `;
     }

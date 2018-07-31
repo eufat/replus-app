@@ -1,5 +1,5 @@
 // const prod = process.env.NODE_ENV === 'production';
-const prod = true;
+const prod = false;
 const googleMapsApi = 'AIzaSyCfGVFRrYf89QiMaQCiXUb-D_uDjUPCsCc';
 const mapboxApi = 'pk.eyJ1IjoicmVwbHVzYXV0b21hdGlvbiIsImEiOiJjampyNmJ5MHAwbW84M3FuZmkydjNjMW1hIn0.akVxS3hGqrLBCE_omJtSXg';
 
@@ -14,12 +14,12 @@ export const firebaseConfig = {
 
 export const env = {
     CORE_IR: 'https://core.replus.co/ir/',
-    CORE_API: prod ? 'https://core.replus.co/api-v2' : 'http://localhost:6000/api',
-    CORE_POST: prod ? 'https://core.replus.co/post-v2' : 'http://localhost:6010/post',
-    CORE_SCHEDULE: prod ? 'https://core.replus.co/schedule-v2' : 'http://localhost:6020/schedule',
-    CORE_ACTIVITY: prod ? 'https://core.replus.co/activity-v2' : 'http://localhost:6030/activity',
-    CORE_GEOSENSE: prod ? 'https://core.replus.co/geosense-v2' : 'http://localhost:6040/geosense',
-    CORE_FORECAST: prod ? 'https://core.replus.co/forecast-v2' : 'http://localhost:6050/forecast',
+    CORE_API: prod ? 'https://core.replus.co/api-v2' : 'http://localhost:2000/api',
+    CORE_POST: prod ? 'https://core.replus.co/post-v2' : 'http://localhost:2010/post',
+    CORE_SCHEDULE: prod ? 'https://core.replus.co/schedule-v2' : 'http://localhost:2020/schedule',
+    CORE_ACTIVITY: prod ? 'https://core.replus.co/activity-v2' : 'http://localhost:2030/activity',
+    CORE_GEOSENSE: prod ? 'https://core.replus.co/geosense-v2' : 'http://localhost:2040/geosense',
+    CORE_FORECAST: prod ? 'https://core.replus.co/forecast-v2' : 'http://localhost:2050/forecast',
     VISION_API: prod ? 'https://vision.replus.co/api-v2' : 'http://localhost:5000/api',
     VISION_ACTIVITY: prod ? 'https://vision.replus.co/activity-v2' : 'ws://localhost:5010',
     VISION_STREAM: prod ? 'https://vision.replus.co/stream' : 'http://localhost:5020',
