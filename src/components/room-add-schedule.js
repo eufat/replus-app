@@ -167,6 +167,18 @@ class AddSchedule extends connect(store)(PolymerElement) {
                         /* margin-left: calc((100vw - 280px) / 2); */
                     }
                 }
+
+                input {
+                    border: 1px solid #ccc;
+                    color: #888;
+                    margin-top: 0.5em;
+                    margin-bottom: 0.5em;
+                    vertical-align: middle;
+                    outline: 0;
+                    padding: 0.5em 1em;
+                    border-radius: 4px;
+                    /* width: calc(100% - 3em - 2px); */
+                }
             </style>
             <paper-dialog id="scheduleDialog">
                 <div id="container" class="vertical layout">
@@ -175,7 +187,9 @@ class AddSchedule extends connect(store)(PolymerElement) {
                         <paper-toggle-button id="toggleRepeated" checked="{{isRepeated}}" on-active-changed="_changeIsRepeated"></paper-toggle-button>
                         <p>Repeated</p>
                     </div>
-                    <div id="containerTime" class="horizontal layout">
+                    <input id="inputTime" type="time" name="time" value="{{choosenTime}}">
+                    <!-- <input id="inputDate" type="date" name="date"> -->
+                    <!-- <div id="containerTime" class="horizontal layout">
                         <paper-dropdown-menu id="dropdownHour" label="Hour" noink no-animations>
                             <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="name" selected="{{choosenHour}}" on-selected-changed="_changeTime">
                                 <template is="dom-repeat" items="{{hours}}" as="hour">
@@ -196,7 +210,7 @@ class AddSchedule extends connect(store)(PolymerElement) {
                                 <paper-item name="PM">PM</paper-item>
                             </paper-listbox>
                         </paper-dropdown-menu>
-                    </div>
+                    </div> -->
                     <div id="containerDate" class="horizontal layout">
                         <paper-dropdown-menu id="dropdownMonth" label="Month" noink no-animations>
                             <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="name" selected="{{choosenMonth}}" on-selected-changed="calculateYear">
@@ -279,7 +293,7 @@ class AddSchedule extends connect(store)(PolymerElement) {
                         <div>[[schedule.titleDay]]</div>
                     </div>
                     <div class="card-actions horizontal layout end-justified">
-                        <paper-button title="[[schedule.id]]" id="btnDeleteSchedule" on-tap="_tapDeleteSchedule">Delete</paper-button>
+                        <paper-button title="[[schedule.titleRemote]]" id="btnDeleteSchedule" on-tap="_tapDeleteSchedule">Delete</paper-button>
                     </div>
                 </paper-card>
             </template>
@@ -300,6 +314,7 @@ class AddSchedule extends connect(store)(PolymerElement) {
 
     static get properties() {
         return {
+            uid: String,
             choosenDay: {
                 type: Object,
                 value: {
@@ -342,24 +357,26 @@ class AddSchedule extends connect(store)(PolymerElement) {
             },
             schedules: {
                 type: Array,
-                value: [
-                    {
-                        id: '-LHXCq_MsS_323O4vVTr',
-                        titleCommand: 'Turn ON',
-                        titleDay: 'January 01 2019, 01:00',
-                        titleRemote: 'TV Sony Dummy',
-                        titleTime: '01:00',
-                    },
-                    {
-                        id: '-LHXk-abfalkkPfozw-5',
-                        titleCommand: 'Turn ON',
-                        titleDay: 'January 01 2019, 10:00',
-                        titleRemote: 'TV Samsung Dummy',
-                        titleTime: '10:00',
-                    }
-                ],
+                // value: [
+                //     {
+                //         id: '-LHXCq_MsS_323O4vVTr',
+                //         titleCommand: 'Turn ON',
+                //         titleDay: 'January 01 2019, 01:00',
+                //         titleRemote: 'TV Sony Dummy',
+                //         titleTime: '01:00',
+                //     },
+                //     {
+                //         id: '-LHXk-abfalkkPfozw-5',
+                //         titleCommand: 'Turn ON',
+                //         titleDay: 'January 01 2019, 10:00',
+                //         titleRemote: 'TV Samsung Dummy',
+                //         titleTime: '10:00',
+                //     }
+                // ],
             },
-
+            scheduleList: {
+                type: Array,
+            },
             manifest: Object,
             mode: Number,
             manifestModes: Array,
@@ -386,9 +403,11 @@ class AddSchedule extends connect(store)(PolymerElement) {
         super();
         this.remotes = [];
         this.manifest = {};
+        this.scheduleList = [];
     }
 
     _stateChanged(state) {
+        this.uid = get(state, 'app.currentUser.uid');
         let stateRemotes = get(state, 'remote.activeRoom.remotes') || [];
         stateRemotes = stateRemotes.map((remote) => {
             const name = get(remote, 'name');
@@ -409,8 +428,18 @@ class AddSchedule extends connect(store)(PolymerElement) {
     }
 
     _tapDeleteSchedule(e) {
-        const scheduleID = e.target.title;
-        store.dispatch(removeSchedule(scheduleID));
+        // const scheduleID = e.target.title;
+        const scheduleTitle = e.target.title;
+        let i;
+        for (i=0; i<this.scheduleList.length; i++) {
+            if (this.scheduleList[i].titleRemote == scheduleTitle) {
+                // delete this.scheduleList[i];
+                this.scheduleList.splice(i, i+1);
+            }
+        }
+        this.schedules = [];
+        this.schedules = this.scheduleList;
+        // store.dispatch(removeSchedule(scheduleID));
     }
 
     _OKtime(OK) {
@@ -444,6 +473,7 @@ class AddSchedule extends connect(store)(PolymerElement) {
         this.$.dropdownAppliance.setAttribute('disabled', true);
         this.setToggleONState('disabled');
         this.setButtonState('disabled');
+        this.$.inputTime.value = '';
     }
 
     clearAll() {
@@ -557,6 +587,23 @@ class AddSchedule extends connect(store)(PolymerElement) {
 
     calculateYear() {
         setTimeout(() => {
+            // untuk waktu menggunakan input type time
+            const time = this.$.inputTime.value;
+            const timeSplit = time.split(':');
+            let timeHour = timeSplit[0];
+            let timeMinute = timeSplit[1];
+            let timeMeridian;
+            if (timeHour > 12) {
+                timeMeridian = 'PM';
+            } else if (timeHour < 12) {
+                timeMeridian = 'AM';
+            } else {
+                timeMeridian = 'PM';
+            }
+            this.choosenHour = timeHour;
+            this.choosenMinute = timeMinute;
+            this.choosenPeriod = timeMeridian;
+
             if (this.choosenHour != '' && this.choosenMinute != '' && this.choosenPeriod != '' && this.choosenDate != '' && this.choosenMonth != '') {
                 const hour = this.choosenHour;
                 const minute = this.choosenMinute;
@@ -676,7 +723,19 @@ class AddSchedule extends connect(store)(PolymerElement) {
             titleTime: this.titleTime,
         };
 
-        store.dispatch(createSchedule(schedule));
+        const schedules = {
+            id: '-LIPYX14LutGJe1fKJwZ',
+            titleCommand: this.titleCommand,
+            titleDay: this.titleDay,
+            titleRemote: this.choosenAppliance,
+            titleTime: this.titleTime,
+        };
+
+        this.schedules = [];
+        this.scheduleList.push(schedules);
+        this.schedules = this.scheduleList;
+
+        // store.dispatch(createSchedule(schedule));
         this.$.scheduleDialog.close();
         this.stateInitial();
     }
