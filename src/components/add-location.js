@@ -37,7 +37,7 @@ export default class Location extends connect(store)(LitElement) {
         super();
         this.currentUser = {};
         this.location = [106.8270482, -6.3627638];
-        this.zoom = 15;
+        this.zoom = 10;
         this.remotes = [];
         this.selectedRemote = '';
         this.onePushButtons = ['ON', 'OFF'];
@@ -48,6 +48,27 @@ export default class Location extends connect(store)(LitElement) {
     }
 
     _didRender() {
+        this.googleMap();
+    }
+
+    _shouldRender(props, changedProps, old) {
+        return props.active;
+    }
+
+    _stateChanged(state) {
+        this.location = get(state, 'remote.location.results[0].geometry.location');
+        this.address = get(state, 'remote.location.results[0].formatted_address');
+        let stateRemotes = get(state, 'remote.activeRoom.remotes') || [];
+        stateRemotes = stateRemotes.map((remote) => {
+            const name = get(remote, 'name');
+            const nameUpperCased = name.toUpperCase();
+            return nameUpperCased;
+        });
+        this.remotes = stateRemotes;
+        this.roomID = get(state, 'remote.activeRoom.id');
+    }
+
+    mapbox() {
         const mapElement = this.shadowRoot.getElementById('map');
         let loc;
         let mapZoom = this.zoom;
@@ -82,21 +103,126 @@ export default class Location extends connect(store)(LitElement) {
         marker.on('dragend', onDragEnd);
     }
 
-    _shouldRender(props, changedProps, old) {
-        return props.active;
+    googleMap() {
+        const mapElement = this.shadowRoot.getElementById('map');
+        let center;
+        let pos;
+        let mapZoom = this.zoom;
+        if (this.location == undefined) {
+            center = {lat: -6.3627638, lng: 106.8270482};
+            pos = null;
+        } else {
+            center = this.location;
+            pos = center;
+        }
+
+        const mapOptions = {
+            zoom: mapZoom,
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            // center: new google.maps.LatLng(-6.3627638, 106.8270482),
+            center: center,
+        };
+
+        const map = new google.maps.Map(mapElement, mapOptions);
+        const geocoder = new google.maps.Geocoder();
+
+        const marker = new google.maps.Marker({
+            draggable: true,
+            map: map,
+            position: pos,
+        });
+
+        marker.addListener('dragend', () => {
+            this.zoom = map.getZoom();
+            const location = marker.getPosition();
+            this.location = {lat: location.lat(), lng: location.lng()};
+            // const latlng = this.location.lat + ',' + this.location.lng;
+            // store.dispatch(reverseGeocode(latlng));
+        });
+
+        // this.searchBox(map, geocoder);
     }
 
-    _stateChanged(state) {
-        this.location = get(state, 'remote.location.results[0].geometry.location');
-        this.address = get(state, 'remote.location.results[0].formatted_address');
-        let stateRemotes = get(state, 'remote.activeRoom.remotes') || [];
-        stateRemotes = stateRemotes.map((remote) => {
-            const name = get(remote, 'name');
-            const nameUpperCased = name.toUpperCase();
-            return nameUpperCased;
+    searchBox(map, geocoder) {
+        // Create the search box and link it to the UI element.
+        const input = this.shadowRoot.getElementById('pac-input');
+        const searchBox = new google.maps.places.SearchBox(input);
+        map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+        // Bias the SearchBox results towards current map's viewport.
+        map.addListener('bounds_changed', () => {
+            searchBox.setBounds(map.getBounds());
         });
-        this.remotes = stateRemotes;
-        this.roomID = get(state, 'remote.activeRoom.id');
+
+        let markers = [];
+        // Listen for the event fired when the user selects a prediction and retrieve
+        // more details for that place.
+        searchBox.addListener('places_changed', () => {
+            this.geocodeAddress(geocoder, map);
+            const places = searchBox.getPlaces();
+
+            if (places.length == 0) {
+                return;
+            }
+
+            // Clear out the old markers.
+            markers.forEach((marker) => {
+                marker.setMap(null);
+            });
+            markers = [];
+
+            // For each place, get the icon, name and location.
+            const bounds = new google.maps.LatLngBounds();
+            places.forEach((place) => {
+                if (!place.geometry) {
+                    console.log("Returned place contains no geometry");
+                    return;
+                }
+                const icon = {
+                    url: place.icon,
+                    size: new google.maps.Size(71, 71),
+                    origin: new google.maps.Point(0, 0),
+                    anchor: new google.maps.Point(17, 34),
+                    scaledSize: new google.maps.Size(25, 25)
+                };
+
+                // Create a marker for each place.
+                markers.push(new google.maps.Marker({
+                    map: map,
+                    icon: icon,
+                    title: place.name,
+                    position: place.geometry.location
+                }));
+
+                if (place.geometry.viewport) {
+                    // Only geocodes have viewport.
+                    bounds.union(place.geometry.viewport);
+                } else {
+                    bounds.extend(place.geometry.location);
+                }
+                console.log(place.geometry.location.lat());
+                console.log(place.geometry.location.lng());
+            });
+            map.fitBounds(bounds);
+            console.log(input.value);
+        });
+    }
+
+    geocodeAddress(geocoder, resultsMap) {
+        const address = this.shadowRoot.getElementById('pac-input').value;
+        geocoder.geocode({'address': address}, (results, status) => {
+            if (status === 'OK') {
+                resultsMap.setCenter(results[0].geometry.location);
+                const marker = new google.maps.Marker({
+                    draggable: true,
+                    map: resultsMap,
+                    zoom: 16,
+                    position: results[0].geometry.location,
+                });
+            } else {
+                alert('Geocode was not successful for the following reason: ' + status);
+            }
+        });
     }
 
     getIndexOf(array, element) {
@@ -174,6 +300,79 @@ export default class Location extends connect(store)(LitElement) {
     _render({location, address, remotes, onePushButtons, commandIn, commandOut}) {
         return html`
             <style>
+                /* google map with searchbox style */
+                #description {
+                    font-family: Roboto;
+                    font-size: 15px;
+                    font-weight: 300;
+                }
+
+                #infowindow-content .title {
+                    font-weight: bold;
+                }
+
+                #infowindow-content {
+                    display: none;
+                }
+
+                #map #infowindow-content {
+                    display: inline;
+                }
+
+                .pac-card {
+                    margin: 10px 10px 0 0;
+                    border-radius: 2px 0 0 2px;
+                    box-sizing: border-box;
+                    -moz-box-sizing: border-box;
+                    outline: none;
+                    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+                    background-color: #fff;
+                    font-family: Roboto;
+                }
+
+                #pac-container {
+                    padding-bottom: 12px;
+                    margin-right: 12px;
+                }
+
+                .pac-controls {
+                    display: inline-block;
+                    padding: 5px 11px;
+                }
+
+                .pac-controls label {
+                    font-family: Roboto;
+                    font-size: 13px;
+                    font-weight: 300;
+                }
+
+                #pac-input {
+                    background-color: #fff;
+                    font-family: Roboto;
+                    font-size: 15px;
+                    font-weight: 300;
+                    margin-left: 12px;
+                    padding: 0 11px 0 13px;
+                    text-overflow: ellipsis;
+                    width: 400px;
+                }
+
+                #pac-input:focus {
+                    border-color: #4d90fe;
+                }
+
+                #title {
+                    color: #fff;
+                    background-color: #4d90fe;
+                    font-size: 25px;
+                    font-weight: 500;
+                    padding: 6px 12px;
+                }
+                #target {
+                    width: 345px;
+                }
+
+                /* mapbox style */
                 .mapboxgl-map {
                     font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
                     overflow: hidden;
@@ -733,7 +932,9 @@ export default class Location extends connect(store)(LitElement) {
                     cursor: pointer;
                 }
             </style>
-            <div id='map' style='width: 100%; height: 300px;'></div>
+            <input id="pac-input" class="controls" type="text" placeholder="Search Address">
+            <div align="left" id="map" style="width: 100%; height: 400px;"></div>
+            <!-- <div id='map' style='width: 100%; height: 300px;'></div> -->
             <div role="listbox" class="settings">
                 <paper-item>
                     <paper-input
@@ -746,7 +947,7 @@ export default class Location extends connect(store)(LitElement) {
                     <mwc-button
                         raised
                         class="light"
-                        label="geocode"
+                        label="search"
                         on-click="${() => this.getLocation(this.shadowRoot)}"
                     ></mwc-button>
                 </paper-item>
@@ -806,7 +1007,7 @@ export default class Location extends connect(store)(LitElement) {
                             )}
                         </paper-listbox>
                     </paper-dropdown-menu>
-                    <paper-dropdown-menu id="dropdownPushButton" label="One Push Button" noink no-animations>
+                    <paper-dropdown-menu id="dropdownPushButton" label="Command" noink no-animations>
                         <paper-listbox id="listbox-button" slot="dropdown-content" class="dropdown-content">
                             ${onePushButtons.map(
                                 (item) => html`
@@ -835,7 +1036,7 @@ export default class Location extends connect(store)(LitElement) {
                             )}
                         </paper-listbox>
                     </paper-dropdown-menu>
-                    <paper-dropdown-menu id="dropdownPushButton" label="One Push Button" noink no-animations>
+                    <paper-dropdown-menu id="dropdownPushButton" label="Command" noink no-animations>
                         <paper-listbox id="listbox-button" slot="dropdown-content" class="dropdown-content">
                             ${onePushButtons.map(
                                 (item) => html`
