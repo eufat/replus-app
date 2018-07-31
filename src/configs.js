@@ -1,5 +1,5 @@
 // const prod = process.env.NODE_ENV === 'production';
-const prod = false;
+const prod = true;
 const googleMapsApi = 'AIzaSyCfGVFRrYf89QiMaQCiXUb-D_uDjUPCsCc';
 const mapboxApi = 'pk.eyJ1IjoicmVwbHVzYXV0b21hdGlvbiIsImEiOiJjampyNmJ5MHAwbW84M3FuZmkydjNjMW1hIn0.akVxS3hGqrLBCE_omJtSXg';
 
