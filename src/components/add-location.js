@@ -140,8 +140,42 @@ export default class Location extends connect(store)(LitElement) {
             this.geocodeLatLng(geocoder, map, latlng);
             // store.dispatch(reverseGeocode(latlng));
         });
-
+        const inputSearch = this.shadowRoot.getElementById('address');
+        const search = new google.maps.places.SearchBox(inputSearch);
         // this.searchBox(map, geocoder);
+    }
+
+    seach() {
+        const inputSearch = this.shadowRoot.getElementById('address');
+        const search = new google.maps.places.SearchBox(inputSearch);
+    }
+
+    geocode(address) {
+        const geocoder = new google.maps.Geocoder();
+        geocoder.geocode({'address': address}, (results, status) => {
+            if (status === 'OK') {
+                const location = results[0].geometry.location;
+                this.location = {lat: location.lat(), lng: location.lng()};
+            } else {
+                alert('Geocode was not successful for the following reason: ' + status);
+            }
+        });
+    }
+
+    geocodeLatLng(geocoder, map, input) {
+        const latlngStr = input.split(',', 2);
+        const latlng = {lat: parseFloat(latlngStr[0]), lng: parseFloat(latlngStr[1])};
+        geocoder.geocode({'location': latlng}, (results, status) => {
+            if (status === 'OK') {
+                if (results[0]) {
+                    this.address = results[0].formatted_address;
+                } else {
+                    window.alert('No results found');
+                }
+            } else {
+                window.alert('Geocoder failed due to: ' + status);
+            }
+        });
     }
 
     searchBox(map, geocoder) {
@@ -206,22 +240,6 @@ export default class Location extends connect(store)(LitElement) {
             });
             map.fitBounds(bounds);
             console.log(input.value);
-        });
-    }
-
-    geocodeLatLng(geocoder, map, input) {
-        const latlngStr = input.split(',', 2);
-        const latlng = {lat: parseFloat(latlngStr[0]), lng: parseFloat(latlngStr[1])};
-        geocoder.geocode({'location': latlng}, (results, status) => {
-            if (status === 'OK') {
-                if (results[0]) {
-                    this.address = results[0].formatted_address;
-                } else {
-                    window.alert('No results found');
-                }
-            } else {
-                window.alert('Geocoder failed due to: ' + status);
-            }
         });
     }
 
@@ -299,7 +317,9 @@ export default class Location extends connect(store)(LitElement) {
 
     getLocation(element) {
         const address = element.getElementById('address').value;
-        store.dispatch(getLocation(address));
+        this.address = address;
+        this.geocode(address);
+        // store.dispatch(getLocation(address));
         this.zoom = 15;
         element.getElementById('address').value = null;
     }
@@ -949,7 +969,7 @@ export default class Location extends connect(store)(LitElement) {
                     cursor: pointer;
                 }
             </style>
-            <input id="pac-input" class="controls" type="text" placeholder="Search Address">
+            <!-- <input id="pac-input" class="controls" type="text" placeholder="Search Address"> -->
             <div align="left" id="map" style="width: 100%; height: 400px;"></div>
             <!-- <div id='map' style='width: 100%; height: 300px;'></div> -->
             <div role="listbox" class="settings">
@@ -957,6 +977,7 @@ export default class Location extends connect(store)(LitElement) {
                     <paper-input
                         id="address"
                         label="Address"
+                        placeholder="Search Address"
                         always-float-label>
                     </paper-input>
                 </paper-item>
