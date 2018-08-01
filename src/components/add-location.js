@@ -136,7 +136,8 @@ export default class Location extends connect(store)(LitElement) {
             this.zoom = map.getZoom();
             const location = marker.getPosition();
             this.location = {lat: location.lat(), lng: location.lng()};
-            // const latlng = this.location.lat + ',' + this.location.lng;
+            const latlng = this.location.lat + ',' + this.location.lng;
+            this.geocodeLatLng(geocoder, map, latlng);
             // store.dispatch(reverseGeocode(latlng));
         });
 
@@ -205,6 +206,22 @@ export default class Location extends connect(store)(LitElement) {
             });
             map.fitBounds(bounds);
             console.log(input.value);
+        });
+    }
+
+    geocodeLatLng(geocoder, map, input) {
+        const latlngStr = input.split(',', 2);
+        const latlng = {lat: parseFloat(latlngStr[0]), lng: parseFloat(latlngStr[1])};
+        geocoder.geocode({'location': latlng}, (results, status) => {
+            if (status === 'OK') {
+                if (results[0]) {
+                    this.address = results[0].formatted_address;
+                } else {
+                    window.alert('No results found');
+                }
+            } else {
+                window.alert('Geocoder failed due to: ' + status);
+            }
         });
     }
 
