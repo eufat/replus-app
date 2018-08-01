@@ -36,7 +36,6 @@ export default class Location extends connect(store)(LitElement) {
     constructor() {
         super();
         this.currentUser = {};
-        this.location = [106.8270482, -6.3627638];
         this.zoom = 10;
         this.remotes = [];
         this.selectedRemote = '';
@@ -56,8 +55,6 @@ export default class Location extends connect(store)(LitElement) {
     }
 
     _stateChanged(state) {
-        this.location = get(state, 'remote.location.results[0].geometry.location');
-        this.address = get(state, 'remote.location.results[0].formatted_address');
         let stateRemotes = get(state, 'remote.activeRoom.remotes') || [];
         stateRemotes = stateRemotes.map((remote) => {
             const name = get(remote, 'name');
