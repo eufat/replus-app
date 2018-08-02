@@ -145,12 +145,16 @@ export default class MainRooms extends connect(store)(LitElement) {
                             color: black;
                             text-decoration: none;
                         }
+                        .remove-button {
+                            display: flex;
+                        }
                     </style>
                         ${
                             onEdit
                                 ? html`
                                     <div class="remote-item">
                                         <mwc-button
+                                            class="remove-button"
                                             label="Remove"
                                             icon="close"
                                             on-click="${() => this._removeRemote(remote.id)}">
@@ -323,28 +327,28 @@ export default class MainRooms extends connect(store)(LitElement) {
                                     </mwc-button>`
                                 : html`
                                     <h1>${item.name}</h1>
-                                    <mwc-button
-                                        label="Edit"
-                                        icon="edit"
-                                        on-click="${() => this._enterOnEdit(roomIndex)}">
-                                    </mwc-button>
-                                    <a href="/dashboard/add-schedule" on-click="${() => this._handleActiveRoom(room)}">
+                                    <div class="top-button">
                                         <mwc-button
-                                            label="Schedule"
-                                            icon="calendar_today">
+                                            label="Edit"
+                                            icon="edit"
+                                            on-click="${() => this._enterOnEdit(roomIndex)}">
                                         </mwc-button>
-                                    </a>
-                                    <a href="/dashboard/add-location" on-click="${() => this._handleActiveRoom(room)}">
-                                        <mwc-button
-                                            label="Location"
-                                            icon="location_on">
-                                        </mwc-button>
-                                    </a>`
+                                        <a href="/dashboard/add-schedule" on-click="${() => this._handleActiveRoom(room)}">
+                                            <mwc-button
+                                                label="Schedule"
+                                                icon="calendar_today">
+                                            </mwc-button>
+                                        </a>
+                                        <a href="/dashboard/add-location" on-click="${() => this._handleActiveRoom(room)}">
+                                            <mwc-button
+                                                label="Location"
+                                                icon="location_on">
+                                            </mwc-button>
+                                        </a>
+                                    </div>`
                         }
                     </div>
                     <div class="room-remotes">
-                        ${_.values(roomCameras(item.devices, roomIndex))}
-                        ${_.values(roomRemotes(item.remotes, roomIndex))}
                         ${
                             onEdit
                                 ? html`
@@ -367,6 +371,8 @@ export default class MainRooms extends connect(store)(LitElement) {
                                     </div>`
                                 : null
                         }
+                        ${_.values(roomCameras(item.devices, roomIndex))}
+                        ${_.values(roomRemotes(item.remotes, roomIndex))}
                     </div>
                     <div class="room-devices">
                         ${roomDevices(_.values(item.devices), roomIndex)}
@@ -408,11 +414,14 @@ export default class MainRooms extends connect(store)(LitElement) {
                 .room-title h1 {
                     font-weight: normal;
                     font-size: 1.25em;
+                    margin-bottom: 0px !important;
                 }
 
                 .room-remotes {
                     width: 100%;
                     display: block;
+                    overflow: auto;
+                    white-space: nowrap;
                 }
 
                 @media screen and (max-width: 375px) {
@@ -447,9 +456,9 @@ export default class MainRooms extends connect(store)(LitElement) {
                     padding: 10px;
                     width: 120px;
                     height: 120px;
-                    margin-top: 0;
+                    margin-top: 5px;
+                    margin-bottom: 5px;
                     margin-right: 10px;
-                    margin-bottom: 10px;
                     border: 1px solid #ccc;
                     border-radius: 10px;
                 }
