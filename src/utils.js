@@ -6,6 +6,10 @@ export const rotationsList = ['0°', '90°', '180°', '270°'];
 
 export const brandsList = ['samsung', 'lg', 'panasonic', 'toshiba', 'mitsubishi', 'daikin', 'dast'];
 
+export const brandsAC = ['daikin', 'dast', 'lg', 'mitsubishi heavy industries', 'panasonic', 'panasonicOld', 'samsung', 'toshiba'];
+
+export const brandsTV = ['changhong', 'lg', 'panasonic', 'samsung', 'sanyo', 'sharp', 'sony', 'toshiba'];
+
 export const upperCases = ['lg', 'tv', 'ac'];
 
 export function hideOnClickOutside(element) {

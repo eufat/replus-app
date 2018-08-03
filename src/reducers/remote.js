@@ -7,7 +7,7 @@ const initialState = {
     newDevice: {},
     newRemote: {
         type: 'tv',
-        brand: 'samsung',
+        brand: 'changhong',
     },
     settings: {},
     manifest: {},

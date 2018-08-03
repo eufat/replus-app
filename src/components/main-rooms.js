@@ -9,7 +9,7 @@ import '@polymer/paper-input/paper-input';
 
 import {setRooms, removeDevice, editRoom, addRoom, removeRoom, setNewRemote, addRemote, removeRemote, addDevice, addCamera, setNewDevice, setActiveRemote, setActiveRoom} from '../actions/remote';
 import {setActiveVision} from '../actions/vision';
-import {getNewRoomTemplate, brandsList, toTitleCase} from '../utils';
+import {getNewRoomTemplate, brandsList, brandsAC, brandsTV, toTitleCase} from '../utils';
 import {store} from '../store';
 
 const get = _.get;
@@ -98,14 +98,39 @@ export default class MainRooms extends connect(store)(LitElement) {
         return array.indexOf(element);
     }
 
+    _setBrandList(e, room) {
+        const remoteType = e.target.name;
+        const brandTV = 'tv-brandlist-' + room;
+        const brandAC = 'ac-brandlist-' + room;
+        if (remoteType == 'ac') {
+            this.shadowRoot.getElementById(brandTV).style.display = 'none';
+            this.shadowRoot.getElementById(brandAC).style.display = 'inline';
+        } else {
+            this.shadowRoot.getElementById(brandAC).style.display = 'none';
+            this.shadowRoot.getElementById(brandTV).style.display = 'inline';
+        }
+    }
+
     _handleNewDeviceChange(e, key) {
         const newDevice = {...this.newDevice, [key]: e.target.value};
         store.dispatch(setNewDevice(newDevice));
     }
 
-    _handleNewRemoteChange(e, key) {
-        const value = key == 'brand' ? e.target.value : e.target.name; // kalau brand ambil valuenya, bukan name
-        const newRemote = {...this.newRemote, [key]: value};
+    _handleNewRemoteChange(e, key, room) {
+        let value = key == 'brand' ? e.target.value : e.target.name; // kalau brand ambil valuenya, bukan name
+        if (value == 'mitsubishi heavy industries') value = 'mitsubishi';
+        let newRemote = {...this.newRemote, [key]: value};
+        if (key == 'type') {
+            const ac = 'ac-brandlist-' + room;
+            const tv = 'tv-brandlist-' + room;
+            const brandAC = this.shadowRoot.getElementById(ac).value;
+            const brandTV = this.shadowRoot.getElementById(tv).value;
+            if (value == 'ac') {
+                newRemote = {brand: brandAC, type: value};
+            } else if (value == 'tv') {
+                newRemote = {brand: brandTV, type: value};
+            }
+        }
         store.dispatch(setNewRemote(newRemote));
     }
 
@@ -115,6 +140,17 @@ export default class MainRooms extends connect(store)(LitElement) {
 
     _handleNewRemoteAdd(roomID) {
         store.dispatch(addRemote(roomID));
+    }
+
+    _initialRemoteAdd(room) {
+        const brandAC = 'ac-brandlist-' + room;
+        const brandTV = 'tv-brandlist-' + room;
+        const selectedAC = 'ac-selected-' + room;
+        const selectedTV = 'tv-selected-' + room;
+        this.shadowRoot.getElementById(selectedAC).selected = brandsAC[0];
+        this.shadowRoot.getElementById(selectedTV).selected = brandsTV[0];
+        this.shadowRoot.getElementById(brandAC).style.display = 'none';
+        this.shadowRoot.getElementById(brandTV).style.display = 'inline';
     }
 
     _handleNewCameraAdd(roomID) {
@@ -257,28 +293,39 @@ export default class MainRooms extends connect(store)(LitElement) {
                     <div class="modal-content">
                         <label id="appliance-type">Choose Remote:</label>
                         <paper-radio-group
+                            id="remote-type-${roomIndex}"
                             aria-labelledby="appliance-type"
-                            selected="${get(this.newRemote, 'type')}"
-                            on-change="${(e) => this._handleNewRemoteChange(e, 'type')}"
+                            selected="tv"
+                            on-change="${(e) => this._handleNewRemoteChange(e, 'type', roomIndex)}"
                         >
-                            <paper-radio-button name="tv">TV</paper-radio-button>
-                            <paper-radio-button name="ac">AC</paper-radio-button>
+                            <paper-radio-button on-click="${(e) => this._setBrandList(e, roomIndex)}" name="tv">TV</paper-radio-button>
+                            <paper-radio-button on-click="${(e) => this._setBrandList(e, roomIndex)}" name="ac">AC</paper-radio-button>
                         </paper-radio-group>
                         <select
-                            selected="${get(this.newRemote, 'brand')}"
-                            on-change="${(e) => this._handleNewRemoteChange(e, 'brand')}"
+                            id="tv-brandlist-${roomIndex}"
+                            on-change="${(e) => this._handleNewRemoteChange(e, 'brand', roomIndex)}"
                         >
-                            ${brandsList.map((brand) => {
+                            ${brandsTV.map((brand) => {
                                 return html`
-                                        <option
-                                            value="${brand}"
-                                        >
-                                                ${toTitleCase(brand)}
-                                        </option>`;
+                                    <option id="tv-selected-${roomIndex}" value="${brand}">
+                                        ${toTitleCase(brand)}
+                                    </option>`;
                             })}
                         </select>
-                        <div class="buttons" on-click="${() => this._handleNewRemoteAdd(item.id)}">
-                            <mwc-button dialog-confirm label="Add This Remote"></mwc-button>
+                        <select
+                            id="ac-brandlist-${roomIndex}"
+                            style="display: none"
+                            on-change="${(e) => this._handleNewRemoteChange(e, 'brand', roomIndex)}"
+                        >
+                            ${brandsAC.map((brand) => {
+                                return html`
+                                    <option id="ac-selected-${roomIndex}" value="${brand}">
+                                        ${toTitleCase(brand)}
+                                    </option>`;
+                            })}
+                        </select>
+                        <div class="buttons">
+                            <mwc-button dialog-confirm label="Add This Remote" on-click="${() => this._handleNewRemoteAdd(item.id)}"></mwc-button>
                         </div>
                     </div>
                 </paper-dialog>
@@ -542,7 +589,7 @@ export default class MainRooms extends connect(store)(LitElement) {
             </style>
             <div class="rooms-container">
                 <div class="paper-container">
-                    ${roomsItems}
+                ${roomsItems}
                     <paper-material elevation="1" class="add-new-room">
                         <mwc-button label="Add new room" icon="add" on-click="${() => this._addNewRoom()}" />
                     </paper-material>
