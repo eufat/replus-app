@@ -271,16 +271,16 @@ export default class Location extends connect(store)(LitElement) {
 
     setCommandIn(element) {
         this.commandIn = this.selectedRemote + ' ' + this.selectedPushButton;
-        const listboxButton = element.getElementById('listbox-button');
-        const listboxRemote = element.getElementById('listbox-remote');
+        const listboxButton = element.getElementById('listbox-button-in');
+        const listboxRemote = element.getElementById('listbox-remote-in');
         listboxButton.selected = null;
         listboxRemote.selected = null;
     }
 
     setCommandOut(element) {
         this.commandOut = this.selectedRemote + ' ' + this.selectedPushButton;
-        const listboxButton = element.getElementById('listbox-button');
-        const listboxRemote = element.getElementById('listbox-remote');
+        const listboxButton = element.getElementById('listbox-button-out');
+        const listboxRemote = element.getElementById('listbox-remote-out');
         listboxButton.selected = null;
         listboxRemote.selected = null;
     }
@@ -1032,7 +1032,7 @@ export default class Location extends connect(store)(LitElement) {
             <paper-dialog id="geoInDialog">
                 <div class="horizontal layout">
                     <paper-dropdown-menu id="dropdownPushButton" label="Remote" noink no-animations>
-                        <paper-listbox id="listbox-remote" slot="dropdown-content" class="dropdown-content">
+                        <paper-listbox id="listbox-remote-in" slot="dropdown-content" class="dropdown-content">
                             ${remotes.map(
                                 (item) => html`
                                     <paper-item on-click="${() => this.setSelectedRemote(item)}" item-name="${this.getIndexOf(remotes, item)}">
@@ -1043,7 +1043,7 @@ export default class Location extends connect(store)(LitElement) {
                         </paper-listbox>
                     </paper-dropdown-menu>
                     <paper-dropdown-menu id="dropdownPushButton" label="Command" noink no-animations>
-                        <paper-listbox id="listbox-button" slot="dropdown-content" class="dropdown-content">
+                        <paper-listbox id="listbox-button-in" slot="dropdown-content" class="dropdown-content">
                             ${onePushButtons.map(
                                 (item) => html`
                                     <paper-item on-click="${() => this.setSelectedPushButton(item)}">
@@ -1061,7 +1061,7 @@ export default class Location extends connect(store)(LitElement) {
             <paper-dialog id="geoOutDialog">
                 <div class="horizontal layout">
                     <paper-dropdown-menu id="dropdownPushButton" label="Remote" noink no-animations>
-                        <paper-listbox id="listbox-remote" slot="dropdown-content" class="dropdown-content">
+                        <paper-listbox id="listbox-remote-out" slot="dropdown-content" class="dropdown-content">
                             ${remotes.map(
                                 (item) => html`
                                     <paper-item on-click="${() => this.setSelectedRemote(item)}" item-name="${this.getIndexOf(remotes, item)}">
@@ -1072,7 +1072,7 @@ export default class Location extends connect(store)(LitElement) {
                         </paper-listbox>
                     </paper-dropdown-menu>
                     <paper-dropdown-menu id="dropdownPushButton" label="Command" noink no-animations>
-                        <paper-listbox id="listbox-button" slot="dropdown-content" class="dropdown-content">
+                        <paper-listbox id="listbox-button-out" slot="dropdown-content" class="dropdown-content">
                             ${onePushButtons.map(
                                 (item) => html`
                                     <paper-item on-click="${() => this.setSelectedPushButton(item)}">
