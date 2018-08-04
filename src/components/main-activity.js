@@ -156,7 +156,17 @@ export default class activityMain extends connect(store)(LitElement) {
 
         const data = this.activityEvents;
 
-        const activityItems = data.map((item) => {
+        function compare(a, b) {
+            const dateA = a.date.getTime();
+            const dateB = b.date.getTime();
+            if (dateA < dateB) return 1;
+            if (dateA > dateB) return -1;
+            return 0;
+        }
+
+        const sortedData = data.sort(compare);
+
+        let activityItems = sortedData.map((item) => {
             const messageIcon = () => {
                 switch (item.event) {
                     case 'increase_temp':
