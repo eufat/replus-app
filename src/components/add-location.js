@@ -10,7 +10,7 @@ import '@em-polymer/google-map/google-map';
 
 import {store} from '../store.js';
 import {connect} from 'pwa-helpers/connect-mixin';
-import {getLocation, reverseGeocode, saveLocation, setLocation} from '../actions/remote.js';
+import {getLocation, reverseGeocode, saveLocation, setLocation, setActiveRoom} from '../actions/remote.js';
 import {env} from '../configs';
 
 // Import from lodash
@@ -30,6 +30,9 @@ export default class Location extends connect(store)(LitElement) {
             commandOut: String,
             codeset: String,
             roomID: String,
+            home: Object,
+            rooms: Array,
+            roomIndex: Number,
         };
     }
 
@@ -44,10 +47,17 @@ export default class Location extends connect(store)(LitElement) {
         this.commandOut = '';
         this.roomID = '';
         this.rendered = false;
+        this.rooms = [];
+        this.home = {};
     }
 
     _didRender() {
         this.googleMap();
+        if (this.location.lat != undefined) {
+            this.geocodeLatLng(this.location.lat + ',' + this.location.lng);
+        } else {
+            this.address = '';
+        }
     }
 
     _shouldRender(props, changedProps, old) {
@@ -63,6 +73,13 @@ export default class Location extends connect(store)(LitElement) {
         });
         this.remotes = stateRemotes;
         this.roomID = get(state, 'remote.activeRoom.id');
+        this.home = get(state, 'remote.activeRoom.home');
+        this.roomIndex = get(state, 'remote.activeRoom.index');
+        this.rooms = get(state, 'remote.rooms');
+        const lat = get(state, 'remote.rooms[' + this.roomIndex + '].home.latitude');
+        const lng = get(state, 'remote.rooms[' + this.roomIndex + '].home.longitude');
+        // this.location = {lat: get(state, 'remote.activeRoom.home.latitude'), lng: get(state, 'remote.activeRoom.home.longitude')};
+        this.location = {lat: lat, lng: lng};
     }
 
     mapbox() {
@@ -105,7 +122,7 @@ export default class Location extends connect(store)(LitElement) {
         let center;
         let pos;
         let mapZoom = this.zoom;
-        if (this.location == undefined) {
+        if (this.location.lat == undefined) {
             center = {lat: -6.3627638, lng: 106.8270482};
             pos = null;
         } else {
@@ -134,7 +151,7 @@ export default class Location extends connect(store)(LitElement) {
             const location = marker.getPosition();
             this.location = {lat: location.lat(), lng: location.lng()};
             const latlng = this.location.lat + ',' + this.location.lng;
-            this.geocodeLatLng(geocoder, map, latlng);
+            this.geocodeLatLng(latlng);
             // store.dispatch(reverseGeocode(latlng));
         });
         const inputSearch = this.shadowRoot.getElementById('address');
@@ -154,7 +171,8 @@ export default class Location extends connect(store)(LitElement) {
         });
     }
 
-    geocodeLatLng(geocoder, map, input) {
+    geocodeLatLng(input) {
+        const geocoder = new google.maps.Geocoder();
         const latlngStr = input.split(',', 2);
         const latlng = {lat: parseFloat(latlngStr[0]), lng: parseFloat(latlngStr[1])};
         geocoder.geocode({'location': latlng}, (results, status) => {
@@ -323,13 +341,27 @@ export default class Location extends connect(store)(LitElement) {
             this.setRemoteCode(this.commandIn);
             codesetInRange = this.codeset;
         }
+
         if (this.commandOut != '') {
             this.setRemoteCode(this.commandOut);
             codesetOutRange = this.codeset;
         }
-        store.dispatch(saveLocation(this.roomID, codesetInRange, codesetOutRange, this.location));
+
+        const location = {
+            roomID: this.roomID,
+            geosenseInRange: codesetInRange,
+            geosenseOutRange: codesetOutRange,
+            lat: this.location.lat,
+            long: this.location.lng,
+        }
+
+        store.dispatch(saveLocation(location));
         this.commandIn = '';
         this.commandOut = '';
+    }
+
+    deleteLocation() {
+        console.log('delete');
     }
 
     _render({location, address, remotes, onePushButtons, commandIn, commandOut}) {
@@ -459,6 +491,10 @@ export default class Location extends connect(store)(LitElement) {
                 .pointer {
                     cursor: pointer;
                 }
+
+                #delete-button {
+                    margin-left: 10px;
+                }
             </style>
             <!-- <input id="pac-input" class="controls" type="text" placeholder="Search Address"> -->
             <div align="left" id="map" style="width: 100%; height: 400px;"></div>
@@ -517,9 +553,17 @@ export default class Location extends connect(store)(LitElement) {
                 <paper-item>
                     <mwc-button
                         raised
+                        id="save-button"
                         class="light"
                         label="save location"
                         on-click="${() => this.saveLocation()}"
+                    ></mwc-button>
+                    <mwc-button
+                        raised
+                        id="delete-button"
+                        class="light"
+                        label="delete location"
+                        on-click="${() => this.deleteLocation()}"
                     ></mwc-button>
                 </paper-item>
             </div>

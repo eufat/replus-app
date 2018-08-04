@@ -390,14 +390,32 @@ export const reverseGeocode = (latlng) => async (dispatch, getState) => {
     }
 };
 
-export const saveLocation = (roomID, geosenseInRange, geosenseOutRange, location) => (dispatch, getState) => {
+export const saveLocation = (location) => (dispatch, getState) => {
     dispatch(showProgress());
     const uid = get(getState(), 'app.currentUser.uid');
+    const roomID = location.roomID;
+    const geosenseInRange = location.geosenseInRange;
+    const geosenseOutRange = location.geosenseOutRange;
     const lat = location.lat;
-    const long = location.lng;
+    const long = location.long;
     const forecast = '';
     try {
         coreClient().put('/save-location', qs({geosenseInRange, geosenseOutRange, forecast, lat, long}), {params: {uid, roomID}});
+        dispatch(fetchLocation());
+        dispatch(showSnackbar(`Location saved.`));
+        dispatch(closeProgress());
+    } catch (error) {
+        errorHandler.report(error);
+        dispatch(closeProgress());
+    }
+};
+
+export const fetchLocation = () => async (dispatch, getState) => {
+    dispatch(showProgress());
+    const uid = get(getState(), 'app.currentUser.uid');
+    try {
+        const response = await coreClient().get('/get-rooms', {params: {uid}});
+        dispatch(setRooms(response.data));
         dispatch(closeProgress());
     } catch (error) {
         errorHandler.report(error);

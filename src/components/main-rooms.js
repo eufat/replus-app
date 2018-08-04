@@ -161,8 +161,9 @@ export default class MainRooms extends connect(store)(LitElement) {
         store.dispatch(setActiveRemote(remote));
     }
 
-    _handleActiveRoom(room) {
-        store.dispatch(setActiveRoom(room));
+    _handleActiveRoom(room, index) {
+        const activeRoom = {index, ...room};
+        store.dispatch(setActiveRoom(activeRoom));
     }
 
     _handleActiveVision(vision) {
@@ -380,13 +381,13 @@ export default class MainRooms extends connect(store)(LitElement) {
                                             icon="edit"
                                             on-click="${() => this._enterOnEdit(roomIndex)}">
                                         </mwc-button>
-                                        <a href="/dashboard/add-schedule" on-click="${() => this._handleActiveRoom(room)}">
+                                        <a href="/dashboard/add-schedule" on-click="${() => this._handleActiveRoom(room, roomIndex)}">
                                             <mwc-button
                                                 label="Schedule"
                                                 icon="calendar_today">
                                             </mwc-button>
                                         </a>
-                                        <a href="/dashboard/add-location" on-click="${() => this._handleActiveRoom(room)}">
+                                        <a href="/dashboard/add-location" on-click="${() => this._handleActiveRoom(room, roomIndex)}">
                                             <mwc-button
                                                 label="Location"
                                                 icon="location_on">
