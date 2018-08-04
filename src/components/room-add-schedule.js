@@ -29,7 +29,7 @@ import '@polymer/iron-flex-layout/iron-flex-layout';
 import '@material/mwc-button';
 import '@material/mwc-icon';
 
-import {setSchedule, createSchedule, fetchIR, removeSchedule} from '../actions/remote.js';
+import {createSchedule, fetchIR, removeSchedule} from '../actions/remote.js';
 import {store} from '../store.js';
 
 const get = _.get;
@@ -167,6 +167,18 @@ class AddSchedule extends connect(store)(PolymerElement) {
                         /* margin-left: calc((100vw - 280px) / 2); */
                     }
                 }
+
+                input {
+                    border: 1px solid #ccc;
+                    color: #888;
+                    margin-top: 0.5em;
+                    margin-bottom: 0.5em;
+                    vertical-align: middle;
+                    outline: 0;
+                    padding: 0.5em 1em;
+                    border-radius: 4px;
+                    /* width: calc(100% - 3em - 2px); */
+                }
             </style>
             <paper-dialog id="scheduleDialog">
                 <div id="container" class="vertical layout">
@@ -175,7 +187,9 @@ class AddSchedule extends connect(store)(PolymerElement) {
                         <paper-toggle-button id="toggleRepeated" checked="{{isRepeated}}" on-active-changed="_changeIsRepeated"></paper-toggle-button>
                         <p>Repeated</p>
                     </div>
-                    <div id="containerTime" class="horizontal layout">
+                    <paper-input id="inputTime" type="time" name="time" value="{{choosenTime}}" on-change="_changeTime"></paper-input>
+                    <paper-input id="inputDate" type="date" name="date" value="{{choosenDates}}" min="{{minDate}}" on-change="calculateYear" on-click="calculateDate"></paper-input>
+                    <!-- <div id="containerTime" class="horizontal layout">
                         <paper-dropdown-menu id="dropdownHour" label="Hour" noink no-animations>
                             <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="name" selected="{{choosenHour}}" on-selected-changed="_changeTime">
                                 <template is="dom-repeat" items="{{hours}}" as="hour">
@@ -196,8 +210,8 @@ class AddSchedule extends connect(store)(PolymerElement) {
                                 <paper-item name="PM">PM</paper-item>
                             </paper-listbox>
                         </paper-dropdown-menu>
-                    </div>
-                    <div id="containerDate" class="horizontal layout">
+                    </div> -->
+                    <!-- <div id="containerDate" class="horizontal layout">
                         <paper-dropdown-menu id="dropdownMonth" label="Month" noink no-animations>
                             <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="name" selected="{{choosenMonth}}" on-selected-changed="calculateYear">
                                 <template is="dom-repeat" items="{{months}}" as="month">
@@ -213,7 +227,7 @@ class AddSchedule extends connect(store)(PolymerElement) {
                             </paper-listbox>
                         </paper-dropdown-menu>
                         <paper-input disabled id="inputYear" label="Year" value="{{calculatedYear}}"></paper-input>
-                    </div>
+                    </div> -->
                     <div id="containerDay" class="horizontal layout justified">
                         <div class="vertical layout"><paper-checkbox id="checkbox1" name="1" on-active-changed="_changeDay"></paper-checkbox>Mon</div>
                         <div class="vertical layout"><paper-checkbox id="checkbox2" name="2" on-active-changed="_changeDay"></paper-checkbox>Tue</div>
@@ -237,22 +251,22 @@ class AddSchedule extends connect(store)(PolymerElement) {
                     <div id="containerCommand">
                         <div id="containerAC" class="horizontal layout justified">
                             <paper-dropdown-menu id="dropdownMode" label="Mode" noink no-animations>
-                                <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="mode" selected="{{choosenMode}}" on-selected-changed="_changeMode">
+                                <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="mode" selected="{{choosenMode}}">
                                     <template is="dom-repeat" items="{{modeTitle}}" as="mode">
-                                        <paper-item mode="{{mode}}">{{mode}}</paper-item>
+                                        <paper-item mode="{{mode}}" on-click="selectedMode">{{mode}}</paper-item>
                                     </template>
                                 </paper-listbox>
                             </paper-dropdown-menu>
                             <paper-dropdown-menu id="dropdownFan" label="Fan speed" noink no-animations>
-                                <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="fan" selected="{{choosenFan}}" on-selected-changed="">
+                                <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="fan" selected="{{choosenFan}}">
                                     <template is="dom-repeat" items="{{fanTitle}}" as="fan">
-                                        <paper-item fan="{{fan}}">{{fan}}</paper-item>
+                                        <paper-item fan="{{fan}}" on-click="selectedFan">{{fan}}</paper-item>
                                     </template>
                                 </paper-listbox>
                             </paper-dropdown-menu>
                             <paper-dropdown-menu id="dropdownTemp" label="Temperature" noink no-animations>
-                                <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="temp" selected="{{choosenTemp}}" on-selected-changed="">
-                                    <template is="dom-repeat" items="{{temps}}" as="temp">
+                                <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="temp" selected="{{choosenTemp}}">
+                                    <template is="dom-repeat" items="{{tempTitle}}" as="temp">
                                         <paper-item temp="{{temp}}">{{temp}}</paper-item>
                                     </template>
                                 </paper-listbox>
@@ -279,7 +293,7 @@ class AddSchedule extends connect(store)(PolymerElement) {
                         <div>[[schedule.titleDay]]</div>
                     </div>
                     <div class="card-actions horizontal layout end-justified">
-                        <paper-button title="[[schedule.id]]" id="btnDeleteSchedule" on-tap="_tapDeleteSchedule">Delete</paper-button>
+                        <paper-button title="[[schedule.titleRemote]]" id="btnDeleteSchedule" on-tap="_tapDeleteSchedule">Delete</paper-button>
                     </div>
                 </paper-card>
             </template>
@@ -294,19 +308,13 @@ class AddSchedule extends connect(store)(PolymerElement) {
                     </paper-material>
                 </div>
             </div>
-            <paper-dialog id="test">
-                <div class="horizontal layout around-justified">
-                    <paper-button title="01">1</paper-button>
-                    <paper-button title="02">2</paper-button>
-                    <paper-button title="03">3</paper-button>
-                </div>
-            </paper-dialog>
             <paper-toast id="toast"></paper-toast>
         `;
     }
 
     static get properties() {
         return {
+            uid: String,
             choosenDay: {
                 type: Object,
                 value: {
@@ -349,24 +357,26 @@ class AddSchedule extends connect(store)(PolymerElement) {
             },
             schedules: {
                 type: Array,
-                value: [
-                    {
-                        id: '-LHXCq_MsS_323O4vVTr',
-                        titleCommand: 'Turn ON',
-                        titleDay: 'January 01 2019, 01:00',
-                        titleRemote: 'TV Sony Dummy',
-                        titleTime: '01:00',
-                    },
-                    {
-                        id: '-LHXk-abfalkkPfozw-5',
-                        titleCommand: 'Turn ON',
-                        titleDay: 'January 01 2019, 10:00',
-                        titleRemote: 'TV Samsung Dummy',
-                        titleTime: '10:00',
-                    }
-                ],
+                // value: [
+                //     {
+                //         id: '-LHXCq_MsS_323O4vVTr',
+                //         titleCommand: 'Turn ON',
+                //         titleDay: 'January 01 2019, 01:00',
+                //         titleRemote: 'TV Sony Dummy',
+                //         titleTime: '01:00',
+                //     },
+                //     {
+                //         id: '-LHXk-abfalkkPfozw-5',
+                //         titleCommand: 'Turn ON',
+                //         titleDay: 'January 01 2019, 10:00',
+                //         titleRemote: 'TV Samsung Dummy',
+                //         titleTime: '10:00',
+                //     }
+                // ],
             },
-
+            scheduleList: {
+                type: Array,
+            },
             manifest: Object,
             mode: Number,
             manifestModes: Array,
@@ -375,6 +385,7 @@ class AddSchedule extends connect(store)(PolymerElement) {
             fan: Number,
             manifestFans: Array,
             fanTitle: Array,
+            tempTitle: Array,
 
             OKtime: {type: Boolean, value: false, observer: '_OKtime'},
             OKdate: {type: Boolean, value: false, observer: '_OKdate'},
@@ -392,9 +403,11 @@ class AddSchedule extends connect(store)(PolymerElement) {
         super();
         this.remotes = [];
         this.manifest = {};
+        this.scheduleList = [];
     }
 
     _stateChanged(state) {
+        this.uid = get(state, 'app.currentUser.uid');
         let stateRemotes = get(state, 'remote.activeRoom.remotes') || [];
         stateRemotes = stateRemotes.map((remote) => {
             const name = get(remote, 'name');
@@ -415,8 +428,18 @@ class AddSchedule extends connect(store)(PolymerElement) {
     }
 
     _tapDeleteSchedule(e) {
-        const scheduleID = e.target.title;
-        store.dispatch(removeSchedule(scheduleID));
+        // const scheduleID = e.target.title;
+        const scheduleTitle = e.target.title;
+        let i;
+        for (i=0; i<this.scheduleList.length; i++) {
+            if (this.scheduleList[i].titleRemote == scheduleTitle) {
+                // delete this.scheduleList[i];
+                this.scheduleList.splice(i, i+1);
+            }
+        }
+        this.schedules = [];
+        this.schedules = this.scheduleList;
+        // store.dispatch(removeSchedule(scheduleID));
     }
 
     _OKtime(OK) {
@@ -444,27 +467,14 @@ class AddSchedule extends connect(store)(PolymerElement) {
         }
     }
 
-    // _changeMode() {
-    //     setTimeout(() => {
-    //         this.manifestFans = [];
-    //         let mode = this.manifest[this.choosenMode];
-    //         for (let fan in mode) {
-    //             if (mode.hasOwnProperty(fan)) {
-    //                 this.push('manifestFans', parseInt(fan));
-    //             }
-    //         }
-    //         this.choosenFan = this.manifestFans[0];
-    //         this.temps = this.manifest[this.choosenMode][this.choosenFan];
-    //         this.choosenTemp = this.temps[0];
-    //     }, 100);
-    // }
-
     stateInitial() {
         this.clearAll();
         this.setCheckboxState('disabled');
         this.$.dropdownAppliance.setAttribute('disabled', true);
         this.setToggleONState('disabled');
         this.setButtonState('disabled');
+        this.$.inputTime.value = '';
+        this.$.inputDate.value = '';
     }
 
     clearAll() {
@@ -541,11 +551,13 @@ class AddSchedule extends connect(store)(PolymerElement) {
         setTimeout(() => {
             this.stateInitial();
             if (this.isRepeated) {
-                this.$.containerDate.style.visibility = 'hidden';
+                // this.$.containerDate.style.visibility = 'hidden';
+                this.$.inputDate.style.visibility = 'hidden';
                 this.$.containerDay.style.visibility = 'visible';
                 this.scheduleType = 'repeated';
             } else {
-                this.$.containerDate.style.visibility = 'visible';
+                // this.$.containerDate.style.visibility = 'visible';
+                this.$.inputDate.style.visibility = 'visible';
                 this.$.containerDay.style.visibility = 'hidden';
                 this.scheduleType = 'once';
             }
@@ -555,6 +567,7 @@ class AddSchedule extends connect(store)(PolymerElement) {
     _changeTime() {
         this.calculateYear();
         setTimeout(() => {
+            this.OKtime = false;
             if (this.choosenHour != '' && this.choosenMinute != '' && this.choosenPeriod != '') this.OKtime = true;
             else this.OKtime = false;
         }, 100);
@@ -576,8 +589,52 @@ class AddSchedule extends connect(store)(PolymerElement) {
         }, 100);
     }
 
+    calculateDate() {
+        const today = new Date().toISOString().split('T')[0];
+        this.minDate = today;
+    }
+
     calculateYear() {
         setTimeout(() => {
+            // untuk waktu menggunakan input type time
+            const time = this.$.inputTime.value;
+            const timeSplit = time.split(':');
+            let timeHour = timeSplit[0];
+            let timeMinute = timeSplit[1];
+            let timeMeridian;
+            if (timeHour > 12) {
+                timeMeridian = 'PM';
+                timeHour -= 12;
+            } else if (timeHour < 12) {
+                timeMeridian = 'AM';
+            } else {
+                timeMeridian = 'PM';
+            }
+            this.choosenHour = timeHour;
+            this.choosenMinute = timeMinute;
+            this.choosenPeriod = timeMeridian;
+
+            // untuk tanggal menggunakan input type date
+            if (this.choosenDates != '') {
+                const date = this.$.inputDate.value;
+                const dateSplit = date.split('-');
+                const monthNumber = dateSplit[1];
+                if (monthNumber == 1) this.choosenMonth = 'January';
+                else if (monthNumber == 2) this.choosenMonth = 'February';
+                else if (monthNumber == 3) this.choosenMonth = 'March';
+                else if (monthNumber == 4) this.choosenMonth = 'April';
+                else if (monthNumber == 5) this.choosenMonth = 'May';
+                else if (monthNumber == 6) this.choosenMonth = 'June';
+                else if (monthNumber == 7) this.choosenMonth = 'July';
+                else if (monthNumber == 8) this.choosenMonth = 'Augustus';
+                else if (monthNumber == 9) this.choosenMonth = 'September';
+                else if (monthNumber == 10) this.choosenMonth = 'October';
+                else if (monthNumber == 11) this.choosenMonth = 'November';
+                else if (monthNumber == 12) this.choosenMonth = 'December';
+                this.calculatedYear = dateSplit[0];
+                this.choosenDate = dateSplit[2];
+            }
+
             if (this.choosenHour != '' && this.choosenMinute != '' && this.choosenPeriod != '' && this.choosenDate != '' && this.choosenMonth != '') {
                 const hour = this.choosenHour;
                 const minute = this.choosenMinute;
@@ -631,8 +688,10 @@ class AddSchedule extends connect(store)(PolymerElement) {
 
         // vary command based on appliance type
         if (this.choosenType == 'AC') {
-            this.command = `${this.choosenBrand}-${this.choosenMode}${this.choosenFan}${this.choosenTemp}`;
-            this.titleCommand = `Set to ${this.choosenTemp}C, ${this.modes[this.choosenMode]}, fan ${this.fans[this.choosenFan]}`;
+            // this.command = `${this.choosenBrand}-${this.choosenMode}${this.choosenFan}${this.choosenTemp}`;
+            // this.titleCommand = `Set to ${this.choosenTemp}C, ${this.modes[this.choosenMode]}, fan ${this.fans[this.choosenFan]}`;
+            this.command = `${this.choosenBrand}-${this.mode}${this.fan}${this.choosenTemp}`;
+            this.titleCommand = `Set to ${this.choosenTemp}C, ${this.modes[this.mode]}, fan ${this.fans[this.mode]}`;
             if (!this.isON) this.command = `${this.choosenBrand}-0000`;
         } else {
             this.titleCommand = 'Turn ON';
@@ -695,7 +754,21 @@ class AddSchedule extends connect(store)(PolymerElement) {
             titleTime: this.titleTime,
         };
 
-        store.dispatch(createSchedule(schedule));
+        const schedules = {
+            id: '-LIPYX14LutGJe1fKJwZ',
+            titleCommand: this.titleCommand,
+            titleDay: this.titleDay,
+            titleRemote: this.choosenAppliance,
+            titleTime: this.titleTime,
+        };
+
+        this.schedules = [];
+        this.scheduleList.push(schedules);
+        this.schedules = this.scheduleList;
+
+        // store.dispatch(createSchedule(schedule));
+        this.$.scheduleDialog.close();
+        this.stateInitial();
     }
 
     getMode() {
@@ -709,6 +782,53 @@ class AddSchedule extends connect(store)(PolymerElement) {
         });
         this.manifestModes = arrModes;
         this.modeTitle = modeName;
+    }
+
+    selectedMode(e) {
+        const modeName = e.target.mode;
+        if (modeName == 'Auto') {
+            this.mode = 0;
+        } else if (modeName == 'Cool') {
+            this.mode = 1;
+        } else if (modeName == 'Dry') {
+            this.mode = 2;
+        } else if (modeName == 'Heat') {
+            this.mode = 3;
+        }
+        this.getFan();
+    }
+
+    getFan() {
+        const arrFans = [];
+        const fanName = [];
+        const fanValues = _.values(this.manifest[`${this.mode}`]);
+
+        fanValues.map((item, index) => {
+            const key = parseInt(Object.keys(this.manifest[`${this.mode}`])[index]);
+            arrFans.push(key);
+            fanName.push(this.fans[arrFans[index]]);
+        });
+        this.manifestFans = arrFans;
+        this.fanTitle = fanName;
+    }
+
+    selectedFan(e) {
+        const fanName = e.target.fan;
+        if (fanName == 'Auto') {
+            this.fan = 0;
+        } else if (fanName == 'Low') {
+            this.fan = 1;
+        } else if (fanName == 'Medium') {
+            this.fan = 2;
+        } else if (fanName == 'High') {
+            this.fan = 3;
+        }
+        this.getTemp();
+    }
+
+    getTemp() {
+        const temp = this.manifest[`${this.mode}`][`${this.fan}`];
+        this.tempTitle = temp;
     }
 
     _changeIsON() {

@@ -25,7 +25,7 @@
   <link rel="manifest" href="manifest.json">
 
   <!-- See https://goo.gl/qRE0vM -->
-  <meta name="theme-color" content="#3f51b5">
+  <meta name="theme-color" content="#4664ae">
 
   <!-- Add to homescreen for Chrome on Android. Fallback for manifest.json -->
   <meta name="mobile-web-app-capable" content="yes">
@@ -42,6 +42,10 @@
   <link rel="apple-touch-icon" sizes="96x96" href="images/manifest/icon-96x96.png">
   <link rel="apple-touch-icon" sizes="144x144" href="images/manifest/icon-144x144.png">
   <link rel="apple-touch-icon" sizes="192x192" href="images/manifest/icon-192x192.png">
+
+  <!-- Leaflet-->
+  <script src='https://api.mapbox.com/mapbox-gl-js/v0.47.0/mapbox-gl.js'></script>
+  <link href='https://api.mapbox.com/mapbox-gl-js/v0.47.0/mapbox-gl.css' rel='stylesheet' />
 
   <!-- Tile icon for Windows 8 (144x144 + tile color) -->
   <meta name="msapplication-TileImage" content="images/manifest/icon-144x144.png">
@@ -74,9 +78,8 @@
   <style>
     body {
       margin: 0;
-      font-family: "IBM Plex Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
       background-color: #fafafa;
-      line-height: 1.5;
       min-height: 100vh;
       -webkit-font-smoothing: antialiased;
     }
@@ -98,6 +101,11 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js" async></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.5.24/dayjs.min.js" async></script>
   <script defer src="https://cdn.rawgit.com/GoogleCloudPlatform/stackdriver-errors-js/v0.4.0/dist/stackdriver-errors-concat.min.js"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCfGVFRrYf89QiMaQCiXUb-D_uDjUPCsCc&libraries=places"></script>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.9/jquery-ui.min.js"></script>
+  <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.9/themes/base/jquery-ui.css" rel="stylesheet" type="text/css" />
+
   <!-- Built with love using PWA Starter Kit -->
   <script type="module" src="src/components/main-app.js"></script>
 </body>

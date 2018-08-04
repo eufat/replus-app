@@ -23,6 +23,8 @@
         "gae:start": "gcloud app versions start dev"
     },
     "dependencies": {
+        "@em-polymer/google-map": "^3.0.0-pre.5",
+        "@google/maps": "^0.5.4",
         "@material/mwc-button": "^0.1.1",
         "@material/mwc-icon": "^0.1.1",
         "@polymer/app-layout": "^3.0.0-pre.19",

@@ -10,7 +10,7 @@ import '@polymer/iron-flex-layout/iron-flex-layout-classes';
 import '@polymer/iron-flex-layout/iron-flex-layout';
 
 import {remoteCommand} from '../actions/remote';
-import {brandsList, toTitleCase} from '../utils';
+import {toTitleCase, fansAC, modesAC} from '../utils';
 import {store} from '../store';
 
 const get = _.get;
@@ -123,11 +123,11 @@ class RemoteAc extends connect(store)(PolymerElement) {
         return {
             fans: {
                 type: Array,
-                value: ['Auto', 'Low', 'Medium', 'High'],
+                value: fansAC,
             },
             modes: {
                 type: Array,
-                value: ['Auto', 'Cool', 'Dry', 'Heat'],
+                value: modesAC,
             },
             mode: Number,
             fan: Number,
@@ -290,6 +290,7 @@ class RemoteAc extends connect(store)(PolymerElement) {
         // this.brand = this.activeRemote.name.substring(2, this.activeRemote.name.length);
         let brandCommand = this.brand + '';
         this.command = brandCommand.toLocaleLowerCase() + '-' + this.mode + this.fan + this.temp;
+        console.log('command', this.command);
         if (this.switchedON) store.dispatch(remoteCommand(this.command));
     }
 

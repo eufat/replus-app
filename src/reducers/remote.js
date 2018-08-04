@@ -3,15 +3,15 @@ const initialState = {
     activeRemote: {},
     activeRemotes: [],
     activeRoom: {},
-    schedule: {},
     rooms: [],
     newDevice: {},
     newRemote: {
         type: 'tv',
-        brand: 'samsung',
+        brand: 'changhong',
     },
     settings: {},
     manifest: {},
+    location: {},
 };
 
 const remote = (state = initialState, action) => {
@@ -30,11 +30,6 @@ const remote = (state = initialState, action) => {
             return {
                 ...state,
                 newRemote: action.newRemote,
-            };
-        case 'SET_SCHEDULE':
-            return {
-                ...state,
-                schedule: action.schedule,
             };
         case 'SET_ACTIVE_REMOTE':
             return {
@@ -66,6 +61,11 @@ const remote = (state = initialState, action) => {
             return {
                 ...state,
                 manifest: action.manifest,
+            };
+        case 'SET_LOCATION':
+            return {
+                ...state,
+                location: action.location,
             };
         default:
             return state;

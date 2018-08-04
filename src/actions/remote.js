@@ -1,4 +1,4 @@
-import {coreClient, corePost, coreIR, coreSchedule} from '../client';
+import {coreClient, corePost, coreIR, coreSchedule, googleMaps} from '../client';
 import {qs} from '../utils';
 import errorHandler from '../error';
 import {showSnackbar, showProgress, closeProgress, showBack, closeBack} from './app';
@@ -260,31 +260,18 @@ export const setActiveRoom = (activeRoom) => (dispatch, getState) => {
     });
 };
 
-export const setSchedule = (schedule) => (dispatch, getState) => {
-    dispatch(showProgress());
-    const uid = get(getState(), 'app.currentUser.uid');
-    const room = get(getState(), 'remote.activeRoom.id');
-
-    const newSchedule = {...schedule, uid, room};
-    dispatch({
-        type: 'SET_SCHEDULE',
-        schedule: newSchedule,
-    });
-    dispatch(closeProgress());
-};
-
 export const createSchedule = (schedules) => (dispatch, getState) => {
     dispatch(showProgress());
-    dispatch(setSchedule(schedules));
     const uid = get(getState(), 'app.currentUser.uid');
     const room = get(getState(), 'remote.activeRoom.id');
-    const command = get(getState(), 'remote.schedule.command');
-    const scheduleType = get(getState(), 'remote.schedule.scheduleType');
-    const schedule = get(getState(), 'remote.schedule.schedule');
-    const titleRemote = get(getState(), 'remote.schedule.titleRemote');
-    const titleCommand = get(getState(), 'remote.schedule.titleCommand');
-    const titleDay = get(getState(), 'remote.schedule.titleDay');
-    const titleTime = get(getState(), 'remote.schedule.titleTime');
+    const command = schedules.command;
+    const scheduleType = schedules.scheduleType;
+    const schedule = schedules.schedule;
+    const titleRemote = schedules.titleRemote;
+    const titleCommand = schedules.titleCommand;
+    const titleDay = schedules.titleDay;
+    const titleTime = schedules.titleTime;
+
     console.log(uid, room, command, scheduleType, schedule, titleRemote, titleCommand, titleDay, titleTime);
 
     try {
@@ -310,9 +297,21 @@ export const removeSchedule = (scheduleID) => (dispatch, getState) => {
 export const remoteCommand = (command) => (dispatch, getState) => {
     dispatch(showProgress());
     const uid = get(getState(), 'app.currentUser.uid');
-    const room = get(getState(), 'remote.activeRemote.room');
+    const activeRemoteRoom = get(getState(), 'remote.activeRemote.room');
+
+    // Iterate over rooms to get devices on desired room
+    // the output of devices will be for ex: "ABC123,ABC234"
+    const rooms = get(getState(), 'remote.rooms');
+    let devices = [];
+    for (let room of rooms) {
+        if (room.id === activeRemoteRoom) {
+            devices = room.devices;
+        }
+    }
+    devices = devices.map((device) => device.name).join(',');
+
     try {
-        corePost().post('/remote', qs({uid, room, command}));
+        corePost().post('/remote', qs({uid, devices, command, room: activeRemoteRoom, source: 'app'}));
         dispatch(closeProgress());
     } catch (error) {
         errorHandler.report(error);
@@ -327,5 +326,60 @@ export const addSetting = (command, deviceID) => (dispatch, getState) => {
         coreClient().post('/device-setup', qs({uid, deviceID}));
     } catch (error) {
         errorHandler.report(error);
+    }
+};
+
+export const setLocation = (location) => async (dispatch, getState) => {
+    dispatch({
+        type: 'SET_LOCATION',
+        location,
+    });
+};
+
+export const getLocation = (address) => async (dispatch, getState) => {
+    try {
+        const response = await googleMaps().get('', {
+            params: {
+                address: address,
+            },
+        });
+        dispatch(setLocation(response.data));
+    } catch (error) {
+        errorHandler.report(error);
+    }
+};
+
+export const setReverseGeocode = (latlng) => async (dispatch, getState) => {
+    dispatch({
+        type: 'SET_LOCATION',
+        location: latlng,
+    });
+};
+
+export const reverseGeocode = (latlng) => async (dispatch, getState) => {
+    try {
+        const response = await googleMaps().get('', {
+            params: {
+                latlng: latlng,
+            },
+        });
+        dispatch(setReverseGeocode(response.data));
+    } catch (error) {
+        errorHandler.report(error);
+    }
+};
+
+export const saveLocation = (roomID, geosenseInRange, geosenseOutRange, location) => (dispatch, getState) => {
+    dispatch(showProgress());
+    const uid = get(getState(), 'app.currentUser.uid');
+    const lat = location.lat;
+    const long = location.lng;
+    const forecast = geosenseInRange;
+    try {
+        coreClient().put('/save-location', qs({geosenseInRange, geosenseOutRange, forecast, lat, long}), {params: {uid, roomID}});
+        dispatch(closeProgress());
+    } catch (error) {
+        errorHandler.report(error);
+        dispatch(closeProgress());
     }
 };
