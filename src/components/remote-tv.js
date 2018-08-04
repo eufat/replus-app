@@ -19,7 +19,7 @@ import '@polymer/iron-flex-layout/iron-flex-layout-classes';
 import '@polymer/iron-flex-layout/iron-flex-layout';
 
 import {remoteCommand} from '../actions/remote';
-import {brandsList, toTitleCase} from '../utils';
+import {toTitleCase, getTVCodesetFromBrand} from '../utils';
 import {store} from '../store';
 
 const get = _.get;
@@ -231,15 +231,7 @@ class RemoteTv extends connect(store)(PolymerElement) {
         const remoteType = this.activeRemote.name.substring(0, 2);
         const brand = this.activeRemote.name.substring(3).toLowerCase();
         if (remoteType == 'tv') {
-            if (brand == 'lg') this.codeset = '1970';
-            else if (brand == 'samsung') this.codeset = '0595';
-            else if (brand == 'panasonic') this.codeset = '2619';
-            else if (brand == 'sony') this.codeset = '1319';
-            else if (brand == 'sharp') this.codeset = 'T001';
-            // 1429
-            else if (brand == 'changhong') this.codeset = '2903';
-            else if (brand == 'sanyo') this.codeset = '1430';
-            else if (brand == 'toshiba') this.codeset = '0339';
+            this.codeset = getTVCodesetFromBrand(brand);
         }
     }
 
@@ -284,7 +276,7 @@ class RemoteTv extends connect(store)(PolymerElement) {
     }
 
     // _handleResponse() {
-    //  
+    //
     //     let response = this.response;
     //     if (response == 'OK') {
     //         console.log(`Sending command ${this.command}: ${this.response}`);

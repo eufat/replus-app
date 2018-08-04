@@ -211,3 +211,9 @@ export function pageToTitle(page) {
         return title;
     }
 }
+
+export function camelToSentence(str) {
+    return str.replace(/^[a-z]|[A-Z]/g, (v, i) => {
+        return i === 0 ? v.toUpperCase() : ' ' + v.toLowerCase();
+    });
+}

@@ -1,16 +1,22 @@
 import {LitElement, html} from '@polymer/lit-element';
+import {connect} from 'pwa-helpers/connect-mixin';
 import '@polymer/paper-card';
 import '@polymer/paper-material';
 import '@polymer/paper-icon-button';
 
 import {env} from '../configs.js';
-import {getDateFromFilename} from '../utils.js';
+import {getDateFromFilename, getTVBrandFromCodeset, getTVCommandFromCodeset, toTitleCase, modesAC, fansAC, camelToSentence} from '../utils.js';
 import '@polymer/iron-icons/iron-icons';
+import {store} from '../store';
+
 import {getEventsDummy, getRemoteActivityDummy} from '../dummy.js';
 
-const VISION_ACTIVITY = env.VISION_ACTIVITY;
+const get = _.get;
 
-export default class activityMain extends LitElement {
+const VISION_ACTIVITY = env.VISION_ACTIVITY;
+const CORE_ACTIVITY = env.CORE_ACTIVITY;
+
+export default class activityMain extends connect(store)(LitElement) {
     static get properties() {
         return {
             activityStatus: String,
@@ -18,6 +24,7 @@ export default class activityMain extends LitElement {
             activityEvents: Array,
             storedEvents: Array,
             active: Boolean,
+            rooms: Array,
         };
     }
 
@@ -27,10 +34,85 @@ export default class activityMain extends LitElement {
         this.activityStatus = 'Not available';
         this.activityEvents = [];
         this.storedEvents = [];
+        this.rooms = [];
+    }
+
+    _stateChanged(state) {
+        this.rooms = get(state, 'remote.rooms');
     }
 
     _shouldRender(props, changedProps, old) {
         return props.active;
+    }
+
+    _didRender() {
+        /*
+        const url = `${VISION_ACTIVITY}/p1z3r02`;
+        this.activityURL = url;
+        const socket = io(url);
+        socket.on('connect', () => {
+            this.activityStatus = 'Connected';
+        });
+        socket.on('disconnect', () => {
+            this.activityStatus = 'Disconnected';
+        });
+        socket.on('frame_now', (data) => {
+            this.addFrameRealtime(data);
+        });
+        socket.on('frame_before', (data) => {
+            this.addFrameStored(data);
+        });
+        */
+
+        const url = `${CORE_ACTIVITY}`;
+        const socket = io(url);
+
+        socket.on('connect', () => {
+            this.activityStatus = 'Connected';
+        });
+
+        socket.on('disconnect', () => {
+            this.activityStatus = 'Disconnected';
+        });
+
+        for (let room of this.rooms) {
+            console.log(`Listening to room ${room.id}`);
+            socket.on(room.id, (data) => {
+                data.room = room.name;
+                this.addRealtimeActivity(data);
+            });
+        }
+    }
+
+    addRealtimeActivity(data) {
+        const date = new Date(+data.date);
+
+        const type = data.command.indexOf('-') > -1 ? 'AC' : 'TV';
+        const brand = type === 'AC' ? data.command.split('-')[0] : getTVBrandFromCodeset(data.command.substring(0, 4));
+        let actionMessage = '';
+
+        if (type === 'AC') {
+            const codesetAC = data.command.split('-')[1];
+            const codesetMode = codesetAC.substring(0, 1);
+            const codesetFan = codesetAC.substring(1, 2);
+            const codesetTemp = codesetAC.substring(2, 4);
+            actionMessage = `set to fan ${fansAC[codesetFan].toLowerCase()} mode ${modesAC[codesetMode].toLocaleLowerCase()} and temp ${codesetTemp}°C`;
+        } else if (type === 'TV') {
+            const codesetTV = data.command.substring(5, 9);
+            actionMessage = `set to ${camelToSentence(getTVCommandFromCodeset(codesetTV))}`;
+        }
+
+        const actionType = '';
+
+        const newActivity = {
+            message: `${type} ${toTitleCase(brand)} ${actionMessage}`,
+            event: actionType,
+            room: data.room,
+            date,
+            source: data.source,
+        };
+
+        this.activityEvents = [...this.activityEvents, newActivity];
     }
 
     addFrameRealtime(frame) {
@@ -47,24 +129,6 @@ export default class activityMain extends LitElement {
 
     getDateFromFilename(name) {
         return getDateFromFilename(name);
-    }
-
-    _didRender() {
-        // const url = `${VISION_ACTIVITY}/p1z3r02`;
-        // this.activityURL = url;
-        // const socket = io(url);
-        // socket.on('connect', () => {
-        //     this.activityStatus = 'Connected';
-        // });
-        // socket.on('disconnect', () => {
-        //     this.activityStatus = 'Disconnected';
-        // });
-        // socket.on('frame_now', (data) => {
-        //     this.addFrameRealtime(data);
-        // });
-        // socket.on('frame_before', (data) => {
-        //     this.addFrameStored(data);
-        // });
     }
 
     _render({activityStatus, activityEvents, storedEvents, activityURL}) {
@@ -90,10 +154,7 @@ export default class activityMain extends LitElement {
             });
         };
 
-        const data = [];
-
-        // activityStatus = 'Connected';
-        // const data = getRemoteActivityDummy();
+        const data = this.activityEvents;
 
         const activityItems = data.map((item) => {
             const messageIcon = () => {
@@ -113,7 +174,7 @@ export default class activityMain extends LitElement {
                 }
             };
 
-            const formattedDate = dayjs(getDateFromFilename(item.date)).format('HH:mm:ss A DD MMM YYYY');
+            const formattedDate = dayjs(item.date).format('HH:mm:ss A DD MMM YYYY');
 
             return html`
                 <div class="activity-group-title">
@@ -123,13 +184,10 @@ export default class activityMain extends LitElement {
                 </div>
                 <paper-material class="activity-group">
                     <h4>${messageIcon()} ${item.message}</h4>
-                    <p>at ${item.room}</p>
+                    <p>at ${item.room} source ${item.source}</p>
                 </paper-material>
             `;
         });
-
-        // const activityItems = eventsItems(activityEvents);
-        // const storedItems = eventsItems(storedEvents);
 
         return html`
             <style>
@@ -224,7 +282,7 @@ export default class activityMain extends LitElement {
             </style>
             <div class="container">
                     ${
-                        activityStatus === 'Connected'
+                        data.length > 0
                             ? html`
                                 <div class="activities-listing activities-listing-padded">${activityItems}</div>`
                             : html`
