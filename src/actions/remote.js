@@ -395,7 +395,7 @@ export const saveLocation = (roomID, geosenseInRange, geosenseOutRange, location
     const uid = get(getState(), 'app.currentUser.uid');
     const lat = location.lat;
     const long = location.lng;
-    const forecast = geosenseInRange;
+    const forecast = '';
     try {
         coreClient().put('/save-location', qs({geosenseInRange, geosenseOutRange, forecast, lat, long}), {params: {uid, roomID}});
         dispatch(closeProgress());
