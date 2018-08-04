@@ -46,7 +46,6 @@ class MainAuth extends connect(store)(PolymerElement) {
 
                 paper-material {
                     display: block;
-                    width: 300px;
                     padding: 16px;
                     padding-bottom: 25px;
                     background: white;
