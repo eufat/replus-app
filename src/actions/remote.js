@@ -297,9 +297,21 @@ export const removeSchedule = (scheduleID) => (dispatch, getState) => {
 export const remoteCommand = (command) => (dispatch, getState) => {
     dispatch(showProgress());
     const uid = get(getState(), 'app.currentUser.uid');
-    const room = get(getState(), 'remote.activeRemote.room');
+    const activeRemoteRoom = get(getState(), 'remote.activeRemote.room');
+
+    // Iterate over rooms to get devices on desired room
+    // the output of devices will be for ex: "ABC123,ABC234"
+    const rooms = get(getState(), 'remote.rooms');
+    let devices = [];
+    for (let room of rooms) {
+        if (room.id === activeRemoteRoom) {
+            devices = room.devices;
+        }
+    }
+    devices = devices.map((device) => device.name).join(',');
+
     try {
-        corePost().post('/remote', qs({uid, room, command}));
+        corePost().post('/remote', qs({uid, devices, command, room: activeRemoteRoom, source: 'app'}));
         dispatch(closeProgress());
     } catch (error) {
         errorHandler.report(error);
@@ -322,14 +334,14 @@ export const setLocation = (location) => async (dispatch, getState) => {
         type: 'SET_LOCATION',
         location,
     });
-}
+};
 
 export const getLocation = (address) => async (dispatch, getState) => {
     try {
         const response = await googleMaps().get('', {
             params: {
                 address: address,
-            }
+            },
         });
         dispatch(setLocation(response.data));
     } catch (error) {
@@ -342,14 +354,14 @@ export const setReverseGeocode = (latlng) => async (dispatch, getState) => {
         type: 'SET_LOCATION',
         location: latlng,
     });
-}
+};
 
 export const reverseGeocode = (latlng) => async (dispatch, getState) => {
     try {
         const response = await googleMaps().get('', {
             params: {
                 latlng: latlng,
-            }
+            },
         });
         dispatch(setReverseGeocode(response.data));
     } catch (error) {
