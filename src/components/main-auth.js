@@ -4,7 +4,6 @@ import '@polymer/iron-ajax';
 import '@polymer/paper-material';
 import '@polymer/paper-spinner/paper-spinner';
 import '@polymer/paper-button';
-import {connect} from 'pwa-helpers/connect-mixin';
 
 import firebase from '../firebase.js';
 import {userDataKey} from '../utils.js';
@@ -12,7 +11,7 @@ import {store} from '../store.js';
 
 import {setCurrentUser, authenticateUser} from '../actions/app.js';
 
-class MainAuth extends connect(store)(PolymerElement) {
+class MainAuth extends PolymerElement {
     static get template() {
         return html`
             <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/2.7.0/firebaseui.css" />
@@ -46,7 +45,6 @@ class MainAuth extends connect(store)(PolymerElement) {
 
                 paper-material {
                     display: block;
-                    width: 300px;
                     padding: 16px;
                     padding-bottom: 25px;
                     background: white;
@@ -130,8 +128,6 @@ class MainAuth extends connect(store)(PolymerElement) {
 
         this.ui.start(thisMainAuth.$.firebaseuicontainer, uiConfig);
     }
-
-    _stateChanged(state) {}
 }
 
 customElements.define('main-auth', MainAuth);
