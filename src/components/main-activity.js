@@ -25,6 +25,7 @@ export default class activityMain extends connect(store)(LitElement) {
             storedEvents: Array,
             active: Boolean,
             rooms: Array,
+            listeing: Boolean,
         };
     }
 
@@ -35,6 +36,7 @@ export default class activityMain extends connect(store)(LitElement) {
         this.activityEvents = [];
         this.storedEvents = [];
         this.rooms = [];
+        this.listening = false;
     }
 
     _stateChanged(state) {
@@ -64,23 +66,27 @@ export default class activityMain extends connect(store)(LitElement) {
         });
         */
 
-        const url = `${CORE_ACTIVITY}`;
-        const socket = io(url);
+        if (this.rooms.length > 0 && !this.listening) {
+            const url = `${CORE_ACTIVITY}`;
+            const socket = io(url);
 
-        socket.on('connect', () => {
-            this.activityStatus = 'Connected';
-        });
-
-        socket.on('disconnect', () => {
-            this.activityStatus = 'Disconnected';
-        });
-
-        for (let room of this.rooms) {
-            console.log(`Listening to room ${room.id}`);
-            socket.on(room.id, (data) => {
-                data.room = room.name;
-                this.addRealtimeActivity(data);
+            socket.on('connect', () => {
+                this.activityStatus = 'Connected';
             });
+
+            socket.on('disconnect', () => {
+                this.activityStatus = 'Disconnected';
+            });
+
+            for (let room of this.rooms) {
+                console.log(`Listening to room ${room.id}`);
+                socket.on(room.id, (data) => {
+                    data.room = room.name;
+                    this.addRealtimeActivity(data);
+                });
+            }
+
+            this.listening = true;
         }
     }
 
