@@ -8,9 +8,52 @@ export const brandsList = ['samsung', 'lg', 'panasonic', 'toshiba', 'mitsubishi'
 
 export const brandsAC = ['daikin', 'dast', 'lg', 'mitsubishi heavy industries', 'panasonic', 'panasonicOld', 'samsung', 'toshiba'];
 
+export const fansAC = ['Auto', 'Low', 'Medium', 'High'];
+
+export const modesAC = ['Auto', 'Cool', 'Dry', 'Heat'];
+
 export const brandsTV = ['changhong', 'lg', 'panasonic', 'samsung', 'sanyo', 'sharp', 'sony', 'toshiba'];
 
 export const upperCases = ['lg', 'tv', 'ac'];
+
+export const TVBrandsCodeset = {
+    lg: '1970',
+    samsung: '0595',
+    panasonic: '2619',
+    sony: '1319',
+    sharp: 'T001',
+    changhong: '2903',
+    sanyo: '1430',
+    toshiba: '0339',
+};
+
+export const TVCommandsCodeset = {
+    power: '15',
+    selection: '17',
+    mute: '10',
+    volumeUp: '13',
+    volumeDown: '14',
+    channelUp: '13',
+    channelDown: '12',
+};
+
+export function getTVCodesetFromBrand(brand) {
+    return TVBrandsCodeset[brand];
+}
+
+export function getTVBrandFromCodeset(codeset) {
+    const invertedTVCodeset = _.invert(TVBrandsCodeset);
+    return invertedTVCodeset(codeset);
+}
+
+export function getTVCodesetFromCommand(command) {
+    return TVCommandsCodeset[command];
+}
+
+export function getTVCommandFromCodeset(codeset) {
+    const invertedTVCodeset = _.invert(TVCommandsCodeset);
+    return invertedTVCodeset(codeset);
+}
 
 export function hideOnClickOutside(element) {
     const outsideClickListener = (event) => {
