@@ -41,6 +41,13 @@ export const setActiveDevice = (activeDevice) => (dispatch, getState) => {
     });
 };
 
+export const setSchedules = (schedules) => (dispatch, getState) => {
+    dispatch({
+        type: 'SET_SCHEDULES',
+        schedules,
+    });
+};
+
 export const setDevices = (devices) => (dispatch, getState) => {
     const prevRooms = get(getState(), 'remote.rooms');
 
@@ -275,7 +282,7 @@ export const createSchedule = (schedules) => (dispatch, getState) => {
     console.log(uid, room, command, scheduleType, schedule, titleRemote, titleCommand, titleDay, titleTime);
 
     try {
-        coreSchedule().post('/schedule-create', qs({uid, room, command, scheduleType, schedule, titleRemote, titleCommand, titleDay, titleTime}));
+        coreSchedule().post('/create', qs({uid, room, command, scheduleType, schedule, titleRemote, titleCommand, titleDay, titleTime}));
     } catch (error) {
         errorHandler.report(error);
     }
@@ -286,7 +293,21 @@ export const removeSchedule = (scheduleID) => (dispatch, getState) => {
     dispatch(showProgress());
     const uid = get(getState(), 'app.currentUser.uid');
     try {
-        coreSchedule().delete('/schedule-delete', {params: {uid, scheduleID}});
+        coreSchedule().delete('/delete', {params: {uid, scheduleID}});
+        dispatch(closeProgress());
+    } catch (error) {
+        errorHandler.report(error);
+        dispatch(closeProgress());
+    }
+};
+
+export const fetchSchedules = () => async (dispatch, getState) => {
+    dispatch(showProgress());
+    const uid = get(getState(), 'app.currentUser.uid');
+
+    try {
+        const response = await coreSchedule().get('/fetch', {params: {uid}});
+        dispatch(setSchedules(response.data));
         dispatch(closeProgress());
     } catch (error) {
         errorHandler.report(error);

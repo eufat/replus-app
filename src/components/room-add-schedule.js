@@ -33,6 +33,7 @@ import {createSchedule, fetchIR, removeSchedule} from '../actions/remote.js';
 import {store} from '../store.js';
 
 const get = _.get;
+const values = _.values;
 
 class AddSchedule extends connect(store)(PolymerElement) {
     static get template() {
@@ -299,7 +300,7 @@ class AddSchedule extends connect(store)(PolymerElement) {
             </template>
             <div class="rooms-container">
                 <div class="paper-container">
-                    <paper-material elevation="0" class="add-new-schedule">
+                    <paper-material elevation="1" class="add-new-schedule">
                         <mwc-button
                             label="Add new schedule"
                             icon="add"
@@ -357,22 +358,6 @@ class AddSchedule extends connect(store)(PolymerElement) {
             },
             schedules: {
                 type: Array,
-                // value: [
-                //     {
-                //         id: '-LHXCq_MsS_323O4vVTr',
-                //         titleCommand: 'Turn ON',
-                //         titleDay: 'January 01 2019, 01:00',
-                //         titleRemote: 'TV Sony Dummy',
-                //         titleTime: '01:00',
-                //     },
-                //     {
-                //         id: '-LHXk-abfalkkPfozw-5',
-                //         titleCommand: 'Turn ON',
-                //         titleDay: 'January 01 2019, 10:00',
-                //         titleRemote: 'TV Samsung Dummy',
-                //         titleTime: '10:00',
-                //     }
-                // ],
             },
             scheduleList: {
                 type: Array,
@@ -416,6 +401,7 @@ class AddSchedule extends connect(store)(PolymerElement) {
         });
         this.remotes = stateRemotes;
         this.manifest = get(state, 'remote.manifest');
+        this.schedules = values(get(state, 'remote.schedules'));
     }
 
     ready() {
@@ -428,18 +414,18 @@ class AddSchedule extends connect(store)(PolymerElement) {
     }
 
     _tapDeleteSchedule(e) {
-        // const scheduleID = e.target.title;
+        const scheduleID = e.target.title;
         const scheduleTitle = e.target.title;
         let i;
-        for (i=0; i<this.scheduleList.length; i++) {
+        for (i = 0; i < this.scheduleList.length; i++) {
             if (this.scheduleList[i].titleRemote == scheduleTitle) {
                 // delete this.scheduleList[i];
-                this.scheduleList.splice(i, i+1);
+                this.scheduleList.splice(i, i + 1);
             }
         }
         this.schedules = [];
         this.schedules = this.scheduleList;
-        // store.dispatch(removeSchedule(scheduleID));
+        store.dispatch(removeSchedule(scheduleID));
     }
 
     _OKtime(OK) {
@@ -755,7 +741,6 @@ class AddSchedule extends connect(store)(PolymerElement) {
         };
 
         const schedules = {
-            id: '-LIPYX14LutGJe1fKJwZ',
             titleCommand: this.titleCommand,
             titleDay: this.titleDay,
             titleRemote: this.choosenAppliance,
@@ -766,7 +751,7 @@ class AddSchedule extends connect(store)(PolymerElement) {
         this.scheduleList.push(schedules);
         this.schedules = this.scheduleList;
 
-        // store.dispatch(createSchedule(schedule));
+        store.dispatch(createSchedule(schedule));
         this.$.scheduleDialog.close();
         this.stateInitial();
     }

@@ -3,7 +3,7 @@ import { userDataKey, qs, setCookie, getCookie } from '../utils';
 import { createClient, coreClient, coreActivity } from '../client';
 import firebase from '../firebase';
 import errorHandler from '../error';
-import { fetchRooms } from './remote';
+import { fetchRooms, fetchSchedules } from './remote';
 import { fetchActivities } from './activity';
 
 const pick = _.pick;
@@ -184,6 +184,7 @@ export const setCurrentUser = (user) => async (dispatch, getState) => {
 
         dispatch(fetchRooms());
         dispatch(fetchActivities());
+        dispatch(fetchSchedules());
 
         // register with available token
         await coreClient().post(

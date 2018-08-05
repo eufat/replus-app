@@ -12,6 +12,7 @@ const initialState = {
     settings: {},
     manifest: {},
     location: {},
+    schedules: {},
 };
 
 const remote = (state = initialState, action) => {
@@ -66,6 +67,11 @@ const remote = (state = initialState, action) => {
             return {
                 ...state,
                 location: action.location,
+            };
+        case 'SET_SCHEDULES':
+            return {
+                ...state,
+                schedules: action.schedules,
             };
         default:
             return state;
