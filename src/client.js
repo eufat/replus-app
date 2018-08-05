@@ -25,6 +25,11 @@ export const createClient = (type, token) => {
         headers['Content-Type'] = 'application/x-www-form-urlencoded';
     }
 
+    if (type === 'activity') {
+        baseURL = env.CORE_ACTIVITY;
+        headers['Content-Type'] = 'application/x-www-form-urlencoded';
+    }
+
     if (type === 'vision') {
         baseURL = env.VISION_API;
         headers['Content-Type'] = 'application/json';
@@ -60,6 +65,11 @@ export const corePost = () => {
 export const coreIR = () => {
     // const accessToken = getCookie('accessToken');
     return createClient('ir', '');
+};
+
+export const coreActivity = () => {
+    const accessToken = getCookie('accessToken');
+    return createClient('activity', accessToken);
 };
 
 export const coreSchedule = () => {

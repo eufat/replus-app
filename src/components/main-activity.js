@@ -8,10 +8,13 @@ import {env} from '../configs.js';
 import {getDateFromFilename, getTVBrandFromCodeset, getTVCommandFromCodeset, toTitleCase, modesAC, fansAC, camelToSentence} from '../utils.js';
 import '@polymer/iron-icons/iron-icons';
 import {store} from '../store';
+import {fetchActivities} from '../actions/activity';
 
 import {getEventsDummy, getRemoteActivityDummy} from '../dummy.js';
 
 const get = _.get;
+const values = _.values;
+const isDate = _.isDate;
 
 const VISION_ACTIVITY = env.VISION_ACTIVITY;
 const CORE_ACTIVITY = env.CORE_ACTIVITY;
@@ -21,11 +24,11 @@ export default class activityMain extends connect(store)(LitElement) {
         return {
             activityStatus: String,
             activityURL: String,
-            activityEvents: Array,
-            storedEvents: Array,
+            realtimeAcitivities: Array,
+            storedActivities: Array,
             active: Boolean,
             rooms: Array,
-            listeing: Boolean,
+            listening: Boolean,
         };
     }
 
@@ -33,14 +36,15 @@ export default class activityMain extends connect(store)(LitElement) {
         super();
         this.activityURL = 'Not set';
         this.activityStatus = 'Not available';
-        this.activityEvents = [];
-        this.storedEvents = [];
+        this.realtimeAcitivities = [];
+        this.storedActivities = [];
         this.rooms = [];
         this.listening = false;
     }
 
     _stateChanged(state) {
         this.rooms = get(state, 'remote.rooms');
+        this.storedActivities = values(get(state, 'activity.activities')).map((data) => this.formatActivity(data));
     }
 
     _shouldRender(props, changedProps, old) {
@@ -82,7 +86,7 @@ export default class activityMain extends connect(store)(LitElement) {
                 console.log(`Listening to room ${room.id}`);
                 socket.on(room.id, (data) => {
                     data.room = room.name;
-                    this.addRealtimeActivity(data);
+                    this.realtimeAcitivities = this.formatActivity(data);
                 });
             }
 
@@ -90,7 +94,7 @@ export default class activityMain extends connect(store)(LitElement) {
         }
     }
 
-    addRealtimeActivity(data) {
+    formatActivity(data) {
         const date = new Date(+data.date);
 
         const type = data.command.indexOf('-') > -1 ? 'AC' : 'TV';
@@ -118,26 +122,26 @@ export default class activityMain extends connect(store)(LitElement) {
             source: data.source,
         };
 
-        this.activityEvents = [...this.activityEvents, newActivity];
+        return newActivity;
     }
 
     addFrameRealtime(frame) {
         const newData = `data:frame/jpeg;base64, ${frame.data}`;
-        const frames = [...this.activityEvents, {data: newData, name: frame.name, dev_id: frame.dev_id}];
-        this.activityEvents = frames;
+        const frames = [...this.realtimeAcitivities, {data: newData, name: frame.name, dev_id: frame.dev_id}];
+        this.realtimeAcitivities = frames;
     }
 
     addFrameStored(frame) {
         const newData = `data:frame/jpeg;base64, ${frame.data}`;
-        const frames = [...this.storedEvents, {data: newData, frame: frame.name, dev_id: frame.dev_id}];
-        this.storedEvents = frames;
+        const frames = [...this.storedActivities, {data: newData, frame: frame.name, dev_id: frame.dev_id}];
+        this.storedActivities = frames;
     }
 
     getDateFromFilename(name) {
         return getDateFromFilename(name);
     }
 
-    _render({activityStatus, activityEvents, storedEvents, activityURL}) {
+    _render({activityStatus, realtimeAcitivities, storedActivities, activityURL}) {
         const activityIcon = html`
                 <svg class="time-icon time-icon-activity" viewBox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true">
                     <path fill-rule="evenodd" d="M10.86 7c-.45-1.72-2-3-3.86-3-1.86 0-3.41 1.28-3.86 3H0v2h3.14c.45 1.72 2 3 3.86 3 1.86 0 3.41-1.28 3.86-3H14V7h-3.14zM7 10.2c-1.22 0-2.2-.98-2.2-2.2 0-1.22.98-2.2 2.2-2.2 1.22 0 2.2.98 2.2 2.2 0 1.22-.98 2.2-2.2 2.2z"></path>
@@ -160,11 +164,12 @@ export default class activityMain extends connect(store)(LitElement) {
             });
         };
 
-        const data = this.activityEvents;
+        const data = [...this.realtimeAcitivities, ...this.storedActivities];
 
         function compare(a, b) {
             const dateA = a.date.getTime();
             const dateB = b.date.getTime();
+
             if (dateA < dateB) return 1;
             if (dateA > dateB) return -1;
             return 0;
