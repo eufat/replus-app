@@ -374,21 +374,37 @@ export default class MainRooms extends connect(store)(LitElement) {
                                         on-click="${() => this._removeRoom(roomIndex)}">
                                     </mwc-button>`
                                 : html`
+                                <style>
+                                    @media screen and (max-width: 320px) {
+                                        mwc-button.mwc-edit {
+                                            width: 65px;
+                                        }
+                                        mwc-button.mwc-schedule {
+                                            width: 105px;
+                                        }
+                                        mwc-button.mwc-location {
+                                            width: 100px;
+                                        }
+                                    }
+                                </style>
                                     <h1>${item.name}</h1>
                                     <div class="top-button">
                                         <mwc-button
+                                            class="mwc-edit"
                                             label="Edit"
                                             icon="edit"
                                             on-click="${() => this._enterOnEdit(roomIndex)}">
                                         </mwc-button>
                                         <a href="/dashboard/add-schedule" on-click="${() => this._handleActiveRoom(room, roomIndex)}">
                                             <mwc-button
+                                                class="mwc-schedule"
                                                 label="Schedule"
                                                 icon="calendar_today">
                                             </mwc-button>
                                         </a>
                                         <a href="/dashboard/add-location" on-click="${() => this._handleActiveRoom(room, roomIndex)}">
                                             <mwc-button
+                                                class="mwc-location"
                                                 label="Location"
                                                 icon="location_on">
                                             </mwc-button>
