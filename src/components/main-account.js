@@ -66,7 +66,6 @@ export default class MainAccount extends connect(store)(LitElement) {
                 totalRemote = totalRemote + deviceItem.remotes.length;
             }
         });
-        console.log(totalRemote);
 
         return html`
             <style>
