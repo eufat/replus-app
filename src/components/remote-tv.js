@@ -166,14 +166,14 @@ class RemoteTv extends connect(store)(PolymerElement) {
 
     static get properties() {
         return {
-            // remote: {
-            //     type: String,
-            //     observer: '_remoteChanged',
-            // },
-            command: {type: String},
-            codeset: {type: String},
-            rooms: {type: Array},
-            title: {type: String},
+            command: String,
+            codeset: String,
+            rooms: Array,
+            title: String,
+            backable: {
+                type: Boolean,
+                observer: '_tapBack',
+            },
         };
     }
 
@@ -186,6 +186,7 @@ class RemoteTv extends connect(store)(PolymerElement) {
     _stateChanged(state) {
         this.rooms = get(state, 'remote.rooms');
         this.activeRemote = get(state, 'remote.activeRemote');
+        this.backable = get(state, 'app.backable');
     }
 
     ready() {
@@ -231,7 +232,14 @@ class RemoteTv extends connect(store)(PolymerElement) {
         const remoteType = this.activeRemote.name.substring(0, 2);
         const brand = this.activeRemote.name.substring(3).toLowerCase();
         if (remoteType == 'tv') {
-            this.codeset = getTVCodesetFromBrand(brand);
+            if (brand == 'lg') this.codeset = '1970';
+            else if (brand == 'samsung') this.codeset = '0595';
+            else if (brand == 'panasonic') this.codeset = '2619';
+            else if (brand == 'sony') this.codeset = '1319';
+            else if (brand == 'sharp') this.codeset = 'T001'; // 1429
+            else if (brand == 'changhong') this.codeset = '2903';
+            else if (brand == 'sanyo') this.codeset = '1430';
+            else if (brand == 'toshiba') this.codeset = '0339';
         }
     }
 
@@ -271,12 +279,13 @@ class RemoteTv extends connect(store)(PolymerElement) {
     }
 
     _tapBack() {
-        this.$.btnPower.setAttribute('icon', 'power-settings-new');
-        this.stateInitial();
+        if (this.backable == true) {
+            this.$.btnPower.setAttribute('icon', 'power-settings-new');
+            this.stateInitial();
+        }
     }
 
     // _handleResponse() {
-    //
     //     let response = this.response;
     //     if (response == 'OK') {
     //         console.log(`Sending command ${this.command}: ${this.response}`);
