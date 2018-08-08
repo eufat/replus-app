@@ -149,6 +149,11 @@ class RemoteAc extends connect(store)(PolymerElement) {
             title: String,
             brand: String,
             command: String,
+
+            backable: {
+                type: Boolean,
+                observer: '_tapBack',
+            }
         };
     }
 
@@ -164,6 +169,7 @@ class RemoteAc extends connect(store)(PolymerElement) {
         this.rooms = get(state, 'remote.rooms');
         this.activeRemote = get(state, 'remote.activeRemote');
         this.manifest = get(state, 'remote.manifest');
+        this.backable = get(state, 'app.backable');
     }
 
     ready() {
@@ -209,7 +215,9 @@ class RemoteAc extends connect(store)(PolymerElement) {
     }
 
     _tapBack() {
-        this.stateInitial();
+        if (this.backable == true) {
+            this.stateInitial();
+        }
         // this._tapPowerOFF();
     }
 
