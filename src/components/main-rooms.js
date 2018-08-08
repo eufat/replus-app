@@ -515,7 +515,7 @@ export default class MainRooms extends connect(store)(LitElement) {
                     display: inline-block;
                     vertical-align: top;
                     padding: 10px;
-                    width: 120px;
+                    width: 128px;
                     height: 120px;
                     margin-top: 5px;
                     margin-bottom: 5px;
