@@ -490,26 +490,23 @@ export default class MainRooms extends connect(store)(LitElement) {
 
                 @media screen and (max-width: 375px) {
                     .remote-item {
-                        width: 100px !important;
+                        width: 42% !important;
                         height: 120px !important;
                     }
                     .camera-item {
-                        width: 100px !important;
+                        width: 42% !important;
                         height: 120px !important;
                     }
                 }
 
                 @media screen and (max-width: 320px) {
                     .remote-item {
-                        width: 86px !important;
-                        height: 86px !important;
+                        width: 115px !important;
+                        height: 120px !important;
                     }
                     .camera-item {
-                        width: 86px !important;
-                        height: 86px !important;
-                    }
-                    .appliance-icon {
-                        padding-top: 0px !important;
+                        width: 115px !important;
+                        height: 120px !important;
                     }
                 }
 
@@ -522,7 +519,9 @@ export default class MainRooms extends connect(store)(LitElement) {
                     height: 120px;
                     margin-top: 5px;
                     margin-bottom: 5px;
-                    margin-right: 10px;
+                    margin-right: 5px;
+                    margin-left: 5px;
+                    padding: 5px 5px 5px 5px;
                     border: 1px solid #ccc;
                     border-radius: 10px;
                 }
@@ -556,7 +555,7 @@ export default class MainRooms extends connect(store)(LitElement) {
 
                 .appliance-icon {
                     height: 50px;
-                    padding-top: 15px;
+                    padding-top: 25px;
                 }
 
                 .appliance-icon-edit {
