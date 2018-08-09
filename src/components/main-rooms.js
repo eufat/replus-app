@@ -161,8 +161,9 @@ export default class MainRooms extends connect(store)(LitElement) {
         store.dispatch(setActiveRemote(remote));
     }
 
-    _handleActiveRoom(room) {
-        store.dispatch(setActiveRoom(room));
+    _handleActiveRoom(room, index) {
+        const activeRoom = {index, ...room};
+        store.dispatch(setActiveRoom(activeRoom));
     }
 
     _handleActiveVision(vision) {
@@ -373,21 +374,37 @@ export default class MainRooms extends connect(store)(LitElement) {
                                         on-click="${() => this._removeRoom(roomIndex)}">
                                     </mwc-button>`
                                 : html`
+                                <style>
+                                    @media screen and (max-width: 320px) {
+                                        mwc-button.mwc-edit {
+                                            width: 65px;
+                                        }
+                                        mwc-button.mwc-schedule {
+                                            width: 105px;
+                                        }
+                                        mwc-button.mwc-location {
+                                            width: 100px;
+                                        }
+                                    }
+                                </style>
                                     <h1>${item.name}</h1>
                                     <div class="top-button">
                                         <mwc-button
+                                            class="mwc-edit"
                                             label="Edit"
                                             icon="edit"
                                             on-click="${() => this._enterOnEdit(roomIndex)}">
                                         </mwc-button>
-                                        <a href="/dashboard/add-schedule" on-click="${() => this._handleActiveRoom(room)}">
+                                        <a href="/dashboard/add-schedule" on-click="${() => this._handleActiveRoom(room, roomIndex)}">
                                             <mwc-button
+                                                class="mwc-schedule"
                                                 label="Schedule"
                                                 icon="calendar_today">
                                             </mwc-button>
                                         </a>
-                                        <a href="/dashboard/add-location" on-click="${() => this._handleActiveRoom(room)}">
+                                        <a href="/dashboard/add-location" on-click="${() => this._handleActiveRoom(room, roomIndex)}">
                                             <mwc-button
+                                                class="mwc-location"
                                                 label="Location"
                                                 icon="location_on">
                                             </mwc-button>
@@ -473,26 +490,23 @@ export default class MainRooms extends connect(store)(LitElement) {
 
                 @media screen and (max-width: 375px) {
                     .remote-item {
-                        width: 100px !important;
+                        width: 42% !important;
                         height: 120px !important;
                     }
                     .camera-item {
-                        width: 100px !important;
+                        width: 42% !important;
                         height: 120px !important;
                     }
                 }
 
                 @media screen and (max-width: 320px) {
                     .remote-item {
-                        width: 86px !important;
-                        height: 86px !important;
+                        width: 115px !important;
+                        height: 120px !important;
                     }
                     .camera-item {
-                        width: 86px !important;
-                        height: 86px !important;
-                    }
-                    .appliance-icon {
-                        padding-top: 0px !important;
+                        width: 115px !important;
+                        height: 120px !important;
                     }
                 }
 
@@ -501,11 +515,13 @@ export default class MainRooms extends connect(store)(LitElement) {
                     display: inline-block;
                     vertical-align: top;
                     padding: 10px;
-                    width: 120px;
+                    width: 128px;
                     height: 120px;
                     margin-top: 5px;
                     margin-bottom: 5px;
-                    margin-right: 10px;
+                    margin-right: 5px;
+                    margin-left: 5px;
+                    padding: 5px 5px 5px 5px;
                     border: 1px solid #ccc;
                     border-radius: 10px;
                 }
@@ -539,7 +555,7 @@ export default class MainRooms extends connect(store)(LitElement) {
 
                 .appliance-icon {
                     height: 50px;
-                    padding-top: 15px;
+                    padding-top: 25px;
                 }
 
                 .appliance-icon-edit {

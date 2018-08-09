@@ -32,7 +32,7 @@ import {toTitleCase, pageToTitle} from '../utils.js';
 const get = _.get;
 
 class MainDashboard extends connect(store)(LitElement) {
-    _render({appTitle, _page, _progress, _backable}) {
+    _render({appTitle, _page, _progress, _backable, remoteName}) {
         return html`
             <style>
                 app-header {
@@ -118,7 +118,7 @@ class MainDashboard extends connect(store)(LitElement) {
                   <app-header slot="header">
                       <app-toolbar>
                         ${_backable ? html`<paper-icon-button on-click="${() => this._onBack()}" icon="arrow-back"></paper-icon-button>` : null}
-                          <div main-title>${pageToTitle(_page)}</div>
+                        ${_page == 'dashboard/remote-ac' || _page == 'dashboard/remote-tv' ? html`<div main-title>${toTitleCase(remoteName)}</div>` : html`<div main-title>${pageToTitle(_page)}</div>`}
                         <paper-icon-button
                             class="more-button"
                             icon="more-vert"
@@ -131,35 +131,35 @@ class MainDashboard extends connect(store)(LitElement) {
                   <!-- Dashboard content pages -->
                   <slot></slot>
                   <paper-tabs selected="0" align-bottom no-bar>
-                    <paper-tab>
+                    <paper-tab on-click="${() => this.removeBack()}">
                     <a href="/dashboard/rooms">
                         <div class="tab-menu">
                             <div class="tab-menu-icon"><iron-icon icon="icons:weekend"></iron-icon></div>
                         </div>
                     </a>
                     </paper-tab>
-                    <paper-tab>
+                    <paper-tab on-click="${() => this.removeBack()}">
                     <a href="/dashboard/activity">
                         <div class="tab-menu">
                             <div class="tab-menu-icon"><iron-icon icon="icons:view-day"></iron-icon></div>
                         </div>
                     </a>
                     </paper-tab>
-                    <paper-tab>
+                    <paper-tab on-click="${() => this.removeBack()}">
                     <a href="/dashboard/metrics">
                         <div class="tab-menu">
                             <div class="tab-menu-icon"><iron-icon icon="icons:timeline"></iron-icon></div>
                         </div>
                     </a>
                     </paper-tab>
-                    <paper-tab>
+                    <paper-tab on-click="${() => this.removeBack()}">
                     <a href="/dashboard/account">
                         <div class="tab-menu">
                             <div class="tab-menu-icon"><iron-icon icon="icons:account-circle"></iron-icon></div>
                         </div>
                     </a>
                     </paper-tab>
-                    <paper-tab>
+                    <paper-tab on-click="${() => this.removeBack()}">
                     <a href="/dashboard/settings">
                         <div class="tab-menu">
                             <div class="tab-menu-icon"><iron-icon icon="icons:settings"></iron-icon></div>
@@ -194,16 +194,22 @@ class MainDashboard extends connect(store)(LitElement) {
             _offline: Boolean,
             _progress: Boolean,
             _backable: Boolean,
+            remoteName: String,
         };
     }
 
     constructor() {
         super();
         setPassiveTouchGestures(true);
+        this.remoteName = '';
     }
 
     _onBack() {
         history.back();
+        store.dispatch(closeBack());
+    }
+
+    removeBack() {
         store.dispatch(closeBack());
     }
 
@@ -222,6 +228,7 @@ class MainDashboard extends connect(store)(LitElement) {
         this._backable = get(state, 'app.backable');
         this._snackbarOpened = get(state, 'app.snackbarOpened');
         this._drawerOpened = get(state, 'app.drawerOpened');
+        this.remoteName = get(state, 'remote.activeRemote.name');
     }
 
     _handleSignOut() {

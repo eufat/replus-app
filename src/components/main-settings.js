@@ -30,12 +30,6 @@ export default class MainSettings extends connect(store)(LitElement) {
         this.rooms = [];
     }
 
-    _didRender(props, changedProps, prevProps) {
-        if (changedProps.uid) {
-            store.dispatch(fetchRooms());
-        }
-    }
-
     _shouldRender(props, changedProps, old) {
         return props.active;
     }
