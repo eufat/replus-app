@@ -294,7 +294,7 @@ class AddSchedule extends connect(store)(PolymerElement) {
                         <div>[[schedule.titleDay]]</div>
                     </div>
                     <div class="card-actions horizontal layout end-justified">
-                        <paper-button title="[[schedule.titleRemote]]" id="btnDeleteSchedule" on-tap="_tapDeleteSchedule">Delete</paper-button>
+                        <paper-button title="[[schedule.id]]" id="btnDeleteSchedule" on-tap="_tapDeleteSchedule">Delete</paper-button>
                     </div>
                 </paper-card>
             </template>
@@ -359,9 +359,6 @@ class AddSchedule extends connect(store)(PolymerElement) {
             schedules: {
                 type: Array,
             },
-            scheduleList: {
-                type: Array,
-            },
             manifest: Object,
             mode: Number,
             manifestModes: Array,
@@ -388,7 +385,6 @@ class AddSchedule extends connect(store)(PolymerElement) {
         super();
         this.remotes = [];
         this.manifest = {};
-        this.scheduleList = [];
     }
 
     _stateChanged(state) {
@@ -401,7 +397,16 @@ class AddSchedule extends connect(store)(PolymerElement) {
         });
         this.remotes = stateRemotes;
         this.manifest = get(state, 'remote.manifest');
-        this.schedules = values(get(state, 'remote.schedules'));
+
+        const roomId = get(state, 'remote.activeRoom.id');
+        const scheduleList = values(get(state, 'remote.schedules')) || [];
+        let schedules = [];
+        scheduleList.map((schedule) => {
+            if (roomId == schedule.room) {
+                schedules.push(schedule);
+            }
+        });
+        this.schedules = schedules;
     }
 
     ready() {
@@ -415,16 +420,6 @@ class AddSchedule extends connect(store)(PolymerElement) {
 
     _tapDeleteSchedule(e) {
         const scheduleID = e.target.title;
-        const scheduleTitle = e.target.title;
-        let i;
-        for (i = 0; i < this.scheduleList.length; i++) {
-            if (this.scheduleList[i].titleRemote == scheduleTitle) {
-                // delete this.scheduleList[i];
-                this.scheduleList.splice(i, i + 1);
-            }
-        }
-        this.schedules = [];
-        this.schedules = this.scheduleList;
         store.dispatch(removeSchedule(scheduleID));
     }
 
@@ -681,17 +676,17 @@ class AddSchedule extends connect(store)(PolymerElement) {
             if (!this.isON) this.command = `${this.choosenBrand}-0000`;
         } else {
             this.titleCommand = 'Turn ON';
-            let merk = this.choosenBrand;
+            let brand = this.choosenBrand;
             let codeset = '';
 
-            if (merk == 'lg') codeset = '1970';
-            else if (merk == 'samsung') codeset = '0595';
-            else if (merk == 'panasonic') codeset = '2619';
-            else if (merk == 'sony') codeset = '1319';
-            else if (merk == 'sharp') codeset = '1429';
-            else if (merk == 'changhong') codeset = '2903';
-            else if (merk == 'sanyo') codeset = '1430';
-            else if (merk == 'toshiba') codeset = '0339';
+            if (brand == 'lg') codeset = '1970';
+            else if (brand == 'samsung') codeset = '0595';
+            else if (brand == 'panasonic') codeset = '2619';
+            else if (brand == 'sony') codeset = '1319';
+            else if (brand == 'sharp') codeset = '1429';
+            else if (brand == 'changhong') codeset = '2903';
+            else if (brand == 'sanyo') codeset = '1430';
+            else if (brand == 'toshiba') codeset = '0339';
             if (this.isON) this.command = `${codeset}15`;
             else this.command = `${codeset}16`;
         }
@@ -729,8 +724,6 @@ class AddSchedule extends connect(store)(PolymerElement) {
         }
 
         const schedule = {
-            uid: this.uid,
-            room: this.roomKey,
             command: this.command,
             scheduleType: this.scheduleType,
             schedule: this.schedule,
@@ -739,17 +732,6 @@ class AddSchedule extends connect(store)(PolymerElement) {
             titleDay: this.titleDay,
             titleTime: this.titleTime,
         };
-
-        const schedules = {
-            titleCommand: this.titleCommand,
-            titleDay: this.titleDay,
-            titleRemote: this.choosenAppliance,
-            titleTime: this.titleTime,
-        };
-
-        this.schedules = [];
-        this.scheduleList.push(schedules);
-        this.schedules = this.scheduleList;
 
         store.dispatch(createSchedule(schedule));
         this.$.scheduleDialog.close();
