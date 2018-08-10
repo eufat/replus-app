@@ -267,7 +267,7 @@ export const setActiveRoom = (activeRoom) => (dispatch, getState) => {
     });
 };
 
-export const createSchedule = (schedules) => (dispatch, getState) => {
+export const createSchedule = (schedules) => async (dispatch, getState) => {
     dispatch(showProgress());
     const uid = get(getState(), 'app.currentUser.uid');
     const room = get(getState(), 'remote.activeRoom.id');
@@ -280,7 +280,7 @@ export const createSchedule = (schedules) => (dispatch, getState) => {
     const titleTime = schedules.titleTime;
 
     try {
-        coreSchedule().post('/create', qs({uid, room, command, scheduleType, schedule, titleRemote, titleCommand, titleDay, titleTime}));
+        await coreSchedule().post('/create', qs({uid, room, command, scheduleType, schedule, titleRemote, titleCommand, titleDay, titleTime}));
         dispatch(fetchSchedules());
         dispatch(showSnackbar(`Schedule created.`));
     } catch (error) {
@@ -289,11 +289,11 @@ export const createSchedule = (schedules) => (dispatch, getState) => {
     dispatch(closeProgress());
 };
 
-export const removeSchedule = (scheduleId) => (dispatch, getState) => {
+export const removeSchedule = (scheduleId) => async (dispatch, getState) => {
     dispatch(showProgress());
     const uid = get(getState(), 'app.currentUser.uid');
     try {
-        coreSchedule().post('/delete', qs({uid, scheduleId}));
+        await coreSchedule().post('/delete', qs({uid, scheduleId}));
         dispatch(fetchSchedules());
         dispatch(showSnackbar(`Schedule deleted.`));
         dispatch(closeProgress());
