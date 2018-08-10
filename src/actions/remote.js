@@ -279,21 +279,23 @@ export const createSchedule = (schedules) => (dispatch, getState) => {
     const titleDay = schedules.titleDay;
     const titleTime = schedules.titleTime;
 
-    console.log(uid, room, command, scheduleType, schedule, titleRemote, titleCommand, titleDay, titleTime);
-
     try {
         coreSchedule().post('/create', qs({uid, room, command, scheduleType, schedule, titleRemote, titleCommand, titleDay, titleTime}));
+        dispatch(fetchSchedules());
+        dispatch(showSnackbar(`Schedule created.`));
     } catch (error) {
         errorHandler.report(error);
     }
     dispatch(closeProgress());
 };
 
-export const removeSchedule = (scheduleID) => (dispatch, getState) => {
+export const removeSchedule = (scheduleId) => (dispatch, getState) => {
     dispatch(showProgress());
     const uid = get(getState(), 'app.currentUser.uid');
     try {
-        coreSchedule().delete('/delete', {params: {uid, scheduleID}});
+        coreSchedule().post('/delete', qs({uid, scheduleId}));
+        dispatch(fetchSchedules());
+        dispatch(showSnackbar(`Schedule deleted.`));
         dispatch(closeProgress());
     } catch (error) {
         errorHandler.report(error);
