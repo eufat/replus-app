@@ -212,34 +212,34 @@ export default class MainRooms extends connect(store)(LitElement) {
         };
 
         const roomCameras = (devices, roomIndex) => {
-            return devices.map((device) => {
-                const onEdit = rooms[roomIndex].onEdit;
+            if (devices) {
+                return devices.map((device) => {
+                    const onEdit = rooms[roomIndex].onEdit;
 
-                if (device.type === 'replus-vision') {
-                    return html`
-                            ${
-                                onEdit
-                                    ? html`
-                                        <div class="remote-item">
-                                            <mwc-button
-                                                label="Remove"
-                                                icon="close"
-                                                on-click="${() => this._removeDevice(device.name)}">
-                                            </mwc-button>
-                                            <img class="appliance-icon" src="images/cam-icon.png"/>
-                                            <p>Camera ${device.name}</p>
-                                        </div>`
-                                    : html`
-                                    <a href="/dashboard/remote-vision"  on-click="${() => this._handleActiveVision(device.name)}">
-                                        <div class="remote-item">
-                                            <img class="appliance-icon" src="images/cam-icon.png"/>
-                                            <p>Camera ${device.name}</p>
-                                        </div>
-                                    </a>`
-                            }
-                    `;
-                }
-            });
+                    if (device.type === 'replus-vision') {
+                        if (onEdit) {
+                            return html`
+                                <div class="remote-item">
+                                    <mwc-button
+                                        label="Remove"
+                                        icon="close"
+                                        on-click="${() => this._removeDevice(device.name)}">
+                                    </mwc-button>
+                                    <img class="appliance-icon" src="images/cam-icon.png"/>
+                                    <p>Camera ${device.name}</p>
+                                </div>`;
+                        } else {
+                            return html`
+                                <a href="/dashboard/remote-vision"  on-click="${() => this._handleActiveVision(device.name)}">
+                                    <div class="remote-item">
+                                        <img class="appliance-icon" src="images/cam-icon.png"/>
+                                        <p>Camera ${device.name}</p>
+                                    </div>
+                                </a>`;
+                        }
+                    }
+                });
+            }
         };
 
         const roomDevices = (devices, roomIndex) => {
@@ -435,7 +435,7 @@ export default class MainRooms extends connect(store)(LitElement) {
                                     </div>`
                                 : null
                         }
-                        ${_.values(roomCameras(item.devices, roomIndex))}
+                        <!-- ${_.values(roomCameras(item.devices, roomIndex))} -->
                         ${_.values(roomRemotes(item.remotes, roomIndex))}
                     </div>
                     <div class="room-devices">
