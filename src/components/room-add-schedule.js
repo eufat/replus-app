@@ -180,6 +180,18 @@ class AddSchedule extends connect(store)(PolymerElement) {
                     border-radius: 4px;
                     /* width: calc(100% - 3em - 2px); */
                 }
+
+                .light {
+                    --mdc-theme-on-primary: black;
+                    --mdc-theme-primary: white;
+                    --mdc-theme-on-secondary: black;
+                    --mdc-theme-secondary: white;
+                }
+
+                .wide {
+                    width: calc(100% - 40px);
+                    margin: 20px 20px;
+                }
             </style>
             <paper-dialog id="scheduleDialog">
                 <div id="container" class="vertical layout">
@@ -300,13 +312,13 @@ class AddSchedule extends connect(store)(PolymerElement) {
             </template>
             <div class="rooms-container">
                 <div class="paper-container">
-                    <paper-material elevation="1" class="add-new-schedule">
-                        <mwc-button
-                            label="Add new schedule"
-                            icon="add"
-                            on-click="_showSchedule">
-                        </mwc-button>
-                    </paper-material>
+                    <mwc-button
+                        raised
+                        class="wide light"
+                        label="Add new schedule"
+                        icon="add"
+                        on-click="_showSchedule">
+                    </mwc-button>
                 </div>
             </div>
             <paper-toast id="toast"></paper-toast>

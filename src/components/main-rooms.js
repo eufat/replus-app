@@ -602,13 +602,23 @@ export default class MainRooms extends connect(store)(LitElement) {
                     text-align: center;
                     line-height: 80vh;
                 }
+
+                .light {
+                    --mdc-theme-on-primary: black;
+                    --mdc-theme-primary: white;
+                    --mdc-theme-on-secondary: black;
+                    --mdc-theme-secondary: white;
+                }
+
+                .wide {
+                    width: calc(100% - 40px);
+                    margin: 20px 20px;
+                }
             </style>
             <div class="rooms-container">
                 <div class="paper-container">
-                ${roomsItems}
-                    <paper-material elevation="1" class="add-new-room">
-                        <mwc-button label="Add new room" icon="add" on-click="${() => this._addNewRoom()}" />
-                    </paper-material>
+                    ${roomsItems}
+                    <mwc-button raised class="wide light" label="Add new room" icon="add" on-click="${() => this._addNewRoom()}" />
                 </div>
             </div>
     `;
