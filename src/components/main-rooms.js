@@ -435,7 +435,6 @@ export default class MainRooms extends connect(store)(LitElement) {
                                     </div>`
                                 : null
                         }
-                        <!-- ${_.values(roomCameras(item.devices, roomIndex))} -->
                         ${_.values(roomRemotes(item.remotes, roomIndex))}
                     </div>
                     <div class="room-devices">

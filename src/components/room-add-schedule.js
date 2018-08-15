@@ -645,6 +645,8 @@ class AddSchedule extends connect(store)(PolymerElement) {
                     else if (monthNumber == 12) this.choosenMonth = 'December';
                     this.calculatedYear = dateSplit[0];
                     this.choosenDate = dateSplit[2];
+                    this.OKdate = true;
+                    this.$.dropdownAppliance.removeAttribute('disabled');
                 }
             } else {
                 if (this.choosenHour != '' && this.choosenMinute != '' && this.choosenPeriod != '' && this.choosenDate != '' && this.choosenMonth != '') {
