@@ -30,6 +30,7 @@ import '@material/mwc-button';
 import '@material/mwc-icon';
 
 import {createSchedule, fetchIR, removeSchedule} from '../actions/remote.js';
+import {mobileCheck} from '../utils';
 import {store} from '../store.js';
 
 const get = _.get;
@@ -200,9 +201,9 @@ class AddSchedule extends connect(store)(PolymerElement) {
                         <paper-toggle-button id="toggleRepeated" checked="{{isRepeated}}" on-active-changed="_changeIsRepeated"></paper-toggle-button>
                         <p>Repeated</p>
                     </div>
-                    <paper-input id="inputTime" type="time" name="time" value="{{choosenTime}}" on-change="_changeTime"></paper-input>
+                    <paper-input id="inputTime" type="time" name="time" on-change="_changeTime"></paper-input>
                     <paper-input id="inputDate" type="date" name="date" value="{{choosenDates}}" min="{{minDate}}" on-change="calculateYear" on-click="calculateDate"></paper-input>
-                    <!-- <div id="containerTime" class="horizontal layout">
+                    <div id="containerTime" class="horizontal layout">
                         <paper-dropdown-menu id="dropdownHour" label="Hour" noink no-animations>
                             <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="name" selected="{{choosenHour}}" on-selected-changed="_changeTime">
                                 <template is="dom-repeat" items="{{hours}}" as="hour">
@@ -223,8 +224,8 @@ class AddSchedule extends connect(store)(PolymerElement) {
                                 <paper-item name="PM">PM</paper-item>
                             </paper-listbox>
                         </paper-dropdown-menu>
-                    </div> -->
-                    <!-- <div id="containerDate" class="horizontal layout">
+                    </div>
+                    <div id="containerDate" class="horizontal layout">
                         <paper-dropdown-menu id="dropdownMonth" label="Month" noink no-animations>
                             <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="name" selected="{{choosenMonth}}" on-selected-changed="calculateYear">
                                 <template is="dom-repeat" items="{{months}}" as="month">
@@ -240,7 +241,7 @@ class AddSchedule extends connect(store)(PolymerElement) {
                             </paper-listbox>
                         </paper-dropdown-menu>
                         <paper-input disabled id="inputYear" label="Year" value="{{calculatedYear}}"></paper-input>
-                    </div> -->
+                    </div>
                     <div id="containerDay" class="horizontal layout justified">
                         <div class="vertical layout"><paper-checkbox id="checkbox1" name="1" on-active-changed="_changeDay"></paper-checkbox>Mon</div>
                         <div class="vertical layout"><paper-checkbox id="checkbox2" name="2" on-active-changed="_changeDay"></paper-checkbox>Tue</div>
@@ -466,8 +467,19 @@ class AddSchedule extends connect(store)(PolymerElement) {
         this.$.dropdownAppliance.setAttribute('disabled', true);
         this.setToggleONState('disabled');
         this.setButtonState('disabled');
-        this.$.inputTime.value = '';
-        this.$.inputDate.value = '';
+        if (mobileCheck()) {
+            this.$.inputTime.value = '';
+            this.$.inputDate.value = '';
+            this.$.inputDate.style.display = 'block';
+            this.$.inputTime.style.display = 'block';
+            this.$.containerDate.style.display = 'none';
+            this.$.containerTime.style.display = 'none';
+        } else {
+            this.$.containerDate.style.display = 'inline-flex';
+            this.$.containerTime.style.display = 'inline-flex';
+            this.$.inputDate.style.display = 'none';
+            this.$.inputTime.style.display = 'none';
+        }
     }
 
     clearAll() {
@@ -544,13 +556,19 @@ class AddSchedule extends connect(store)(PolymerElement) {
         setTimeout(() => {
             this.stateInitial();
             if (this.isRepeated) {
-                // this.$.containerDate.style.visibility = 'hidden';
-                this.$.inputDate.style.visibility = 'hidden';
+                if (mobileCheck()) {
+                    this.$.inputDate.style.visibility = 'hidden'; // input type date
+                } else {
+                    this.$.containerDate.style.visibility = 'hidden';
+                }
                 this.$.containerDay.style.visibility = 'visible';
                 this.scheduleType = 'repeated';
             } else {
-                // this.$.containerDate.style.visibility = 'visible';
-                this.$.inputDate.style.visibility = 'visible';
+                if (mobileCheck()) {
+                    this.$.inputDate.style.visibility = 'visible'; // input type date
+                } else {
+                    this.$.containerDate.style.visibility = 'visible';
+                }
                 this.$.containerDay.style.visibility = 'hidden';
                 this.scheduleType = 'once';
             }
@@ -589,58 +607,60 @@ class AddSchedule extends connect(store)(PolymerElement) {
 
     calculateYear() {
         setTimeout(() => {
-            // untuk waktu menggunakan input type time
-            const time = this.$.inputTime.value;
-            const timeSplit = time.split(':');
-            let timeHour = timeSplit[0];
-            let timeMinute = timeSplit[1];
-            let timeMeridian;
-            if (timeHour > 12) {
-                timeMeridian = 'PM';
-                timeHour -= 12;
-            } else if (timeHour < 12) {
-                timeMeridian = 'AM';
+            if (mobileCheck()) {
+                // untuk waktu menggunakan input type time
+                const time = this.$.inputTime.value;
+                const timeSplit = time.split(':');
+                let timeHour = timeSplit[0];
+                let timeMinute = timeSplit[1];
+                let timeMeridian;
+                if (timeHour > 12) {
+                    timeMeridian = 'PM';
+                    timeHour -= 12;
+                } else if (timeHour < 12) {
+                    timeMeridian = 'AM';
+                } else {
+                    timeMeridian = 'PM';
+                }
+                this.choosenHour = timeHour;
+                this.choosenMinute = timeMinute;
+                this.choosenPeriod = timeMeridian;
+
+                // untuk tanggal menggunakan input type date
+                if (this.choosenDates != '') {
+                    const date = this.$.inputDate.value;
+                    const dateSplit = date.split('-');
+                    const monthNumber = dateSplit[1];
+                    if (monthNumber == 1) this.choosenMonth = 'January';
+                    else if (monthNumber == 2) this.choosenMonth = 'February';
+                    else if (monthNumber == 3) this.choosenMonth = 'March';
+                    else if (monthNumber == 4) this.choosenMonth = 'April';
+                    else if (monthNumber == 5) this.choosenMonth = 'May';
+                    else if (monthNumber == 6) this.choosenMonth = 'June';
+                    else if (monthNumber == 7) this.choosenMonth = 'July';
+                    else if (monthNumber == 8) this.choosenMonth = 'Augustus';
+                    else if (monthNumber == 9) this.choosenMonth = 'September';
+                    else if (monthNumber == 10) this.choosenMonth = 'October';
+                    else if (monthNumber == 11) this.choosenMonth = 'November';
+                    else if (monthNumber == 12) this.choosenMonth = 'December';
+                    this.calculatedYear = dateSplit[0];
+                    this.choosenDate = dateSplit[2];
+                }
             } else {
-                timeMeridian = 'PM';
-            }
-            this.choosenHour = timeHour;
-            this.choosenMinute = timeMinute;
-            this.choosenPeriod = timeMeridian;
+                if (this.choosenHour != '' && this.choosenMinute != '' && this.choosenPeriod != '' && this.choosenDate != '' && this.choosenMonth != '') {
+                    const hour = this.choosenHour;
+                    const minute = this.choosenMinute;
+                    const period = this.choosenPeriod;
+                    const date = this.choosenDate;
+                    const month = this.choosenMonth;
+                    const yearNow = new Date().getFullYear();
+                    const epochNow = new Date().getTime();
+                    const epoch = new Date(`${month} ${date}, ${yearNow} ${hour}:${minute} ${period}`).getTime();
 
-            // untuk tanggal menggunakan input type date
-            if (this.choosenDates != '') {
-                const date = this.$.inputDate.value;
-                const dateSplit = date.split('-');
-                const monthNumber = dateSplit[1];
-                if (monthNumber == 1) this.choosenMonth = 'January';
-                else if (monthNumber == 2) this.choosenMonth = 'February';
-                else if (monthNumber == 3) this.choosenMonth = 'March';
-                else if (monthNumber == 4) this.choosenMonth = 'April';
-                else if (monthNumber == 5) this.choosenMonth = 'May';
-                else if (monthNumber == 6) this.choosenMonth = 'June';
-                else if (monthNumber == 7) this.choosenMonth = 'July';
-                else if (monthNumber == 8) this.choosenMonth = 'Augustus';
-                else if (monthNumber == 9) this.choosenMonth = 'September';
-                else if (monthNumber == 10) this.choosenMonth = 'October';
-                else if (monthNumber == 11) this.choosenMonth = 'November';
-                else if (monthNumber == 12) this.choosenMonth = 'December';
-                this.calculatedYear = dateSplit[0];
-                this.choosenDate = dateSplit[2];
-            }
-
-            if (this.choosenHour != '' && this.choosenMinute != '' && this.choosenPeriod != '' && this.choosenDate != '' && this.choosenMonth != '') {
-                const hour = this.choosenHour;
-                const minute = this.choosenMinute;
-                const period = this.choosenPeriod;
-                const date = this.choosenDate;
-                const month = this.choosenMonth;
-                const yearNow = new Date().getFullYear();
-                const epochNow = new Date().getTime();
-                const epoch = new Date(`${month} ${date}, ${yearNow} ${hour}:${minute} ${period}`).getTime();
-
-                this.calculatedYear = epoch > epochNow ? yearNow : yearNow + 1;
-                this.OKdate = true;
-                this.$.dropdownAppliance.removeAttribute('disabled');
+                    this.calculatedYear = epoch > epochNow ? yearNow : yearNow + 1;
+                    this.OKdate = true;
+                    this.$.dropdownAppliance.removeAttribute('disabled');
+                }
             }
         }, 100);
     }
