@@ -13,6 +13,8 @@ import {getNewRoomTemplate, brandsList, brandsAC, brandsTV, toTitleCase} from '.
 import {store} from '../store';
 
 const get = _.get;
+const values = _.values;
+const mapValues = _.mapValues;
 
 export default class MainRooms extends connect(store)(LitElement) {
     static get properties() {
@@ -172,7 +174,7 @@ export default class MainRooms extends connect(store)(LitElement) {
 
     _render({rooms, newRemote, newDevice, _progress}) {
         const roomRemotes = (remotes, roomIndex) => {
-            return _.mapValues(remotes, (remote) => {
+            return mapValues(remotes, (remote) => {
                 const onEdit = rooms[roomIndex].onEdit;
                 const applicanceType = remote.name.split(' ')[0].toLowerCase();
 
@@ -211,6 +213,20 @@ export default class MainRooms extends connect(store)(LitElement) {
             });
         };
 
+        const addRemote = (onEdit, roomIndex) => {
+            return html`${
+                onEdit
+                    ? html`
+                        <div
+                            class="remote-item"
+                            on-click="${() => this.shadowRoot.getElementById(`add-new-remote-modal-${roomIndex}`).open()}">
+                            <img class="appliance-icon" src="images/add-plus-button.png"/>
+                            <p>Add Remote</p>
+                        </div>`
+                    : null
+            }`;
+        };
+
         const roomCameras = (devices, roomIndex) => {
             if (devices) {
                 return devices.map((device) => {
@@ -242,6 +258,20 @@ export default class MainRooms extends connect(store)(LitElement) {
             }
         };
 
+        const addCamera = (onEdit, roomIndex) => {
+            return html`<div> ${
+                onEdit
+                    ? html`
+                        <div
+                            class="camera-item"
+                            on-click="${() => this.shadowRoot.getElementById(`add-new-camera-modal-${roomIndex}`).open()}">
+                            <img class="appliance-icon" src="images/add-plus-button.png"/>
+                            <p>Add Camera</p>
+                        </div>`
+                    : null
+            } </div>`;
+        };
+
         const roomDevices = (devices, roomIndex) => {
             return devices.map((device) => {
                 const onEdit = rooms[roomIndex].onEdit;
@@ -263,7 +293,8 @@ export default class MainRooms extends connect(store)(LitElement) {
             });
         };
 
-        const roomsValues = _.values(rooms);
+
+        const roomsValues = values(rooms);
         const roomsItems = roomsValues.map((item, roomIndex) => {
             const room = rooms[roomIndex];
             const onEdit = room.onEdit;
@@ -413,34 +444,11 @@ export default class MainRooms extends connect(store)(LitElement) {
                         }
                     </div>
                     <div class="room-remotes">
-                        ${
-                            onEdit
-                                ? html`
-                                    <div
-                                        class="remote-item"
-                                        on-click="${() => this.shadowRoot.getElementById(`add-new-remote-modal-${roomIndex}`).open()}">
-                                        <img class="appliance-icon" src="images/add-plus-button.png"/>
-                                        <p>Add Remote</p>
-                                    </div>`
-                                : null
-                        }
-                        <!--
-                        ${
-                            onEdit
-                                ? html`
-                                    <div
-                                        class="camera-item"
-                                        on-click="${() => this.shadowRoot.getElementById(`add-new-camera-modal-${roomIndex}`).open()}">
-                                        <img class="appliance-icon" src="images/add-plus-button.png"/>
-                                        <p>Add Camera</p>
-                                    </div>`
-                                : null
-                        }
-                        -->
-                        ${_.values(roomRemotes(item.remotes, roomIndex))}
+                        ${addRemote(onEdit, roomIndex)}
+                        ${values(roomRemotes(item.remotes, roomIndex))}
                     </div>
                     <div class="room-devices">
-                        ${roomDevices(_.values(item.devices), roomIndex)}
+                        ${roomDevices(values(item.devices), roomIndex)}
                         ${
                             onEdit
                                 ? html`
