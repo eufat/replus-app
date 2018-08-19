@@ -424,6 +424,7 @@ export default class MainRooms extends connect(store)(LitElement) {
                                     </div>`
                                 : null
                         }
+                        <!--
                         ${
                             onEdit
                                 ? html`
@@ -435,6 +436,7 @@ export default class MainRooms extends connect(store)(LitElement) {
                                     </div>`
                                 : null
                         }
+                        -->
                         ${_.values(roomRemotes(item.remotes, roomIndex))}
                     </div>
                     <div class="room-devices">
