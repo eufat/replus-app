@@ -1,6 +1,7 @@
 import {showSnackbar, showProgress, closeProgress, showBack, closeBack} from './app';
 import {coreActivity} from '../client';
 import errorHandler from '../error';
+import {env} from '../configs';
 
 const get = _.get;
 
@@ -20,7 +21,7 @@ export const fetchActivities = () => async (dispatch, getState) => {
     const uid = get(getState(), 'app.currentUser.uid');
 
     try {
-        const response = await coreActivity().get('/activity/fetch', {params: {uid}});
+        const response = await coreActivity().get('/activity/fetch', {params: {uid, id: uid, by: 'owner'}});
         dispatch(setActivities(response.data));
         dispatch(closeProgress());
     } catch (error) {
