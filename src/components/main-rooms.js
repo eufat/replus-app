@@ -86,11 +86,10 @@ export default class MainRooms extends connect(store)(LitElement) {
     }
 
     _addNewRoom() {
-        // let newRooms = [...this.rooms, getNewRoomTemplate()];
-        // store.dispatch(setRooms(newRooms));
         const roomName = this.shadowRoot.getElementById('roomName').value;
         const newRoom = getNewRoomTemplate(roomName);
         store.dispatch(addRoom(newRoom));
+        this.shadowRoot.getElementById('roomName').value = '';
     }
 
     _patchOverlay(e) {
