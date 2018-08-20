@@ -82,10 +82,10 @@ class MainDashboard extends connect(store)(LitElement) {
                     width: 100%;
                     position: fixed;
                     border-top: 1px solid #ccc;
-                    height: 40px;
+                    height: 50px;
                     background-color: white;
-                    padding-top: 10px;
                     bottom: 0;
+                    --paper-tab-ink: #4664ae;
                 }
 
                 paper-tabs[no-bar] paper-tab.iron-selected {
@@ -103,6 +103,7 @@ class MainDashboard extends connect(store)(LitElement) {
                 }
 
                 .tab-menu-icon {
+                    padding-top: 10px;
                     width: 100%;
                     text-align: center;
                 }
