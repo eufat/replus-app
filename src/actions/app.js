@@ -31,7 +31,7 @@ const loadPage = (page) => async (dispatch) => {
     let paths = page.split('/');
     paths = paths.filter((item) => item !== '');
 
-    const pageList = ['auth', 'dashboard', 'activity', 'rooms', 'settings', 'setting-vision', 'setting-remote', 'help', 'account', 'remote-ac', 'remote-tv', 'add-schedule', 'add-location'];
+    const pageList = ['auth', 'dashboard', 'rooms', 'activity', 'metrics', 'settings', 'setting-vision', 'setting-remote', 'help', 'account', 'remote-ac', 'remote-tv', 'add-schedule', 'add-location'];
 
     for (const path of paths) {
         if (!(pageList.indexOf(path) > -1)) {
