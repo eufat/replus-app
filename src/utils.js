@@ -128,10 +128,10 @@ export function expandResolution(resolution) {
     return output;
 }
 
-export function getNewRoomTemplate() {
+export function getNewRoomTemplate(roomName) {
     return {
         devices: [],
-        name: 'My Room',
+        name: roomName,
         owner: '',
         id: '',
         remotes: [],

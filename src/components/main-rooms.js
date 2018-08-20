@@ -86,8 +86,11 @@ export default class MainRooms extends connect(store)(LitElement) {
     }
 
     _addNewRoom() {
-        let newRooms = [...this.rooms, getNewRoomTemplate()];
-        store.dispatch(setRooms(newRooms));
+        // let newRooms = [...this.rooms, getNewRoomTemplate()];
+        // store.dispatch(setRooms(newRooms));
+        const roomName = this.shadowRoot.getElementById('roomName').value;
+        const newRoom = getNewRoomTemplate(roomName);
+        store.dispatch(addRoom(newRoom));
     }
 
     _patchOverlay(e) {
@@ -624,10 +627,20 @@ export default class MainRooms extends connect(store)(LitElement) {
                     margin: 20px 20px;
                 }
             </style>
+            <paper-dialog id="add-new-room-modal">
+                <div class="modal-content">
+                    <paper-input
+                        id="roomName"
+                        label="Enter Room Name"
+                        always-float-label>
+                    </paper-input>
+                    <mwc-button dialog-confirm label="Add This Room" on-click="${() => this._addNewRoom()}"></mwc-button>
+                </div>
+            </paper-dialog>
             <div class="rooms-container">
                 <div class="paper-container">
                     ${roomsItems}
-                    <mwc-button raised class="wide light" label="Add new room" icon="add" on-click="${() => this._addNewRoom()}" />
+                    <mwc-button raised class="wide light" label="Add new room" icon="add" on-click="${() => this.shadowRoot.getElementById('add-new-room-modal').open()}" />
                 </div>
             </div>
     `;
