@@ -6,6 +6,10 @@ import '@polymer/paper-dialog';
 import '@material/mwc-button';
 import '@material/mwc-icon';
 import '@polymer/paper-input/paper-input';
+import '@polymer/paper-fab';
+import '@polymer/iron-icon';
+import '@polymer/iron-icons/iron-icons';
+import '@polymer/iron-icons/image-icons';
 
 import {setRooms, removeDevice, editRoom, addRoom, removeRoom, setNewRemote, addRemote, removeRemote, addDevice, addCamera, setNewDevice, setActiveRemote, setActiveRoom} from '../actions/remote';
 import {setActiveVision} from '../actions/vision';
@@ -45,6 +49,21 @@ export default class MainRooms extends connect(store)(LitElement) {
         this.newRemote = get(state, 'remote.newRemote');
         this.uid = get(state, 'app.currentUser.uid');
         this._progress = get(state, 'app.progressOpened');
+        this._setButton();
+    }
+
+    _setButton() {
+        const rooms = _.values(this.rooms);
+        rooms.map((item, index) => {
+            const nextButton = this.shadowRoot.getElementById(`next-slide-${index}`);
+            if (nextButton != undefined) {
+                if (item.remotes.length <= 6) {
+                    nextButton.style.display = 'none';
+                } else {
+                    nextButton.style.display = 'block';
+                }
+            }
+        });
     }
 
     _enterOnEdit(roomIndex) {
@@ -174,6 +193,27 @@ export default class MainRooms extends connect(store)(LitElement) {
         store.dispatch(setActiveVision(vision));
     }
 
+    _scrollRight(e, roomIndex) {
+        const remote = this.shadowRoot.getElementById(`remotes-${roomIndex}`);
+        e.target.parentNode.childNodes[1].style.display = 'block';
+        const maxScrollLeft = remote.scrollWidth - remote.clientWidth;
+        remote.scrollLeft += 154;
+        if (remote.scrollLeft == maxScrollLeft) {
+            e.target.style.display = 'none';
+        }
+    }
+
+    _scrollLeft(e, roomIndex) {
+        const remote = this.shadowRoot.getElementById(`remotes-${roomIndex}`);
+        const maxScrollLeft = remote.scrollWidth - remote.clientWidth;
+        remote.scrollLeft -= 154;
+        if ((remote.scrollLeft+154) == maxScrollLeft) {
+            e.target.parentNode.childNodes[3].style.display = 'block';
+        } else if (remote.scrollLeft == 0) {
+            e.target.style.display = 'none';
+        }
+    }
+
     _render({rooms, newRemote, newDevice, _progress}) {
         const roomRemotes = (remotes, roomIndex) => {
             return mapValues(remotes, (remote) => {
@@ -205,7 +245,7 @@ export default class MainRooms extends connect(store)(LitElement) {
                                     </div>`
                                 : html`
                                 <a href="/dashboard/remote-${remote.name.substring(0, 2)}" on-click="${() => this._handleActiveRemote(remote)}">
-                                    <div class="remote-item">
+                                    <div id="remote-${roomIndex}${remotes.indexOf(remote)}" class="remote-item">
                                         <img class="appliance-icon" src="images/${applicanceType}-icon.png"/>
                                         <p>${toTitleCase(remote.name)}</p>
                                     </div>
@@ -302,6 +342,30 @@ export default class MainRooms extends connect(store)(LitElement) {
             const onEdit = room.onEdit;
 
             return html`
+                <style>
+                    paper-fab {
+                        margin: 5px;
+                        color: #2B5788;
+                        --paper-fab-background: white;
+                        --paper-fab-keyboard-focus-background: white;
+                    }
+                    .slides {
+                        width: auto;
+                    }
+                    .slides paper-fab {
+                        /* display: flex; */
+                        position: absolute;
+                        top: 110px;
+                    }
+                    .next {
+                        right: 0 !important;
+                        display: none;
+                    }
+                    .prev {
+                        left: 0 !important;
+                        display: none;
+                    }
+                </style>
                 <paper-dialog id="add-new-device-modal-${roomIndex}">
                     <div class="modal-content">
                         <paper-input
@@ -407,27 +471,31 @@ export default class MainRooms extends connect(store)(LitElement) {
                                         on-click="${() => this._removeRoom(roomIndex)}">
                                     </mwc-button>`
                                 : html`
-                                <style>
-                                    @media screen and (max-width: 320px) {
+                                    <style>
                                         mwc-button.mwc-edit {
-                                            width: 65px;
+                                            position: absolute;
+                                            right: 30px;
                                         }
-                                        mwc-button.mwc-schedule {
-                                            width: 105px;
+                                        @media screen and (max-width: 320px) {
+                                            mwc-button.mwc-edit {
+                                                width: 65px;
+                                            }
+                                            mwc-button.mwc-schedule {
+                                                width: 105px;
+                                            }
+                                            mwc-button.mwc-location {
+                                                width: 100px;
+                                            }
                                         }
-                                        mwc-button.mwc-location {
-                                            width: 100px;
-                                        }
-                                    }
-                                </style>
+                                    </style>
                                     <h1>${item.name}</h1>
+                                    <mwc-button
+                                        class="mwc-edit"
+                                        label="Edit"
+                                        icon="edit"
+                                        on-click="${() => this._enterOnEdit(roomIndex)}">
+                                    </mwc-button>
                                     <div class="top-button">
-                                        <mwc-button
-                                            class="mwc-edit"
-                                            label="Edit"
-                                            icon="edit"
-                                            on-click="${() => this._enterOnEdit(roomIndex)}">
-                                        </mwc-button>
                                         <a href="/dashboard/add-schedule" on-click="${() => this._handleActiveRoom(room, roomIndex)}">
                                             <mwc-button
                                                 class="mwc-schedule"
@@ -445,9 +513,13 @@ export default class MainRooms extends connect(store)(LitElement) {
                                     </div>`
                         }
                     </div>
-                    <div class="room-remotes">
+                    <div id="remotes-${roomIndex}" class="room-remotes">
                         ${addRemote(onEdit, roomIndex)}
                         ${values(roomRemotes(item.remotes, roomIndex))}
+                        <div class="slides">
+                            <paper-fab id="prev-slide-${roomIndex}" class="prev" mini icon="image:navigate-before" on-click="${(e) => this._scrollLeft(e, roomIndex)}"></paper-fab>
+                            <paper-fab id="next-slide-${roomIndex}" class="next" mini icon="image:navigate-next" on-click="${(e) => this._scrollRight(e, roomIndex)}"></paper-fab>
+                        </div>
                     </div>
                     <div class="room-devices">
                         ${roomDevices(values(item.devices), roomIndex)}
@@ -490,12 +562,13 @@ export default class MainRooms extends connect(store)(LitElement) {
                     font-weight: normal;
                     font-size: 1.25em;
                     margin-bottom: 0px !important;
+                    margin-top: 0px !important;
                 }
 
                 .room-remotes {
                     width: 100%;
                     display: block;
-                    overflow: auto;
+                    overflow: hidden;
                     white-space: nowrap;
                 }
 
@@ -594,6 +667,7 @@ export default class MainRooms extends connect(store)(LitElement) {
                 }
 
                 paper-material {
+                    position: relative;
                     display: block;
                     margin: 0 0 20px;
                     padding: 10px 20px 20px;
