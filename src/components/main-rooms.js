@@ -56,10 +56,12 @@ export default class MainRooms extends connect(store)(LitElement) {
         const rooms = _.values(this.rooms);
         rooms.map((item, index) => {
             const nextButton = this.shadowRoot.getElementById(`next-slide-${index}`);
-            if (item.remotes.length <= 6) {
-                nextButton.style.display = 'none';
-            } else {
-                if (nextButton != undefined) nextButton.style.display = 'block';
+            if (nextButton != undefined) {
+                if (item.remotes.length <= 6) {
+                    nextButton.style.display = 'none';
+                } else {
+                    nextButton.style.display = 'block';
+                }
             }
         });
     }
@@ -191,7 +193,7 @@ export default class MainRooms extends connect(store)(LitElement) {
         store.dispatch(setActiveVision(vision));
     }
 
-    _scrollRight(e, roomIndex, item) {
+    _scrollRight(e, roomIndex) {
         const remote = this.shadowRoot.getElementById(`remotes-${roomIndex}`);
         e.target.parentNode.childNodes[1].style.display = 'block';
         const maxScrollLeft = remote.scrollWidth - remote.clientWidth;
@@ -201,7 +203,7 @@ export default class MainRooms extends connect(store)(LitElement) {
         }
     }
 
-    _scrollLeft(e, roomIndex, item) {
+    _scrollLeft(e, roomIndex) {
         const remote = this.shadowRoot.getElementById(`remotes-${roomIndex}`);
         const maxScrollLeft = remote.scrollWidth - remote.clientWidth;
         remote.scrollLeft -= 154;
@@ -211,50 +213,6 @@ export default class MainRooms extends connect(store)(LitElement) {
             e.target.style.display = 'none';
         }
     }
-
-    // _scrollRight(e, roomIndex, item) {
-    //     const parent = this.shadowRoot.getElementById('remotes-' + roomIndex);
-    //     e.target.parentNode.childNodes[1].style.display = 'block';
-    //     // this.shadowRoot.getElementById('prev-slide').style.display = 'block';
-    //     let i;
-    //     const limit = `remote-${roomIndex}${(item.remotes.length-6)-1}`;
-    //     for (i = 8; i < parent.childNodes.length; i++) {
-    //         const node = parent.childNodes[i];
-    //         if (node.nodeName == 'A') {
-    //             const remoteItem = parent.childNodes[i].childNodes[1];
-    //             if (remoteItem.style.display != 'none') {
-    //                 if (remoteItem.id == limit) {
-    //                     e.target.style.display = 'none';
-    //                 }
-    //                 remoteItem.style.display = 'none';
-    //                 break;
-    //             }
-    //         }
-    //     }
-    // }
-
-    // _scrollLeft(e, roomIndex, item) {
-    //     const parent = this.shadowRoot.getElementById('remotes-' + roomIndex);
-    //     let i;
-    //     const limit = `remote-${roomIndex}${(item.remotes.length-6)-1}`;
-    //     for (i = 8; i < parent.childNodes.length; i++) {
-    //         const node = parent.childNodes[i];
-    //         if (node.nodeName == 'A') {
-    //             const nextNode = parent.childNodes[i+7].childNodes[1];
-    //             const remoteItem = parent.childNodes[i].childNodes[1];
-    //             if (remoteItem.style.display == 'none' && nextNode.style.display != 'none') {
-    //                 if (remoteItem.id == limit) {
-    //                     e.target.parentNode.childNodes[3].style.display = 'block';
-    //                 }
-    //                 remoteItem.style.display = 'inline-block';
-    //                 if (parent.childNodes[i-7].childNodes[1] == undefined) {
-    //                     e.target.style.display = 'none';
-    //                 }
-    //                 break;
-    //             }
-    //         }
-    //     }
-    // }
 
     _render({rooms, newRemote, newDevice, _progress}) {
         const roomRemotes = (remotes, roomIndex) => {
@@ -559,8 +517,8 @@ export default class MainRooms extends connect(store)(LitElement) {
                         ${addRemote(onEdit, roomIndex)}
                         ${values(roomRemotes(item.remotes, roomIndex))}
                         <div class="slides">
-                            <paper-fab id="prev-slide-${roomIndex}" class="prev" mini icon="image:navigate-before" on-click="${(e) => this._scrollLeft(e, roomIndex, item)}"></paper-fab>
-                            <paper-fab id="next-slide-${roomIndex}" class="next" mini icon="image:navigate-next" on-click="${(e) => this._scrollRight(e, roomIndex, item)}"></paper-fab>
+                            <paper-fab id="prev-slide-${roomIndex}" class="prev" mini icon="image:navigate-before" on-click="${(e) => this._scrollLeft(e, roomIndex)}"></paper-fab>
+                            <paper-fab id="next-slide-${roomIndex}" class="next" mini icon="image:navigate-next" on-click="${(e) => this._scrollRight(e, roomIndex)}"></paper-fab>
                         </div>
                     </div>
                     <div class="room-devices">
@@ -610,7 +568,7 @@ export default class MainRooms extends connect(store)(LitElement) {
                 .room-remotes {
                     width: 100%;
                     display: block;
-                    overflow: auto;
+                    overflow: hidden;
                     white-space: nowrap;
                 }
 
