@@ -56,9 +56,11 @@ export default class MainRooms extends connect(store)(LitElement) {
         const rooms = _.values(this.rooms);
         rooms.map((item, index) => {
             const nextButton = this.shadowRoot.getElementById(`next-slide-${index}`);
+            const prevButton = this.shadowRoot.getElementById(`prev-slide-${index}`);
             if (nextButton != undefined) {
                 if (item.remotes.length <= 6) {
                     nextButton.style.display = 'none';
+                    prevButton.style.display = 'none';
                 } else {
                     nextButton.style.display = 'block';
                 }
@@ -193,24 +195,27 @@ export default class MainRooms extends connect(store)(LitElement) {
         store.dispatch(setActiveVision(vision));
     }
 
-    _scrollRight(e, roomIndex) {
+    _scrollLeft(roomIndex, button) {
         const remote = this.shadowRoot.getElementById(`remotes-${roomIndex}`);
-        e.target.parentNode.childNodes[1].style.display = 'block';
-        const maxScrollLeft = remote.scrollWidth - remote.clientWidth;
-        remote.scrollLeft += 154;
-        if (remote.scrollLeft == maxScrollLeft) {
-            e.target.style.display = 'none';
+        if (button == 'right') {
+            remote.scrollLeft += 154;
+        } else if (button == 'left') {
+            remote.scrollLeft -= 154;
         }
     }
 
-    _scrollLeft(e, roomIndex) {
-        const remote = this.shadowRoot.getElementById(`remotes-${roomIndex}`);
+    _scroll(e, roomIndex) {
+        const remote = e.target;
         const maxScrollLeft = remote.scrollWidth - remote.clientWidth;
-        remote.scrollLeft -= 154;
-        if ((remote.scrollLeft+154) == maxScrollLeft) {
-            e.target.parentNode.childNodes[3].style.display = 'block';
+        const nextButton = this.shadowRoot.getElementById(`next-slide-${roomIndex}`);
+        const prevButton = this.shadowRoot.getElementById(`prev-slide-${roomIndex}`);
+        if (remote.scrollLeft == maxScrollLeft) {
+            nextButton.style.display = 'none';
         } else if (remote.scrollLeft == 0) {
-            e.target.style.display = 'none';
+            prevButton.style.display = 'none';
+        } else {
+            nextButton.style.display = 'block';
+            prevButton.style.display = 'block';
         }
     }
 
@@ -349,11 +354,10 @@ export default class MainRooms extends connect(store)(LitElement) {
                         --paper-fab-background: white;
                         --paper-fab-keyboard-focus-background: white;
                     }
-                    .slides {
+                    #slides {
                         width: auto;
                     }
-                    .slides paper-fab {
-                        /* display: flex; */
+                    #slides paper-fab {
                         position: absolute;
                         top: 110px;
                     }
@@ -513,12 +517,12 @@ export default class MainRooms extends connect(store)(LitElement) {
                                     </div>`
                         }
                     </div>
-                    <div id="remotes-${roomIndex}" class="room-remotes">
+                    <div id="remotes-${roomIndex}" class="room-remotes" on-scroll="${(e) => this._scroll(e, roomIndex)}">
                         ${addRemote(onEdit, roomIndex)}
                         ${values(roomRemotes(item.remotes, roomIndex))}
-                        <div class="slides">
-                            <paper-fab id="prev-slide-${roomIndex}" class="prev" mini icon="image:navigate-before" on-click="${(e) => this._scrollLeft(e, roomIndex)}"></paper-fab>
-                            <paper-fab id="next-slide-${roomIndex}" class="next" mini icon="image:navigate-next" on-click="${(e) => this._scrollRight(e, roomIndex)}"></paper-fab>
+                        <div id="slides">
+                            <paper-fab id="prev-slide-${roomIndex}" class="prev" mini icon="image:navigate-before" on-click="${(e) => this._scrollLeft(roomIndex, 'left')}"></paper-fab>
+                            <paper-fab id="next-slide-${roomIndex}" class="next" mini icon="image:navigate-next" on-click="${(e) => this._scrollLeft(roomIndex, 'right')}"></paper-fab>
                         </div>
                     </div>
                     <div class="room-devices">
@@ -568,7 +572,7 @@ export default class MainRooms extends connect(store)(LitElement) {
                 .room-remotes {
                     width: 100%;
                     display: block;
-                    overflow: hidden;
+                    overflow: auto;
                     white-space: nowrap;
                 }
 
