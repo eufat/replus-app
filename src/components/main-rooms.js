@@ -57,12 +57,29 @@ export default class MainRooms extends connect(store)(LitElement) {
         rooms.map((item, index) => {
             const nextButton = this.shadowRoot.getElementById(`next-slide-${index}`);
             const prevButton = this.shadowRoot.getElementById(`prev-slide-${index}`);
+            const remotes = this.shadowRoot.getElementById(`remotes-${index}`);
+            let hasHorizontalScrollbar;
+
+            if (nextButton != null || prevButton != null) {
+                if (item.onEdit == true) {
+                    nextButton.style.top = '150px';
+                    prevButton.style.top = '150px';
+                } else {
+                    nextButton.style.top = '110px';
+                    prevButton.style.top = '110px';
+                }
+            }
+
+            if (remotes != null) {
+                hasHorizontalScrollbar = remotes.scrollWidth > remotes.clientWidth;
+            }
+
             if (nextButton != undefined) {
-                if (item.remotes.length <= 6) {
+                if (hasHorizontalScrollbar) {
+                    nextButton.style.display = 'block';
+                } else {
                     nextButton.style.display = 'none';
                     prevButton.style.display = 'none';
-                } else {
-                    nextButton.style.display = 'block';
                 }
             }
         });
@@ -357,7 +374,7 @@ export default class MainRooms extends connect(store)(LitElement) {
                     #slides {
                         width: auto;
                     }
-                    #slides paper-fab {
+                    [id|=next-slide], [id|=prev-slide] {
                         position: absolute;
                         top: 110px;
                     }
@@ -453,7 +470,7 @@ export default class MainRooms extends connect(store)(LitElement) {
                         </div>
                     </div>
                 </paper-dialog>
-                <paper-material elevation="1">
+                <paper-material id="material-${roomIndex}" elevation="1">
                     <div class="room-title">
                         ${
                             onEdit
@@ -569,7 +586,8 @@ export default class MainRooms extends connect(store)(LitElement) {
                     margin-top: 0px !important;
                 }
 
-                .room-remotes {
+                /* .room-remotes { */
+                [id|=remotes] {
                     width: 100%;
                     display: block;
                     overflow: auto;
