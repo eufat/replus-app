@@ -29,10 +29,7 @@ export default class Location extends connect(store)(LitElement) {
             commandIn: String,
             commandOut: String,
             codeset: String,
-            roomID: String,
-            home: Object,
-            rooms: Array,
-            roomIndex: Number,
+            room: Object,
         };
     }
 
@@ -47,8 +44,7 @@ export default class Location extends connect(store)(LitElement) {
         this.commandOut = '';
         this.roomID = '';
         this.rendered = false;
-        this.rooms = [];
-        this.home = {};
+        this.room = {};
     }
 
     _didRender() {
@@ -57,6 +53,14 @@ export default class Location extends connect(store)(LitElement) {
             this.geocodeLatLng(this.location.lat + ',' + this.location.lng);
         } else {
             this.address = '';
+        }
+
+        const locationEmpty = this.room.home == null;
+        const resetElement = this.shadowRoot.getElementById(`reset-button-${this.room.index}`);
+        if (locationEmpty) {
+            resetElement.setAttribute('disabled', true);
+        } else {
+            resetElement.removeAttribute('disabled');
         }
     }
 
@@ -72,13 +76,10 @@ export default class Location extends connect(store)(LitElement) {
             return nameUpperCased;
         });
         this.remotes = stateRemotes;
-        this.roomID = get(state, 'remote.activeRoom.id');
-        this.home = get(state, 'remote.activeRoom.home');
-        this.roomIndex = get(state, 'remote.activeRoom.index');
-        this.rooms = get(state, 'remote.rooms');
-        const lat = get(state, 'remote.rooms[' + this.roomIndex + '].home.latitude');
-        const lng = get(state, 'remote.rooms[' + this.roomIndex + '].home.longitude');
-        // this.location = {lat: get(state, 'remote.activeRoom.home.latitude'), lng: get(state, 'remote.activeRoom.home.longitude')};
+        this.room = get(state, 'remote.activeRoom');
+        const lat = get(state, 'remote.activeRoom.home.latitude');
+        const lng = get(state, 'remote.activeRoom.home.longitude');
+
         this.location = {lat: lat, lng: lng};
     }
 
@@ -348,7 +349,8 @@ export default class Location extends connect(store)(LitElement) {
         }
 
         const location = {
-            roomID: this.roomID,
+            // roomID: this.roomID,
+            roomID: this.room.id,
             geosenseInRange: codesetInRange,
             geosenseOutRange: codesetOutRange,
             lat: this.location.lat,
@@ -360,11 +362,11 @@ export default class Location extends connect(store)(LitElement) {
         this.commandOut = '';
     }
 
-    deleteLocation() {
-        console.log('delete');
+    resetLocation() {
+        console.log('reset');
     }
 
-    _render({location, address, remotes, onePushButtons, commandIn, commandOut}) {
+    _render({room, location, address, remotes, onePushButtons, commandIn, commandOut}) {
         return html`
             <style>
                 /* google map with searchbox style */
@@ -492,7 +494,8 @@ export default class Location extends connect(store)(LitElement) {
                     cursor: pointer;
                 }
 
-                #delete-button {
+                [id|=reset-button] {
+                /* #reset-button { */
                     margin-left: 10px;
                 }
             </style>
@@ -553,17 +556,17 @@ export default class Location extends connect(store)(LitElement) {
                 <paper-item>
                     <mwc-button
                         raised
-                        id="save-button"
+                        id="save-button-${room.index}"
                         class="light"
-                        label="save location"
+                        label="save"
                         on-click="${() => this.saveLocation()}"
                     ></mwc-button>
                     <mwc-button
                         raised
-                        id="delete-button"
+                        id="reset-button-${room.index}"
                         class="light"
-                        label="delete location"
-                        on-click="${() => this.deleteLocation()}"
+                        label="reset"
+                        on-click="${() => this.resetLocation()}"
                     ></mwc-button>
                 </paper-item>
             </div>
