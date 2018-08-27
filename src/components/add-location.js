@@ -338,7 +338,6 @@ export default class Location extends connect(store)(LitElement) {
         // store.dispatch(getLocation(address));
         this.zoom = 15;
         this.shadowRoot.getElementById('address').value = null;
-        console.log(geoInElement);
         geoInElement.removeAttribute('disabled');
         geoOutElement.removeAttribute('disabled');
     }
