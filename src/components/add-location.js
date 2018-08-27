@@ -57,8 +57,12 @@ export default class Location extends connect(store)(LitElement) {
 
         const locationEmpty = this.room.home == null;
         const resetElement = this.shadowRoot.getElementById(`reset-button-${this.room.index}`);
+        const geoInElement = this.shadowRoot.getElementById(`geo-in-${this.room.index}`);
+        const geoOutElement = this.shadowRoot.getElementById(`geo-out-${this.room.index}`);
         if (locationEmpty) {
             resetElement.setAttribute('disabled', true);
+            geoInElement.setAttribute('disabled', true);
+            geoOutElement.setAttribute('disabled', true);
         } else {
             resetElement.removeAttribute('disabled');
         }
@@ -79,7 +83,6 @@ export default class Location extends connect(store)(LitElement) {
         this.room = get(state, 'remote.activeRoom');
         const lat = get(state, 'remote.activeRoom.home.latitude');
         const lng = get(state, 'remote.activeRoom.home.longitude');
-
         this.location = {lat: lat, lng: lng};
     }
 
@@ -326,13 +329,18 @@ export default class Location extends connect(store)(LitElement) {
         }
     }
 
-    getLocation(element) {
-        const address = element.getElementById('address').value;
+    getLocation(roomIndex) {
+        const address = this.shadowRoot.getElementById('address').value;
+        const geoInElement = this.shadowRoot.getElementById(`geo-in-${roomIndex}`);
+        const geoOutElement = this.shadowRoot.getElementById(`geo-out-${roomIndex}`);
         this.address = address;
         this.geocode(address);
         // store.dispatch(getLocation(address));
         this.zoom = 15;
-        element.getElementById('address').value = null;
+        this.shadowRoot.getElementById('address').value = null;
+        console.log(geoInElement);
+        geoInElement.removeAttribute('disabled');
+        geoOutElement.removeAttribute('disabled');
     }
 
     saveLocation() {
@@ -516,7 +524,7 @@ export default class Location extends connect(store)(LitElement) {
                         raised
                         class="light"
                         label="search"
-                        on-click="${() => this.getLocation(this.shadowRoot)}"
+                        on-click="${() => this.getLocation(room.index)}"
                     ></mwc-button>
                 </paper-item>
                 <paper-item>
@@ -537,20 +545,45 @@ export default class Location extends connect(store)(LitElement) {
                         <p class="right">${get(location, 'lng')}</p>
                     </paper-item-body>
                 </paper-item>
-                <paper-item class="pointer" on-click="${() => this.shadowRoot.getElementById('geoInDialog').open()}">
+                <hr>
+                <paper-item class="pointer">
                     <paper-item-body class="text-container">
-                        <p class="left">Geosense in range</p>
+                        <p class="left">Action in range</p>
                     </paper-item-body>
                     <div class="command-right">
-                        ${commandIn}
+                        ${
+                            commandIn == ''
+                            ? html`
+                                <mwc-button
+                                    id="geo-in-${room.index}"
+                                    class="mwc-edit"
+                                    label="Edit"
+                                    icon="edit"
+                                    on-click="${() => this.shadowRoot.getElementById('geoInDialog').open()}">
+                                </mwc-button>`
+                            : html`
+                                ${commandIn}`
+                        }
                     </div>
                 </paper-item>
-                <paper-item class="pointer" on-click="${() => this.shadowRoot.getElementById('geoOutDialog').open()}">
+                <paper-item class="pointer">
                     <paper-item-body class="text-container">
-                        <p class="left">Geosense out range</p>
+                        <p class="left">Action out range</p>
                     </paper-item-body>
                     <div class="command-right">
-                        ${commandOut}
+                    ${
+                            commandOut == ''
+                            ? html`
+                                <mwc-button
+                                    id="geo-out-${room.index}"
+                                    class="mwc-edit"
+                                    label="Edit"
+                                    icon="edit"
+                                    on-click="${() => this.shadowRoot.getElementById('geoOutDialog').open()}">
+                                </mwc-button>`
+                            : html`
+                                ${commandOut}`
+                        }
                     </div>
                 </paper-item>
                 <paper-item>
