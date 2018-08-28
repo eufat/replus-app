@@ -323,7 +323,7 @@ export const remoteCommand = (command) => (dispatch, getState) => {
     const activeRemoteRoom = get(getState(), 'remote.activeRemote.room');
 
     // Iterate over rooms to get devices on desired room
-    // the output of devices will be for ex: "ABC123,ABC234"
+    // the output of devices will be for ex: "ABC123,ABC234".
     const rooms = get(getState(), 'remote.rooms');
     let devices = [];
     for (let room of rooms) {
@@ -333,8 +333,11 @@ export const remoteCommand = (command) => (dispatch, getState) => {
     }
     devices = devices.map((device) => device.name).join(',');
 
+    // Trim whitespaces in any given command.
+    const formattedCommand = command.trim();
+
     try {
-        corePost().post('/remote', qs({uid, devices, command, room: activeRemoteRoom, source: 'app'}));
+        corePost().post('/remote', qs({uid, devices, command: formattedCommand, room: activeRemoteRoom, source: 'app'}));
         dispatch(closeProgress());
     } catch (error) {
         errorHandler.report(error);
@@ -343,7 +346,6 @@ export const remoteCommand = (command) => (dispatch, getState) => {
 };
 
 export const addSetting = (command, deviceID) => (dispatch, getState) => {
-    console.log(command, deviceID);
     const uid = get(getState(), 'app.currentUser.uid');
     try {
         coreClient().post('/device-setup', qs({uid, deviceID}));

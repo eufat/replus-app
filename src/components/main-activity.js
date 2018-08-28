@@ -106,7 +106,7 @@ export default class activityMain extends connect(store)(LitElement) {
             const codesetMode = codesetAC.substring(0, 1);
             const codesetFan = codesetAC.substring(1, 2);
             const codesetTemp = codesetAC.substring(2, 4);
-            actionMessage = `set to fan ${fansAC[codesetFan].toLowerCase()} mode ${modesAC[codesetMode].toLocaleLowerCase()} and temp ${codesetTemp}°C`;
+            actionMessage = `set to fan ${fansAC[codesetFan].toLowerCase()} mode ${modesAC[codesetMode].toLowerCase()} and temp ${codesetTemp}°C`;
         } else if (type === 'TV') {
             const codesetTV = data.command.substring(5, 9);
             actionMessage = `set to ${camelToSentence(getTVCommandFromCodeset(codesetTV))}`;

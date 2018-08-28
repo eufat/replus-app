@@ -153,7 +153,7 @@ class RemoteAc extends connect(store)(PolymerElement) {
             backable: {
                 type: Boolean,
                 observer: '_tapBack',
-            }
+            },
         };
     }
 
@@ -261,7 +261,7 @@ class RemoteAc extends connect(store)(PolymerElement) {
 
     _tapPower() {
         const remoteType = this.activeRemote.name.substring(0, 2).toUpperCase();
-        this.brand = toTitleCase(this.activeRemote.name.substring(2, this.activeRemote.name.length));
+        this.brand = toTitleCase(this.activeRemote.name.substring(3, this.activeRemote.name.length));
         this.title = remoteType + ' ' + this.brand;
         this.getMode();
 
@@ -275,8 +275,8 @@ class RemoteAc extends connect(store)(PolymerElement) {
     }
 
     _tapPowerOFF() {
-        let brandCommand = this.brand + '';
-        this.command = brandCommand.toLocaleLowerCase() + '-0000';
+        let brandCommand = this.brand;
+        this.command = brandCommand.toLowerCase() + '-0000';
         store.dispatch(remoteCommand(this.command));
         this.modeIndex = 0;
         this.fanIndex = 0;
@@ -296,9 +296,8 @@ class RemoteAc extends connect(store)(PolymerElement) {
 
     send() {
         // this.brand = this.activeRemote.name.substring(2, this.activeRemote.name.length);
-        let brandCommand = this.brand + '';
-        this.command = brandCommand.toLocaleLowerCase() + '-' + this.mode + this.fan + this.temp;
-        console.log('command', this.command);
+        let brandCommand = this.brand;
+        this.command = brandCommand.toLowerCase() + '-' + this.mode + this.fan + this.temp;
         if (this.switchedON) store.dispatch(remoteCommand(this.command));
     }
 
