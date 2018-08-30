@@ -1,12 +1,6 @@
 {
     "name": "Replus",
     "short_name": "Replus",
-    "description": "A Replus Progressive Web App (PWA) for Replus Remote and Replus Vision",
-    "start_url": "/",
-    "orientation": "portrait",
-    "display": "standalone",
-    "theme_color": "#4664ae",
-    "background_color": "#4664ae",
     "icons": [
         {
             "src": "images/manifest/icon-app-192.png",
@@ -18,5 +12,10 @@
             "sizes": "512x512",
             "type": "image/png"
         }
-    ]
+    ],
+    "start_url": "/",
+    "display": "standalone",
+    "theme_color": "#4664ae",
+    "background_color": "#4664ae",
+    "orientation": "portrait"
 }
