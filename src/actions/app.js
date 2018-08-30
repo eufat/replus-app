@@ -21,6 +21,69 @@ export const SET_CURRENT_USER = 'SET_CURRENT_USER';
 export const AUTHENTICATE_USER = 'AUTHENTICATE_USER';
 export const DEAUTHENTICATE_USER = 'DEAUTHENTICATE_USER';
 
+const pageList = [
+    {
+        path: 'auth',
+        component: '../components/main-auth.js',
+    },
+    {
+        path: 'dashboard',
+        component: '../components/main-dashboard.js',
+    },
+    {
+        path: 'activity',
+        component: '../components/main-activity.js',
+    },
+    {
+        path: 'metrics',
+        component: '../components/main-metrics.js',
+    },
+    {
+        path: 'rooms',
+        component: '../components/main-rooms.js',
+    },
+    {
+        path: 'help',
+        component: '../components/main-help.js',
+    },
+    {
+        path: 'account',
+        component: '../components/main-account.js',
+    },
+    {
+        path: 'settings',
+        component: '../components/main-settings.js',
+    },
+    {
+        path: 'setting-vision',
+        component: '../components/setting-vision.js',
+    },
+    {
+        path: 'setting-remote',
+        component: '../components/setting-remote.js',
+    },
+    {
+        path: 'remote-ac',
+        component: '../components/remote-ac.js',
+    },
+    {
+        path: 'remote-tv',
+        component: '../components/remote-tv.js',
+    },
+    {
+        path: 'add-schedule',
+        component: '../components/room-add-schedule.js',
+    },
+    {
+        path: 'add-location',
+        component: '../components/room-add-location.js',
+    },
+    {
+        path: '404',
+        component: '../components/not-found.js',
+    },
+];
+
 export const navigate = (path) => (dispatch) => {
     const page = path === '/' ? 'auth' : path.slice(1);
 
@@ -28,62 +91,24 @@ export const navigate = (path) => (dispatch) => {
 };
 
 const loadPage = (page) => async (dispatch) => {
-    let paths = page.split('/');
-    paths = paths.filter((item) => item !== '');
+    // Parse path to array. For example: 'dashboard/rooms' to ['dashboard', 'rooms']
+    const paths = page.split('/').filter((item) => item !== '');
 
-    const pageList = ['auth', 'dashboard', 'rooms', 'activity', 'metrics', 'settings', 'setting-vision', 'setting-remote', 'help', 'account', 'remote-ac', 'remote-tv', 'add-schedule', 'add-location'];
+    const pageListPaths = pageList.map((page) => page.path);
 
     for (const path of paths) {
-        if (!(pageList.indexOf(path) > -1)) {
+        // If not listed, use 404 as not found page
+        if (!(pageListPaths.indexOf(path) > -1)) {
             page = '404';
         }
 
-        switch (path) {
-            case 'auth':
-                await import('../components/main-auth');
-                break;
-            case 'dashboard':
-                await import('../components/main-dashboard');
-                break;
-            case 'activity':
-                await import('../components/main-activity');
-                break;
-            case 'metrics':
-                await import('../components/main-metrics');
-                break;
-            case 'rooms':
-                await import('../components/main-rooms');
-                break;
-            case 'settings':
-                await import('../components/main-settings.js');
-                break;
-            case 'setting-vision':
-                await import('../components/settings-vision');
-                break;
-            case 'setting-remote':
-                await import('../components/settings-remote');
-                break;
-            case 'help':
-                await import('../components/main-help');
-                break;
-            case 'account':
-                await import('../components/main-account');
-                break;
-            case 'remote-ac':
-                await import('../components/remote-ac');
-                break;
-            case 'remote-tv':
-                await import('../components/remote-tv');
-                break;
-            case 'add-schedule':
-                await import('../components/room-add-schedule');
-                break;
-            case 'add-location':
-                await import('../components/add-location');
-                break;
-            default:
-                page = '404';
+        // Import respective component for page's path
+        for (let item of pageList) {
+            if (path === item.path) {
+                await import(item.component);
+            } else {
                 await import('../components/not-found');
+            }
         }
     }
 
