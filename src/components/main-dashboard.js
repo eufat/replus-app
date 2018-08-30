@@ -31,6 +31,9 @@ const get = _.get;
 
 class MainDashboard extends connect(store)(LitElement) {
     _render({appTitle, _page, _progress, _backable, remoteName}) {
+        const tabOrder = ['rooms', 'activity', 'metrics', 'account', 'settings'];
+        const tabPage = _page.split('/')[1] || 'rooms';
+
         return html`
             <style>
                 app-header {
@@ -123,7 +126,7 @@ class MainDashboard extends connect(store)(LitElement) {
                 </app-header>
                 <!-- Dashboard content pages -->
                 <slot></slot>
-                <paper-tabs selected="0" align-bottom no-bar>
+                <paper-tabs selected="${tabOrder.indexOf(tabPage)}" align-bottom no-bar>
                 <paper-tab on-click="${() => this.removeBack()}">
                 <a href="/dashboard/rooms">
                     <div class="tab-menu">
