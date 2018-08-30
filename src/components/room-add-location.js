@@ -11,7 +11,7 @@ import '@em-polymer/google-map/google-map';
 import {store} from '../store.js';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {getLocation, reverseGeocode, saveLocation, setLocation, setActiveRoom} from '../actions/remote.js';
-import {env} from '../configs';
+import {env} from '../configs.js';
 
 // Import from lodash
 const get = _.get;

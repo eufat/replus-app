@@ -34,7 +34,7 @@ import './remote-tv';
 import './remote-vision';
 
 import './room-add-schedule';
-import './add-location';
+import './room-add-location';
 
 const includes = _.includes;
 

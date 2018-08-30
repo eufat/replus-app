@@ -7,15 +7,13 @@ import '@polymer/iron-selector/iron-selector';
 
 import '@polymer/app-layout/app-header/app-header';
 import '@polymer/app-layout/app-toolbar/app-toolbar';
-import '@polymer/app-layout/app-scroll-effects/effects/waterfall';
-import '@polymer/app-layout/app-header-layout/app-header-layout';
-import '@polymer/app-layout/app-scroll-effects/app-scroll-effects';
+
+import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 import '@polymer/paper-item/paper-item';
+import '@polymer/paper-icon-button';
+import '@polymer/paper-progress';
 import '@polymer/paper-material';
 import '@polymer/paper-listbox';
-import '@polymer/paper-icon-button';
-import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
-import '@polymer/paper-progress';
 import '@polymer/paper-tabs';
 import '@polymer/paper-fab';
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
@@ -44,10 +42,6 @@ class MainDashboard extends connect(store)(LitElement) {
                     --paper-icon-button-ink-color: white;
                 }
 
-                app-drawer-layout:not([narrow]) [drawer-toggle] {
-                    display: none;
-                }
-
                 paper-progress {
                     display: block;
                     width: 100%;
@@ -64,7 +58,7 @@ class MainDashboard extends connect(store)(LitElement) {
                 #moreMenu {
                     margin: 0;
                     right: 0;
-                    top: auto;
+                    top: 64px;
                     position: fixed;
                     display: none;
                     min-width: 200px;
@@ -113,74 +107,71 @@ class MainDashboard extends connect(store)(LitElement) {
                 }
             </style>
             <div id="body">
-              <app-header-layout fullbleed>
+                <!-- Dashboard app bar -->
+                <app-header slot="header">
+                    <app-toolbar>
+                    ${_backable ? html`<paper-icon-button on-click="${() => this._onBack()}" icon="arrow-back"></paper-icon-button>` : null}
+                    ${_page == 'dashboard/remote-ac' || _page == 'dashboard/remote-tv' ? html`<div main-title>${toTitleCase(remoteName)}</div>` : html`<div main-title>${pageToTitle(_page)}</div>`}
+                    <paper-icon-button
+                        class="more-button"
+                        icon="more-vert"
+                        on-click="${() => this._toggleMoreMenu(this.shadowRoot.getElementById('moreMenu'))}"
+                    >
+                    </paper-icon-button>
+                    ${_progress ? html`<paper-progress value="10" indeterminate bottom-item></paper-progress>` : null}
+                    </app-toolbar>
+                </app-header>
+                <!-- Dashboard content pages -->
+                <slot></slot>
+                <paper-tabs selected="0" align-bottom no-bar>
+                <paper-tab on-click="${() => this.removeBack()}">
+                <a href="/dashboard/rooms">
+                    <div class="tab-menu">
+                        <div class="tab-menu-icon"><iron-icon icon="icons:weekend"></iron-icon></div>
+                    </div>
+                </a>
+                </paper-tab>
+                <paper-tab on-click="${() => this.removeBack()}">
+                <a href="/dashboard/activity">
+                    <div class="tab-menu">
+                        <div class="tab-menu-icon"><iron-icon icon="icons:view-day"></iron-icon></div>
+                    </div>
+                </a>
+                </paper-tab>
+                <paper-tab on-click="${() => this.removeBack()}">
+                <a href="/dashboard/metrics">
+                    <div class="tab-menu">
+                        <div class="tab-menu-icon"><iron-icon icon="icons:timeline"></iron-icon></div>
+                    </div>
+                </a>
+                </paper-tab>
+                <paper-tab on-click="${() => this.removeBack()}">
+                <a href="/dashboard/account">
+                    <div class="tab-menu">
+                        <div class="tab-menu-icon"><iron-icon icon="icons:account-circle"></iron-icon></div>
+                    </div>
+                </a>
+                </paper-tab>
+                <paper-tab on-click="${() => this.removeBack()}">
+                <a href="/dashboard/settings">
+                    <div class="tab-menu">
+                        <div class="tab-menu-icon"><iron-icon icon="icons:settings"></iron-icon></div>
+                    </div>
+                </a>
+                </paper-tab>
+                </paper-tabs>
 
-                  <!-- Dashboard app bar -->
-                  <app-header slot="header">
-                      <app-toolbar>
-                        ${_backable ? html`<paper-icon-button on-click="${() => this._onBack()}" icon="arrow-back"></paper-icon-button>` : null}
-                        ${_page == 'dashboard/remote-ac' || _page == 'dashboard/remote-tv' ? html`<div main-title>${toTitleCase(remoteName)}</div>` : html`<div main-title>${pageToTitle(_page)}</div>`}
-                        <paper-icon-button
-                            class="more-button"
-                            icon="more-vert"
-                            on-click="${() => this._toggleMoreMenu(this.shadowRoot.getElementById('moreMenu'))}"
-                        >
-                        </paper-icon-button>
-                        ${_progress ? html`<paper-progress value="10" indeterminate bottom-item></paper-progress>` : null}
-                      </app-toolbar>
-                  </app-header>
-                  <!-- Dashboard content pages -->
-                  <slot></slot>
-                  <paper-tabs selected="0" align-bottom no-bar>
-                    <paper-tab on-click="${() => this.removeBack()}">
-                    <a href="/dashboard/rooms">
-                        <div class="tab-menu">
-                            <div class="tab-menu-icon"><iron-icon icon="icons:weekend"></iron-icon></div>
-                        </div>
-                    </a>
-                    </paper-tab>
-                    <paper-tab on-click="${() => this.removeBack()}">
-                    <a href="/dashboard/activity">
-                        <div class="tab-menu">
-                            <div class="tab-menu-icon"><iron-icon icon="icons:view-day"></iron-icon></div>
-                        </div>
-                    </a>
-                    </paper-tab>
-                    <paper-tab on-click="${() => this.removeBack()}">
-                    <a href="/dashboard/metrics">
-                        <div class="tab-menu">
-                            <div class="tab-menu-icon"><iron-icon icon="icons:timeline"></iron-icon></div>
-                        </div>
-                    </a>
-                    </paper-tab>
-                    <paper-tab on-click="${() => this.removeBack()}">
-                    <a href="/dashboard/account">
-                        <div class="tab-menu">
-                            <div class="tab-menu-icon"><iron-icon icon="icons:account-circle"></iron-icon></div>
-                        </div>
-                    </a>
-                    </paper-tab>
-                    <paper-tab on-click="${() => this.removeBack()}">
-                    <a href="/dashboard/settings">
-                        <div class="tab-menu">
-                            <div class="tab-menu-icon"><iron-icon icon="icons:settings"></iron-icon></div>
-                        </div>
-                    </a>
-                    </paper-tab>
-                    </paper-tabs>
-
-                  <!-- Dashboard app bar menu -->
-                  <paper-material id="moreMenu">
-                      <paper-listbox>
-                          <a name='help' href='/dashboard/help' tabindex='-1'>
-                          <paper-item raised><iron-icon icon="icons:help" class="more-menu-icon"></iron-icon>Help</paper-item>
-                          </a>
-                          <a name='sign-out' on-click='${() => this._handleSignOut()}' tabindex='-1'>
-                          <paper-item raised><iron-icon icon="icons:exit-to-app" class="more-menu-icon"></iron-icon>Sign Out</paper-item>
-                          </a>
-                      </paper-listbox>
-                  </paper-material>
-              </app-header-layout>
+                <!-- Dashboard app bar menu -->
+                <paper-material id="moreMenu">
+                    <paper-listbox>
+                        <a name='help' href='/dashboard/help' tabindex='-1'>
+                        <paper-item raised><iron-icon icon="icons:help" class="more-menu-icon"></iron-icon>Help</paper-item>
+                        </a>
+                        <a name='sign-out' on-click='${() => this._handleSignOut()}' tabindex='-1'>
+                        <paper-item raised><iron-icon icon="icons:exit-to-app" class="more-menu-icon"></iron-icon>Sign Out</paper-item>
+                        </a>
+                    </paper-listbox>
+                </paper-material>
             </div>
     `;
     }
