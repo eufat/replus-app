@@ -12,6 +12,7 @@ import {store} from '../store.js';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {getLocation, reverseGeocode, saveLocation, setLocation, setActiveRoom} from '../actions/remote.js';
 import {env} from '../configs.js';
+import {log} from '../utils.js';
 
 // Import from lodash
 const get = _.get;
@@ -224,7 +225,7 @@ export default class Location extends connect(store)(LitElement) {
             const bounds = new google.maps.LatLngBounds();
             places.forEach((place) => {
                 if (!place.geometry) {
-                    console.log('Returned place contains no geometry');
+                    log('Returned place contains no geometry');
                     return;
                 }
                 const icon = {
@@ -251,11 +252,11 @@ export default class Location extends connect(store)(LitElement) {
                 } else {
                     bounds.extend(place.geometry.location);
                 }
-                console.log(place.geometry.location.lat());
-                console.log(place.geometry.location.lng());
+                log(place.geometry.location.lat());
+                log(place.geometry.location.lng());
             });
             map.fitBounds(bounds);
-            console.log(input.value);
+            log(input.value);
         });
     }
 
@@ -373,7 +374,7 @@ export default class Location extends connect(store)(LitElement) {
     }
 
     resetLocation() {
-        console.log('reset');
+        log('reset');
     }
 
     _render({room, location, address, remotes, onePushButtons, commandIn, commandOut}) {

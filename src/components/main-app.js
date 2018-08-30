@@ -16,7 +16,7 @@ import firebase from '../firebase';
 import {store} from '../store';
 import {setCurrentUser, authenticateUser, deauthenticateUser} from '../actions/app';
 import {navigate, updateOffline, updateLayout} from '../actions/app';
-import {toTitleCase} from '../utils';
+import {toTitleCase, log} from '../utils';
 import './snack-bar';
 
 import './main-help';
@@ -133,7 +133,7 @@ class MainApp extends connect(store)(LitElement) {
     }
 
     _stateChanged(state) {
-        console.log(state);
+        log(state);
         this._page = state.app.page;
         this._offline = state.app.offline;
         this._snackbarOpened = state.app.snackbarOpened;

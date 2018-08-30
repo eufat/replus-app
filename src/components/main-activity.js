@@ -5,7 +5,7 @@ import '@polymer/paper-material';
 import '@polymer/paper-icon-button';
 
 import {env} from '../configs.js';
-import {getDateFromFilename, getTVBrandFromCodeset, getTVCommandFromCodeset, toTitleCase, modesAC, fansAC, camelToSentence} from '../utils.js';
+import {getDateFromFilename, getTVBrandFromCodeset, getTVCommandFromCodeset, toTitleCase, modesAC, fansAC, camelToSentence, log} from '../utils.js';
 import '@polymer/iron-icons/iron-icons';
 import {store} from '../store';
 import {fetchActivities} from '../actions/activity';
@@ -83,7 +83,7 @@ export default class activityMain extends connect(store)(LitElement) {
             });
 
             for (let room of this.rooms) {
-                console.log(`Listening to room ${room.id}`);
+                log(`Listening to room ${room.id}`);
                 socket.on(room.id, (data) => {
                     data.room = room.name;
                     this.realtimeAcitivities = this.formatActivity(data);
