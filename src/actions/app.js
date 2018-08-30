@@ -58,17 +58,17 @@ const loadPage = (page) => async (dispatch) => {
             case 'settings':
                 await import('../components/main-settings.js');
                 break;
-            case 'setting-vision':
-                await import('../components/settings-vision');
-                break;
-            case 'setting-remote':
-                await import('../components/settings-remote');
-                break;
             case 'help':
                 await import('../components/main-help');
                 break;
             case 'account':
                 await import('../components/main-account');
+                break;
+            case 'setting-vision':
+                await import('../components/settings-vision');
+                break;
+            case 'setting-remote':
+                await import('../components/settings-remote');
                 break;
             case 'remote-ac':
                 await import('../components/remote-ac');
@@ -80,7 +80,7 @@ const loadPage = (page) => async (dispatch) => {
                 await import('../components/room-add-schedule');
                 break;
             case 'add-location':
-                await import('../components/add-location');
+                await import('../components/room-add-location');
                 break;
             default:
                 page = '404';

@@ -1,7 +1,6 @@
 // const prod = process.env.NODE_ENV === 'production';
 const prod = false;
 const googleMapsApi = 'AIzaSyCfGVFRrYf89QiMaQCiXUb-D_uDjUPCsCc';
-const mapboxApi = 'pk.eyJ1IjoicmVwbHVzYXV0b21hdGlvbiIsImEiOiJjampyNmJ5MHAwbW84M3FuZmkydjNjMW1hIn0.akVxS3hGqrLBCE_omJtSXg';
 
 export const firebaseConfig = {
     apiKey: 'AIzaSyDGCQ24hjwEeQwlus_Knet1_Lnx93Lyy2g',
@@ -26,7 +25,6 @@ export const env = {
     VISION_STREAM: prod ? 'https://vision.replus.co/stream' : 'http://localhost:5020',
     PROJECT_ENV: 'replus-162509',
     GOOGLE_MAPS: 'https://maps.googleapis.com/maps/api/geocode/json?key=' + googleMapsApi,
-    MAPBOX: mapboxApi,
     ERROR_KEY: 'AIzaSyBNs1144i3uKRPvqsXlrrAi4hKrijWrqLE',
 };
 

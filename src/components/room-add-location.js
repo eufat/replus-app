@@ -11,7 +11,7 @@ import '@em-polymer/google-map/google-map';
 import {store} from '../store.js';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {getLocation, reverseGeocode, saveLocation, setLocation, setActiveRoom} from '../actions/remote.js';
-import {env} from '../configs';
+import {env} from '../configs.js';
 
 // Import from lodash
 const get = _.get;
@@ -165,7 +165,7 @@ export default class Location extends connect(store)(LitElement) {
 
     geocode(address) {
         const geocoder = new google.maps.Geocoder();
-        geocoder.geocode({'address': address}, (results, status) => {
+        geocoder.geocode({address: address}, (results, status) => {
             if (status === 'OK') {
                 const location = results[0].geometry.location;
                 this.location = {lat: location.lat(), lng: location.lng()};
@@ -179,7 +179,7 @@ export default class Location extends connect(store)(LitElement) {
         const geocoder = new google.maps.Geocoder();
         const latlngStr = input.split(',', 2);
         const latlng = {lat: parseFloat(latlngStr[0]), lng: parseFloat(latlngStr[1])};
-        geocoder.geocode({'location': latlng}, (results, status) => {
+        geocoder.geocode({location: latlng}, (results, status) => {
             if (status === 'OK') {
                 if (results[0]) {
                     this.address = results[0].formatted_address;
@@ -224,7 +224,7 @@ export default class Location extends connect(store)(LitElement) {
             const bounds = new google.maps.LatLngBounds();
             places.forEach((place) => {
                 if (!place.geometry) {
-                    console.log("Returned place contains no geometry");
+                    console.log('Returned place contains no geometry');
                     return;
                 }
                 const icon = {
@@ -232,16 +232,18 @@ export default class Location extends connect(store)(LitElement) {
                     size: new google.maps.Size(71, 71),
                     origin: new google.maps.Point(0, 0),
                     anchor: new google.maps.Point(17, 34),
-                    scaledSize: new google.maps.Size(25, 25)
+                    scaledSize: new google.maps.Size(25, 25),
                 };
 
                 // Create a marker for each place.
-                markers.push(new google.maps.Marker({
-                    map: map,
-                    icon: icon,
-                    title: place.name,
-                    position: place.geometry.location
-                }));
+                markers.push(
+                    new google.maps.Marker({
+                        map: map,
+                        icon: icon,
+                        title: place.name,
+                        position: place.geometry.location,
+                    })
+                );
 
                 if (place.geometry.viewport) {
                     // Only geocodes have viewport.
@@ -259,7 +261,7 @@ export default class Location extends connect(store)(LitElement) {
 
     geocodeAddress(geocoder, resultsMap) {
         const address = this.shadowRoot.getElementById('pac-input').value;
-        geocoder.geocode({'address': address}, (results, status) => {
+        geocoder.geocode({address: address}, (results, status) => {
             if (status === 'OK') {
                 resultsMap.setCenter(results[0].geometry.location);
                 const marker = new google.maps.Marker({
@@ -315,16 +317,17 @@ export default class Location extends connect(store)(LitElement) {
             else if (brand == 'samsung') codeBrand = '0595';
             else if (brand == 'panasonic') codeBrand = '2619';
             else if (brand == 'sony') codeBrand = '1319';
-            else if (brand == 'sharp') codeBrand = 'T001'; // 1429
+            else if (brand == 'sharp') codeBrand = 'T001';
+            // 1429
             else if (brand == 'changhong') codeBrand = '2903';
             else if (brand == 'sanyo') codeBrand = '1430';
             else if (brand == 'toshiba') codeBrand = '0339';
-            if(command == 'on') codeCommand ='15';
-            else if(command == 'off') codeCommand = '16';
+            if (command == 'on') codeCommand = '15';
+            else if (command == 'off') codeCommand = '16';
             this.codeset = codeBrand + codeCommand;
         } else if (remoteType == 'ac') {
-            if(command == 'on') codeCommand = '1018';
-            else if(command == 'off') codeCommand = '0000';
+            if (command == 'on') codeCommand = '1018';
+            else if (command == 'off') codeCommand = '0000';
             this.codeset = brand + '-' + codeCommand;
         }
     }
@@ -362,7 +365,7 @@ export default class Location extends connect(store)(LitElement) {
             geosenseOutRange: codesetOutRange,
             lat: this.location.lat,
             long: this.location.lng,
-        }
+        };
 
         store.dispatch(saveLocation(location));
         this.commandIn = '';
@@ -552,7 +555,7 @@ export default class Location extends connect(store)(LitElement) {
                     <div class="command-right">
                         ${
                             commandIn == ''
-                            ? html`
+                                ? html`
                                 <mwc-button
                                     id="geo-in-${room.index}"
                                     class="mwc-edit"
@@ -560,7 +563,7 @@ export default class Location extends connect(store)(LitElement) {
                                     icon="edit"
                                     on-click="${() => this.shadowRoot.getElementById('geoInDialog').open()}">
                                 </mwc-button>`
-                            : html`
+                                : html`
                                 ${commandIn}`
                         }
                     </div>
@@ -571,7 +574,7 @@ export default class Location extends connect(store)(LitElement) {
                     </paper-item-body>
                     <div class="command-right">
                     ${
-                            commandOut == ''
+                        commandOut == ''
                             ? html`
                                 <mwc-button
                                     id="geo-out-${room.index}"
@@ -582,7 +585,7 @@ export default class Location extends connect(store)(LitElement) {
                                 </mwc-button>`
                             : html`
                                 ${commandOut}`
-                        }
+                    }
                     </div>
                 </paper-item>
                 <paper-item>
