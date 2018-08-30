@@ -1,8 +1,9 @@
 {
-    "name": "Replus App",
-    "short_name": "Replus App",
+    "name": "Replus",
+    "short_name": "Replus",
     "description": "A Replus Progressive Web App (PWA) for Replus Remote and Replus Vision",
     "start_url": "/",
+    "orientation": "portrait",
     "display": "standalone",
     "theme_color": "#4664ae",
     "background_color": "#4664ae",
