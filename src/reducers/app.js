@@ -1,8 +1,9 @@
-import {UPDATE_PAGE, UPDATE_OFFLINE, OPEN_SNACKBAR, CLOSE_SNACKBAR, OPEN_PROGRESS, CLOSE_PROGRESS, UPDATE_DRAWER_STATE, AUTHENTICATE_USER, DEAUTHENTICATE_USER, SET_CURRENT_USER, OPEN_BACK, CLOSE_BACK} from '../actions/app.js';
+import {UPDATE_PAGE, UPDATE_OFFLINE, OPEN_SNACKBAR, CLOSE_SNACKBAR, OPEN_PROGRESS, CLOSE_PROGRESS, UPDATE_DRAWER_STATE, AUTHENTICATE_USER, DEAUTHENTICATE_USER, SET_CURRENT_USER, OPEN_BACK, CLOSE_BACK, SET_NOTIFICATION} from '../actions/app.js';
 
 const initialState = {
     progressOpened: false,
     backable: false,
+    notification: false,
 };
 
 const app = (state = initialState, action) => {
@@ -69,6 +70,11 @@ const app = (state = initialState, action) => {
                 ...state,
                 currentUser: action.currentUser,
                 accessToken: action.accessToken,
+            };
+        case SET_NOTIFICATION:
+            return {
+                ...state,
+                notification: action.notification,
             };
         default:
             return state;

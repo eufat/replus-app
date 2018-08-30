@@ -20,6 +20,7 @@ export const CLOSE_BACK = 'CLOSE_BACK';
 export const SET_CURRENT_USER = 'SET_CURRENT_USER';
 export const AUTHENTICATE_USER = 'AUTHENTICATE_USER';
 export const DEAUTHENTICATE_USER = 'DEAUTHENTICATE_USER';
+export const SET_NOTIFICATION = 'SET_NOTIFICATION';
 
 export const navigate = (path) => (dispatch) => {
     const page = path === '/' ? 'auth' : path.slice(1);
@@ -251,4 +252,11 @@ export const linkWithProvider = (providerType) => async (dispatch, getState) => 
     } catch (error) {
         errorHandler.report(error);
     }
+};
+
+export const setNotification = (notification) => (dispatch, getState) => {
+    dispatch({
+        type: SET_NOTIFICATION,
+        notification,
+    });
 };
