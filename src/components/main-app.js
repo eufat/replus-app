@@ -20,6 +20,7 @@ import {toTitleCase} from '../utils';
 import './snack-bar';
 
 import './main-help';
+import './main-auth';
 import './not-found';
 import './main-account';
 import './main-activity';
