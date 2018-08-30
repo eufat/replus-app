@@ -11,7 +11,7 @@ import {Button} from '@material/mwc-button';
 import firebase from '../firebase.js';
 import {store} from '../store.js';
 import {connect} from 'pwa-helpers/connect-mixin';
-import {linkWithProvider} from '../actions/app.js';
+import {linkWithProvider, setNotification} from '../actions/app.js';
 
 // Import from lodash
 const get = _.get;
@@ -23,6 +23,7 @@ export default class MainAccount extends connect(store)(LitElement) {
             active: Boolean,
             provider: String,
             rooms: Array,
+            notification: Boolean,
         };
     }
 
@@ -39,6 +40,7 @@ export default class MainAccount extends connect(store)(LitElement) {
     _stateChanged(state) {
         this.currentUser = get(state, 'app.currentUser');
         this.rooms = get(state, 'remote.rooms');
+        this.notification = get(state, 'app.notification');
     }
 
     _didRender() {
@@ -51,7 +53,18 @@ export default class MainAccount extends connect(store)(LitElement) {
         }
     }
 
-    _render({currentUser, provider, rooms}) {
+    _notifIsON(e) {
+        const isON = e.target.active;
+        if (isON) {
+            store.dispatch(setNotification(isON))
+            console.log('Notification On');
+        } else {
+            store.dispatch(setNotification(isON))
+            console.log('Notification Off');
+        }
+    }
+
+    _render({currentUser, provider, notification, rooms}) {
         const providerIsGoogle = provider === undefined ? true : provider === 'google.com';
         const providerIsFacebook = provider === undefined ? true : provider === 'facebook.com';
 
@@ -113,6 +126,10 @@ export default class MainAccount extends connect(store)(LitElement) {
                 .title {
                     margin-top: 0px !important;
                 }
+
+                paper-toggle-button.right {
+                    margin-top: 15px !important;
+                }
             </style>
             <div role="listbox" class="settings">
                 <div class="row">
@@ -158,6 +175,12 @@ export default class MainAccount extends connect(store)(LitElement) {
                         disabled="${providerIsFacebook}"
                         on-click="${() => store.dispatch(linkWithProvider('facebook'))}"
                     ></mwc-button>
+                </paper-item>
+                <paper-item>
+                    <paper-item-body class="text-container">
+                        <p class="left">Notification</p>
+                        <paper-toggle-button class="right" checked="${notification}" on-active-changed="${(e) => this._notifIsON(e)}"></paper-toggle-button>
+                    </paper-item-body>
                 </paper-item>
             </div>
     `;
