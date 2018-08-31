@@ -56,10 +56,10 @@ export default class MainAccount extends connect(store)(LitElement) {
     _notifIsON(e) {
         const isON = e.target.active;
         if (isON) {
-            store.dispatch(setNotification(isON))
+            store.dispatch(setNotification(isON));
             console.log('Notification On');
         } else {
-            store.dispatch(setNotification(isON))
+            store.dispatch(setNotification(isON));
             console.log('Notification Off');
         }
     }
