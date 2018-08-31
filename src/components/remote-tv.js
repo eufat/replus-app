@@ -139,7 +139,7 @@ class RemoteTv extends connect(store)(PolymerElement) {
                 </div>
             </div>
 
-            <paper-dialog id="dialog" on-iron-overlay-closed="_closedDialog">
+            <paper-dialog id="dialog" on-iron-overlay-closed="_closedDialog" with-backdrop>
                 <div class="horizontal layout around-justified">
                     <paper-button on-tap="_tapBtn" title="01">1</paper-button>
                     <paper-button on-tap="_tapBtn" title="02">2</paper-button>
@@ -236,7 +236,8 @@ class RemoteTv extends connect(store)(PolymerElement) {
             else if (brand == 'samsung') this.codeset = '0595';
             else if (brand == 'panasonic') this.codeset = '2619';
             else if (brand == 'sony') this.codeset = '1319';
-            else if (brand == 'sharp') this.codeset = 'T001'; // 1429
+            else if (brand == 'sharp') this.codeset = 'T001';
+            // 1429
             else if (brand == 'changhong') this.codeset = '2903';
             else if (brand == 'sanyo') this.codeset = '1430';
             else if (brand == 'toshiba') this.codeset = '0339';
