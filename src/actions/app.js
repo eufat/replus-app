@@ -1,13 +1,12 @@
-import { pushLocationTo } from '../utils.js';
-import { userDataKey, qs, setCookie, getCookie } from '../utils.js';
-import { createClient, coreClient } from '../client.js';
-import firebase from '../firebase.js';
-import errorHandler from '../error.js';
-import { fetchRooms, fetchSchedules } from './remote.js';
-import { fetchActivities } from './activity.js';
-
-const pick = _.pick;
-const get = _.get;
+import pick from 'lodash/pick';
+import get from 'lodash/get';
+import { pushLocationTo } from '../utils';
+import { userDataKey, qs, setCookie, getCookie } from '../utils';
+import { createClient, coreClient } from '../client';
+import firebase from '../firebase';
+import errorHandler from '../error';
+import { fetchRooms, fetchSchedules } from './remote';
+import { fetchActivities } from './activity';
 
 export const UPDATE_PAGE = 'UPDATE_PAGE';
 export const UPDATE_OFFLINE = 'UPDATE_OFFLINE';

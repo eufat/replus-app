@@ -1,4 +1,5 @@
 import {LitElement, html} from '@polymer/lit-element';
+import get from 'lodash/get';
 
 import '@polymer/app-route/app-location';
 import '@polymer/iron-icons/iron-icons';
@@ -26,8 +27,6 @@ import {installMediaQueryWatcher} from 'pwa-helpers/media-query';
 import {store} from '../store.js';
 import {navigate, updateOffline, updateLayout, deauthenticateUser, showSnackbar, closeBack} from '../actions/app.js';
 import {toTitleCase, pageToTitle} from '../utils.js';
-
-const get = _.get;
 
 class MainDashboard extends connect(store)(LitElement) {
     _render({_page, _progress, _backable, remoteName}) {

@@ -1,5 +1,6 @@
 import {LitElement, html} from '@polymer/lit-element';
 
+import includes from 'lodash/includes';
 import '@polymer/app-layout/app-drawer/app-drawer';
 import '@polymer/app-layout/app-header/app-header';
 import '@polymer/app-layout/app-scroll-effects/effects/waterfall';
@@ -35,9 +36,6 @@ import './remote-vision.js';
 
 import './room-schedule.js';
 import './room-location.js';
-
-const includes = _.includes;
-const isEmpty = _.isEmpty;
 
 class MainApp extends connect(store)(LitElement) {
     static get properties() {

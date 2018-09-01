@@ -1,9 +1,9 @@
-import {coreClient, corePost, coreIR, coreSchedule, googleMaps} from '../client.js';
-import {qs} from '../utils.js';
-import errorHandler from '../error.js';
-import {showSnackbar, showProgress, closeProgress, showBack} from './app.js';
-import {toTitleCase} from '../utils.js';
-const get = _.get; // import from lodash
+import get from 'lodash/get';
+import {coreClient, corePost, coreIR, coreSchedule, googleMaps} from '../client';
+import {qs} from '../utils';
+import errorHandler from '../error';
+import {showSnackbar, showProgress, closeProgress, showBack} from './app';
+import {toTitleCase} from '../utils';
 
 export const setRooms = (rooms) => (dispatch, getState) => {
     if (rooms) {

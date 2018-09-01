@@ -1,6 +1,9 @@
 import {PolymerElement, html} from '@polymer/polymer';
 import {connect} from 'pwa-helpers/connect-mixin';
 
+import get from 'lodash/get';
+import values from 'lodash/values';
+
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 import '@polymer/paper-listbox';
 import '@polymer/paper-item/paper-item';
@@ -32,9 +35,6 @@ import '@material/mwc-icon';
 import {createSchedule, fetchIR, removeSchedule} from '../actions/remote.js';
 import {mobileCheck, toTitleCase} from '../utils.js';
 import {store} from '../store.js';
-
-const get = _.get;
-const values = _.values;
 
 class AddSchedule extends connect(store)(PolymerElement) {
     static get template() {
@@ -798,7 +798,7 @@ class AddSchedule extends connect(store)(PolymerElement) {
     getMode() {
         const arrModes = [];
         const modeName = [];
-        const manifestValues = _.values(this.manifest);
+        const manifestValues = values(this.manifest);
         manifestValues.map((item, index) => {
             const key = parseInt(Object.keys(this.manifest)[index]);
             arrModes.push(key);
@@ -825,7 +825,7 @@ class AddSchedule extends connect(store)(PolymerElement) {
     getFan() {
         const arrFans = [];
         const fanName = [];
-        const fanValues = _.values(this.manifest[`${this.mode}`]);
+        const fanValues = values(this.manifest[`${this.mode}`]);
 
         fanValues.map((item, index) => {
             const key = parseInt(Object.keys(this.manifest[`${this.mode}`])[index]);

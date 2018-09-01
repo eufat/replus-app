@@ -1,6 +1,9 @@
 import {PolymerElement, html} from '@polymer/polymer';
 import {connect} from 'pwa-helpers/connect-mixin';
 
+import get from 'lodash/get';
+import values from 'lodash/values';
+
 import '@polymer/paper-fab';
 import '@polymer/paper-toast';
 import '@polymer/iron-icon';
@@ -12,8 +15,6 @@ import '@polymer/iron-flex-layout/iron-flex-layout';
 import {remoteCommand} from '../actions/remote.js';
 import {toTitleCase, fansAC, modesAC} from '../utils.js';
 import {store} from '../store.js';
-
-const get = _.get;
 
 class RemoteAc extends connect(store)(PolymerElement) {
     static get template() {
@@ -227,7 +228,7 @@ class RemoteAc extends connect(store)(PolymerElement) {
 
     getMode() {
         const arrModes = [];
-        const manifestValues = _.values(this.manifest);
+        const manifestValues = values(this.manifest);
         manifestValues.map((item, index) => {
             const key = parseInt(Object.keys(this.manifest)[index]);
             arrModes.push(key);
@@ -241,7 +242,7 @@ class RemoteAc extends connect(store)(PolymerElement) {
 
     getFan() {
         const arrFans = [];
-        const fanValues = _.values(this.manifest[`${this.mode}`]);
+        const fanValues = values(this.manifest[`${this.mode}`]);
 
         fanValues.map((item, index) => {
             const key = parseInt(Object.keys(this.manifest[`${this.mode}`])[index]);

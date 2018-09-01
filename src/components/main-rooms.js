@@ -1,6 +1,10 @@
 import {LitElement, html} from '@polymer/lit-element';
 import {connect} from 'pwa-helpers/connect-mixin';
 
+import get from 'lodash/get';
+import values from 'lodash/values';
+import mapValues from 'lodash/mapValues';
+
 import '@polymer/paper-item/paper-item';
 import '@polymer/paper-dialog';
 import '@material/mwc-button';
@@ -15,10 +19,6 @@ import {setRooms, removeDevice, editRoom, addRoom, removeRoom, setNewRemote, add
 import {setActiveVision} from '../actions/vision.js';
 import {getNewRoomTemplate, brandsAC, brandsTV, toTitleCase} from '../utils.js';
 import {store} from '../store.js';
-
-const get = _.get;
-const values = _.values;
-const mapValues = _.mapValues;
 
 export default class MainRooms extends connect(store)(LitElement) {
     static get properties() {
@@ -56,7 +56,7 @@ export default class MainRooms extends connect(store)(LitElement) {
     }
 
     _setButton() {
-        const rooms = _.values(this.rooms);
+        const rooms = values(this.rooms);
         rooms.map((item, index) => {
             const nextButton = this.shadowRoot.getElementById(`next-slide-${index}`);
             const prevButton = this.shadowRoot.getElementById(`prev-slide-${index}`);

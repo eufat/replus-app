@@ -1,4 +1,6 @@
-import {env} from './configs.js';
+import invert from 'lodash/invert';
+
+import {env} from './configs';
 
 export const userDataKey = ['uid', 'email', 'displayName', 'photoUrl'];
 
@@ -45,8 +47,8 @@ export function getTVCodesetFromBrand(brand) {
 }
 
 export function getTVBrandFromCodeset(codeset) {
-    const invertedTVCodeset = _.invert(TVBrandsCodeset);
-    return invertedTVCodeset[codeset];
+    const invertedTVCodeset = invert(TVBrandsCodeset);
+    return invertedTVCodeset(codeset);
 }
 
 export function getTVCodesetFromCommand(command) {
@@ -54,8 +56,8 @@ export function getTVCodesetFromCommand(command) {
 }
 
 export function getTVCommandFromCodeset(codeset) {
-    const invertedTVCodeset = _.invert(TVCommandsCodeset);
-    return invertedTVCodeset[codeset];
+    const invertedTVCodeset = invert(TVCommandsCodeset);
+    return invertedTVCodeset(codeset);
 }
 
 export function hideOnClickOutside(element) {

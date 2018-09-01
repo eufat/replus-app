@@ -1,5 +1,8 @@
 import {LitElement, html} from '@polymer/lit-element';
 
+import get from 'lodash/get';
+import values from 'lodash/values';
+
 import '@polymer/paper-toggle-button';
 import '@polymer/paper-button';
 import '@polymer/paper-item/paper-item';
@@ -17,9 +20,6 @@ import {setActiveDevice, setActiveRemotes} from '../actions/remote.js';
 import {linkWithProvider, notification, setGeolocation} from '../actions/app.js';
 import {showBack} from '../actions/app.js';
 import {log} from '../utils.js';
-
-const get = _.get;
-const values = _.values;
 
 export default class MainSettings extends connect(store)(LitElement) {
     static get properties() {
