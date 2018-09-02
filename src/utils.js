@@ -30,6 +30,7 @@ export const TVBrandsCodeset = {
 };
 
 export const TVCommandsCodeset = {
+    off: '16',
     power: '15',
     selection: '17',
     mute: '10',
@@ -45,7 +46,7 @@ export function getTVCodesetFromBrand(brand) {
 
 export function getTVBrandFromCodeset(codeset) {
     const invertedTVCodeset = _.invert(TVBrandsCodeset);
-    return invertedTVCodeset(codeset);
+    return invertedTVCodeset[codeset];
 }
 
 export function getTVCodesetFromCommand(command) {
@@ -54,7 +55,7 @@ export function getTVCodesetFromCommand(command) {
 
 export function getTVCommandFromCodeset(codeset) {
     const invertedTVCodeset = _.invert(TVCommandsCodeset);
-    return invertedTVCodeset(codeset);
+    return invertedTVCodeset[codeset];
 }
 
 export function hideOnClickOutside(element) {
