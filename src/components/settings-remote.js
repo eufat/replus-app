@@ -168,7 +168,7 @@ export default class SettingsRemote extends connect(store)(LitElement) {
                     Save Settings
             </paper-button>
         </div>
-        <paper-dialog id="remoteDialog">
+        <paper-dialog id="remoteDialog" with-backdrop>
             <div class="horizontal layout">
                 <paper-dropdown-menu id="dropdownPushButton" label="Remote" noink no-animations>
                     <paper-listbox id="listbox-remote" slot="dropdown-content" class="dropdown-content">

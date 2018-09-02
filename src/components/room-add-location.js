@@ -606,7 +606,7 @@ export default class Location extends connect(store)(LitElement) {
                     ></mwc-button>
                 </paper-item>
             </div>
-            <paper-dialog id="geoInDialog">
+            <paper-dialog id="geoInDialog" with-backdrop>
                 <div class="horizontal layout">
                     <paper-dropdown-menu id="dropdownPushButton" label="Remote" noink no-animations>
                         <paper-listbox id="listbox-remote-in" slot="dropdown-content" class="dropdown-content">
@@ -635,7 +635,7 @@ export default class Location extends connect(store)(LitElement) {
                     <mwc-button on-click="${() => this.setCommandIn(this.shadowRoot)}" dialog-confirm label="Add This Setting"></mwc-button>
                 </div>
             </paper-dialog>
-            <paper-dialog id="geoOutDialog">
+            <paper-dialog id="geoOutDialog" with-backdrop>
                 <div class="horizontal layout">
                     <paper-dropdown-menu id="dropdownPushButton" label="Remote" noink no-animations>
                         <paper-listbox id="listbox-remote-out" slot="dropdown-content" class="dropdown-content">

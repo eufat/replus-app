@@ -357,7 +357,6 @@ export default class MainRooms extends connect(store)(LitElement) {
             });
         };
 
-
         const roomsValues = values(rooms);
         const roomsItems = roomsValues.map((item, roomIndex) => {
             const room = rooms[roomIndex];
@@ -387,7 +386,7 @@ export default class MainRooms extends connect(store)(LitElement) {
                         display: none;
                     }
                 </style>
-                <paper-dialog id="add-new-device-modal-${roomIndex}">
+                <paper-dialog id="add-new-device-modal-${roomIndex}" with-backdrop>
                     <div class="modal-content">
                         <paper-input
                             label="Device ID"
@@ -408,7 +407,7 @@ export default class MainRooms extends connect(store)(LitElement) {
                         </div>
                     </div>
                 </paper-dialog>
-                <paper-dialog id="add-new-remote-modal-${roomIndex}">
+                <paper-dialog id="add-new-remote-modal-${roomIndex}" with-backdrop>
                     <div class="modal-content">
                         <label id="appliance-type">Choose Remote:</label>
                         <paper-radio-group
@@ -448,7 +447,7 @@ export default class MainRooms extends connect(store)(LitElement) {
                         </div>
                     </div>
                 </paper-dialog>
-                <paper-dialog id="add-new-camera-modal-${roomIndex}">
+                <paper-dialog id="add-new-camera-modal-${roomIndex}" with-backdrop>
                     <div class="modal-content">
                         <label id="appliance-type">Add Camera: Replus Vision</label>
                         <paper-input
@@ -722,7 +721,7 @@ export default class MainRooms extends connect(store)(LitElement) {
                     margin: 20px 20px;
                 }
             </style>
-            <paper-dialog id="add-new-room-modal">
+            <paper-dialog id="add-new-room-modal" with-backdrop>
                 <div class="modal-content">
                     <paper-input
                         id="roomName"

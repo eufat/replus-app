@@ -163,13 +163,6 @@ class AddSchedule extends connect(store)(PolymerElement) {
                     margin: auto;
                 }
 
-                @media (max-width: 500px) {
-                    #container {
-                        width: 250px;
-                        /* margin-left: calc((100vw - 280px) / 2); */
-                    }
-                }
-
                 input {
                     border: 1px solid #ccc;
                     color: #888;
@@ -193,8 +186,24 @@ class AddSchedule extends connect(store)(PolymerElement) {
                     width: calc(100% - 40px);
                     margin: 20px 20px;
                 }
+
+                #scheduleDialog {
+                    width: 100%;
+                }
+
+                @media (max-width: 480px) {
+                    #container {
+                        width: auto;
+                        margin:20px 0;
+                        /* margin-left: calc((100vw - 280px) / 2); */
+                    }
+
+                    #scheduleDialog {
+                        margin: 0 20px;
+                    }
+                }
             </style>
-            <paper-dialog id="scheduleDialog">
+            <paper-dialog id="scheduleDialog" with-backdrop>
                 <div id="container" class="vertical layout">
                     <div class="horizontal layout justified">
                         <p>One time</p>

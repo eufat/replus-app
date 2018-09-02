@@ -163,7 +163,7 @@ export default class SettingsVision extends connect(store)(LitElement) {
                     Save Settings
             </paper-button>
         </div>
-        <paper-dialog id="resolutionDialog">
+        <paper-dialog id="resolutionDialog" with-backdrop>
             <paper-radio-group
                 selected="${settings.resolution}"
                 on-change="${(e) => this.changeSettings(e, 'resolution')}"
@@ -178,7 +178,7 @@ export default class SettingsVision extends connect(store)(LitElement) {
                 )}
             </paper-radio-group>
         </paper-dialog>
-        <paper-dialog id="rotationDialog">
+        <paper-dialog id="rotationDialog" with-backdrop>
             <paper-radio-group
                 selected="${settings.rotation}"
                 on-change="${(e) => this.changeSettings(e, 'rotation')}"
@@ -193,7 +193,7 @@ export default class SettingsVision extends connect(store)(LitElement) {
             )}
             </paper-radio-group>
         </paper-dialog>
-        <paper-dialog id="turnOffDialog">
+        <paper-dialog id="turnOffDialog" with-backdrop>
             <p>Are you sure you want to turn off the device?</p>
             <div class="buttons">
                 <paper-button dialog-dismiss>Cancel</paper-button>
@@ -205,7 +205,7 @@ export default class SettingsVision extends connect(store)(LitElement) {
                 </paper-button>
             </div>
         </paper-dialog>
-        <paper-dialog id="restartDialog">
+        <paper-dialog id="restartDialog" with-backdrop>
             <p>Are you sure you want to restart the device?</p>
             <div class="buttons">
                 <paper-button dialog-dismiss>Cancel</paper-button>
