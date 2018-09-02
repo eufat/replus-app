@@ -1,5 +1,7 @@
 import {LitElement, html} from '@polymer/lit-element';
 import {connect} from 'pwa-helpers/connect-mixin';
+import io from 'socket.io-client';
+import dayjs from 'dayjs';
 
 import get from 'lodash/get';
 import values from 'lodash/values';

@@ -1,5 +1,7 @@
-import {env} from './configs.js';
-import {getCookie} from './utils.js';
+import axios from 'axios';
+
+import {env} from './configs';
+import {getCookie} from './utils';
 
 export const createClient = (type, token) => {
     let baseURL = '';

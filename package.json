@@ -62,12 +62,16 @@
         "@polymer/polymer": "^3.0.5",
         "@webcomponents/webcomponentsjs": "^2.1.0",
         "axios": "^0.18.0",
+        "dayjs": "^1.6.9",
         "dotenv": "^6.0.0",
-        "firebase": "^5.4.1",
+        "firebase": "^5.4.2",
+        "firebaseui": "^2.7.0",
+        "lodash": "^4.17.10",
         "pwa-helpers": "Polymer/pwa-helpers",
         "redux": "^4.0.0",
         "redux-thunk": "^2.3.0",
-        "reselect": "^3.0.1"
+        "reselect": "^3.0.1",
+        "socket.io-client": "^2.1.1"
     },
     "devDependencies": {
         "axe-core": "^3.1.1",
@@ -91,6 +95,9 @@
         "puppeteer": "^1.7.0",
         "renamer": "^1.0.0",
         "replace": "^1.0.0",
-        "wct-browser-legacy": "1.0.1"
+        "wct-browser-legacy": "1.0.1",
+        "webpack": "^4.10.2",
+        "webpack-cli": "^2.1.5",
+        "webpack-dev-server": "^3.1.4"
     }
 }
