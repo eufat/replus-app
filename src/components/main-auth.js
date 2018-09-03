@@ -64,7 +64,7 @@ class MainAuth extends PolymerElement {
             <div id="container" class="vertical layout">
                 <paper-material>
                     <p id="header">Sign in</p>
-                    <p id="subheader">to continue using Replus App</p>
+                    <p id="subheader">to continue using Replus</p>
                     <div id="spinner" class="horizontal layout center-justified">
                         <paper-spinner active></paper-spinner>
                     </div>

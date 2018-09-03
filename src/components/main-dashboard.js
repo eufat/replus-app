@@ -37,8 +37,7 @@ class MainDashboard extends connect(store)(LitElement) {
         return html`
             <style>
                 app-header {
-                    background-color: #4664ae;
-                    color: #fff;
+                    background-color: transparent;
                 }
 
                 app-header paper-icon-button {
