@@ -273,6 +273,25 @@ export const setNotification = (notification) => (dispatch, getState) => {
     });
 };
 
+export const notification = (notification) => (dispatch, getState) => {
+    dispatch(showProgress());
+    const uid = get(getState(), 'app.currentUser.uid');
+    const name = get(getState(), 'app.currentUser.displayName');
+    try {
+        coreClient().put('/user-edit', qs({name, notification}), {params: {uid}});
+        dispatch(setNotification(notification));
+        if (notification == 'true') {
+            dispatch(showSnackbar('Notification On'));
+        } else {
+            dispatch(showSnackbar('Notification Off'));
+        }
+        dispatch(closeProgress());
+    } catch (error) {
+        errorHandler.report(error);
+        dispatch(closeProgress());
+    }
+}
+
 export const setGeolocation = (geolocation) => (dispatch, getState) => {
     dispatch({
         type: SET_GEOLOCATION,
