@@ -517,14 +517,14 @@ export default class MainRooms extends connect(store)(LitElement) {
                                         on-click="${() => this._enterOnEdit(roomIndex)}">
                                     </mwc-button>
                                     <div class="top-button">
-                                        <a href="/dashboard/add-schedule" on-click="${() => this._handleActiveRoom(room, roomIndex)}">
+                                        <a href="/dashboard/room-schedule" on-click="${() => this._handleActiveRoom(room, roomIndex)}">
                                             <mwc-button
                                                 class="mwc-schedule"
                                                 label="Schedule"
                                                 icon="calendar_today">
                                             </mwc-button>
                                         </a>
-                                        <a href="/dashboard/add-location" on-click="${() => this._handleActiveRoom(room, roomIndex)}">
+                                        <a href="/dashboard/room-location" on-click="${() => this._handleActiveRoom(room, roomIndex)}">
                                             <mwc-button
                                                 class="mwc-location"
                                                 label="Location"

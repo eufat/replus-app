@@ -30,7 +30,7 @@ import '@material/mwc-button';
 import '@material/mwc-icon';
 
 import {createSchedule, fetchIR, removeSchedule} from '../actions/remote.js';
-import {mobileCheck} from '../utils';
+import {mobileCheck} from '../utils.js';
 import {store} from '../store.js';
 
 const get = _.get;
@@ -862,4 +862,4 @@ class AddSchedule extends connect(store)(PolymerElement) {
     }
 }
 
-window.customElements.define('room-add-schedule', AddSchedule);
+window.customElements.define('room-schedule', AddSchedule);

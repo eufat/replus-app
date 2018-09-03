@@ -668,4 +668,4 @@ export default class Location extends connect(store)(LitElement) {
     }
 }
 
-customElements.define('add-location', Location);
+customElements.define('room-location', Location);

@@ -34,8 +34,8 @@ import './remote-ac';
 import './remote-tv';
 import './remote-vision';
 
-import './room-add-schedule';
-import './room-add-location';
+import './room-schedule';
+import './room-location';
 
 const includes = _.includes;
 
@@ -82,8 +82,8 @@ class MainApp extends connect(store)(LitElement) {
                     <remote-ac class="page" active?="${includes(_page, 'remote-ac')}"></remote-ac>
                     <remote-tv class="page" active?="${includes(_page, 'remote-tv')}"></remote-tv>
                     <remote-vision class="page" active?="${includes(_page, 'remote-vision')}"></remote-vision>
-                    <room-add-schedule class="page" active?="${includes(_page, 'add-schedule')}"></room-add-schedule>
-                    <add-location class="page" active?="${includes(_page, 'add-location')}"></add-location>
+                    <room-schedule class="page" active?="${includes(_page, 'room-schedule')}"></room-schedule>
+                    <room-location class="page" active?="${includes(_page, 'room-location')}"></a-location>
                 </main-dashboard>
             </main>
             <snack-bar active?="${_snackbarOpened}" text="${_snackbarText}"></snack-bar>
