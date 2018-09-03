@@ -8,13 +8,16 @@ import '@polymer/paper-radio-group';
 import '@polymer/paper-radio-button';
 import '@polymer/iron-icons/iron-icons';
 
-import {store} from '../store.js';
 import {connect} from 'pwa-helpers/connect-mixin';
+import {store} from '../store.js';
+import firebase from '../firebase.js';
 
-import {fetchRooms, setActiveDevice, setActiveRemotes} from '../actions/remote.js';
+import {setActiveDevice, setActiveRemotes} from '../actions/remote.js';
+import {linkWithProvider, setNotification, setGeolocation} from '../actions/app.js';
 import {showBack} from '../actions/app.js';
 
 const get = _.get;
+const values = _.values;
 
 export default class MainSettings extends connect(store)(LitElement) {
     static get properties() {
@@ -22,12 +25,17 @@ export default class MainSettings extends connect(store)(LitElement) {
             uid: String,
             active: Boolean,
             rooms: Array,
+            currentUser: Object,
+            provider: String,
+            notification: Boolean,
+            geolocation: Boolean,
         };
     }
 
     constructor() {
         super();
         this.rooms = [];
+        this.currentUser = {};
     }
 
     _shouldRender(props, changedProps, old) {
@@ -35,13 +43,25 @@ export default class MainSettings extends connect(store)(LitElement) {
     }
 
     _stateChanged(state) {
-        this.rooms = _.get(state, 'remote.rooms');
-        this.uid = _.get(state, 'app.currentUser.uid');
+        this.rooms = get(state, 'remote.rooms');
+        this.uid = get(state, 'app.currentUser.uid');
+        this.currentUser = get(state, 'app.currentUser');
+        this.notification = get(state, 'app.notification');
+    }
+
+    _didRender() {
+        let user = firebase.auth().currentUser;
+
+        if (user != null) {
+            user.providerData.forEach((profile) => {
+                this.provider = profile.providerId;
+            });
+        }
     }
 
     _activeDevice(device, remotes) {
         const arrRemotes = [];
-        const remotesValues = _.values(remotes);
+        const remotesValues = values(remotes);
         remotesValues.map((item) => {
             arrRemotes.push(item.name);
         });
@@ -54,7 +74,30 @@ export default class MainSettings extends connect(store)(LitElement) {
     _handleDeviceClick() {
         store.dispatch(showBack());
     }
-    _render({rooms}) {
+
+    _notifIsON(e) {
+        const isON = e.target.active;
+        if (isON) {
+            store.dispatch(setNotification(isON));
+            console.log('Notification On');
+        } else {
+            store.dispatch(setNotification(isON));
+            console.log('Notification Off');
+        }
+    }
+
+    _geoIsON(e) {
+        const isON = e.target.active;
+        if (isON) {
+            store.dispatch(setGeolocation(isON));
+            console.log('Geolocation On');
+        } else {
+            store.dispatch(setGeolocation(isON));
+            console.log('Geolocation Off');
+        }
+    }
+
+    _render({rooms, currentUser, provider, notification, geolocation}) {
         const remoteDevices = (devices, rooms) => {
             return devices.map((device, index) => {
                 if (device.type == 'replus-remote') {
@@ -125,87 +168,214 @@ export default class MainSettings extends connect(store)(LitElement) {
             });
         };
 
-        const remoteValues = _.values(rooms);
+        const remoteValues = values(rooms);
         const remoteItems = remoteValues.map((item, roomIndex) => {
             return html`
                 <paper-material elevation="0">
                     <div class="room-devices">
-                        ${remoteDevices(_.values(item.devices), item)}
+                        ${remoteDevices(values(item.devices), item)}
                     </div>
                 </paper-material>
             `;
         });
 
-        const cameraValues = _.values(rooms);
+        const cameraValues = values(rooms);
         const cameraItems = cameraValues.map((item, roomIndex) => {
             return html`
                 <paper-material elevation="0">
                     <div class="room-devices">
-                        ${cameraDevices(_.values(item.devices), item)}
+                        ${cameraDevices(values(item.devices), item)}
                     </div>
                 </paper-material>
             `;
         });
 
+        const providerIsGoogle = provider === undefined ? true : provider === 'google.com';
+        const providerIsFacebook = provider === undefined ? true : provider === 'facebook.com';
+
+        let totalDevice = 0;
+        let totalRemote = 0;
+        const deviceValues = values(rooms);
+        deviceValues.map((deviceItem) => {
+            if (deviceItem.devices.length != 0) {
+                totalDevice = totalDevice + deviceItem.devices.length;
+            }
+            if (deviceItem.remotes.length != 0) {
+                totalRemote = totalRemote + deviceItem.remotes.length;
+            }
+        });
+
         return html`
-        <style>
-            .settings-right {
-                margin-left: auto;
-                margin-right: 0;
-            }
-            paper-button.save {
-                margin: 1em;
-                background-color: white;
-                color: black;
-            }
-            paper-button.save:hover {
-                background-color: var(--paper-grey-50);
-            }
-            paper-radio-button {
-                width: 100%;
-                margin: 0;
-            }
-            .device-pill {
-                color: white;
-                background-color: #ccc;
-                border-radius: 15px;
-                display: inline-block;
-                text-align: center;
-                padding: 0 10px;
-                width: auto;
-                height: 30px;
-                line-height: 30px;
-                margin-right: 5px;
-            }
-            .device-pill .pill-content, .device-pill mwc-icon {
-                vertical-align: top;
-                display: inline-block;
-            }
-            .settings-icon {
-                color: #333333;
-                padding-bottom: 5px;
-            }
-            .remote-icon {
-                padding-right: 5px;
-            }
-            .device-type {
-                display: inline !important;
-            }
-        </style>
-        <div role="listbox" class="settings">
-            <paper-item>
-                <paper-item-body>
-                    <div>Replus Remote</div>
-                </paper-item-body>
-            </paper-item>
-            ${remoteItems}
-            <paper-item>
-                <paper-item-body>
-                    <div>Replus Vision</div>
-                </paper-item-body>
-            </paper-item>
-            ${cameraItems}
-        </div>
+            <style>
+                .settings {
+                    border-bottom: 1px solid #ccc;
+                    padding-bottom: 2rem;
+                }
+                .settings-right {
+                    margin-left: auto;
+                    margin-right: 0;
+                }
+                paper-button.save {
+                    margin: 1em;
+                    background-color: white;
+                    color: black;
+                }
+                paper-button.save:hover {
+                    background-color: var(--paper-grey-50);
+                }
+                paper-radio-button {
+                    width: 100%;
+                    margin: 0;
+                }
+                .device-pill {
+                    color: white;
+                    background-color: #ccc;
+                    border-radius: 15px;
+                    display: inline-block;
+                    text-align: center;
+                    padding: 0 10px;
+                    width: auto;
+                    height: 30px;
+                    line-height: 30px;
+                    margin-right: 5px;
+                }
+                .device-pill .pill-content, .device-pill mwc-icon {
+                    vertical-align: top;
+                    display: inline-block;
+                }
+                .settings-icon {
+                    color: #333333;
+                    padding-bottom: 5px;
+                }
+                .remote-icon {
+                    padding-right: 5px;
+                }
+                .device-type {
+                    display: inline !important;
+                }
+                .text-container {
+                    width: 100%;
+                }
+
+                .left {
+                    float: left;
+                }
+
+                .right {
+                    float: right;
+                }
+
+                .light {
+                    --mdc-theme-on-primary: black;
+                    --mdc-theme-primary: white;
+                    --mdc-theme-on-secondary: black;
+                    --mdc-theme-secondary: white;
+                }
+
+                * {
+                    box-sizing: border-box;
+                }
+
+                /* Create three equal columns that floats next to each other */
+                .column {
+                    float: left;
+                    width: 33.33%;
+                }
+
+                /* Clear floats after the columns */
+                .row:after {
+                    content: "";
+                    display: table;
+                    clear: both;
+                }
+                .column p {
+                    text-align: center;
+                }
+                .total {
+                    margin-bottom: 0px !important;
+                }
+                .title {
+                    margin-top: 0px !important;
+                }
+
+                paper-toggle-button.right {
+                    margin-top: 15px !important;
+                }
+            </style>
+            <div role="listbox" class="settings">
+                <div class="row">
+                    <div class="column">
+                        <p class="total">${rooms.length}</p>
+                        <p class="title">Rooms</p>
+                    </div>
+                    <div class="column">
+                        <p class="total">${totalRemote}</p>
+                        <p class="title">Remotes</p>
+                    </div>
+                    <div class="column">
+                        <p class="total">${totalDevice}</p>
+                        <p class="title">Devices</p>
+                    </div>
+                </div>
+                <paper-item>
+                    <paper-item-body class="text-container">
+                        <p class="left">Owner Name</p>
+                        <p class="right">${get(currentUser, 'displayName')}</p>
+                    </paper-item-body>
+                </paper-item>
+                <paper-item>
+                    <paper-item-body class="text-container">
+                        <p class="left">Owner Email</p>
+                        <p class="right">${get(currentUser, 'email')}</p>
+                    </paper-item-body>
+                </paper-item>
+                <paper-item>
+                    <mwc-button
+                        raised
+                        class="light"
+                        label="Link to Google"
+                        disabled="${providerIsGoogle}"
+                        on-click="${() => store.dispatch(linkWithProvider('google'))}"
+                    ></mwc-button>
+                </paper-item>
+                <paper-item>
+                    <mwc-button
+                        raised
+                        class="light"
+                        label="Link to Facebook"
+                        disabled="${providerIsFacebook}"
+                        on-click="${() => store.dispatch(linkWithProvider('facebook'))}"
+                    ></mwc-button>
+                </paper-item>
+            </div>
+            <div role="listbox" class="settings">
+                <paper-item>
+                    <paper-item-body class="text-container">
+                        <p class="left">Notification</p>
+                        <paper-toggle-button class="right" checked="${notification}" on-active-changed="${(e) => this._notifIsON(e)}"></paper-toggle-button>
+                    </paper-item-body>
+                </paper-item>
+                <paper-item>
+                    <paper-item-body class="text-container">
+                        <p class="left">Geolocation</p>
+                        <paper-toggle-button class="right" checked="${geolocation}" on-active-changed="${(e) => this._geoIsON(e)}"></paper-toggle-button>
+                    </paper-item-body>
+                </paper-item>
+            </div>
+            <div role="listbox" class="settings">
+                <paper-item>
+                    <paper-item-body>
+                        <div>Replus Remote</div>
+                    </paper-item-body>
+                </paper-item>
+                ${remoteItems}
+                <paper-item>
+                    <paper-item-body>
+                        <div>Replus Vision</div>
+                    </paper-item-body>
+                </paper-item>
+                ${cameraItems}
+            </div>
     `;
     }
 }

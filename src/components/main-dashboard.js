@@ -149,13 +149,6 @@ class MainDashboard extends connect(store)(LitElement) {
                 </a>
                 </paper-tab>
                 <paper-tab on-click="${() => this.removeBack()}">
-                <a href="/dashboard/account">
-                    <div class="tab-menu">
-                        <div class="tab-menu-icon"><iron-icon icon="icons:account-circle"></iron-icon></div>
-                    </div>
-                </a>
-                </paper-tab>
-                <paper-tab on-click="${() => this.removeBack()}">
                 <a href="/dashboard/settings">
                     <div class="tab-menu">
                         <div class="tab-menu-icon"><iron-icon icon="icons:settings"></iron-icon></div>

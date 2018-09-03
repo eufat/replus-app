@@ -21,6 +21,7 @@ export const SET_CURRENT_USER = 'SET_CURRENT_USER';
 export const AUTHENTICATE_USER = 'AUTHENTICATE_USER';
 export const DEAUTHENTICATE_USER = 'DEAUTHENTICATE_USER';
 export const SET_NOTIFICATION = 'SET_NOTIFICATION';
+export const SET_GEOLOCATION = 'SET_GEOLOCATION';
 
 export const navigate = (path) => (dispatch) => {
     const page = path === '/' ? 'auth' : path.slice(1);
@@ -32,7 +33,7 @@ const loadPage = (page) => async (dispatch) => {
     let paths = page.split('/');
     paths = paths.filter((item) => item !== '');
 
-    const pageList = ['auth', 'dashboard', 'rooms', 'activity', 'metrics', 'settings', 'setting-vision', 'setting-remote', 'help', 'account', 'remote-ac', 'remote-tv', 'room-schedule', 'room-location'];
+    const pageList = ['auth', 'dashboard', 'rooms', 'activity', 'metrics', 'settings', 'setting-vision', 'setting-remote', 'help', 'remote-ac', 'remote-tv', 'room-schedule', 'room-location'];
 
     for (const path of paths) {
         if (!(pageList.indexOf(path) > -1)) {
@@ -60,9 +61,6 @@ const loadPage = (page) => async (dispatch) => {
                 break;
             case 'help':
                 await import('../components/main-help');
-                break;
-            case 'account':
-                await import('../components/main-account');
                 break;
             case 'setting-vision':
                 await import('../components/settings-vision');
@@ -258,5 +256,12 @@ export const setNotification = (notification) => (dispatch, getState) => {
     dispatch({
         type: SET_NOTIFICATION,
         notification,
+    });
+};
+
+export const setGeolocation = (geolocation) => (dispatch, getState) => {
+    dispatch({
+        type: SET_GEOLOCATION,
+        geolocation,
     });
 };

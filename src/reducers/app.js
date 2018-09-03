@@ -1,4 +1,4 @@
-import {UPDATE_PAGE, UPDATE_OFFLINE, OPEN_SNACKBAR, CLOSE_SNACKBAR, OPEN_PROGRESS, CLOSE_PROGRESS, UPDATE_DRAWER_STATE, AUTHENTICATE_USER, DEAUTHENTICATE_USER, SET_CURRENT_USER, OPEN_BACK, CLOSE_BACK, SET_NOTIFICATION} from '../actions/app.js';
+import {UPDATE_PAGE, UPDATE_OFFLINE, OPEN_SNACKBAR, CLOSE_SNACKBAR, OPEN_PROGRESS, CLOSE_PROGRESS, UPDATE_DRAWER_STATE, AUTHENTICATE_USER, DEAUTHENTICATE_USER, SET_CURRENT_USER, OPEN_BACK, CLOSE_BACK, SET_NOTIFICATION, SET_GEOLOCATION} from '../actions/app.js';
 
 const initialState = {
     progressOpened: false,
@@ -75,6 +75,11 @@ const app = (state = initialState, action) => {
             return {
                 ...state,
                 notification: action.notification,
+            };
+        case SET_GEOLOCATION:
+            return {
+                ...state,
+                geolocation: action.geolocation,
             };
         default:
             return state;
