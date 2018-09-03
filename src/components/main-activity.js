@@ -8,15 +8,13 @@ import {env} from '../configs.js';
 import {getDateFromFilename, getTVBrandFromCodeset, getTVCommandFromCodeset, toTitleCase, modesAC, fansAC, camelToSentence, log} from '../utils.js';
 import '@polymer/iron-icons/iron-icons';
 import {store} from '../store';
-import {fetchActivities} from '../actions/activity';
 
-import {getEventsDummy, getRemoteActivityDummy} from '../dummy.js';
+// import {getEventsDummy, getRemoteActivityDummy} from '../dummy.js';
 
 const get = _.get;
 const values = _.values;
-const isDate = _.isDate;
 
-const VISION_ACTIVITY = env.VISION_ACTIVITY;
+// const VISION_ACTIVITY = env.VISION_ACTIVITY;
 const CORE_ACTIVITY = env.CORE_ACTIVITY;
 
 export default class activityMain extends connect(store)(LitElement) {
@@ -111,7 +109,7 @@ export default class activityMain extends connect(store)(LitElement) {
     displayNotification(message) {
         const options = {
             body: message,
-        }
+        };
         if (Notification.permission == 'granted') {
             if (this.notification == 'true') {
                 navigator.serviceWorker.getRegistration().then((reg) => {
@@ -133,7 +131,7 @@ export default class activityMain extends connect(store)(LitElement) {
             const codesetMode = codesetAC.substring(0, 1);
             const codesetFan = codesetAC.substring(1, 2);
             const codesetTemp = codesetAC.substring(2, 4);
-            actionMessage = `set to fan ${fansAC[codesetFan].toLowerCase()} mode ${modesAC[codesetMode].toLowerCase()} and temp ${codesetTemp}°C`;
+            actionMessage = `set to ${fansAC[codesetFan].toLowerCase()} fan with ${modesAC[codesetMode].toLowerCase()} mode and ${codesetTemp}°C temperature`;
         } else if (type === 'TV') {
             const codesetTV = data.command.substring(4, 9);
             if (getTVCommandFromCodeset(codesetTV) != undefined) {
@@ -143,10 +141,22 @@ export default class activityMain extends connect(store)(LitElement) {
 
         const actionType = '';
 
+        let room = this.rooms
+            .map((obj) => {
+                if (obj.id === data.room) {
+                    return obj.name;
+                } else {
+                    return false;
+                }
+            })
+            .filter((item) => item !== false)[0];
+
+        room = room ? room : 'Unknown Room';
+
         const newActivity = {
             message: `${type} ${toTitleCase(brand)} ${actionMessage}`,
             event: actionType,
-            room: data.room,
+            room,
             date,
             source: data.source,
         };
@@ -235,7 +245,7 @@ export default class activityMain extends connect(store)(LitElement) {
                 </div>
                 <paper-material class="activity-group">
                     <h4>${messageIcon()} ${item.message}</h4>
-                    <p>at ${item.room} source ${item.source}</p>
+                    <p>at ${item.room} source from ${item.source}</p>
                 </paper-material>
             `;
         });
@@ -310,7 +320,7 @@ export default class activityMain extends connect(store)(LitElement) {
                     display: block;
                     margin: 20px;
                     margin-left: 0;
-                    padding: 10px 20px;
+                    padding: 15px;
                     background-color: white;
                     border-radius: 5px;
                 }
@@ -318,6 +328,11 @@ export default class activityMain extends connect(store)(LitElement) {
                 .activity-group {
                     margin-top: 10px;
                     list-style-type: none;
+                }
+
+                h4 {
+                    margin-top: 0;
+                    margin-bottom: 10px
                 }
 
                 p {
