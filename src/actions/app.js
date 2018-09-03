@@ -7,6 +7,7 @@ import { fetchRooms, fetchSchedules } from './remote';
 import { fetchActivities } from './activity';
 
 const pick = _.pick;
+const get = _.get;
 
 export const UPDATE_PAGE = 'UPDATE_PAGE';
 export const UPDATE_OFFLINE = 'UPDATE_OFFLINE';
@@ -188,18 +189,31 @@ export const setCurrentUser = (user) => async (dispatch, getState) => {
         dispatch(fetchSchedules());
 
         // register with available token
-        await coreClient().post(
-            '/user-register',
-            qs({
-                uid: currentUser.uid,
-                name: currentUser.displayName,
-                email: currentUser.email,
-            })
-        );
+        dispatch(fetchUser());
+        // await coreClient().post(
+        //     '/user-register',
+        //     qs({
+        //         uid: currentUser.uid,
+        //         name: currentUser.displayName,
+        //         email: currentUser.email,
+        //     })
+        // );
     } catch (error) {
         errorHandler.report(error);
     }
 };
+
+export const fetchUser = () => async (dispatch, getState) => {
+    const uid = get(getState(), 'app.currentUser.uid');
+    const name = get(getState(), 'app.currentUser.displayName');
+    const email = get(getState(), 'app.currentUser.email');
+    try {
+        const response = await coreClient().post('/user-register', qs({uid, name, email}));
+        dispatch(setNotification(response.data.notification));
+    } catch (error) {
+        errorHandler.report(error);
+    }
+}
 
 export const authenticateUser = () => (dispatch, getState) => {
     if (!(window.location.href.indexOf('dashboard') > -1)) {
@@ -259,4 +273,23 @@ export const setNotification = (notification) => (dispatch, getState) => {
         type: SET_NOTIFICATION,
         notification,
     });
+};
+
+export const notification = (notification) => (dispatch, getState) => {
+    dispatch(showProgress());
+    const uid = get(getState(), 'app.currentUser.uid');
+    const name = get(getState(), 'app.currentUser.displayName');
+    try {
+        coreClient().put('/user-edit', qs({name, notification}), {params: {uid}});
+        dispatch(setNotification(notification));
+        if (notification == 'true') {
+            dispatch(showSnackbar('Notification On'));
+        } else {
+            dispatch(showSnackbar('Notification Off'));
+        }
+        dispatch(closeProgress());
+    } catch (error) {
+        errorHandler.report(error);
+        dispatch(closeProgress());
+    }
 };
