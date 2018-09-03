@@ -13,7 +13,7 @@ import {store} from '../store.js';
 import firebase from '../firebase.js';
 
 import {setActiveDevice, setActiveRemotes} from '../actions/remote.js';
-import {linkWithProvider, setNotification, setGeolocation} from '../actions/app.js';
+import {linkWithProvider, notification, setGeolocation} from '../actions/app.js';
 import {showBack} from '../actions/app.js';
 
 const get = _.get;
@@ -46,7 +46,12 @@ export default class MainSettings extends connect(store)(LitElement) {
         this.rooms = get(state, 'remote.rooms');
         this.uid = get(state, 'app.currentUser.uid');
         this.currentUser = get(state, 'app.currentUser');
-        this.notification = get(state, 'app.notification');
+        const notification = get(state, 'app.notification');
+        if (notification == 'true') {
+            this.notification = true;
+        } else {
+            this.notification = false;
+        }
     }
 
     _didRender() {
@@ -78,11 +83,9 @@ export default class MainSettings extends connect(store)(LitElement) {
     _notifIsON(e) {
         const isON = e.target.active;
         if (isON) {
-            store.dispatch(setNotification(isON));
-            console.log('Notification On');
+            store.dispatch(notification('true'));
         } else {
-            store.dispatch(setNotification(isON));
-            console.log('Notification Off');
+            store.dispatch(notification('false'));
         }
     }
 
@@ -352,13 +355,13 @@ export default class MainSettings extends connect(store)(LitElement) {
                 <paper-item>
                     <paper-item-body class="text-container">
                         <p class="left">Notification</p>
-                        <paper-toggle-button class="right" checked="${notification}" on-active-changed="${(e) => this._notifIsON(e)}"></paper-toggle-button>
+                        <paper-toggle-button class="right" checked="${notification}" on-tap="${(e) => this._notifIsON(e)}"></paper-toggle-button>
                     </paper-item-body>
                 </paper-item>
                 <paper-item>
                     <paper-item-body class="text-container">
                         <p class="left">Geolocation</p>
-                        <paper-toggle-button class="right" checked="${geolocation}" on-active-changed="${(e) => this._geoIsON(e)}"></paper-toggle-button>
+                        <paper-toggle-button class="right" checked="${geolocation}" on-tap="${(e) => this._geoIsON(e)}"></paper-toggle-button>
                     </paper-item-body>
                 </paper-item>
             </div>
