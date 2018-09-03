@@ -69,6 +69,8 @@ class RemoteTv extends connect(store)(PolymerElement) {
                 }
 
                 #menubuttons {
+                    margin-top: 1rem !important;
+                    background-color: white;
                     padding: 5px;
                 }
 
