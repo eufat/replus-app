@@ -303,6 +303,7 @@ export default class MainRooms extends connect(store)(LitElement) {
                                     <mwc-button
                                         label="Remove"
                                         icon="close"
+
                                         on-click="${() => this._removeDevice(device.name)}">
                                     </mwc-button>
                                     <img class="appliance-icon" src="images/cam-icon.png"/>
@@ -403,7 +404,7 @@ export default class MainRooms extends connect(store)(LitElement) {
                         >
                         </paper-input>
                         <div class="buttons" on-click="${() => this._handleNewDeviceAdd(room)}">
-                            <mwc-button dialog-confirm label="Add This Device"></mwc-button>
+                            <mwc-button dialog-confirm label="Add This Device" ></mwc-button>
                         </div>
                     </div>
                 </paper-dialog>
@@ -443,7 +444,7 @@ export default class MainRooms extends connect(store)(LitElement) {
                             })}
                         </select>
                         <div class="buttons">
-                            <mwc-button dialog-confirm label="Add This Remote" on-click="${() => this._handleNewRemoteAdd(item.id)}"></mwc-button>
+                            <mwc-button  dialog-confirm label="Add This Remote" on-click="${() => this._handleNewRemoteAdd(item.id)}"></mwc-button>
                         </div>
                     </div>
                 </paper-dialog>
@@ -465,7 +466,7 @@ export default class MainRooms extends connect(store)(LitElement) {
                         >
                         </paper-input>
                         <div class="buttons" on-click="${() => this._handleNewCameraAdd(item.id)}">
-                            <mwc-button dialog-confirm label="Add This Camera"></mwc-button>
+                            <mwc-button dialog-confirm label="Add This Camera" ></mwc-button>
                         </div>
                     </div>
                 </paper-dialog>
@@ -574,15 +575,20 @@ export default class MainRooms extends connect(store)(LitElement) {
                     margin: 100px;
                 }
 
-                .room-title paper-button, .room-title h1 {
+                .room-title paper-button {
                     display: inline-block;
                 }
 
                 .room-title h1 {
+                    display: inline-block;
                     font-weight: normal;
-                    font-size: 1.25em;
+                    font-size: 1.2rem;
                     margin-bottom: 0px !important;
                     margin-top: 0px !important;
+                }
+
+                .top-button {
+                    margin: 0.5rem 0;
                 }
 
                 /* .room-remotes { */
@@ -620,15 +626,12 @@ export default class MainRooms extends connect(store)(LitElement) {
                     display: inline-block;
                     vertical-align: top;
                     padding: 10px;
-                    width: 128px;
+                    width: 120px;
                     height: 120px;
-                    margin-top: 5px;
-                    margin-bottom: 5px;
-                    margin-right: 5px;
-                    margin-left: 5px;
-                    padding: 5px 5px 5px 5px;
-                    border: 1px solid #ccc;
+                    padding: 5px;
+                    margin-right: 0.5rem;
                     border-radius: 10px;
+                    border: 1px solid #ccc;
                 }
 
                 .remote-item:hover, .camera-item:hover {
@@ -641,8 +644,8 @@ export default class MainRooms extends connect(store)(LitElement) {
                 }
 
                 .device-pill {
-                    color: white;
-                    background-color: #ccc;
+                    color: rgba(35, 47, 52, 1);
+                    background-color: rgba(35, 47, 52, 0.12);
                     border-radius: 15px;
                     display: inline-block;
                     text-align: center;
@@ -650,6 +653,7 @@ export default class MainRooms extends connect(store)(LitElement) {
                     width: auto;
                     height: 30px;
                     line-height: 30px;
+                    margin-top: 0.5rem;
                     margin-right: 5px;
                 }
 
@@ -679,7 +683,7 @@ export default class MainRooms extends connect(store)(LitElement) {
                 .paper-container {
                     margin: 0 auto;
                     max-width: 960px;
-                    padding-bottom: 50px;
+                    padding: 0 0.8rem 5rem;
                 }
 
                 paper-dialog {
@@ -690,8 +694,9 @@ export default class MainRooms extends connect(store)(LitElement) {
                 paper-material {
                     position: relative;
                     display: block;
-                    margin: 0 0 20px;
-                    padding: 10px 20px 20px;
+                    margin: 1rem 0;
+                    padding: 1rem;
+                    border-radius: 5px;
                     background-color: white;
                 }
 
@@ -709,16 +714,25 @@ export default class MainRooms extends connect(store)(LitElement) {
                     line-height: 80vh;
                 }
 
-                .light {
+                .light-button {
                     --mdc-theme-on-primary: black;
                     --mdc-theme-primary: white;
                     --mdc-theme-on-secondary: black;
                     --mdc-theme-secondary: white;
                 }
 
+                .blue-button {
+                    --mdc-theme-on-primary: white;
+                    --mdc-theme-primary: #4664ae;
+                    --mdc-theme-on-secondary: white;
+                    --mdc-theme-secondary: #4664ae;
+                }
+
+
+
                 .wide {
-                    width: calc(100% - 40px);
-                    margin: 20px 20px;
+                    width: 100%;
+                    margin: 1rem 0 0 !important;
                 }
             </style>
             <paper-dialog id="add-new-room-modal" with-backdrop>
@@ -734,7 +748,7 @@ export default class MainRooms extends connect(store)(LitElement) {
             <div class="rooms-container">
                 <div class="paper-container">
                     ${roomsItems}
-                    <mwc-button raised class="wide light" label="Add new room" icon="add" on-click="${() => this.shadowRoot.getElementById('add-new-room-modal').open()}" />
+                    <mwc-button raised class="wide light-button" label="Add new room" icon="add" on-click="${() => this.shadowRoot.getElementById('add-new-room-modal').open()}" />
                 </div>
             </div>
     `;
