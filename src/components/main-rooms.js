@@ -655,6 +655,12 @@ export default class MainRooms extends connect(store)(LitElement) {
                     line-height: 30px;
                     margin-top: 0.5rem;
                     margin-right: 5px;
+                    --mdc-icon-size: 16px;
+                }
+
+                .device-pill mwc-icon {
+                    margin-top: 7px;
+                    margin-bottom: 7px;
                 }
 
                 .device-pill .pill-content, .device-pill mwc-icon {
