@@ -22,7 +22,6 @@ import './snack-bar';
 import './main-help';
 import './main-auth';
 import './not-found';
-import './main-account';
 import './main-activity';
 import './main-metrics';
 import './main-rooms';
@@ -34,8 +33,8 @@ import './remote-ac';
 import './remote-tv';
 import './remote-vision';
 
-import './room-add-schedule';
-import './room-add-location';
+import './room-schedule';
+import './room-location';
 
 const includes = _.includes;
 
@@ -72,18 +71,17 @@ class MainApp extends connect(store)(LitElement) {
                 <main-auth class="page" active?="${includes(_page, 'auth')}"></main-auth>
                 <main-dashboard class="page" active?="${includes(_page, 'dashboard')}">
                     <main-rooms class="page" active?="${includes(_page, 'rooms') || onIndex('dashboard')}"></main-rooms>
+                    <room-schedule class="page" active?="${includes(_page, 'room-schedule')}"></room-schedule>
+                    <room-location class="page" active?="${includes(_page, 'room-location')}"></room-location>
+                    <remote-ac class="page" active?="${includes(_page, 'remote-ac')}"></remote-ac>
+                    <remote-tv class="page" active?="${includes(_page, 'remote-tv')}"></remote-tv>
+                    <remote-vision class="page" active?="${includes(_page, 'remote-vision')}"></remote-vision>
                     <main-activity class="page" active?="${includes(_page, 'activity')}"></main-activity>
                     <main-metrics class="page" active?="${includes(_page, 'metrics')}"></main-metrics>
                     <main-settings class="page" active?="${includes(_page, 'settings')}"></main-settings>
                     <settings-vision class="page" active?="${includes(_page, 'setting-vision')}"></settings-vision>
                     <settings-remote class="page" active?="${includes(_page, 'setting-remote')}"></settings-remote>
-                    <main-account class="page" active?="${includes(_page, 'account')}"></main-account>
                     <main-help class="page" active?="${includes(_page, 'help')}"></main-help>
-                    <remote-ac class="page" active?="${includes(_page, 'remote-ac')}"></remote-ac>
-                    <remote-tv class="page" active?="${includes(_page, 'remote-tv')}"></remote-tv>
-                    <remote-vision class="page" active?="${includes(_page, 'remote-vision')}"></remote-vision>
-                    <room-add-schedule class="page" active?="${includes(_page, 'add-schedule')}"></room-add-schedule>
-                    <add-location class="page" active?="${includes(_page, 'add-location')}"></add-location>
                 </main-dashboard>
             </main>
             <snack-bar active?="${_snackbarOpened}" text="${_snackbarText}"></snack-bar>

@@ -315,13 +315,6 @@ export default class activityMain extends connect(store)(LitElement) {
                     border-radius: 5px;
                 }
 
-                .center-vh {
-                    width: 100%;
-                    height: 80vh;
-                    text-align: center;
-                    line-height: 80vh;
-                }
-
                 .activity-group {
                     margin-top: 10px;
                     list-style-type: none;
@@ -329,6 +322,25 @@ export default class activityMain extends connect(store)(LitElement) {
 
                 p {
                     margin: 0;
+                }
+
+                .center-vh {
+                    width: 100%;
+                    height: 80vh;
+                    text-align: center;
+                }
+
+                .center-vh p {
+                    position: relative;
+                    top: 50%;
+                    transform: translateY(-50%);
+                }
+
+                .center-vh iron-icon {
+                    margin-bottom: 1rem;
+                    --iron-icon-fill-color: #5f6368;
+                    --iron-icon-height: 48px;
+                    --iron-icon-width: 48px;
                 }
             </style>
             <div class="container">
@@ -338,7 +350,10 @@ export default class activityMain extends connect(store)(LitElement) {
                                 <div class="activities-listing activities-listing-padded">${activityItems}</div>`
                             : html`
                                 <div class="center-vh">
-                                    <p>Your activity is empty.<p>
+                                    <p>
+                                        <iron-icon icon="icons:view-day"></iron-icon><br />
+                                        Your activity is empty
+                                    </p>
                                 </div>`
                     }
             </div>

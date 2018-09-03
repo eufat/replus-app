@@ -13,12 +13,27 @@ export default class MainMetrics extends LitElement {
                     width: 100%;
                     height: 80vh;
                     text-align: center;
-                    line-height: 80vh;
+                }
+
+                .center-vh p {
+                    position: relative;
+                    top: 50%;
+                    transform: translateY(-50%);
+                }
+
+                .center-vh iron-icon {
+                    margin-bottom: 1rem;
+                    --iron-icon-fill-color: #5f6368;
+                    --iron-icon-height: 48px;
+                    --iron-icon-width: 48px;
                 }
             </style>
             <div class="container">
                 <div class="center-vh">
-                    <p>Your metrics is empty.<p>
+                    <p>
+                        <iron-icon icon="icons:timeline"></iron-icon><br />
+                        Your activity is empty
+                    </p>
                 </div>
             </div>
     `;

@@ -30,7 +30,7 @@ import '@material/mwc-button';
 import '@material/mwc-icon';
 
 import {createSchedule, fetchIR, removeSchedule} from '../actions/remote.js';
-import {mobileCheck} from '../utils';
+import {mobileCheck, toTitleCase} from '../utils.js';
 import {store} from '../store.js';
 
 const get = _.get;
@@ -414,8 +414,7 @@ class AddSchedule extends connect(store)(PolymerElement) {
         let stateRemotes = get(state, 'remote.activeRoom.remotes') || [];
         stateRemotes = stateRemotes.map((remote) => {
             const name = get(remote, 'name');
-            const nameUpperCased = name.toUpperCase();
-            return nameUpperCased;
+            return toTitleCase(name);
         });
         this.remotes = stateRemotes;
         this.manifest = get(state, 'remote.manifest');
@@ -862,4 +861,4 @@ class AddSchedule extends connect(store)(PolymerElement) {
     }
 }
 
-window.customElements.define('room-add-schedule', AddSchedule);
+window.customElements.define('room-schedule', AddSchedule);

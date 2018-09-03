@@ -17,7 +17,7 @@ export const env = {
     CORE_API: prod ? 'https://core.replus.co/api-v2' : 'http://localhost:2000/api',
     CORE_POST: prod ? 'https://core.replus.co/post-v2' : 'http://localhost:2010/post',
     CORE_SCHEDULE: prod ? 'https://core.replus.co/schedule-v2' : 'http://localhost:2020/schedule',
-    CORE_ACTIVITY: prod ? 'https://core.replus.co/' : 'http://localhost:2030/',
+    CORE_ACTIVITY: prod ? 'https://activity.replus.co' : 'http://localhost:2030/',
     CORE_GEOSENSE: prod ? 'https://core.replus.co/geosense' : 'http://localhost:2040/geosense',
     CORE_FORECAST: prod ? 'https://core.replus.co/forecast' : 'http://localhost:2050/forecast',
     VISION_API: prod ? 'https://vision.replus.co/api' : 'http://localhost:5000/api',

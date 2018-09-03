@@ -37,8 +37,7 @@ class MainDashboard extends connect(store)(LitElement) {
         return html`
             <style>
                 app-header {
-                    background-color: #4664ae;
-                    color: #fff;
+                    background-color: transparent;
                 }
 
                 app-header paper-icon-button {
@@ -145,13 +144,6 @@ class MainDashboard extends connect(store)(LitElement) {
                 <a href="/dashboard/metrics">
                     <div class="tab-menu">
                         <div class="tab-menu-icon"><iron-icon icon="icons:timeline"></iron-icon></div>
-                    </div>
-                </a>
-                </paper-tab>
-                <paper-tab on-click="${() => this.removeBack()}">
-                <a href="/dashboard/account">
-                    <div class="tab-menu">
-                        <div class="tab-menu-icon"><iron-icon icon="icons:account-circle"></iron-icon></div>
                     </div>
                 </a>
                 </paper-tab>

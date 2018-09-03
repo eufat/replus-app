@@ -19,6 +19,7 @@ export default class Help extends LitElement {
             <style>
                 h3, h2, h3, h4, h5, h6 {
                     font-weight: normal;
+                    margin-bottom: 0;
                 }
 
                 .light {
@@ -30,9 +31,9 @@ export default class Help extends LitElement {
 
                 paper-material {
                     display: block;
-                    margin: 20px;
                     padding: 10px 20px;
                     background-color: white;
+                    margin-top: 1rem;
                 }
 
                 .help-container {
@@ -57,15 +58,21 @@ export default class Help extends LitElement {
                 .paper-container {
                     margin: 0 auto;
                     max-width: 960px;
+                    padding: 0 0.8rem 5rem;
+                }
+
+                p, h4, li {
+                    color: #5f6368;
                 }
 
                 a {
                     text-decoration: none;
+                    color: #4664ae;
                 }
             </style>
             <div class="paper-container">
                 <paper-material>
-                    <h3>Help</h3>
+                    <h3>App Installation</h3>
                     <section>
                         <div class="section-content">
                             <h4>1. Add Replus App to homescreen for Android (Chrome)</h4>
@@ -91,24 +98,17 @@ export default class Help extends LitElement {
                     <h3>Support</h3>
                     <section>
                         <div class="section-content">
-                            <p>Contact Us</p>
+                            <h4>Contact Us</h4>
                             <p>
                                 <a href="mail:hello@replus.co">hello@replus.co</a>
                                 <br />
                                 <a href="tel:+62087889620709">(62) 087889620709</a>
                                 <br />
-                                <p>PT POCI Otomasi Cerdas Indonesia</p>
+                                <p>PT POCI Otomasi Cerdas Indonesia
                                 <br /> Ruang Tenant Gedung ILRC Lantai 2
                                 <br /> Universitas Indonesia, Depok, Jawa Barat
+                                </p>
                             </p>
-                        </div>
-                    </section>
-                </paper-material>
-                <paper-material>
-                    <h3>Feedback</h3>
-                    <section>
-                        <div class="section-content">
-                            <mwc-button raised icon="feedback" class="light" label="Fill Feedback Form"></mwc-button>
                         </div>
                     </section>
                 </paper-material>
