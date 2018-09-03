@@ -29,6 +29,7 @@ export default class activityMain extends connect(store)(LitElement) {
             active: Boolean,
             rooms: Array,
             listening: Boolean,
+            notification: String,
         };
     }
 
@@ -45,6 +46,7 @@ export default class activityMain extends connect(store)(LitElement) {
     _stateChanged(state) {
         this.rooms = get(state, 'remote.rooms');
         this.storedActivities = values(get(state, 'activity.activities')).map((data) => this.formatActivity(data));
+        this.notification = get(state, 'app.notification');
     }
 
     _shouldRender(props, changedProps, old) {
@@ -70,6 +72,18 @@ export default class activityMain extends connect(store)(LitElement) {
         });
         */
 
+        Notification.requestPermission((status) => {
+            console.log('Notification permission status:', status);
+        });
+
+        // if (Notification.permission !== 'granted') {
+        //     Notification.requestPermission((permission) => {
+        //         if (!('permission' in Notification)) {
+        //             Notification.permission = permission;
+        //         }
+        //     });
+        // }
+
         if (this.rooms.length > 0 && !this.listening) {
             const url = `${CORE_ACTIVITY}/activity`;
             const socket = io(url);
@@ -91,6 +105,19 @@ export default class activityMain extends connect(store)(LitElement) {
             }
 
             this.listening = true;
+        }
+    }
+
+    displayNotification(message) {
+        const options = {
+            body: message,
+        }
+        if (Notification.permission == 'granted') {
+            if (this.notification == 'true') {
+                navigator.serviceWorker.getRegistration().then((reg) => {
+                    reg.showNotification('Replus Remote', options);
+                });
+            }
         }
     }
 
@@ -124,6 +151,7 @@ export default class activityMain extends connect(store)(LitElement) {
             source: data.source,
         };
 
+        // this.displayNotification(newActivity.message);
         return newActivity;
     }
 
