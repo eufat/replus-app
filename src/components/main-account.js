@@ -11,7 +11,7 @@ import {Button} from '@material/mwc-button';
 import firebase from '../firebase.js';
 import {store} from '../store.js';
 import {connect} from 'pwa-helpers/connect-mixin';
-import {linkWithProvider, setNotification} from '../actions/app.js';
+import {linkWithProvider, notification} from '../actions/app.js';
 
 // Import from lodash
 const get = _.get;
@@ -40,7 +40,13 @@ export default class MainAccount extends connect(store)(LitElement) {
     _stateChanged(state) {
         this.currentUser = get(state, 'app.currentUser');
         this.rooms = get(state, 'remote.rooms');
-        this.notification = get(state, 'app.notification');
+        const notification = get(state, 'app.notification');
+        // this.notification = get(state, 'app.notification');
+        if (notification == 'true') {
+            this.notification = true;
+        } else {
+            this.notification = false;
+        }
     }
 
     _didRender() {
@@ -56,11 +62,9 @@ export default class MainAccount extends connect(store)(LitElement) {
     _notifIsON(e) {
         const isON = e.target.active;
         if (isON) {
-            store.dispatch(setNotification(isON));
-            console.log('Notification On');
+            store.dispatch(notification('true'));
         } else {
-            store.dispatch(setNotification(isON));
-            console.log('Notification Off');
+            store.dispatch(notification('false'));
         }
     }
 
@@ -179,7 +183,7 @@ export default class MainAccount extends connect(store)(LitElement) {
                 <paper-item>
                     <paper-item-body class="text-container">
                         <p class="left">Notification</p>
-                        <paper-toggle-button class="right" checked="${notification}" on-active-changed="${(e) => this._notifIsON(e)}"></paper-toggle-button>
+                        <paper-toggle-button class="right" checked="${notification}" on-tap="${(e) => this._notifIsON(e)}"></paper-toggle-button>
                     </paper-item-body>
                 </paper-item>
             </div>
