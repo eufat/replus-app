@@ -404,7 +404,7 @@ export default class MainRooms extends connect(store)(LitElement) {
                         >
                         </paper-input>
                         <div class="buttons" on-click="${() => this._handleNewDeviceAdd(room)}">
-                            <mwc-button dialog-confirm label="Add This Device" ></mwc-button>
+                            <mwc-button dialog-confirm label="Add This Device" disabled="${!(this.newDevice.deviceID || this.newDevice.deviceCode)}"></mwc-button>
                         </div>
                     </div>
                 </paper-dialog>
