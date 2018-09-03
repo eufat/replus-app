@@ -1,5 +1,5 @@
 // const prod = process.env.NODE_ENV === 'production';
-const prod = true;
+const prod = false;
 const googleMapsApi = 'AIzaSyCfGVFRrYf89QiMaQCiXUb-D_uDjUPCsCc';
 
 export const firebaseConfig = {
