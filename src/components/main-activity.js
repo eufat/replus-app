@@ -74,13 +74,13 @@ export default class activityMain extends connect(store)(LitElement) {
             console.log('Notification permission status:', status);
         });
 
-        // if (Notification.permission !== 'granted') {
-        //     Notification.requestPermission((permission) => {
-        //         if (!('permission' in Notification)) {
-        //             Notification.permission = permission;
-        //         }
-        //     });
-        // }
+        if (Notification.permission !== 'granted') {
+            Notification.requestPermission((permission) => {
+                if (!('permission' in Notification)) {
+                    Notification.permission = permission;
+                }
+            });
+        }
 
         if (this.rooms.length > 0 && !this.listening) {
             const url = `${CORE_ACTIVITY}/activity`;
@@ -110,6 +110,7 @@ export default class activityMain extends connect(store)(LitElement) {
         const options = {
             body: message,
         };
+
         if (Notification.permission == 'granted') {
             if (this.notification == 'true') {
                 navigator.serviceWorker.getRegistration().then((reg) => {
