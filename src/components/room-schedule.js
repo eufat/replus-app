@@ -139,21 +139,32 @@ class AddSchedule extends connect(store)(PolymerElement) {
 
                 paper-card {
                     display: block;
-                    margin: 20px 20px 0;
+                    margin: 1rem 0.8rem;
+                    border-radius: 5px;
                 }
 
                 .card-heading {
-                    @apply(--paper-font-headline);
-                    color: #777;
+                    font-size: 1.25rem;
                 }
 
                 .card-time {
-                    background: var(--paper-grey-400);
-                    border-radius: 10px;
-                    color: #fff;
-                    padding: 5px;
+                    color: rgba(35, 47, 52, 1);
+                    background-color: rgba(35, 47, 52, 0.12);
+                    border-radius: 15px;
+                    display: inline-block;
                     text-align: center;
-                    width: 70px;
+                    padding: 0 10px;
+                    width: auto;
+                    height: 30px;
+                    line-height: 30px;
+                }
+
+                .card-time iron-icon {
+                    margin-top: 7px;
+                    margin-bottom: 7px;
+                    margin-right: 5px;
+                    --iron-icon-height: 16px;
+                    --iron-icon-width: 16px;
                 }
 
                 paper-button#btnDeleteSchedule {
@@ -310,7 +321,7 @@ class AddSchedule extends connect(store)(PolymerElement) {
                     <div class="card-content">
                         <div class="horizontal layout justified">
                             <div class="card-heading">[[schedule.titleRemote]]</div>
-                            <div class="card-time">[[schedule.titleTime]]</div>
+                            <div class="card-time"><iron-icon icon="icons:schedule"></iron-icon>[[schedule.titleTime]]</div>
                         </div>
                         <div>[[schedule.titleCommand]]</div>
                         <div>[[schedule.titleDay]]</div>
