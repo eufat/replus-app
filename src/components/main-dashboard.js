@@ -36,6 +36,13 @@ class MainDashboard extends connect(store)(LitElement) {
         let tabPage = _page ? _page.split('/')[1] : 'rooms';
         tabPage = tabPage === '' ? 'rooms' : tabPage;
 
+        let isBackable = _backable;
+        if (tabPage == 'rooms' || tabPage == 'activity' || tabPage == 'metrics' || tabPage == 'settings') {
+            isBackable = false;
+        } else {
+            isBackable = true;
+        }
+
         return html`
             <style>
                 app-header {
@@ -115,7 +122,7 @@ class MainDashboard extends connect(store)(LitElement) {
                 <!-- Dashboard app bar -->
                 <app-header slot="header">
                     <app-toolbar>
-                    ${_backable ? html`<paper-icon-button on-click="${() => this._onBack()}" icon="arrow-back"></paper-icon-button>` : null}
+                    ${isBackable ? html`<paper-icon-button on-click="${() => this._onBack()}" icon="arrow-back"></paper-icon-button>` : null}
                     ${_page == 'dashboard/remote-ac' || _page == 'dashboard/remote-tv' ? html`<div main-title>${toTitleCase(remoteName)}</div>` : html`<div main-title>${pageToTitle(_page)}</div>`}
                     <paper-icon-button
                         class="more-button"
