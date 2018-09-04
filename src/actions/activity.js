@@ -16,12 +16,12 @@ export const setActivities = (activities) => (dispatch, getState) => {
     }
 };
 
-export const fetchActivities = () => async (dispatch, getState) => {
+export const fetchActivities = (by, id) => async (dispatch, getState) => {
     dispatch(showProgress());
     const uid = get(getState(), 'app.currentUser.uid');
 
     try {
-        const response = await coreActivity().get('/activity/fetch', {params: {uid, id: uid, by: 'owner'}});
+        const response = await coreActivity().get('/activity/fetch', {params: {uid, id, by}});
         dispatch(setActivities(response.data));
         dispatch(closeProgress());
     } catch (error) {

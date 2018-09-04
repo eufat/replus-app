@@ -3,16 +3,21 @@ import {connect} from 'pwa-helpers/connect-mixin';
 import '@polymer/paper-card';
 import '@polymer/paper-material';
 import '@polymer/paper-icon-button';
+import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
+import '@polymer/paper-listbox';
 
 import {env} from '../configs.js';
 import {getDateFromFilename, getTVBrandFromCodeset, getTVCommandFromCodeset, toTitleCase, modesAC, fansAC, camelToSentence, log} from '../utils.js';
 import '@polymer/iron-icons/iron-icons';
 import {store} from '../store';
+import {fetchActivities} from '../actions/activity';
+import {showSnackbar} from '../actions/app';
 
 // import {getEventsDummy, getRemoteActivityDummy} from '../dummy.js';
 
 const get = _.get;
 const values = _.values;
+const concat = _.concat;
 
 // const VISION_ACTIVITY = env.VISION_ACTIVITY;
 const CORE_ACTIVITY = env.CORE_ACTIVITY;
@@ -28,6 +33,11 @@ export default class activityMain extends connect(store)(LitElement) {
             rooms: Array,
             listening: Boolean,
             notification: String,
+            filterTypeSelection: Array,
+            filterItemSelection: Array,
+            selectedFilterType: String,
+            selectedFilterItem: String,
+            currentUser: Object,
         };
     }
 
@@ -39,13 +49,21 @@ export default class activityMain extends connect(store)(LitElement) {
         this.storedActivities = [];
         this.rooms = [];
         this.listening = false;
+        this.filterTypeSelection = ['owner', 'room', 'device'];
+        this.filterItemSelection = [];
+        this.selectedFilterType = 'owner';
+        this.selectedFilterItem = '';
+        this.currentUser = {};
     }
 
     _stateChanged(state) {
         this.rooms = get(state, 'remote.rooms');
         this.storedActivities = values(get(state, 'activity.activities')).map((data) => this.formatActivity(data));
         this.notification = get(state, 'app.notification');
+        this.currentUser = get(state, 'app.currentUser');
     }
+
+    _firstRendered() {}
 
     _shouldRender(props, changedProps, old) {
         return props.active;
@@ -181,7 +199,70 @@ export default class activityMain extends connect(store)(LitElement) {
         return getDateFromFilename(name);
     }
 
-    _render({activityStatus, realtimeAcitivities, storedActivities, activityURL}) {
+    selectFilterType(type) {
+        this.selectedFilterType = type;
+        if (type === 'owner') {
+            const owner = this.currentUser.displayName;
+            this.filterItemSelection = [owner];
+            this.selectedFilterItem = owner;
+            this.startActivityFiltering();
+        } else if (type === 'room') {
+            const rooms = this.rooms.map((obj) => obj.name);
+            this.filterItemSelection = rooms;
+            this.selectedFilterItem = rooms[0];
+            this.startActivityFiltering();
+        } else if (type === 'device') {
+            const devices = concat(
+                this.rooms
+                    .map((obj) => {
+                        return obj.devices.map((obj) => {
+                            return obj.name;
+                        });
+                    })
+                    .filter((item) => item !== undefined)
+                    .reduce((item) => item)
+            );
+
+            this.filterItemSelection = devices;
+            this.selectedFilterItem = devices[0];
+            this.startActivityFiltering();
+        }
+    }
+
+    startActivityFiltering() {
+        const type = this.selectedFilterType;
+
+        if (type === 'owner') {
+            const uid = this.currentUser.uid;
+            store.dispatch(fetchActivities('owner', uid));
+        } else if (type === 'room') {
+            const roomId = this.rooms
+                .map((obj) => {
+                    const roomName = this.selectedFilterItem;
+                    if (obj.name === roomName) {
+                        return obj.id;
+                    } else {
+                        return false;
+                    }
+                })
+                .filter((item) => item !== false)
+                .reduce((item) => item);
+
+            store.dispatch(fetchActivities('room', roomId));
+        } else if (type === 'device') {
+            const deviceId = this.selectedFilterItem;
+            store.dispatch(fetchActivities('device', deviceId));
+        }
+
+        store.dispatch(showSnackbar(`Activity filtered by ${this.selectedFilterType}`));
+    }
+
+    selectFilterItem(item) {
+        this.selectedFilterItem = item;
+        this.startActivityFiltering();
+    }
+
+    _render({filterTypeSelection, filterItemSelection, selectedFilterType, selectedFilterItem}) {
         const activityIcon = html`
                 <svg class="time-icon time-icon-activity" viewBox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true">
                     <path fill-rule="evenodd" d="M10.86 7c-.45-1.72-2-3-3.86-3-1.86 0-3.41 1.28-3.86 3H0v2h3.14c.45 1.72 2 3 3.86 3 1.86 0 3.41-1.28 3.86-3H14V7h-3.14zM7 10.2c-1.22 0-2.2-.98-2.2-2.2 0-1.22.98-2.2 2.2-2.2 1.22 0 2.2.98 2.2 2.2 0 1.22-.98 2.2-2.2 2.2z"></path>
@@ -250,6 +331,27 @@ export default class activityMain extends connect(store)(LitElement) {
             `;
         });
 
+        const activityFilter = html`<div class="activities-filter">
+            <paper-dropdown-menu label="Filter by" id="filter-type-selection" noink no-animations>
+                <paper-listbox class="dropdown-content" slot="dropdown-content" selected="${filterTypeSelection.indexOf(selectedFilterType)}">
+                    ${filterTypeSelection.map((type) => {
+                        return html`
+                                <paper-item on-tap="${() => this.selectFilterType(type)}">${toTitleCase(type)}</paper-item>
+                            `;
+                    })}
+                </paper-listbox>
+            </paper-dropdown-menu>
+            <paper-dropdown-menu label="${toTitleCase(selectedFilterType)}" id="filter-item-selection" noink no-animations>
+                <paper-listbox class="dropdown-content" slot="dropdown-content" selected="${filterItemSelection.indexOf(selectedFilterItem)}">
+                    ${filterItemSelection.map((item) => {
+                        return html`
+                                <paper-item on-tap="${() => this.selectFilterItem(item)}">${item}</paper-item>
+                            `;
+                    })}
+                </paper-listbox>
+            </paper-dropdown-menu>
+        </div>`;
+
         return html`
             <style>
                 .event-container {
@@ -260,6 +362,20 @@ export default class activityMain extends connect(store)(LitElement) {
 
                 img {
                     height: 300px;
+                }
+
+                .activities-filter {
+                    margin: 0 1rem;
+                    display: flex;
+                    flex-flow: row wrap;
+                }
+
+                #filter-type-selection {
+                    margin-right: 5%;
+                }
+
+                #filter-type-selection, #filter-item-selection {
+                    width: 47.5%;
                 }
 
                 .activities-listing::before {
@@ -359,6 +475,7 @@ export default class activityMain extends connect(store)(LitElement) {
                 }
             </style>
             <div class="container">
+                    ${activityFilter}
                     ${
                         data.length > 0
                             ? html`

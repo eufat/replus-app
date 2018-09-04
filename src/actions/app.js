@@ -183,7 +183,7 @@ export const setCurrentUser = (user) => async (dispatch, getState) => {
         });
 
         dispatch(fetchRooms());
-        dispatch(fetchActivities());
+        dispatch(fetchActivities('owner', currentUser.uid));
         dispatch(fetchSchedules());
 
         // register with available token
@@ -206,12 +206,12 @@ export const fetchUser = () => async (dispatch, getState) => {
     const name = get(getState(), 'app.currentUser.displayName');
     const email = get(getState(), 'app.currentUser.email');
     try {
-        const response = await coreClient().post('/user-register', qs({uid, name, email}));
+        const response = await coreClient().post('/user-register', qs({ uid, name, email }));
         dispatch(setNotification(response.data.notification));
     } catch (error) {
         errorHandler.report(error);
     }
-}
+};
 
 export const authenticateUser = () => (dispatch, getState) => {
     if (!(window.location.href.indexOf('dashboard') > -1)) {
@@ -278,7 +278,7 @@ export const notification = (notification) => (dispatch, getState) => {
     const uid = get(getState(), 'app.currentUser.uid');
     const name = get(getState(), 'app.currentUser.displayName');
     try {
-        coreClient().put('/user-edit', qs({name, notification}), {params: {uid}});
+        coreClient().put('/user-edit', qs({ name, notification }), { params: { uid } });
         dispatch(setNotification(notification));
         if (notification == 'true') {
             dispatch(showSnackbar('Notification On'));
@@ -290,7 +290,7 @@ export const notification = (notification) => (dispatch, getState) => {
         errorHandler.report(error);
         dispatch(closeProgress());
     }
-}
+};
 
 export const setGeolocation = (geolocation) => (dispatch, getState) => {
     dispatch({
