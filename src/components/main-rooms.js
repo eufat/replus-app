@@ -39,6 +39,10 @@ export default class MainRooms extends connect(store)(LitElement) {
         this.newRemote = {};
     }
 
+    _didRender() {
+        this._setButton();
+    }
+
     _shouldRender(props, changedProps, old) {
         return props.active;
     }
@@ -49,7 +53,6 @@ export default class MainRooms extends connect(store)(LitElement) {
         this.newRemote = get(state, 'remote.newRemote');
         this.uid = get(state, 'app.currentUser.uid');
         this._progress = get(state, 'app.progressOpened');
-        this._setButton();
     }
 
     _setButton() {
@@ -65,8 +68,8 @@ export default class MainRooms extends connect(store)(LitElement) {
                     nextButton.style.top = '150px';
                     prevButton.style.top = '150px';
                 } else {
-                    nextButton.style.top = '110px';
-                    prevButton.style.top = '110px';
+                    nextButton.style.top = '130px';
+                    prevButton.style.top = '130px';
                 }
             }
 
@@ -77,6 +80,9 @@ export default class MainRooms extends connect(store)(LitElement) {
             if (nextButton != undefined) {
                 if (hasHorizontalScrollbar) {
                     nextButton.style.display = 'block';
+                    if (remotes.scrollLeft != 0) {
+                        prevButton.style.display = 'block';
+                    }
                 } else {
                     nextButton.style.display = 'none';
                     prevButton.style.display = 'none';
@@ -213,11 +219,13 @@ export default class MainRooms extends connect(store)(LitElement) {
     }
 
     _scrollLeft(roomIndex, button) {
-        const remote = this.shadowRoot.getElementById(`remotes-${roomIndex}`);
+        const remotes = this.shadowRoot.getElementById(`remotes-${roomIndex}`);
+        const remoteItem = this.shadowRoot.getElementById(`remote-${roomIndex}0`);
+        const remoteWidth = remoteItem.offsetWidth;
         if (button == 'right') {
-            remote.scrollLeft += 154;
+            remotes.scrollLeft += (remoteWidth + 12);
         } else if (button == 'left') {
-            remote.scrollLeft -= 154;
+            remotes.scrollLeft -= (remoteWidth + 12);
         }
     }
 
