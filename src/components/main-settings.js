@@ -210,6 +210,9 @@ export default class MainSettings extends connect(store)(LitElement) {
 
         return html`
             <style>
+                .settings-container {
+                    padding-bottom: 2rem;
+                }
                 .settings {
                     border-bottom: 1px solid #ccc;
                     padding-bottom: 2rem;
@@ -305,79 +308,81 @@ export default class MainSettings extends connect(store)(LitElement) {
                     margin-top: 15px !important;
                 }
             </style>
-            <div role="listbox" class="settings">
-                <div class="row">
-                    <div class="column">
-                        <p class="total">${rooms.length}</p>
-                        <p class="title">Rooms</p>
+            <div class="settings-container">
+                <div role="listbox" class="settings">
+                    <div class="row">
+                        <div class="column">
+                            <p class="total">${rooms.length}</p>
+                            <p class="title">Rooms</p>
+                        </div>
+                        <div class="column">
+                            <p class="total">${totalRemote}</p>
+                            <p class="title">Remotes</p>
+                        </div>
+                        <div class="column">
+                            <p class="total">${totalDevice}</p>
+                            <p class="title">Devices</p>
+                        </div>
                     </div>
-                    <div class="column">
-                        <p class="total">${totalRemote}</p>
-                        <p class="title">Remotes</p>
-                    </div>
-                    <div class="column">
-                        <p class="total">${totalDevice}</p>
-                        <p class="title">Devices</p>
-                    </div>
+                    <paper-item>
+                        <paper-item-body class="text-container">
+                            <p class="left">Owner Name</p>
+                            <p class="right">${get(currentUser, 'displayName')}</p>
+                        </paper-item-body>
+                    </paper-item>
+                    <paper-item>
+                        <paper-item-body class="text-container">
+                            <p class="left">Owner Email</p>
+                            <p class="right">${get(currentUser, 'email')}</p>
+                        </paper-item-body>
+                    </paper-item>
+                    <paper-item>
+                        <mwc-button
+                            raised
+                            class="light"
+                            label="Link to Google"
+                            disabled="${providerIsGoogle}"
+                            on-click="${() => store.dispatch(linkWithProvider('google'))}"
+                        ></mwc-button>
+                    </paper-item>
+                    <paper-item>
+                        <mwc-button
+                            raised
+                            class="light"
+                            label="Link to Facebook"
+                            disabled="${providerIsFacebook}"
+                            on-click="${() => store.dispatch(linkWithProvider('facebook'))}"
+                        ></mwc-button>
+                    </paper-item>
                 </div>
-                <paper-item>
-                    <paper-item-body class="text-container">
-                        <p class="left">Owner Name</p>
-                        <p class="right">${get(currentUser, 'displayName')}</p>
-                    </paper-item-body>
-                </paper-item>
-                <paper-item>
-                    <paper-item-body class="text-container">
-                        <p class="left">Owner Email</p>
-                        <p class="right">${get(currentUser, 'email')}</p>
-                    </paper-item-body>
-                </paper-item>
-                <paper-item>
-                    <mwc-button
-                        raised
-                        class="light"
-                        label="Link to Google"
-                        disabled="${providerIsGoogle}"
-                        on-click="${() => store.dispatch(linkWithProvider('google'))}"
-                    ></mwc-button>
-                </paper-item>
-                <paper-item>
-                    <mwc-button
-                        raised
-                        class="light"
-                        label="Link to Facebook"
-                        disabled="${providerIsFacebook}"
-                        on-click="${() => store.dispatch(linkWithProvider('facebook'))}"
-                    ></mwc-button>
-                </paper-item>
-            </div>
-            <div role="listbox" class="settings">
-                <paper-item>
-                    <paper-item-body class="text-container">
-                        <p class="left">Notification</p>
-                        <paper-toggle-button class="right" checked="${notification}" on-tap="${(e) => this._notifIsON(e)}"></paper-toggle-button>
-                    </paper-item-body>
-                </paper-item>
-                <paper-item>
-                    <paper-item-body class="text-container">
-                        <p class="left">Geolocation</p>
-                        <paper-toggle-button class="right" checked="${geolocation}" on-tap="${(e) => this._geoIsON(e)}"></paper-toggle-button>
-                    </paper-item-body>
-                </paper-item>
-            </div>
-            <div role="listbox" class="settings">
-                <paper-item>
-                    <paper-item-body>
-                        <div>Replus Remote</div>
-                    </paper-item-body>
-                </paper-item>
-                ${remoteItems}
-                <paper-item>
-                    <paper-item-body>
-                        <div>Replus Vision</div>
-                    </paper-item-body>
-                </paper-item>
-                ${cameraItems}
+                <div role="listbox" class="settings">
+                    <paper-item>
+                        <paper-item-body class="text-container">
+                            <p class="left">Notification</p>
+                            <paper-toggle-button class="right" checked="${notification}" on-tap="${(e) => this._notifIsON(e)}"></paper-toggle-button>
+                        </paper-item-body>
+                    </paper-item>
+                    <paper-item>
+                        <paper-item-body class="text-container">
+                            <p class="left">Geolocation</p>
+                            <paper-toggle-button class="right" checked="${geolocation}" on-tap="${(e) => this._geoIsON(e)}"></paper-toggle-button>
+                        </paper-item-body>
+                    </paper-item>
+                </div>
+                <div role="listbox" class="settings">
+                    <paper-item>
+                        <paper-item-body>
+                            <div>Replus Remote</div>
+                        </paper-item-body>
+                    </paper-item>
+                    ${remoteItems}
+                    <paper-item>
+                        <paper-item-body>
+                            <div>Replus Vision</div>
+                        </paper-item-body>
+                    </paper-item>
+                    ${cameraItems}
+                </div>
             </div>
     `;
     }
