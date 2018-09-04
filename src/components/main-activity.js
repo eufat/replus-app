@@ -235,7 +235,7 @@ export default class activityMain extends connect(store)(LitElement) {
                 }
             };
 
-            const formattedDate = dayjs(item.date).format('HH:mm:ss A DD MMM YYYY');
+            const formattedDate = dayjs(item.date).format('HH:mm:ss DD MMM YYYY');
 
             return html`
                 <div class="activity-group-title">
@@ -312,7 +312,7 @@ export default class activityMain extends connect(store)(LitElement) {
                 }
 
                 .container {
-                    margin: 0 auto;
+                    margin: 0 auto 4rem;
                     max-width: 960px;
                 }
 
