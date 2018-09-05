@@ -48,7 +48,7 @@ export function getTVCodesetFromBrand(brand) {
 
 export function getTVBrandFromCodeset(codeset) {
     const invertedTVCodeset = invert(TVBrandsCodeset);
-    return invertedTVCodeset(codeset);
+    return invertedTVCodeset[codeset];
 }
 
 export function getTVCodesetFromCommand(command) {
@@ -57,7 +57,7 @@ export function getTVCodesetFromCommand(command) {
 
 export function getTVCommandFromCodeset(codeset) {
     const invertedTVCodeset = invert(TVCommandsCodeset);
-    return invertedTVCodeset(codeset);
+    return invertedTVCodeset[codeset];
 }
 
 export function hideOnClickOutside(element) {
