@@ -6,7 +6,6 @@ import dayjs from 'dayjs';
 import get from 'lodash/get';
 import values from 'lodash/values';
 import concat from 'lodash/concat';
-import isDate from 'lodash/isDate';
 
 import '@polymer/paper-card';
 import '@polymer/paper-material';

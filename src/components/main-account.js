@@ -12,7 +12,7 @@ import '@polymer/paper-radio-button';
 import firebase from '../firebase.js';
 import {store} from '../store.js';
 import {connect} from 'pwa-helpers/connect-mixin';
-import {linkWithProvider, setNotification} from '../actions/app.js';
+import {linkWithProvider, notification} from '../actions/app.js';
 
 export default class MainAccount extends connect(store)(LitElement) {
     static get properties() {
