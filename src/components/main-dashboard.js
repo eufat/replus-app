@@ -37,7 +37,7 @@ class MainDashboard extends connect(store)(LitElement) {
         tabPage = tabPage === '' ? 'rooms' : tabPage;
 
         let isBackable = _backable;
-        if (tabPage == 'rooms' || tabPage == 'activity' || tabPage == 'metrics' || tabPage == 'settings') {
+        if (tabPage == 'rooms' || tabPage == 'activity' || tabPage == 'metrics' || tabPage == 'settings' || tabPage == undefined) {
             isBackable = false;
         } else {
             isBackable = true;
