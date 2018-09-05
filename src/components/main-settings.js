@@ -7,6 +7,7 @@ import '@polymer/paper-dialog';
 import '@polymer/paper-radio-group';
 import '@polymer/paper-radio-button';
 import '@polymer/iron-icons/iron-icons';
+import '@polymer/paper-material';
 
 import {connect} from 'pwa-helpers/connect-mixin';
 import {store} from '../store.js';
@@ -120,15 +121,13 @@ export default class MainSettings extends connect(store)(LitElement) {
                         </style>
                         <paper-item>
                             <paper-item-body>
-                                <iron-icon class="remote-icon" src="images/add-device.png"></iron-icon>
-                                <p class="device-type">${device.type}</p>
-                            </paper-item-body>
-                            <div class="settings-right">
                                 <div class="device-pill">
                                     <span class="pill-content">${device.name}</span>
                                 </div>
+                            </paper-item-body>
+                            <div class="settings-right">
                                 <a href="/dashboard/setting-remote" on-click="${() => this._activeDevice(device.name, rooms.remotes)}">
-                                    <iron-icon class="settings-icon" icon="icons:settings">
+                                    <iron-icon class="settings-icon" icon="icons:arrow-forward">
                                 </a>
                             </div>
                         </paper-item>
@@ -155,15 +154,13 @@ export default class MainSettings extends connect(store)(LitElement) {
                         </style>
                         <paper-item>
                             <paper-item-body>
-                                <iron-icon class="remote-icon" src=""></iron-icon>
-                                <p class="device-type">${device.type}</p>
-                            </paper-item-body>
-                            <div class="settings-right">
                                 <div class="device-pill">
                                     <span class="pill-content">${device.name}</span>
                                 </div>
+                            </paper-item-body>
+                            <div class="settings-right">
                                 <a href="/dashboard/setting-vision">
-                                    <iron-icon class="settings-icon" icon="icons:settings">
+                                    <iron-icon class="settings-icon" icon="icons:arrow-forward">
                                 </a>
                             </div>
                         </paper-item>
@@ -211,12 +208,13 @@ export default class MainSettings extends connect(store)(LitElement) {
 
         return html`
             <style>
-                .settings-container {
-                    padding-bottom: 2rem;
+                .container {
+                    max-width: 680px;
+                    margin: 0 auto;
+                    padding: 0 0.8rem 5rem;
                 }
                 .settings {
-                    border-bottom: 1px solid #ccc;
-                    padding-bottom: 2rem;
+                    border-bottom: 1px solid #0000000f;
                 }
                 .settings-right {
                     margin-left: auto;
@@ -235,8 +233,8 @@ export default class MainSettings extends connect(store)(LitElement) {
                     margin: 0;
                 }
                 .device-pill {
-                    color: white;
-                    background-color: #ccc;
+                    color: rgba(35, 47, 52, 1);
+                    background-color: rgba(35, 47, 52, 0.12);
                     border-radius: 15px;
                     display: inline-block;
                     text-align: center;
@@ -244,7 +242,6 @@ export default class MainSettings extends connect(store)(LitElement) {
                     width: auto;
                     height: 30px;
                     line-height: 30px;
-                    margin-right: 5px;
                 }
                 .device-pill .pill-content, .device-pill mwc-icon {
                     vertical-align: top;
@@ -273,10 +270,10 @@ export default class MainSettings extends connect(store)(LitElement) {
                 }
 
                 .light {
-                    --mdc-theme-on-primary: black;
-                    --mdc-theme-primary: white;
-                    --mdc-theme-on-secondary: black;
-                    --mdc-theme-secondary: white;
+                    --mdc-theme-on-primary: white;
+                    --mdc-theme-primary: #4664ae;
+                    --mdc-theme-on-secondary: white;
+                    --mdc-theme-secondary: #4664ae;
                 }
 
                 * {
@@ -299,6 +296,7 @@ export default class MainSettings extends connect(store)(LitElement) {
                     text-align: center;
                 }
                 .total {
+                    font-size: 1.25rem;
                     margin-bottom: 0px !important;
                 }
                 .title {
@@ -308,8 +306,22 @@ export default class MainSettings extends connect(store)(LitElement) {
                 paper-toggle-button.right {
                     margin-top: 15px !important;
                 }
+
+                paper-material.paper-container {
+                    position: relative;
+                    display: block;
+                    border-radius: 5px;
+                    background-color: white;
+                    margin: 1rem 0;
+                    background-color: white;
+                }
+
+                paper-item {
+                    border-top: 1px solid #0000000f;
+                }
             </style>
-            <div class="settings-container">
+            <div class="container">
+            <paper-material class="paper-container" elevation="1">
                 <div role="listbox" class="settings">
                     <div class="row">
                         <div class="column">
@@ -327,6 +339,22 @@ export default class MainSettings extends connect(store)(LitElement) {
                     </div>
                     <paper-item>
                         <paper-item-body class="text-container">
+                            <p class="left">Notification</p>
+                            <paper-toggle-button class="right" checked="${notification}" on-tap="${(e) => this._notifIsON(e)}"></paper-toggle-button>
+                        </paper-item-body>
+                    </paper-item>
+                    <paper-item>
+                        <paper-item-body class="text-container">
+                            <p class="left">Geolocation</p>
+                            <paper-toggle-button class="right" checked="${geolocation}" on-tap="${(e) => this._geoIsON(e)}"></paper-toggle-button>
+                        </paper-item-body>
+                    </paper-item>
+                </div>
+            </paper-material>
+            <paper-material class="paper-container" elevation="1">
+                <div role="listbox" class="settings">
+                    <paper-item>
+                        <paper-item-body class="text-container">
                             <p class="left">Owner Name</p>
                             <p class="right">${get(currentUser, 'displayName')}</p>
                         </paper-item-body>
@@ -339,7 +367,8 @@ export default class MainSettings extends connect(store)(LitElement) {
                     </paper-item>
                     <paper-item>
                         <mwc-button
-                            raised
+                            dense
+                            icon="link"
                             class="light"
                             label="Link to Google"
                             disabled="${providerIsGoogle}"
@@ -348,7 +377,8 @@ export default class MainSettings extends connect(store)(LitElement) {
                     </paper-item>
                     <paper-item>
                         <mwc-button
-                            raised
+                            dense
+                            icon="link"
                             class="light"
                             label="Link to Facebook"
                             disabled="${providerIsFacebook}"
@@ -356,20 +386,8 @@ export default class MainSettings extends connect(store)(LitElement) {
                         ></mwc-button>
                     </paper-item>
                 </div>
-                <div role="listbox" class="settings">
-                    <paper-item>
-                        <paper-item-body class="text-container">
-                            <p class="left">Notification</p>
-                            <paper-toggle-button class="right" checked="${notification}" on-tap="${(e) => this._notifIsON(e)}"></paper-toggle-button>
-                        </paper-item-body>
-                    </paper-item>
-                    <paper-item>
-                        <paper-item-body class="text-container">
-                            <p class="left">Geolocation</p>
-                            <paper-toggle-button class="right" checked="${geolocation}" on-tap="${(e) => this._geoIsON(e)}"></paper-toggle-button>
-                        </paper-item-body>
-                    </paper-item>
-                </div>
+            </paper-material>
+            <paper-material class="paper-container" elevation="1">
                 <div role="listbox" class="settings">
                     <paper-item>
                         <paper-item-body>
@@ -384,6 +402,7 @@ export default class MainSettings extends connect(store)(LitElement) {
                     </paper-item>
                     ${cameraItems}
                 </div>
+            </paper-material>
             </div>
     `;
     }

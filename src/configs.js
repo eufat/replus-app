@@ -1,5 +1,6 @@
-// const prod = process.env.NODE_ENV === 'production';
-const prod = false;
+const prod = true; // process.env.NODE_ENV === 'production';
+const version = '2.0.0-alpha.1';
+
 const googleMapsApi = 'AIzaSyCfGVFRrYf89QiMaQCiXUb-D_uDjUPCsCc';
 
 export const firebaseConfig = {
@@ -13,6 +14,7 @@ export const firebaseConfig = {
 
 export const env = {
     PRODUCTION: prod,
+    VERSION: version,
     CORE_IR: 'https://core.replus.co/ir/',
     CORE_API: prod ? 'https://core.replus.co/api-v2' : 'http://localhost:2000/api',
     CORE_POST: prod ? 'https://core.replus.co/post-v2' : 'http://localhost:2010/post',

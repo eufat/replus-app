@@ -92,7 +92,7 @@ export default class SettingsVision extends connect(store)(LitElement) {
         return html`
         <style>
             .settings {
-                border-bottom: 1px solid #ECEFF1;
+                border-bottom: 1px solid #0000000f;
             }
             .settings-right {
                 margin-left: auto;

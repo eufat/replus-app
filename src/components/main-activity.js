@@ -332,8 +332,8 @@ export default class activityMain extends connect(store)(LitElement) {
                     ${formattedDate}
                 </div>
                 <paper-material class="activity-group">
-                    <h4>${messageIcon()} ${item.message}</h4>
-                    <p>at ${item.room} source from ${item.source}</p>
+                    <p>${messageIcon()} ${item.message}</p>
+                    <p class="secondary">at ${item.room} source from ${item.source}</p>
                 </paper-material>
             `;
         });
@@ -436,7 +436,7 @@ export default class activityMain extends connect(store)(LitElement) {
 
                 .container {
                     margin: 0 auto 4rem;
-                    max-width: 960px;
+                    max-width: 680px;
                 }
 
                 paper-material {
@@ -460,6 +460,10 @@ export default class activityMain extends connect(store)(LitElement) {
 
                 p {
                     margin: 0;
+                }
+
+                p.secondary {
+                    color: #6e6e6e;
                 }
 
                 .center-vh {
@@ -491,7 +495,7 @@ export default class activityMain extends connect(store)(LitElement) {
                                 <div class="center-vh">
                                     <p>
                                         <iron-icon icon="icons:view-day"></iron-icon><br />
-                                        Your activity is empty
+                                        No activity found
                                     </p>
                                 </div>`
                     }

@@ -48,6 +48,11 @@ class MainDashboard extends connect(store)(LitElement) {
                 app-header {
                     background-color: #4664ae;
                     color: #fff;
+                    height: 56px;
+                }
+
+                app-toolbar {
+                    height: 56px;
                 }
 
                 app-header paper-icon-button {
@@ -70,7 +75,7 @@ class MainDashboard extends connect(store)(LitElement) {
                 #moreMenu {
                     margin: 0;
                     right: 0;
-                    top: 64px;
+                    top: 56px;
                     position: fixed;
                     display: none;
                     min-width: 200px;
@@ -87,7 +92,7 @@ class MainDashboard extends connect(store)(LitElement) {
                     display: block;
                     width: 100%;
                     position: fixed;
-                    border-top: 1px solid #ccc;
+                    border-top: 1px solid #0000000f;
                     height: 50px;
                     background-color: white;
                     bottom: 0;
@@ -120,10 +125,10 @@ class MainDashboard extends connect(store)(LitElement) {
             </style>
             <div id="body">
                 <!-- Dashboard app bar -->
-                <app-header slot="header">
+                <app-header slot="header" reveals>
                     <app-toolbar>
                     ${isBackable ? html`<paper-icon-button on-click="${() => this._onBack()}" icon="arrow-back"></paper-icon-button>` : null}
-                    ${_page == 'dashboard/remote-ac' || _page == 'dashboard/remote-tv' ? html`<div main-title>${toTitleCase(remoteName)}</div>` : html`<div main-title>${pageToTitle(_page)}</div>`}
+                    <div main-title>${_page == 'dashboard/remote-ac' || _page == 'dashboard/remote-tv' ? `${toTitleCase(remoteName)}` : `${pageToTitle(_page)}`}</div>
                     <paper-icon-button
                         class="more-button"
                         icon="more-vert"
