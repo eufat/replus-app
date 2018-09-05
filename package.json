@@ -3,7 +3,8 @@
     "version": "2.0.0-alpha.1",
     "flat": true,
     "repository": "https://github.com/eufat/replus-app.git",
-    "license": "BSD-3-Clause",
+    "author": "Replus Engineering",
+    "license": "unlicensed",
     "scripts": {
         "start": "polymer serve",
         "dev": "npm run start & npm run watch &",

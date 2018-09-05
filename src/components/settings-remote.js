@@ -106,7 +106,7 @@ export default class SettingsRemote extends connect(store)(LitElement) {
                 display: block;
             }
             .settings {
-                border-bottom: 1px solid #ECEFF1;
+                border-bottom: 1px solid #0000000f;
             }
             .settings-right {
                 margin-left: auto;

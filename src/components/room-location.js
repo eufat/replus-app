@@ -380,6 +380,11 @@ export default class Location extends connect(store)(LitElement) {
     _render({room, location, address, remotes, onePushButtons, commandIn, commandOut}) {
         return html`
             <style>
+                .container {
+                    margin: 0 auto;
+                    max-width: 680px;
+                    padding: 0 0.8rem 0;
+                }
                 /* google map with searchbox style */
                 #description {
                     font-family: Roboto;
@@ -510,101 +515,101 @@ export default class Location extends connect(store)(LitElement) {
                     margin-left: 10px;
                 }
             </style>
-            <!-- <input id="pac-input" class="controls" type="text" placeholder="Search Address"> -->
-            <div align="left" id="map" style="width: 100%; height: 400px;"></div>
-            <!-- <div id='map' style='width: 100%; height: 300px;'></div> -->
-            <div role="listbox" class="settings">
-                <paper-item>
-                    <paper-input
-                        id="address"
-                        label="Address"
-                        placeholder="Search Address"
-                        always-float-label>
-                    </paper-input>
-                </paper-item>
-                <paper-item>
-                    <mwc-button
-                        raised
-                        class="light"
-                        label="search"
-                        on-click="${() => this.getLocation(room.index)}"
-                    ></mwc-button>
-                </paper-item>
-                <paper-item>
-                    <paper-item-body class="text-container">
-                        <p class="left">Address</p>
-                        <p class="right">${address}</p>
-                    </paper-item-body>
-                </paper-item>
-                <paper-item>
-                    <paper-item-body class="text-container">
-                        <p class="left">Latitude</p>
-                        <p class="right">${get(location, 'lat')}</p>
-                    </paper-item-body>
-                </paper-item>
-                <paper-item>
-                    <paper-item-body class="text-container">
-                        <p class="left">Longitude</p>
-                        <p class="right">${get(location, 'lng')}</p>
-                    </paper-item-body>
-                </paper-item>
-                <hr>
-                <paper-item class="pointer">
-                    <paper-item-body class="text-container">
-                        <p class="left">Action in range</p>
-                    </paper-item-body>
-                    <div class="command-right">
+            <div class="container">
+                <div align="left" id="map" style="width: 100%; height: 400px;"></div>
+                <div role="listbox" class="settings">
+                    <paper-item>
+                        <paper-input
+                            id="address"
+                            label="Address"
+                            placeholder="Search Address"
+                            always-float-label>
+                        </paper-input>
+                    </paper-item>
+                    <paper-item>
+                        <mwc-button
+                            raised
+                            class="light"
+                            label="search"
+                            on-click="${() => this.getLocation(room.index)}"
+                        ></mwc-button>
+                    </paper-item>
+                    <paper-item>
+                        <paper-item-body class="text-container">
+                            <p class="left">Address</p>
+                            <p class="right">${address}</p>
+                        </paper-item-body>
+                    </paper-item>
+                    <paper-item>
+                        <paper-item-body class="text-container">
+                            <p class="left">Latitude</p>
+                            <p class="right">${get(location, 'lat')}</p>
+                        </paper-item-body>
+                    </paper-item>
+                    <paper-item>
+                        <paper-item-body class="text-container">
+                            <p class="left">Longitude</p>
+                            <p class="right">${get(location, 'lng')}</p>
+                        </paper-item-body>
+                    </paper-item>
+                    <hr>
+                    <paper-item class="pointer">
+                        <paper-item-body class="text-container">
+                            <p class="left">Action in range</p>
+                        </paper-item-body>
+                        <div class="command-right">
+                            ${
+                                commandIn == ''
+                                    ? html`
+                                    <mwc-button
+                                        id="geo-in-${room.index}"
+                                        class="mwc-edit"
+                                        label="Edit"
+                                        icon="edit"
+                                        on-click="${() => this.shadowRoot.getElementById('geoInDialog').open()}">
+                                    </mwc-button>`
+                                    : html`
+                                    ${commandIn}`
+                            }
+                        </div>
+                    </paper-item>
+                    <paper-item class="pointer">
+                        <paper-item-body class="text-container">
+                            <p class="left">Action out range</p>
+                        </paper-item-body>
+                        <div class="command-right">
                         ${
-                            commandIn == ''
+                            commandOut == ''
                                 ? html`
-                                <mwc-button
-                                    id="geo-in-${room.index}"
-                                    class="mwc-edit"
-                                    label="Edit"
-                                    icon="edit"
-                                    on-click="${() => this.shadowRoot.getElementById('geoInDialog').open()}">
-                                </mwc-button>`
+                                    <mwc-button
+                                        id="geo-out-${room.index}"
+                                        class="mwc-edit"
+                                        label="Edit"
+                                        icon="edit"
+                                        on-click="${() => this.shadowRoot.getElementById('geoOutDialog').open()}">
+                                    </mwc-button>`
                                 : html`
-                                ${commandIn}`
+                                    ${commandOut}`
                         }
-                    </div>
-                </paper-item>
-                <paper-item class="pointer">
-                    <paper-item-body class="text-container">
-                        <p class="left">Action out range</p>
-                    </paper-item-body>
-                    <div class="command-right">
-                    ${
-                        commandOut == ''
-                            ? html`
-                                <mwc-button
-                                    id="geo-out-${room.index}"
-                                    class="mwc-edit"
-                                    label="Edit"
-                                    icon="edit"
-                                    on-click="${() => this.shadowRoot.getElementById('geoOutDialog').open()}">
-                                </mwc-button>`
-                            : html`
-                                ${commandOut}`
-                    }
-                    </div>
-                </paper-item>
-                <paper-item>
-                    <mwc-button
-                        raised
-                        id="save-button-${room.index}"
-                        class="light"
-                        label="save"
-                        on-click="${() => this.saveLocation()}"
-                    ></mwc-button>
-                    <mwc-button
-                        raised
-                        id="reset-button-${room.index}"
-                        class="light"
-                        label="reset"
-                        on-click="${() => this.resetLocation()}"
-                    ></mwc-button>
-                </paper-item>
+                        </div>
+                    </paper-item>
+                    <paper-item>
+                        <mwc-button
+                            raised
+                            id="save-button-${room.index}"
+                            class="light"
+                            label="save"
+                            on-click="${() => this.saveLocation()}"
+                        ></mwc-button>
+                        <mwc-button
+                            raised
+                            id="reset-button-${room.index}"
+                            class="light"
+                            label="reset"
+                            on-click="${() => this.resetLocation()}"
+                        ></mwc-button>
+                    </paper-item>
+                </div>
             </div>
             <paper-dialog id="geoInDialog" with-backdrop>
                 <div class="horizontal layout">
@@ -663,7 +668,7 @@ export default class Location extends connect(store)(LitElement) {
                 <div class="buttons">
                     <mwc-button on-click="${() => this.setCommandOut(this.shadowRoot)}" dialog-confirm label="Add This Setting"></mwc-button>
                 </div>
-            </paper-dialog
+            </paper-dialog>
         `;
     }
 }

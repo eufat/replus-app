@@ -265,7 +265,7 @@ export default class MainRooms extends connect(store)(LitElement) {
                                 ? html`
                                     <div class="remote-item">
                                         <mwc-button
-                                            class="remove-button"
+                                            class="remove-button blue-button"
                                             label="Remove"
                                             icon="close"
                                             on-click="${() => this._removeRemote(remote.id)}">
@@ -311,7 +311,7 @@ export default class MainRooms extends connect(store)(LitElement) {
                                     <mwc-button
                                         label="Remove"
                                         icon="close"
-
+                                        class="blue-button"
                                         on-click="${() => this._removeDevice(device.name)}">
                                     </mwc-button>
                                     <img class="appliance-icon" src="images/cam-icon.png"/>
@@ -412,7 +412,7 @@ export default class MainRooms extends connect(store)(LitElement) {
                         >
                         </paper-input>
                         <div class="buttons" on-click="${() => this._handleNewDeviceAdd(room)}">
-                            <mwc-button dialog-confirm label="Add This Device" disabled="${!(this.newDevice.deviceID || this.newDevice.deviceCode)}"></mwc-button>
+                            <mwc-button class="blue-button" dialog-confirm label="Add This Device" disabled="${!(this.newDevice.deviceID || this.newDevice.deviceCode)}"></mwc-button>
                         </div>
                     </div>
                 </paper-dialog>
@@ -452,7 +452,7 @@ export default class MainRooms extends connect(store)(LitElement) {
                             })}
                         </select>
                         <div class="buttons">
-                            <mwc-button  dialog-confirm label="Add This Remote" on-click="${() => this._handleNewRemoteAdd(item.id)}"></mwc-button>
+                            <mwc-button class="blue-button" dialog-confirm label="Add This Remote" on-click="${() => this._handleNewRemoteAdd(item.id)}"></mwc-button>
                         </div>
                     </div>
                 </paper-dialog>
@@ -474,7 +474,7 @@ export default class MainRooms extends connect(store)(LitElement) {
                         >
                         </paper-input>
                         <div class="buttons" on-click="${() => this._handleNewCameraAdd(item.id)}">
-                            <mwc-button dialog-confirm label="Add This Camera" ></mwc-button>
+                            <mwc-button class="blue-button" dialog-confirm label="Add This Camera" ></mwc-button>
                         </div>
                     </div>
                 </paper-dialog>
@@ -490,11 +490,13 @@ export default class MainRooms extends connect(store)(LitElement) {
                                         always-float-label>
                                     </paper-input>
                                     <mwc-button
+                                        class="blue-button"
                                         label="Exit Edit"
                                         icon="close"
                                         on-click="${() => this._exitOnEdit(roomIndex)}">
                                     </mwc-button>
                                     <mwc-button
+                                        class="blue-button"
                                         label="Delete Room"
                                         icon="delete"
                                         on-click="${() => this._removeRoom(roomIndex)}">
@@ -502,8 +504,10 @@ export default class MainRooms extends connect(store)(LitElement) {
                                 : html`
                                     <style>
                                         mwc-button.mwc-edit {
+                                            display: inline-block;
                                             position: absolute;
-                                            right: 30px;
+                                            right: 1rem;
+                                            top: 1rem;
                                         }
                                         @media screen and (max-width: 320px) {
                                             mwc-button.mwc-edit {
@@ -519,7 +523,8 @@ export default class MainRooms extends connect(store)(LitElement) {
                                     </style>
                                     <h1>${item.name}</h1>
                                     <mwc-button
-                                        class="mwc-edit"
+                                        dense
+                                        class="mwc-edit blue-button"
                                         label="Edit"
                                         icon="edit"
                                         on-click="${() => this._enterOnEdit(roomIndex)}">
@@ -527,14 +532,14 @@ export default class MainRooms extends connect(store)(LitElement) {
                                     <div class="top-button">
                                         <a href="/dashboard/room-schedule" on-click="${() => this._handleActiveRoom(room, roomIndex)}">
                                             <mwc-button
-                                                class="mwc-schedule"
+                                                class="mwc-schedule blue-button"
                                                 label="Schedule"
                                                 icon="calendar_today">
                                             </mwc-button>
                                         </a>
                                         <a href="/dashboard/room-location" on-click="${() => this._handleActiveRoom(room, roomIndex)}">
                                             <mwc-button
-                                                class="mwc-location"
+                                                class="mwc-location blue-button"
                                                 label="Location"
                                                 icon="location_on">
                                             </mwc-button>
@@ -556,6 +561,7 @@ export default class MainRooms extends connect(store)(LitElement) {
                             onEdit
                                 ? html`
                                     <mwc-button
+                                        class="blue-button add-device-button"
                                         label="Add device"
                                         icon="add"
                                         on-click="${() => this.shadowRoot.getElementById(`add-new-device-modal-${roomIndex}`).open()}">
@@ -639,7 +645,7 @@ export default class MainRooms extends connect(store)(LitElement) {
                     padding: 5px;
                     margin-right: 0.5rem;
                     border-radius: 10px;
-                    border: 1px solid #ccc;
+                    border: 1px solid #0000000f;
                 }
 
                 .remote-item:hover, .camera-item:hover {
@@ -696,7 +702,7 @@ export default class MainRooms extends connect(store)(LitElement) {
 
                 .paper-container {
                     margin: 0 auto;
-                    max-width: 960px;
+                    max-width: 680px;
                     padding: 0 0.8rem 5rem;
                 }
 
@@ -742,7 +748,10 @@ export default class MainRooms extends connect(store)(LitElement) {
                     --mdc-theme-secondary: #4664ae;
                 }
 
-
+                .add-device-button {
+                    display: inline-block;
+                    margin-top: 1rem;
+                }
 
                 .wide {
                     width: 100%;

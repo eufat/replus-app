@@ -6,7 +6,7 @@ export default class MainMetrics extends LitElement {
             <style>
                 .container {
                     margin: 0 auto;
-                    max-width: 960px;
+                    max-width: 680px;
                 }
 
                 .center-vh {
@@ -32,7 +32,7 @@ export default class MainMetrics extends LitElement {
                 <div class="center-vh">
                     <p>
                         <iron-icon icon="icons:timeline"></iron-icon><br />
-                        Your activity is empty
+                        No metrics found
                     </p>
                 </div>
             </div>

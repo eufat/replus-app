@@ -1,4 +1,5 @@
 import {LitElement, html} from '@polymer/lit-element';
+import {env} from '../configs';
 
 export default class Help extends LitElement {
     static get properties() {
@@ -32,6 +33,7 @@ export default class Help extends LitElement {
                     padding: 10px 20px;
                     background-color: white;
                     margin-top: 1rem;
+                    border-radius: 5px;
                 }
 
                 .help-container {
@@ -43,6 +45,7 @@ export default class Help extends LitElement {
                     display: flex;
                     flex-direction: row;
                     flex-wrap: wrap;
+                    margin-bottom: 1rem;
                 }
 
                 .section-content {
@@ -50,12 +53,12 @@ export default class Help extends LitElement {
                 }
 
                 img.add-to-homescreen-image {
-                    width: 300px;
+                    width: 100%;
                 }
 
                 .paper-container {
                     margin: 0 auto;
-                    max-width: 960px;
+                    max-width: 680px;
                     padding: 0 0.8rem 5rem;
                 }
 
@@ -70,10 +73,10 @@ export default class Help extends LitElement {
             </style>
             <div class="paper-container">
                 <paper-material>
-                    <h3>App Installation</h3>
+                    <h3>Add Replus App to Home screen</h3>
                     <section>
                         <div class="section-content">
-                            <h4>1. Add Replus App to homescreen for Android (Chrome)</h4>
+                            <h4>1. Android (Chrome)</h4>
                             <img class="add-to-homescreen-image" src="images/add-to-homescreen-android.png" />
                             <ol>
                                 <li>Click the top vertical three dot icon</li>
@@ -82,7 +85,7 @@ export default class Help extends LitElement {
                             </ol>
                         </div>
                         <div class="section-content">
-                            <h4>2. Add Replus App to homescreen for iOS (Safari)</h4>
+                            <h4>2. iOS (Safari)</h4>
                             <img class="add-to-homescreen-image" src="images/add-to-homescreen-ios.png" />
                             <ol>
                                 <li>Click bottom share icon</li>
@@ -93,10 +96,9 @@ export default class Help extends LitElement {
                     </section>
                 </paper-material>
                 <paper-material>
-                    <h3>Support</h3>
+                    <h3>Contact and Support</h3>
                     <section>
                         <div class="section-content">
-                            <h4>Contact Us</h4>
                             <p>
                                 <a href="mail:hello@replus.co">hello@replus.co</a>
                                 <br />
@@ -106,6 +108,7 @@ export default class Help extends LitElement {
                                 <br /> Ruang Tenant Gedung ILRC Lantai 2
                                 <br /> Universitas Indonesia, Depok, Jawa Barat
                                 </p>
+                                <p>Application version ${env.VERSION}</p>
                             </p>
                         </div>
                     </section>

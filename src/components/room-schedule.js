@@ -40,6 +40,12 @@ class AddSchedule extends connect(store)(PolymerElement) {
     static get template() {
         return html`
             <style include="iron-flex iron-flex-alignment">
+                .container {
+                    margin: 0 auto;
+                    max-width: 680px;
+                    padding: 0 0.8rem 0;
+                }
+
                 :host {
                     display: block;
                     overflow: auto;
@@ -120,7 +126,7 @@ class AddSchedule extends connect(store)(PolymerElement) {
 
                 .paper-container {
                     margin: 0 auto;
-                    max-width: 960px;
+                    max-width: 680px;
                     padding-bottom: 50px;
                 }
 
@@ -139,7 +145,7 @@ class AddSchedule extends connect(store)(PolymerElement) {
 
                 paper-card {
                     display: block;
-                    margin: 1rem 0.8rem;
+                    margin: 1rem 0;
                     border-radius: 5px;
                 }
 
@@ -175,7 +181,7 @@ class AddSchedule extends connect(store)(PolymerElement) {
                 }
 
                 input {
-                    border: 1px solid #ccc;
+                    border: 1px solid #0000000f;
                     color: #888;
                     margin-top: 0.5em;
                     margin-bottom: 0.5em;
@@ -316,6 +322,7 @@ class AddSchedule extends connect(store)(PolymerElement) {
                     </div>
                 </div>
             </paper-dialog>
+            <div class="container">
             <template is="dom-repeat" items="{{schedules}}" as="schedule">
                 <paper-card>
                     <div class="card-content">
@@ -331,6 +338,7 @@ class AddSchedule extends connect(store)(PolymerElement) {
                     </div>
                 </paper-card>
             </template>
+            </div>
             <div class="rooms-container">
                 <div class="paper-container">
                     <mwc-button
