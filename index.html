@@ -9,22 +9,10 @@
   <title>Replus</title>
   <meta name="description" content="A Replus Progressive Web App (PWA) for Replus Remote and Replus Vision">
 
-  <!--
-      The `<base>` tag below is present to support two advanced deployment options:
-      1) Differential serving. 2) Serving from a non-root path.
-
-      Instead of manually editing the `<base>` tag yourself, you should generally either:
-      a) Add a `basePath` property to the build configuration in your `polymer.json`.
-      b) Use the `--base-path` command-line option for `polymer build`.
-    -->
   <base href="/">
 
   <link rel="icon" href="images/favicon.ico">
-
-  <!-- See https://goo.gl/OOhYW5 -->
   <link rel="manifest" href="manifest.json">
-
-  <!-- See https://goo.gl/qRE0vM -->
   <meta name="theme-color" content="#4664ae">
 
   <!-- Add to homescreen for Chrome on Android. Fallback for manifest.json -->
@@ -76,20 +64,17 @@
   <noscript>
     Please enable JavaScript to view this website.
   </noscript>
-  <!-- Load webcomponents-loader.js to check and load any polyfills your browser needs -->
-  <script src="node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/5.0.4/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/5.0.4/firebase-auth.js"></script>
-  <script src="https://cdn.firebase.com/libs/firebaseui/2.7.0/firebaseui.js" async></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.10/lodash.min.js" async></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.0/socket.io.js" async></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js" async></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.5.24/dayjs.min.js" async></script>
+  <script defer src="node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/5.4.1/firebase-app.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/5.4.1/firebase-auth.js"></script>
+  <script defer src="https://cdn.firebase.com/libs/firebaseui/3.4.0/firebaseui.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.10/lodash.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.slim.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.7.5/dayjs.min.js"></script>
   <script defer src="https://cdn.rawgit.com/GoogleCloudPlatform/stackdriver-errors-js/v0.4.0/dist/stackdriver-errors-concat.min.js"></script>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCfGVFRrYf89QiMaQCiXUb-D_uDjUPCsCc&libraries=places"></script>
-
-  <!-- Built with love using PWA Starter Kit -->
-  <script type="module" src="src/components/main-app.js"></script>
+  <script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCfGVFRrYf89QiMaQCiXUb-D_uDjUPCsCc&libraries=places"></script>
+  <script defer type="module" src="src/components/main-app.js"></script>
 </body>
 
 </html>

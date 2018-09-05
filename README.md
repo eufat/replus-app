@@ -4,17 +4,17 @@ A Replus Progressive Web App (PWA) for Replus Remote and Replus Vision.
 
 ### Prerequisites
 
-*   Latest Node.js
-*   Latest Chrome Browser
-*   Google Cloud SDK
-*   Polymer CLI
-*   Yarn
+-   Latest Node.js
+-   Latest Chrome Browser
+-   Google Cloud SDK
+-   Polymer CLI
+-   npm
 
-### Clone and pull all branches
+### Clone
 
 ```
 git clone https://github.com/eufat/replus-app.git
-git branch -r | grep -v '\->' | while read remote; do git branch --track "${remote#origin/}" "$remote"; done
+cd replus-app
 ```
 
 ### Install project
@@ -22,10 +22,10 @@ git branch -r | grep -v '\->' | while read remote; do git branch --track "${remo
 Start by installing all dependencies and dev dependencies
 
 ```
-npm
+npm install
 ```
 
-Start project with
+Start project backend on https://github.com/RianWardana/mqtt-remote-api then
 
 ```
 npm run start
@@ -36,5 +36,5 @@ npm run start
 Deployment process include building builds and App Engine deployment
 
 ```
-yarn run deploy
+npm run deploy
 ```

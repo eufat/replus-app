@@ -19,7 +19,7 @@ import '@polymer/iron-flex-layout/iron-flex-layout-classes';
 import '@polymer/iron-flex-layout/iron-flex-layout';
 
 import {remoteCommand} from '../actions/remote';
-import {toTitleCase, getTVCodesetFromBrand} from '../utils';
+import {toTitleCase} from '../utils';
 import {store} from '../store';
 
 const get = _.get;

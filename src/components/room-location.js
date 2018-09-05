@@ -10,7 +10,7 @@ import '@em-polymer/google-map/google-map';
 
 import {store} from '../store.js';
 import {connect} from 'pwa-helpers/connect-mixin';
-import {getLocation, reverseGeocode, saveLocation, setLocation, setActiveRoom} from '../actions/remote.js';
+import {reverseGeocode, saveLocation} from '../actions/remote.js';
 import {env} from '../configs.js';
 import {log} from '../utils.js';
 

@@ -1,7 +1,7 @@
 import {coreClient, corePost, coreIR, coreSchedule, googleMaps} from '../client';
 import {qs} from '../utils';
 import errorHandler from '../error';
-import {showSnackbar, showProgress, closeProgress, showBack, closeBack} from './app';
+import {showSnackbar, showProgress, closeProgress, showBack} from './app';
 import {toTitleCase} from '../utils';
 const get = _.get; // import from lodash
 

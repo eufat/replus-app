@@ -89,7 +89,7 @@ export default class activityMain extends connect(store)(LitElement) {
         */
 
         Notification.requestPermission((status) => {
-            console.log('Notification permission status:', status);
+            log('Notification permission status:', status);
         });
 
         if (Notification.permission !== 'granted') {

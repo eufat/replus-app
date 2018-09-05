@@ -6,7 +6,6 @@ import '@polymer/paper-item/paper-item';
 import '@polymer/paper-dialog';
 import '@polymer/paper-radio-group';
 import '@polymer/paper-radio-button';
-import {Button} from '@material/mwc-button';
 
 import firebase from '../firebase.js';
 import {store} from '../store.js';

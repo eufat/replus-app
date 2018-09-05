@@ -13,7 +13,7 @@ import '@polymer/iron-icons/image-icons';
 
 import {setRooms, removeDevice, editRoom, addRoom, removeRoom, setNewRemote, addRemote, removeRemote, addDevice, addCamera, setNewDevice, setActiveRemote, setActiveRoom} from '../actions/remote';
 import {setActiveVision} from '../actions/vision';
-import {getNewRoomTemplate, brandsList, brandsAC, brandsTV, toTitleCase} from '../utils';
+import {getNewRoomTemplate, brandsAC, brandsTV, toTitleCase} from '../utils';
 import {store} from '../store';
 
 const get = _.get;
@@ -223,9 +223,9 @@ export default class MainRooms extends connect(store)(LitElement) {
         const remoteItem = this.shadowRoot.getElementById(`remote-${roomIndex}0`);
         const remoteWidth = remoteItem.offsetWidth;
         if (button == 'right') {
-            remotes.scrollLeft += (remoteWidth + 12);
+            remotes.scrollLeft += remoteWidth + 12;
         } else if (button == 'left') {
-            remotes.scrollLeft -= (remoteWidth + 12);
+            remotes.scrollLeft -= remoteWidth + 12;
         }
     }
 

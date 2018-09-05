@@ -16,7 +16,7 @@ import '@polymer/iron-flex-layout/iron-flex-layout';
 // import {rotationsList, resolutionsList} from '../utils';
 import {store} from '../store.js';
 import {addSetting, setSettings} from '../actions/remote.js';
-import {brandsList, toTitleCase} from '../utils.js';
+import {toTitleCase} from '../utils.js';
 
 export default class SettingsRemote extends connect(store)(LitElement) {
     static get properties() {

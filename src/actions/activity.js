@@ -1,7 +1,6 @@
-import {showSnackbar, showProgress, closeProgress, showBack, closeBack} from './app';
+import {showProgress, closeProgress} from './app';
 import {coreActivity} from '../client';
 import errorHandler from '../error';
-import {env} from '../configs';
 
 const get = _.get;
 

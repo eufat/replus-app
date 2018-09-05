@@ -15,6 +15,7 @@ import firebase from '../firebase.js';
 import {setActiveDevice, setActiveRemotes} from '../actions/remote.js';
 import {linkWithProvider, notification, setGeolocation} from '../actions/app.js';
 import {showBack} from '../actions/app.js';
+import {log} from '../utils';
 
 const get = _.get;
 const values = _.values;
@@ -93,10 +94,10 @@ export default class MainSettings extends connect(store)(LitElement) {
         const isON = e.target.active;
         if (isON) {
             store.dispatch(setGeolocation(isON));
-            console.log('Geolocation On');
+            log('Geolocation On');
         } else {
             store.dispatch(setGeolocation(isON));
-            console.log('Geolocation Off');
+            log('Geolocation Off');
         }
     }
 
