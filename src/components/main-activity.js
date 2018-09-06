@@ -87,19 +87,6 @@ export default class activityMain extends connect(store)(LitElement) {
             this.addFrameStored(data);
         });
         */
-
-        Notification.requestPermission((status) => {
-            log(`Notification permission status: ${status}`);
-        });
-
-        if (Notification.permission !== 'granted') {
-            Notification.requestPermission((permission) => {
-                if (!('permission' in Notification)) {
-                    Notification.permission = permission;
-                }
-            });
-        }
-
         if (this.rooms.length > 0 && !this.listening) {
             const url = `${CORE_ACTIVITY}/activity`;
             const socket = io(url, {

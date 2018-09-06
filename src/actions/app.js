@@ -288,6 +288,17 @@ export const notification = (state) => (dispatch, getState) => {
         coreClient().put('/user-edit', qs({ name, notification: state }), { params: { uid } });
         dispatch(setNotification(state));
         if (state) {
+            Notification.requestPermission((status) => {
+                log(`Notification permission status: ${status}`);
+            });
+
+            if (Notification.permission !== 'granted') {
+                Notification.requestPermission((permission) => {
+                    if (!('permission' in Notification)) {
+                        Notification.permission = permission;
+                    }
+                });
+            }
             dispatch(showSnackbar('Notification on'));
         } else {
             dispatch(showSnackbar('Notification off'));
