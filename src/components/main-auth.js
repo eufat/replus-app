@@ -1,132 +1,108 @@
-import {PolymerElement, html} from '@polymer/polymer';
+import {LitElement, html} from '@polymer/lit-element';
+import {connect} from 'pwa-helpers/connect-mixin';
 
-import '@polymer/iron-ajax';
-import '@polymer/paper-material';
-import '@polymer/paper-spinner/paper-spinner';
-import '@polymer/paper-button';
+import '@material/mwc-button';
 
-import firebase from '../firebase.js';
+import firebase from '../firebase';
+import errorHandler from '../error';
+import {store} from '../store';
 import {userDataKey} from '../utils.js';
-import {store} from '../store.js';
-
 import {setCurrentUser, authenticateUser} from '../actions/app.js';
 
-class MainAuth extends PolymerElement {
-    static get template() {
-        return html`
-            <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/2.7.0/firebaseui.css" />
-            <style>
-                :host {
-                    display: block;
-                }
+const pick = _.pick;
 
-                div#spinner {
-                    padding: 20px;
+export default class MainAuth extends connect(store)(LitElement) {
+    constructor() {
+        super();
+        this.googleProvider = new firebase.auth.GoogleAuthProvider();
+        this.facebookProvider = new firebase.auth.FacebookAuthProvider();
+    }
+
+    _stateChanged() {}
+
+    handleOnGoogleSignIn() {
+        firebase.auth().signInWithRedirect(this.googleProvider);
+    }
+
+    handleOnFacebookSignIn() {
+        firebase.auth().signInWithRedirect(this.facebookProvider);
+    }
+
+    _render() {
+        return html`
+            <style>
+                .container {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    height: 100vh;
+                    padding: 0 1rem;
+                    max-width: 340px;
+                    margin: 0 auto;
                 }
 
                 p {
-                    margin: 0 24px 0 30px;
                     color: #252525;
                 }
-
                 p#header {
-                    margin-top: 20px;
-                    font-size: 32px;
+                    margin-top: 0;
+                    margin-bottom: 0.5rem;
+                    font-size: 1.5rem;
                 }
-
                 p#subheader {
-                    font-size: 16px;
-                    margin-bottom: 10px;
+                    margin-bottom: 1rem;
+                    font-size: 1rem;
+                    color: #6e6e6e;
                 }
 
-                p#subheader span {
-                    color: #2B5788;
+                .auth-container {
+                    background-color: white;
+                    border-radius: 5px;
+                    overflow: auto;
+                    padding: 2rem;
                 }
 
-                paper-material {
-                    display: block;
-                    padding: 16px;
-                    padding-bottom: 25px;
-                    background: white;
+                mwc-button.google-button {
+                    margin-top: 1rem;
+                    width: 100%;
+                    border: 1px solid #dadce0;
+                    border-radius: 5px;
+                    --mdc-theme-on-primary: white;
+                    --mdc-theme-primary: #4285F4;
+                    --mdc-theme-on-secondary: white;
+                    --mdc-theme-secondary: #4285F4;
                 }
 
-                paper-spinner {
-                    --paper-spinner-layer-1-color: var(--app-primary-color);
-                    --paper-spinner-layer-3-color: var(--app-primary-color);
-                    --paper-spinner-layer-2-color: #3498db;
-                    --paper-spinner-layer-4-color: #3498db;
+                mwc-button.google-button:hover {
+                    background-color: #4285f40a;
+                    border: 1px solid #d2e3fc;
                 }
 
-                #container {
-                    width: 300px;
+                mwc-button.facebook-button {
+                    margin-top: 1rem;
+                    width: 100%;
+                    border: 1px solid #dadce0;
+                    border-radius: 5px;
+                    --mdc-theme-on-primary: white;
+                    --mdc-theme-primary: #4267B2;
+                    --mdc-theme-on-secondary: white;
+                    --mdc-theme-secondary: #4267B2;
+                }
+
+                mwc-button.facebook-button:hover {
+                    background-color: #4285f40a;
+                    border: 1px solid #d2e3fc;
                 }
             </style>
-            <div id="container" class="vertical layout">
-                <paper-material>
-                    <p id="header">Sign in</p>
-                    <p id="subheader">to continue using Replus</p>
-                    <div id="spinner" class="horizontal layout center-justified">
-                        <paper-spinner active></paper-spinner>
-                    </div>
-                    <div id="firebaseuicontainer"></div>
+            <div class="container">
+                <paper-material class="auth-container" elevation="1">
+                    <p id="header">Sign in to Replus</p>
+                    <p id="subheader">Use your social account to continue.</p>
+                    <mwc-button class="width google-button" on-click="${() => this.handleOnGoogleSignIn()}">Continue with Google</mwc-button>
+                    <mwc-button class="width facebook-button" on-click="${() => this.handleOnFacebookSignIn()}">Continue with Facebook</mwc-button>
                 </paper-material>
             </div>
     `;
-    }
-
-    ready() {
-        super.ready();
-        const thisMainAuth = this;
-
-        thisMainAuth.setupPosition();
-
-        this.$.firebaseuicontainer.style.display = 'none';
-
-        window.addEventListener('resize', () => {
-            this.setupPosition();
-        });
-
-        this.loadFirebaseUI();
-    }
-
-    setupPosition() {
-        const thisMainAuth = this;
-        thisMainAuth.$.container.style.marginTop = (window.innerHeight - 294) / 2 - 100 + 'px';
-        thisMainAuth.$.container.style.marginLeft = (window.innerWidth - 300) / 2 + 'px';
-
-        if (window.innerWidth < 640) {
-            thisMainAuth.$.container.style.marginTop = (window.innerHeight - 294) / 2 + 'px';
-        }
-    }
-
-    loadFirebaseUI() {
-        const thisMainAuth = this;
-        const uiConfig = {
-            signInSuccessUrl: '/dashboard',
-            signInOptions: [
-                firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-                {
-                    provider: firebase.auth.FacebookAuthProvider.PROVIDER_ID,
-                    scopes: ['public_profile', 'email'],
-                },
-            ],
-            callbacks: {
-                signInSuccessWithAuthResult: (authResult, redirectUrl) => {
-                    const currentUser = _.pick(authResult.user, userDataKey);
-                    store.dispatch(authenticateUser());
-                    store.dispatch(setCurrentUser(currentUser));
-                    return true;
-                },
-                uiShown: () => {
-                    thisMainAuth.$.firebaseuicontainer.style.display = 'block';
-                    thisMainAuth.$.spinner.style.display = 'none';
-                },
-            },
-        };
-
-        this.ui = new firebaseui.auth.AuthUI(firebase.auth());
-
-        this.ui.start(thisMainAuth.$.firebaseuicontainer, uiConfig);
     }
 }
 

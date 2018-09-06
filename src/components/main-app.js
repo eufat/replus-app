@@ -39,58 +39,10 @@ import './room-location';
 const includes = _.includes;
 
 class MainApp extends connect(store)(LitElement) {
-    _render({appTitle, _page, _drawerOpened, _snackbarOpened, _snackbarText, _offline}) {
-        const onIndex = (parent) => {
-            if (_page) {
-                // Check if it is only parent. ex: 'dashboard' is only parent.
-                const onlyParent = includes(_page, parent) && !includes(_page, '/');
-
-                let paths = _page.split('/');
-                paths = paths.filter((item) => item !== '');
-
-                // Check either multilevel or not. ex: 'dashboard/test' is multilevel.
-                const notMultilevel = !(paths.length > 1);
-
-                // If only the parent and slash. ex: 'dashboard/' is only parent with slash.
-                const onlyParentAndSlash = includes(_page, parent) && notMultilevel;
-                return onlyParent || onlyParentAndSlash;
-            }
-        };
-
-        return html`
-            <style>
-                .page {
-                    display: none;
-                }
-
-                .page[active] {
-                    display: block;
-                }
-            </style>
-            <main class="main-content">
-                <main-auth class="page" active?="${includes(_page, 'auth')}"></main-auth>
-                <main-dashboard class="page" active?="${includes(_page, 'dashboard')}">
-                    <main-rooms class="page" active?="${includes(_page, 'rooms') || onIndex('dashboard')}"></main-rooms>
-                    <room-schedule class="page" active?="${includes(_page, 'room-schedule')}"></room-schedule>
-                    <room-location class="page" active?="${includes(_page, 'room-location')}"></room-location>
-                    <remote-ac class="page" active?="${includes(_page, 'remote-ac')}"></remote-ac>
-                    <remote-tv class="page" active?="${includes(_page, 'remote-tv')}"></remote-tv>
-                    <remote-vision class="page" active?="${includes(_page, 'remote-vision')}"></remote-vision>
-                    <main-activity class="page" active?="${includes(_page, 'activity')}"></main-activity>
-                    <main-metrics class="page" active?="${includes(_page, 'metrics')}"></main-metrics>
-                    <main-settings class="page" active?="${includes(_page, 'settings')}"></main-settings>
-                    <settings-vision class="page" active?="${includes(_page, 'setting-vision')}"></settings-vision>
-                    <settings-remote class="page" active?="${includes(_page, 'setting-remote')}"></settings-remote>
-                    <main-help class="page" active?="${includes(_page, 'help')}"></main-help>
-                </main-dashboard>
-            </main>
-            <snack-bar active?="${_snackbarOpened}" text="${_snackbarText}"></snack-bar>
-    `;
-    }
-
     static get properties() {
         return {
             appTitle: String,
+            loaded: Boolean,
             _page: String,
             _drawerOpened: Boolean,
             _snackbarOpened: Boolean,
@@ -102,6 +54,7 @@ class MainApp extends connect(store)(LitElement) {
     constructor() {
         super();
         setPassiveTouchGestures(true);
+        this.loaded = false;
     }
 
     _firstRendered() {
@@ -110,6 +63,7 @@ class MainApp extends connect(store)(LitElement) {
         installMediaQueryWatcher(`(min-width: 460px)`, (matches) => store.dispatch(updateLayout(matches)));
 
         firebase.auth().onAuthStateChanged((firebaseUser) => {
+            this.loaded = true;
             if (firebaseUser) {
                 store.dispatch(authenticateUser());
                 store.dispatch(setCurrentUser(firebaseUser));
@@ -137,6 +91,72 @@ class MainApp extends connect(store)(LitElement) {
         this._snackbarOpened = state.app.snackbarOpened;
         this._snackbarText = state.app.snackbarText;
         this._drawerOpened = state.app.drawerOpened;
+    }
+
+    _render({appTitle, _page, _drawerOpened, _snackbarOpened, _snackbarText, _offline}) {
+        const onIndex = (parent) => {
+            if (_page) {
+                // Check if it is only parent. ex: 'dashboard' is only parent.
+                const onlyParent = includes(_page, parent) && !includes(_page, '/');
+
+                let paths = _page.split('/');
+                paths = paths.filter((item) => item !== '');
+
+                // Check either multilevel or not. ex: 'dashboard/test' is multilevel.
+                const notMultilevel = !(paths.length > 1);
+
+                // If only the parent and slash. ex: 'dashboard/' is only parent with slash.
+                const onlyParentAndSlash = includes(_page, parent) && notMultilevel;
+                return onlyParent || onlyParentAndSlash;
+            }
+        };
+
+        return html`
+            <style>
+                .page {
+                    display: none;
+                }
+
+                .page[active] {
+                    display: block;
+                }
+
+                .center {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    height: 100vh;
+                }
+            </style>
+            <main class="main-content">
+                ${
+                    this.loaded
+                        ? html`
+                            <main-auth class="page" active?="${includes(_page, 'auth')}"></main-auth>
+                            <main-dashboard class="page" active?="${includes(_page, 'dashboard')}">
+                                <main-rooms class="page" active?="${includes(_page, 'rooms') || onIndex('dashboard')}"></main-rooms>
+                                <room-schedule class="page" active?="${includes(_page, 'room-schedule')}"></room-schedule>
+                                <room-location class="page" active?="${includes(_page, 'room-location')}"></room-location>
+                                <remote-ac class="page" active?="${includes(_page, 'remote-ac')}"></remote-ac>
+                                <remote-tv class="page" active?="${includes(_page, 'remote-tv')}"></remote-tv>
+                                <remote-vision class="page" active?="${includes(_page, 'remote-vision')}"></remote-vision>
+                                <main-activity class="page" active?="${includes(_page, 'activity')}"></main-activity>
+                                <main-metrics class="page" active?="${includes(_page, 'metrics')}"></main-metrics>
+                                <main-settings class="page" active?="${includes(_page, 'settings')}"></main-settings>
+                                <settings-vision class="page" active?="${includes(_page, 'setting-vision')}"></settings-vision>
+                                <settings-remote class="page" active?="${includes(_page, 'setting-remote')}"></settings-remote>
+                                <main-help class="page" active?="${includes(_page, 'help')}"></main-help>
+                            </main-dashboard>
+                        `
+                        : html`
+                            <div class="center">
+                                <paper-spinner active></paper-spinner>
+                            </div>
+                        `
+                }
+            </main>
+            <snack-bar active?="${_snackbarOpened}" text="${_snackbarText}"></snack-bar>
+    `;
     }
 }
 
