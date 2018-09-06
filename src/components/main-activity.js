@@ -13,13 +13,10 @@ import {store} from '../store';
 import {fetchActivities} from '../actions/activity';
 import {showSnackbar} from '../actions/app';
 
-// import {getEventsDummy, getRemoteActivityDummy} from '../dummy.js';
-
 const get = _.get;
 const values = _.values;
 const concat = _.concat;
 
-// const VISION_ACTIVITY = env.VISION_ACTIVITY;
 const CORE_ACTIVITY = env.CORE_ACTIVITY;
 
 export default class activityMain extends connect(store)(LitElement) {
@@ -70,23 +67,6 @@ export default class activityMain extends connect(store)(LitElement) {
     }
 
     _didRender() {
-        /*
-        const url = `${VISION_ACTIVITY}/p1z3r02`;
-        this.activityURL = url;
-        const socket = io(url);
-        socket.on('connect', () => {
-            this.activityStatus = 'Connected';
-        });
-        socket.on('disconnect', () => {
-            this.activityStatus = 'Disconnected';
-        });
-        socket.on('frame_now', (data) => {
-            this.addFrameRealtime(data);
-        });
-        socket.on('frame_before', (data) => {
-            this.addFrameStored(data);
-        });
-        */
         if (this.rooms.length > 0 && !this.listening) {
             const url = `${CORE_ACTIVITY}/activity`;
             const socket = io(url, {
@@ -171,7 +151,6 @@ export default class activityMain extends connect(store)(LitElement) {
             source: data.source,
         };
 
-        // this.displayNotification(newActivity.message);
         return newActivity;
     }
 
