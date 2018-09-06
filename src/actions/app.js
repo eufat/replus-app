@@ -210,6 +210,7 @@ export const fetchUser = () => async (dispatch, getState) => {
     try {
         const response = await coreClient().post('/user-register', qs({ uid, name, email }));
         dispatch(setNotification(response.data.notification));
+        dispatch(setGeolocation(response.data.geolocation));
     } catch (error) {
         errorHandler.report(error);
     }
@@ -279,14 +280,14 @@ export const setNotification = (notification) => (dispatch, getState) => {
     });
 };
 
-export const notification = (notification) => (dispatch, getState) => {
+export const notification = (state) => (dispatch, getState) => {
     dispatch(showProgress());
     const uid = get(getState(), 'app.currentUser.uid');
     const name = get(getState(), 'app.currentUser.displayName');
     try {
-        coreClient().put('/user-edit', qs({ name, notification }), { params: { uid } });
-        dispatch(setNotification(notification));
-        if (notification) {
+        coreClient().put('/user-edit', qs({ name, notification: state }), { params: { uid } });
+        dispatch(setNotification(state));
+        if (state) {
             dispatch(showSnackbar('Notification on'));
         } else {
             dispatch(showSnackbar('Notification off'));
@@ -299,45 +300,55 @@ export const notification = (notification) => (dispatch, getState) => {
 };
 
 export const setGeolocation = (state) => (dispatch, getState) => {
-    dispatch({
-        type: SET_GEOLOCATION_STATE,
-        state,
-    });
+    dispatch(showProgress());
+    const uid = get(getState(), 'app.currentUser.uid');
+    const name = get(getState(), 'app.currentUser.displayName');
 
-    if (state) {
-        if ('geolocation' in navigator) {
-            const watchID = navigator.geolocation.watchPosition((position) => {
-                dispatch({
-                    type: SET_GEOLOCATION_LATLONG,
-                    latitude: position.coords.latitude,
-                    longitude: position.coords.longitude,
+    try {
+        coreClient().put('/user-edit', qs({ name, geolocation: state }), { params: { uid } });
+        dispatch({
+            type: SET_GEOLOCATION_STATE,
+            state,
+        });
+
+        if (state) {
+            if ('geolocation' in navigator) {
+                const watchID = navigator.geolocation.watchPosition((position) => {
+                    dispatch({
+                        type: SET_GEOLOCATION_LATLONG,
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude,
+                    });
                 });
+
+                dispatch({
+                    type: SET_GEOLOCATION_ID,
+                    id: watchID,
+                });
+
+                dispatch(showSnackbar('Geolocation started'));
+            } else {
+                dispatch(showSnackbar('Geolocation not available'));
+            }
+        } else {
+            const watchID = get(getState(), 'app.geolocation.id');
+            navigator.geolocation.clearWatch(watchID);
+
+            dispatch({
+                type: SET_GEOLOCATION_LATLONG,
+                latitude: '',
+                longitude: '',
             });
 
             dispatch({
                 type: SET_GEOLOCATION_ID,
-                id: watchID,
+                id: '',
             });
 
-            dispatch(showSnackbar('Geolocation started'));
-        } else {
-            dispatch(showSnackbar('Geolocation not available'));
+            dispatch(showSnackbar('Geolocation off'));
         }
-    } else {
-        const watchID = get(getState(), 'app.geolocation.id');
-        navigator.geolocation.clearWatch(watchID);
-
-        dispatch({
-            type: SET_GEOLOCATION_LATLONG,
-            latitude: '',
-            longitude: '',
-        });
-
-        dispatch({
-            type: SET_GEOLOCATION_ID,
-            id: '',
-        });
-
-        dispatch(showSnackbar('Geolocation off'));
+    } catch (error) {
+        errorHandler.report(error);
+        dispatch(closeProgress());
     }
 };
