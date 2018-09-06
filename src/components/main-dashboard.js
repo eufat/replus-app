@@ -30,7 +30,7 @@ import {toTitleCase, pageToTitle} from '../utils.js';
 const get = _.get;
 
 class MainDashboard extends connect(store)(LitElement) {
-    _render({appTitle, _page, _progress, _backable, remoteName}) {
+    _render({_page, _progress, _backable, remoteName}) {
         const tabOrder = ['rooms', 'activity', 'metrics', 'settings'];
 
         let tabPage = _page ? _page.split('/')[1] : 'rooms';

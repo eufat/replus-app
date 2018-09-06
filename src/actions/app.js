@@ -213,7 +213,7 @@ export const fetchUser = () => async (dispatch, getState) => {
     }
 };
 
-export const authenticateUser = () => (dispatch, getState) => {
+export const authenticateUser = (callback) => (dispatch, getState) => {
     if (!(window.location.href.indexOf('dashboard') > -1)) {
         pushLocationTo('/dashboard');
     }
@@ -221,9 +221,11 @@ export const authenticateUser = () => (dispatch, getState) => {
     dispatch({
         type: AUTHENTICATE_USER,
     });
+
+    if (callback) callback();
 };
 
-export const deauthenticateUser = () => (dispatch, getState) => {
+export const deauthenticateUser = (callback) => (dispatch, getState) => {
     if (!(window.location.href.indexOf('auth') > -1)) {
         pushLocationTo('/auth');
         firebase.auth().signOut();
@@ -232,6 +234,8 @@ export const deauthenticateUser = () => (dispatch, getState) => {
     dispatch({
         type: DEAUTHENTICATE_USER,
     });
+
+    if (callback) callback();
 };
 
 export const linkWithProvider = (providerType) => async (dispatch, getState) => {

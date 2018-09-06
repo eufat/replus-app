@@ -4,12 +4,7 @@ import {connect} from 'pwa-helpers/connect-mixin';
 import '@material/mwc-button';
 
 import firebase from '../firebase';
-import errorHandler from '../error';
 import {store} from '../store';
-import {userDataKey} from '../utils.js';
-import {setCurrentUser, authenticateUser} from '../actions/app.js';
-
-const pick = _.pick;
 
 export default class MainAuth extends connect(store)(LitElement) {
     constructor() {

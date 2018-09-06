@@ -48,6 +48,7 @@ class MainApp extends connect(store)(LitElement) {
             _snackbarOpened: Boolean,
             _snackbarText: String,
             _offline: Boolean,
+            _isAuthenticated: Boolean,
         };
     }
 
@@ -62,13 +63,16 @@ class MainApp extends connect(store)(LitElement) {
         installOfflineWatcher((offline) => store.dispatch(updateOffline(offline)));
         installMediaQueryWatcher(`(min-width: 460px)`, (matches) => store.dispatch(updateLayout(matches)));
 
-        firebase.auth().onAuthStateChanged((firebaseUser) => {
+        const setLoaded = () => {
             this.loaded = true;
+        };
+
+        firebase.auth().onAuthStateChanged((firebaseUser) => {
             if (firebaseUser) {
-                store.dispatch(authenticateUser());
+                store.dispatch(authenticateUser(setLoaded));
                 store.dispatch(setCurrentUser(firebaseUser));
             } else {
-                store.dispatch(deauthenticateUser());
+                store.dispatch(deauthenticateUser(setLoaded));
             }
         });
     }
@@ -91,9 +95,10 @@ class MainApp extends connect(store)(LitElement) {
         this._snackbarOpened = state.app.snackbarOpened;
         this._snackbarText = state.app.snackbarText;
         this._drawerOpened = state.app.drawerOpened;
+        this._isAuthenticated = state.app.isAuthenticated;
     }
 
-    _render({appTitle, _page, _drawerOpened, _snackbarOpened, _snackbarText, _offline}) {
+    _render({_page, _snackbarOpened, _snackbarText}) {
         const onIndex = (parent) => {
             if (_page) {
                 // Check if it is only parent. ex: 'dashboard' is only parent.
@@ -132,21 +137,28 @@ class MainApp extends connect(store)(LitElement) {
                 ${
                     this.loaded
                         ? html`
-                            <main-auth class="page" active?="${includes(_page, 'auth')}"></main-auth>
-                            <main-dashboard class="page" active?="${includes(_page, 'dashboard')}">
-                                <main-rooms class="page" active?="${includes(_page, 'rooms') || onIndex('dashboard')}"></main-rooms>
-                                <room-schedule class="page" active?="${includes(_page, 'room-schedule')}"></room-schedule>
-                                <room-location class="page" active?="${includes(_page, 'room-location')}"></room-location>
-                                <remote-ac class="page" active?="${includes(_page, 'remote-ac')}"></remote-ac>
-                                <remote-tv class="page" active?="${includes(_page, 'remote-tv')}"></remote-tv>
-                                <remote-vision class="page" active?="${includes(_page, 'remote-vision')}"></remote-vision>
-                                <main-activity class="page" active?="${includes(_page, 'activity')}"></main-activity>
-                                <main-metrics class="page" active?="${includes(_page, 'metrics')}"></main-metrics>
-                                <main-settings class="page" active?="${includes(_page, 'settings')}"></main-settings>
-                                <settings-vision class="page" active?="${includes(_page, 'setting-vision')}"></settings-vision>
-                                <settings-remote class="page" active?="${includes(_page, 'setting-remote')}"></settings-remote>
-                                <main-help class="page" active?="${includes(_page, 'help')}"></main-help>
-                            </main-dashboard>
+                            ${
+                                this._isAuthenticated
+                                    ? html`
+                                        <main-dashboard>
+                                            <main-rooms class="page" active?="${includes(_page, 'rooms') || onIndex('dashboard')}"></main-rooms>
+                                            <room-schedule class="page" active?="${includes(_page, 'room-schedule')}"></room-schedule>
+                                            <room-location class="page" active?="${includes(_page, 'room-location')}"></room-location>
+                                            <remote-ac class="page" active?="${includes(_page, 'remote-ac')}"></remote-ac>
+                                            <remote-tv class="page" active?="${includes(_page, 'remote-tv')}"></remote-tv>
+                                            <remote-vision class="page" active?="${includes(_page, 'remote-vision')}"></remote-vision>
+                                            <main-activity class="page" active?="${includes(_page, 'activity')}"></main-activity>
+                                            <main-metrics class="page" active?="${includes(_page, 'metrics')}"></main-metrics>
+                                            <main-settings class="page" active?="${includes(_page, 'settings')}"></main-settings>
+                                            <settings-vision class="page" active?="${includes(_page, 'setting-vision')}"></settings-vision>
+                                            <settings-remote class="page" active?="${includes(_page, 'setting-remote')}"></settings-remote>
+                                            <main-help class="page" active?="${includes(_page, 'help')}"></main-help>
+                                        </main-dashboard>
+                                    `
+                                    : html`
+                                        <main-auth></main-auth>
+                                    `
+                            }
                         `
                         : html`
                             <div class="center">
