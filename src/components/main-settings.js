@@ -48,12 +48,8 @@ export default class MainSettings extends connect(store)(LitElement) {
         this.rooms = get(state, 'remote.rooms');
         this.uid = get(state, 'app.currentUser.uid');
         this.currentUser = get(state, 'app.currentUser');
-        const notification = get(state, 'app.notification');
-        if (notification == 'true') {
-            this.notification = true;
-        } else {
-            this.notification = false;
-        }
+        this.notification = get(state, 'app.notification');
+        this.geolocation = get(state, 'app.geolocation.state');
     }
 
     _didRender() {
@@ -82,23 +78,19 @@ export default class MainSettings extends connect(store)(LitElement) {
         store.dispatch(showBack());
     }
 
-    _notifIsON(e) {
-        const isON = e.target.active;
-        if (isON) {
-            store.dispatch(notification('true'));
+    _handleNotification(e) {
+        if (this.notification) {
+            store.dispatch(notification(true));
         } else {
-            store.dispatch(notification('false'));
+            store.dispatch(notification(false));
         }
     }
 
-    _geoIsON(e) {
-        const isON = e.target.active;
-        if (isON) {
-            store.dispatch(setGeolocation(isON));
-            log('Geolocation On');
+    _handleGeolocation(e) {
+        if (this.geolocation) {
+            store.dispatch(setGeolocation(false));
         } else {
-            store.dispatch(setGeolocation(isON));
-            log('Geolocation Off');
+            store.dispatch(setGeolocation(true));
         }
     }
 
@@ -198,11 +190,13 @@ export default class MainSettings extends connect(store)(LitElement) {
         let totalRemote = 0;
         const deviceValues = values(rooms);
         deviceValues.map((deviceItem) => {
-            if (deviceItem.devices.length != 0) {
-                totalDevice = totalDevice + deviceItem.devices.length;
-            }
-            if (deviceItem.remotes.length != 0) {
-                totalRemote = totalRemote + deviceItem.remotes.length;
+            if (deviceItem.devices) {
+                if (deviceItem.devices.length != 0) {
+                    totalDevice = totalDevice + deviceItem.devices.length;
+                }
+                if (deviceItem.remotes.length != 0) {
+                    totalRemote = totalRemote + deviceItem.remotes.length;
+                }
             }
         });
 
@@ -340,13 +334,13 @@ export default class MainSettings extends connect(store)(LitElement) {
                     <paper-item>
                         <paper-item-body class="text-container">
                             <p class="left">Notification</p>
-                            <paper-toggle-button class="right" checked="${notification}" on-tap="${(e) => this._notifIsON(e)}"></paper-toggle-button>
+                            <paper-toggle-button class="right" checked="${notification}" on-tap="${(e) => this._handleNotification(e)}"></paper-toggle-button>
                         </paper-item-body>
                     </paper-item>
                     <paper-item>
                         <paper-item-body class="text-container">
                             <p class="left">Geolocation</p>
-                            <paper-toggle-button class="right" checked="${geolocation}" on-tap="${(e) => this._geoIsON(e)}"></paper-toggle-button>
+                            <paper-toggle-button class="right" checked="${geolocation}" on-tap="${(e) => this._handleGeolocation(e)}"></paper-toggle-button>
                         </paper-item-body>
                     </paper-item>
                 </div>
