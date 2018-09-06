@@ -89,7 +89,7 @@ export default class activityMain extends connect(store)(LitElement) {
         */
 
         Notification.requestPermission((status) => {
-            log('Notification permission status:', status);
+            log(`Notification permission status: ${status}`);
         });
 
         if (Notification.permission !== 'granted') {
@@ -210,12 +210,12 @@ export default class activityMain extends connect(store)(LitElement) {
             const owner = this.currentUser.displayName;
             this.filterItemSelection = [owner];
             this.selectedFilterItem = owner;
-            this.startActivityFiltering();
+            // this.startActivityFiltering();
         } else if (type === 'room') {
             const rooms = this.rooms.map((obj) => obj.name);
             this.filterItemSelection = rooms;
             this.selectedFilterItem = rooms[0];
-            this.startActivityFiltering();
+            // this.startActivityFiltering();
         } else if (type === 'device') {
             const devices = concat(
                 this.rooms
@@ -230,8 +230,10 @@ export default class activityMain extends connect(store)(LitElement) {
 
             this.filterItemSelection = devices;
             this.selectedFilterItem = devices[0];
-            this.startActivityFiltering();
+            // this.startActivityFiltering();
         }
+        const itemSelected = this.shadowRoot.getElementById('item-selected');
+        itemSelected.selected = null;
     }
 
     startActivityFiltering() {
@@ -338,7 +340,7 @@ export default class activityMain extends connect(store)(LitElement) {
 
         const activityFilter = html`<div class="activities-filter">
             <paper-dropdown-menu label="Filter by" id="filter-type-selection" noink no-animations>
-                <paper-listbox class="dropdown-content" slot="dropdown-content" selected="${filterTypeSelection.indexOf(selectedFilterType)}">
+                <paper-listbox class="dropdown-content" slot="dropdown-content">
                     ${filterTypeSelection.map((type) => {
                         return html`
                                 <paper-item on-tap="${() => this.selectFilterType(type)}">${toTitleCase(type)}</paper-item>
@@ -347,7 +349,7 @@ export default class activityMain extends connect(store)(LitElement) {
                 </paper-listbox>
             </paper-dropdown-menu>
             <paper-dropdown-menu label="${toTitleCase(selectedFilterType)}" id="filter-item-selection" noink no-animations>
-                <paper-listbox class="dropdown-content" slot="dropdown-content" selected="${filterItemSelection.indexOf(selectedFilterItem)}">
+                <paper-listbox id="item-selected" class="dropdown-content" slot="dropdown-content">
                     ${filterItemSelection.map((item) => {
                         return html`
                                 <paper-item on-tap="${() => this.selectFilterItem(item)}">${item}</paper-item>

@@ -204,10 +204,6 @@ class AddSchedule extends connect(store)(PolymerElement) {
                     margin: 20px 20px;
                 }
 
-                #scheduleDialog {
-                    width: 100%;
-                }
-
                 @media (max-width: 480px) {
                     #container {
                         width: auto;

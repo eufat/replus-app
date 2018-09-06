@@ -79,9 +79,10 @@ export default class MainRooms extends connect(store)(LitElement) {
 
             if (nextButton != undefined) {
                 if (hasHorizontalScrollbar) {
+                    const maxScrollLeft = remotes.scrollWidth - remotes.clientWidth;
                     nextButton.style.display = 'block';
-                    if (remotes.scrollLeft != 0) {
-                        prevButton.style.display = 'block';
+                    if (remotes.scrollLeft == maxScrollLeft) {
+                        nextButton.style.display = 'none';
                     }
                 } else {
                     nextButton.style.display = 'none';
