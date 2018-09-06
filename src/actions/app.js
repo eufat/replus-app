@@ -358,6 +358,8 @@ export const setGeolocation = (state) => (dispatch, getState) => {
 
             dispatch(showSnackbar('Geolocation off'));
         }
+
+        dispatch(closeProgress());
     } catch (error) {
         errorHandler.report(error);
         dispatch(closeProgress());
