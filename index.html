@@ -51,13 +51,33 @@
 
   <!-- Add any global styles for body, document, etc. -->
   <style>
-    body {
+    body,
+    html {
       margin: 0;
       font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
       font-size: 15px;
       background-color: #f8f9fa;
       min-height: 100vh;
       -webkit-font-smoothing: antialiased;
+
+      /* Disable selection in every page */
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
+    /* Disable image dragging */
+    img {
+      -moz-user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      -webkit-user-drag: none;
+      user-drag: none;
+      -webkit-touch-callout: none;
     }
   </style>
 </head>
