@@ -34,10 +34,10 @@ class MainDashboard extends connect(store)(LitElement) {
         const tabOrder = ['rooms', 'activity', 'metrics', 'settings'];
 
         let tabPage = _page ? _page.split('/')[1] : 'rooms';
-        tabPage = tabPage === '' ? 'rooms' : tabPage;
+        tabPage = tabPage === '' || tabPage === undefined ? 'rooms' : tabPage;
 
         let isBackable = _backable;
-        if (tabPage == 'rooms' || tabPage == 'activity' || tabPage == 'metrics' || tabPage == 'settings' || tabPage == undefined) {
+        if (tabPage === 'rooms' || tabPage === 'activity' || tabPage === 'metrics' || tabPage === 'settings' || tabPage === undefined) {
             isBackable = false;
         } else {
             isBackable = true;
@@ -128,7 +128,7 @@ class MainDashboard extends connect(store)(LitElement) {
                 <app-header slot="header" reveals>
                     <app-toolbar>
                     ${isBackable ? html`<paper-icon-button on-click="${() => this._onBack()}" icon="arrow-back"></paper-icon-button>` : null}
-                    <div main-title>${_page == 'dashboard/remote-ac' || _page == 'dashboard/remote-tv' ? `${toTitleCase(remoteName)}` : `${pageToTitle(_page)}`}</div>
+                    <div main-title>${_page === 'dashboard/remote-ac' || _page === 'dashboard/remote-tv' ? `${toTitleCase(remoteName)}` : `${pageToTitle(_page)}`}</div>
                     <paper-icon-button
                         class="more-button"
                         icon="more-vert"
