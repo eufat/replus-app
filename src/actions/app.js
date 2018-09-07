@@ -187,17 +187,7 @@ export const setCurrentUser = (user) => async (dispatch, getState) => {
         dispatch(fetchRooms());
         dispatch(fetchActivities('owner', currentUser.uid));
         dispatch(fetchSchedules());
-
-        // register with available token
         dispatch(fetchUser());
-        // await coreClient().post(
-        //     '/user-register',
-        //     qs({
-        //         uid: currentUser.uid,
-        //         name: currentUser.displayName,
-        //         email: currentUser.email,
-        //     })
-        // );
     } catch (error) {
         errorHandler.report(error);
     }
@@ -209,8 +199,8 @@ export const fetchUser = () => async (dispatch, getState) => {
     const email = get(getState(), 'app.currentUser.email');
     try {
         const response = await coreClient().post('/user-register', qs({ uid, name, email }));
-        dispatch(setNotification(response.data.notification));
-        dispatch(setGeolocation(response.data.geolocation));
+        dispatch(setNotification(response.data.notification === 'true'));
+        dispatch(setGeolocation(response.data.geolocation === 'true'));
     } catch (error) {
         errorHandler.report(error);
     }
