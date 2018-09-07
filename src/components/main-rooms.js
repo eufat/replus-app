@@ -264,7 +264,7 @@ export default class MainRooms extends connect(store)(LitElement) {
                         ${
                             onEdit
                                 ? html`
-                                    <div class="remote-item">
+                                    <div id="remote-${roomIndex}${remotes.indexOf(remote)}" class="remote-item">
                                         <mwc-button
                                             class="remove-button blue-button"
                                             label="Remove"
