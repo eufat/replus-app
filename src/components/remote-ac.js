@@ -157,6 +157,12 @@ class RemoteAc extends connect(store)(PolymerElement) {
         };
     }
 
+    static get observers() {
+        return [
+            'resetTimeout(mode, fan, temp)',
+        ];
+    }
+
     constructor() {
         super();
         this.rooms = [];
@@ -270,7 +276,7 @@ class RemoteAc extends connect(store)(PolymerElement) {
             this._tapPowerOFF();
         } else {
             this.stateEnabled();
-            this.send();
+            // this.send();
         }
     }
 
@@ -308,26 +314,26 @@ class RemoteAc extends connect(store)(PolymerElement) {
         this.fan = this.manifestFans[this.fanIndex];
         this.fanName = this.fans[this.fan];
         this.getMode();
-        this.send();
+        // this.send();
     }
 
     _tapFan() {
         if (this.fanIndex < this.manifestFans.length - 1) this.fanIndex++;
         else this.fanIndex = 0;
         this.getFan();
-        this.send();
+        // this.send();
     }
 
     _tapUp() {
         if (this.tempIndex < this.manifestTemps.length - 1) this.tempIndex++;
         this.temp = this.manifestTemps[this.tempIndex];
-        this.send();
+        // this.send();
     }
 
     _tapDown() {
         if (this.tempIndex > 0) this.tempIndex--;
         this.temp = this.manifestTemps[this.tempIndex];
-        this.send();
+        // this.send();
     }
 }
 
