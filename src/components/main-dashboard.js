@@ -76,7 +76,7 @@ class MainDashboard extends connect(store)(LitElement) {
                     margin: 0;
                     right: 0;
                     top: 56px;
-                    position: fixed;
+                    position: absolute;
                     display: none;
                     min-width: 200px;
                 }
