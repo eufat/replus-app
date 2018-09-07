@@ -342,7 +342,7 @@ export const remoteCommand = (command) => (dispatch, getState) => {
         dispatch(closeProgress());
     } catch (error) {
         errorHandler.report(error);
-        dispatch(showSnackbar(`Failed to send command.`));
+        dispatch(showSnackbar(`Device is offline.`));
         dispatch(closeProgress());
     }
 };
