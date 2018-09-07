@@ -338,9 +338,11 @@ export const remoteCommand = (command) => (dispatch, getState) => {
 
     try {
         corePost().post('/remote', qs({uid, devices, command: formattedCommand, room: activeRemoteRoom, source: 'app'}));
+        dispatch(showSnackbar(`Command sent.`));
         dispatch(closeProgress());
     } catch (error) {
         errorHandler.report(error);
+        dispatch(showSnackbar(`Failed to send command.`));
         dispatch(closeProgress());
     }
 };
