@@ -50,13 +50,13 @@ export default class Location extends connect(store)(LitElement) {
 
     _didRender() {
         this.googleMap();
-        if (this.location.lat != undefined) {
-            this.geocodeLatLng(this.location.lat + ',' + this.location.lng);
-        } else {
+        if (this.location.lat == undefined) {
             this.address = '';
+        } else {
+            this.geocodeLatLng(this.location.lat + ',' + this.location.lng);
         }
 
-        const locationEmpty = this.room.home == null;
+        const locationEmpty = this.location.lat == undefined;
         const resetElement = this.shadowRoot.getElementById(`reset-button-${this.room.index}`);
         const geoInElement = this.shadowRoot.getElementById(`geo-in-${this.room.index}`);
         const geoOutElement = this.shadowRoot.getElementById(`geo-out-${this.room.index}`);
@@ -82,9 +82,14 @@ export default class Location extends connect(store)(LitElement) {
         });
         this.remotes = stateRemotes;
         this.room = get(state, 'remote.activeRoom');
-        const lat = get(state, 'remote.activeRoom.home.latitude');
-        const lng = get(state, 'remote.activeRoom.home.longitude');
-        this.location = {lat: lat, lng: lng};
+        const roomIndex = get(state, 'remote.activeRoom.index');
+        const lat = get(state, `remote.rooms[${roomIndex}].home.latitude`);
+        const lng = get(state, `remote.rooms[${roomIndex}].home.longitude`);
+        if (lat == undefined) {
+            this.location = {lat: lat, lng: lng};
+        } else {
+            this.location = {lat: +lat, lng: +lng};
+        }
     }
 
     mapbox() {
@@ -360,7 +365,6 @@ export default class Location extends connect(store)(LitElement) {
         }
 
         const location = {
-            // roomID: this.roomID,
             roomID: this.room.id,
             geosenseInRange: codesetInRange,
             geosenseOutRange: codesetOutRange,
