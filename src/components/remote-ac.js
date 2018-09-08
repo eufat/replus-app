@@ -158,9 +158,7 @@ class RemoteAc extends connect(store)(PolymerElement) {
     }
 
     static get observers() {
-        return [
-            'resetTimeout(mode, fan, temp)',
-        ];
+        return ['resetTimeout(mode, fan, temp)'];
     }
 
     constructor() {

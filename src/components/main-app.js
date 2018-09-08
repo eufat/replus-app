@@ -16,7 +16,7 @@ import firebase from '../firebase';
 import {store} from '../store';
 import {setCurrentUser, authenticateUser, deauthenticateUser} from '../actions/app';
 import {navigate, updateOffline, updateLayout} from '../actions/app';
-import {toTitleCase, log} from '../utils';
+import {toTitleCase, log, pushLocationTo} from '../utils';
 import './snack-bar';
 
 import './main-help';
@@ -37,6 +37,7 @@ import './room-schedule';
 import './room-location';
 
 const includes = _.includes;
+const isEmpty = _.isEmpty;
 
 class MainApp extends connect(store)(LitElement) {
     static get properties() {
@@ -49,6 +50,7 @@ class MainApp extends connect(store)(LitElement) {
             _snackbarText: String,
             _offline: Boolean,
             _isAuthenticated: Boolean,
+            _activeRemote: Array,
         };
     }
 
@@ -96,6 +98,7 @@ class MainApp extends connect(store)(LitElement) {
         this._snackbarText = state.app.snackbarText;
         this._drawerOpened = state.app.drawerOpened;
         this._isAuthenticated = state.app.isAuthenticated;
+        this._activeRemote = state.remote.activeRemote;
     }
 
     _render({_page, _snackbarOpened, _snackbarText}) {
@@ -115,6 +118,10 @@ class MainApp extends connect(store)(LitElement) {
                 return onlyParent || onlyParentAndSlash;
             }
         };
+
+        if ((includes(_page, 'remote-ac') || includes(_page, 'remote-tv')) && isEmpty(this._activeRemote)) {
+            pushLocationTo('/dashboard');
+        }
 
         return html`
             <style>
