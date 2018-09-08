@@ -1,6 +1,7 @@
 import {LitElement, html} from '@polymer/lit-element';
 
 import includes from 'lodash/includes';
+import isEmpty from 'lodash/isEmpty';
 import '@polymer/app-layout/app-drawer/app-drawer';
 import '@polymer/app-layout/app-header/app-header';
 import '@polymer/app-layout/app-scroll-effects/effects/waterfall';
