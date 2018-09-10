@@ -50,7 +50,8 @@ class MainApp extends connect(store)(LitElement) {
             _snackbarText: String,
             _offline: Boolean,
             _isAuthenticated: Boolean,
-            _activeRemote: Array,
+            _activeRemote: Object,
+            _activeRoom: Object,
         };
     }
 
@@ -99,6 +100,7 @@ class MainApp extends connect(store)(LitElement) {
         this._drawerOpened = state.app.drawerOpened;
         this._isAuthenticated = state.app.isAuthenticated;
         this._activeRemote = state.remote.activeRemote;
+        this._activeRoom = state.remote.activeRoom;
     }
 
     _render({_page, _snackbarOpened, _snackbarText}) {
@@ -120,6 +122,10 @@ class MainApp extends connect(store)(LitElement) {
         };
 
         if ((includes(_page, 'remote-ac') || includes(_page, 'remote-tv')) && isEmpty(this._activeRemote)) {
+            pushLocationTo('/dashboard');
+        }
+
+        if ((includes(_page, 'room-schedule') || includes(_page, 'room-location')) && isEmpty(this._activeRoom)) {
             pushLocationTo('/dashboard');
         }
 
