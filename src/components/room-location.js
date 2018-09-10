@@ -10,8 +10,7 @@ import '@em-polymer/google-map/google-map';
 
 import {store} from '../store.js';
 import {connect} from 'pwa-helpers/connect-mixin';
-import {reverseGeocode, saveLocation} from '../actions/remote.js';
-import {env} from '../configs.js';
+import {saveLocation} from '../actions/remote.js';
 import {log} from '../utils.js';
 
 // Import from lodash
@@ -90,41 +89,6 @@ export default class Location extends connect(store)(LitElement) {
         } else {
             this.location = {lat: +lat, lng: +lng};
         }
-    }
-
-    mapbox() {
-        const mapElement = this.shadowRoot.getElementById('map');
-        let loc;
-        let mapZoom = this.zoom;
-
-        if (this.location == undefined) {
-            loc = [106.8270482, -6.3627638];
-        } else {
-            loc = this.location;
-        }
-
-        mapboxgl.accessToken = env.MAPBOX;
-        const map = new mapboxgl.Map({
-            container: mapElement,
-            style: 'mapbox://styles/mapbox/streets-v10',
-            center: loc,
-            zoom: mapZoom,
-        });
-
-        const marker = new mapboxgl.Marker({
-            draggable: true,
-        })
-            .setLngLat(loc)
-            .addTo(map);
-
-        const onDragEnd = () => {
-            this.zoom = map.getZoom();
-            this.location = marker.getLngLat();
-            const latlng = this.location.lat + ',' + this.location.lng;
-            store.dispatch(reverseGeocode(latlng));
-        };
-
-        marker.on('dragend', onDragEnd);
     }
 
     googleMap() {
@@ -387,7 +351,7 @@ export default class Location extends connect(store)(LitElement) {
                 .container {
                     margin: 0 auto;
                     max-width: 680px;
-                    padding: 0 0.8rem 0;
+                    padding: 0 0.8rem 5rem;
                 }
                 /* google map with searchbox style */
                 #description {
@@ -462,10 +426,6 @@ export default class Location extends connect(store)(LitElement) {
                 }
                 /* end style */
 
-                .settings {
-                    padding-bottom: 70px;
-                }
-
                 .text-container {
                     width: 100%;
                 }
@@ -514,106 +474,114 @@ export default class Location extends connect(store)(LitElement) {
                     cursor: pointer;
                 }
 
-                [id|=reset-button] {
-                /* #reset-button { */
-                    margin-left: 10px;
+                paper-material.paper-container {
+                    position: relative;
+                    display: block;
+                    border-radius: 5px;
+                    background-color: white;
+                    margin: 1rem 0;
+                    padding-bottom: 1rem;
+                    background-color: white;
+                }
+
+                paper-item {
+                    border-top: 1px solid #0000000f;
+                }
+
+                .geolocation-buttons {
+                    margin: 1rem;
+                    display: flex;
+                    flex-flow: row wrap;
+                }
+
+                .save-button {
+                    margin-right: 4%;
+                }
+
+                .save-button, .reset-button {
+                    width: 47.5%;
                 }
             </style>
+            <div align="left" id="map" style="width: 100%; height: 300px;"></div>
             <div class="container">
-                <div align="left" id="map" style="width: 100%; height: 400px;"></div>
-                <div role="listbox" class="settings">
-                    <paper-item>
-                        <paper-input
-                            id="address"
-                            label="Address"
-                            placeholder="Search Address"
-                            always-float-label>
-                        </paper-input>
-                    </paper-item>
-                    <paper-item>
-                        <mwc-button
-                            raised
-                            class="light"
-                            label="search"
-                            on-click="${() => this.getLocation(room.index)}"
-                        ></mwc-button>
-                    </paper-item>
-                    <paper-item>
-                        <paper-item-body class="text-container">
-                            <p class="left">Address</p>
-                            <p class="right">${address}</p>
-                        </paper-item-body>
-                    </paper-item>
-                    <paper-item>
-                        <paper-item-body class="text-container">
-                            <p class="left">Latitude</p>
-                            <p class="right">${get(location, 'lat')}</p>
-                        </paper-item-body>
-                    </paper-item>
-                    <paper-item>
-                        <paper-item-body class="text-container">
-                            <p class="left">Longitude</p>
-                            <p class="right">${get(location, 'lng')}</p>
-                        </paper-item-body>
-                    </paper-item>
-                    <hr>
-                    <paper-item class="pointer">
-                        <paper-item-body class="text-container">
-                            <p class="left">Action in range</p>
-                        </paper-item-body>
-                        <div class="command-right">
+                <paper-material class="paper-container">
+                    <div role="listbox" class="settings">
+                        <paper-item>
+                            <paper-input
+                                id="address"
+                                label="Address"
+                                placeholder="Search Address"
+                                always-float-label>
+                            </paper-input>
+                            <mwc-button
+                                icon="search"
+                                label="search"
+                                on-click="${() => this.getLocation(room.index)}"
+                            ></mwc-button>
+                        </paper-item>
+                        <paper-item>
+                            <paper-item-body class="text-container">
+                                <p class="left">Address</p>
+                                <p class="right">${address}</p>
+                            </paper-item-body>
+                        </paper-item>
+                        <paper-item class="pointer">
+                            <paper-item-body class="text-container">
+                                <p class="left">Action in range</p>
+                            </paper-item-body>
+                            <div class="command-right">
+                                ${
+                                    commandIn == ''
+                                        ? html`
+                                        <mwc-button
+                                            id="geo-in-${room.index}"
+                                            class="mwc-edit"
+                                            label="Edit"
+                                            icon="edit"
+                                            on-click="${() => this.shadowRoot.getElementById('geoInDialog').open()}">
+                                        </mwc-button>`
+                                        : html`
+                                        ${commandIn}`
+                                }
+                            </div>
+                        </paper-item>
+                        <paper-item class="pointer">
+                            <paper-item-body class="text-container">
+                                <p class="left">Action out range</p>
+                            </paper-item-body>
+                            <div class="command-right">
                             ${
-                                commandIn == ''
+                                commandOut == ''
                                     ? html`
-                                    <mwc-button
-                                        id="geo-in-${room.index}"
-                                        class="mwc-edit"
-                                        label="Edit"
-                                        icon="edit"
-                                        on-click="${() => this.shadowRoot.getElementById('geoInDialog').open()}">
-                                    </mwc-button>`
+                                        <mwc-button
+                                            id="geo-out-${room.index}"
+                                            class="mwc-edit"
+                                            label="Edit"
+                                            icon="edit"
+                                            on-click="${() => this.shadowRoot.getElementById('geoOutDialog').open()}">
+                                        </mwc-button>`
                                     : html`
-                                    ${commandIn}`
+                                        ${commandOut}`
                             }
+                            </div>
+                        </paper-item>
+                        <div class="geolocation-buttons">
+                            <mwc-button
+                                raised
+                                id="save-button-${room.index}"
+                                class="light save-button"
+                                label="save"
+                                on-click="${() => this.saveLocation()}"
+                            ></mwc-button>
+                            <mwc-button
+                                id="reset-button-${room.index}"
+                                class="reset-button"
+                                label="reset"
+                                on-click="${() => this.resetLocation()}"
+                            ></mwc-button>
                         </div>
-                    </paper-item>
-                    <paper-item class="pointer">
-                        <paper-item-body class="text-container">
-                            <p class="left">Action out range</p>
-                        </paper-item-body>
-                        <div class="command-right">
-                        ${
-                            commandOut == ''
-                                ? html`
-                                    <mwc-button
-                                        id="geo-out-${room.index}"
-                                        class="mwc-edit"
-                                        label="Edit"
-                                        icon="edit"
-                                        on-click="${() => this.shadowRoot.getElementById('geoOutDialog').open()}">
-                                    </mwc-button>`
-                                : html`
-                                    ${commandOut}`
-                        }
-                        </div>
-                    </paper-item>
-                    <paper-item>
-                        <mwc-button
-                            raised
-                            id="save-button-${room.index}"
-                            class="light"
-                            label="save"
-                            on-click="${() => this.saveLocation()}"
-                        ></mwc-button>
-                        <mwc-button
-                            raised
-                            id="reset-button-${room.index}"
-                            class="light"
-                            label="reset"
-                            on-click="${() => this.resetLocation()}"
-                        ></mwc-button>
-                    </paper-item>
-                </div>
+                    </div>
+                </paper-material>
             </div>
             <paper-dialog id="geoInDialog" with-backdrop>
                 <div class="horizontal layout">
