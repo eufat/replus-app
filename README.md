@@ -25,10 +25,16 @@ Start by installing all dependencies and dev dependencies
 npm install
 ```
 
+Enable hot reload with browser sync
+
+```
+npm install -g browser-sync
+```
+
 Start project backend on https://github.com/RianWardana/mqtt-remote-api then
 
 ```
-npm run start
+npm run dev
 ```
 
 ### Deploy project
