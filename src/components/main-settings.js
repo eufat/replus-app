@@ -10,13 +10,13 @@ import '@polymer/iron-icons/iron-icons';
 import '@polymer/paper-material';
 
 import {connect} from 'pwa-helpers/connect-mixin';
+
 import {store} from '../store.js';
 import firebase from '../firebase.js';
-
 import {setActiveDevice, setActiveRemotes} from '../actions/remote.js';
 import {linkWithProvider, notification, setGeolocation} from '../actions/app.js';
 import {showBack} from '../actions/app.js';
-import {log} from '../utils';
+import {log} from '../utils.js';
 
 const get = _.get;
 const values = _.values;

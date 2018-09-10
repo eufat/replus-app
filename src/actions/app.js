@@ -1,10 +1,10 @@
-import { pushLocationTo } from '../utils';
-import { userDataKey, qs, setCookie, getCookie } from '../utils';
-import { createClient, coreClient } from '../client';
-import firebase from '../firebase';
-import errorHandler from '../error';
-import { fetchRooms, fetchSchedules } from './remote';
-import { fetchActivities } from './activity';
+import { pushLocationTo } from '../utils.js';
+import { userDataKey, qs, setCookie, getCookie } from '../utils.js';
+import { createClient, coreClient } from '../client.js';
+import firebase from '../firebase.js';
+import errorHandler from '../error.js';
+import { fetchRooms, fetchSchedules } from './remote.js';
+import { fetchActivities } from './activity.js';
 
 const pick = _.pick;
 const get = _.get;
@@ -45,47 +45,47 @@ const loadPage = (page) => async (dispatch) => {
 
         switch (path) {
             case 'auth':
-                await import('../components/main-auth');
+                await import('../components/main-auth.js');
                 break;
             case 'dashboard':
-                await import('../components/main-dashboard');
+                await import('../components/main-dashboard.js');
                 break;
             case 'activity':
-                await import('../components/main-activity');
+                await import('../components/main-activity.js');
                 break;
             case 'metrics':
-                await import('../components/main-metrics');
+                await import('../components/main-metrics.js');
                 break;
             case 'rooms':
-                await import('../components/main-rooms');
+                await import('../components/main-rooms.js');
                 break;
             case 'settings':
                 await import('../components/main-settings.js');
                 break;
             case 'help':
-                await import('../components/main-help');
+                await import('../components/main-help.js');
                 break;
             case 'setting-vision':
-                await import('../components/settings-vision');
+                await import('../components/settings-vision.js');
                 break;
             case 'setting-remote':
-                await import('../components/settings-remote');
+                await import('../components/settings-remote.js');
                 break;
             case 'remote-ac':
-                await import('../components/remote-ac');
+                await import('../components/remote-ac.js');
                 break;
             case 'remote-tv':
-                await import('../components/remote-tv');
+                await import('../components/remote-tv.js');
                 break;
             case 'room-schedule':
-                await import('../components/room-schedule');
+                await import('../components/room-schedule.js');
                 break;
             case 'room-location':
-                await import('../components/room-location');
+                await import('../components/room-location.js');
                 break;
             default:
                 page = '404';
-                await import('../components/not-found');
+                await import('../components/not-found.js');
         }
     }
 

@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
-import {expandResolution, rotationsList, resolutionsList, getCookie} from '../utils';
-import {visionClient} from '../client';
-import errorHandler from '../error';
+import {expandResolution, rotationsList, resolutionsList, getCookie} from '../utils.js';
+import {visionClient} from '../client.js';
+import errorHandler from '../error.js';
 
 export const setSettings = (settings) => (dispatch, getState) => {
     dispatch({

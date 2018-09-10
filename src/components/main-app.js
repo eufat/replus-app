@@ -12,29 +12,29 @@ import {installOfflineWatcher} from 'pwa-helpers/network';
 import {installMediaQueryWatcher} from 'pwa-helpers/media-query';
 import {updateMetadata} from 'pwa-helpers/metadata';
 
-import firebase from '../firebase';
-import {store} from '../store';
-import {setCurrentUser, authenticateUser, deauthenticateUser} from '../actions/app';
-import {navigate, updateOffline, updateLayout} from '../actions/app';
-import {toTitleCase, log, pushLocationTo} from '../utils';
-import './snack-bar';
+import firebase from '../firebase.js';
+import {store} from '../store.js';
+import {setCurrentUser, authenticateUser, deauthenticateUser} from '../actions/app.js';
+import {navigate, updateOffline, updateLayout} from '../actions/app.js';
+import {toTitleCase, log, pushLocationTo} from '../utils.js';
+import './snack-bar.js';
 
-import './main-help';
-import './main-auth';
-import './not-found';
-import './main-activity';
-import './main-metrics';
-import './main-rooms';
-import './main-settings';
-import './settings-vision';
-import './settings-remote';
+import './main-help.js';
+import './main-auth.js';
+import './not-found.js';
+import './main-activity.js';
+import './main-metrics.js';
+import './main-rooms.js';
+import './main-settings.js';
+import './settings-vision.js';
+import './settings-remote.js';
 
-import './remote-ac';
-import './remote-tv';
-import './remote-vision';
+import './remote-ac.js';
+import './remote-tv.js';
+import './remote-vision.js';
 
-import './room-schedule';
-import './room-location';
+import './room-schedule.js';
+import './room-location.js';
 
 const includes = _.includes;
 const isEmpty = _.isEmpty;

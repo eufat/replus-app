@@ -7,10 +7,11 @@ import '@polymer/paper-dialog';
 import '@polymer/paper-radio-group';
 import '@polymer/paper-radio-button';
 
-import {rotationsList, resolutionsList} from '../utils';
-import {store} from '../store';
-import {setSettings, saveSettings} from '../actions/vision';
 import {connect} from 'pwa-helpers/connect-mixin';
+
+import {rotationsList, resolutionsList} from '../utils.js';
+import {store} from '../store.js';
+import {setSettings, saveSettings} from '../actions/vision.js';
 
 export default class SettingsVision extends connect(store)(LitElement) {
     static get properties() {

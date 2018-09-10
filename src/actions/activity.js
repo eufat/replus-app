@@ -1,6 +1,6 @@
-import {showProgress, closeProgress} from './app';
-import {coreActivity} from '../client';
-import errorHandler from '../error';
+import {showProgress, closeProgress} from './app.js';
+import {coreActivity} from '../client.js';
+import errorHandler from '../error.js';
 
 const get = _.get;
 

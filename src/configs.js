@@ -1,4 +1,4 @@
-const prod = false; // process.env.NODE_ENV === 'production';
+const prod = true; // process.env.NODE_ENV === 'production';
 const version = '2.0.0-alpha.1';
 
 const googleMapsApi = 'AIzaSyCfGVFRrYf89QiMaQCiXUb-D_uDjUPCsCc';

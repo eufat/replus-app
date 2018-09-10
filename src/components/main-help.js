@@ -1,5 +1,5 @@
 import {LitElement, html} from '@polymer/lit-element';
-import {env} from '../configs';
+import {env} from '../configs.js';
 
 export default class Help extends LitElement {
     static get properties() {

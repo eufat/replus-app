@@ -1,4 +1,4 @@
-import {firebaseConfig} from './configs';
+import {firebaseConfig} from './configs.js';
 
 firebase.initializeApp(firebaseConfig);
 

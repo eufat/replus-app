@@ -1,8 +1,8 @@
-import {coreClient, corePost, coreIR, coreSchedule, googleMaps} from '../client';
-import {qs} from '../utils';
-import errorHandler from '../error';
-import {showSnackbar, showProgress, closeProgress, showBack} from './app';
-import {toTitleCase} from '../utils';
+import {coreClient, corePost, coreIR, coreSchedule, googleMaps} from '../client.js';
+import {qs} from '../utils.js';
+import errorHandler from '../error.js';
+import {showSnackbar, showProgress, closeProgress, showBack} from './app.js';
+import {toTitleCase} from '../utils.js';
 const get = _.get; // import from lodash
 
 export const setRooms = (rooms) => (dispatch, getState) => {
@@ -201,7 +201,7 @@ export const addDevice = (room) => async (dispatch, getState) => {
     const uid = get(getState(), 'app.currentUser.uid');
     const deviceID = get(getState(), 'remote.newDevice.deviceID');
     const deviceCode = get(getState(), 'remote.newDevice.deviceCode');
-    const type = 'replus-remote';
+    const type = 'replus-remote.js';
 
     try {
         await coreClient().post('/device-register', qs({uid, type, room: room.id, deviceID, deviceCode}));
@@ -234,7 +234,7 @@ export const addCamera = (room) => async (dispatch, getState) => {
     const uid = get(getState(), 'app.currentUser.uid');
     const deviceID = get(getState(), 'remote.newDevice.deviceID');
     const deviceCode = get(getState(), 'remote.newDevice.deviceCode');
-    const type = 'replus-vision';
+    const type = 'replus-vision.js';
 
     try {
         await coreClient().post('/device-register', qs({uid, type, room: room.id, deviceID, deviceCode}));
@@ -404,7 +404,7 @@ export const saveLocation = (location) => (dispatch, getState) => {
     const geosenseOutRange = location.geosenseOutRange;
     const lat = location.lat;
     const long = location.long;
-    const forecast = '';
+    const forecast = '.js';
     try {
         coreClient().put('/save-location', qs({geosenseInRange, geosenseOutRange, forecast, lat, long}), {params: {uid, roomID}});
         dispatch(fetchLocation());

@@ -18,9 +18,9 @@ import '@polymer/iron-icons/hardware-icons';
 import '@polymer/iron-flex-layout/iron-flex-layout-classes';
 import '@polymer/iron-flex-layout/iron-flex-layout';
 
-import {remoteCommand} from '../actions/remote';
-import {toTitleCase} from '../utils';
-import {store} from '../store';
+import {remoteCommand} from '../actions/remote.js';
+import {toTitleCase} from '../utils.js';
+import {store} from '../store.js';
 
 const get = _.get;
 

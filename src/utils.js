@@ -1,4 +1,4 @@
-import {env} from './configs';
+import {env} from './configs.js';
 
 export const userDataKey = ['uid', 'email', 'displayName', 'photoUrl'];
 

@@ -5,13 +5,13 @@ import '@polymer/paper-material';
 import '@polymer/paper-icon-button';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 import '@polymer/paper-listbox';
+import '@polymer/iron-icons/iron-icons';
 
 import {env} from '../configs.js';
 import {getDateFromFilename, getTVBrandFromCodeset, getTVCommandFromCodeset, toTitleCase, modesAC, fansAC, camelToSentence, log} from '../utils.js';
-import '@polymer/iron-icons/iron-icons';
-import {store} from '../store';
-import {fetchActivities} from '../actions/activity';
-import {showSnackbar} from '../actions/app';
+import {store} from '../store.js';
+import {fetchActivities} from '../actions/activity.js';
+import {showSnackbar} from '../actions/app.js';
 
 const get = _.get;
 const values = _.values;

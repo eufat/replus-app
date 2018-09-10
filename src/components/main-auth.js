@@ -3,8 +3,8 @@ import {connect} from 'pwa-helpers/connect-mixin';
 
 import '@material/mwc-button';
 
-import firebase from '../firebase';
-import {store} from '../store';
+import firebase from '../firebase.js';
+import {store} from '../store.js';
 
 export default class MainAuth extends connect(store)(LitElement) {
     constructor() {

@@ -1,5 +1,5 @@
-import {env} from './configs';
-import {getCookie} from './utils';
+import {env} from './configs.js';
+import {getCookie} from './utils.js';
 
 export const createClient = (type, token) => {
     let baseURL = '';

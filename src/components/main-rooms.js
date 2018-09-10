@@ -11,10 +11,10 @@ import '@polymer/iron-icon';
 import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-icons/image-icons';
 
-import {setRooms, removeDevice, editRoom, addRoom, removeRoom, setNewRemote, addRemote, removeRemote, addDevice, addCamera, setNewDevice, setActiveRemote, setActiveRoom} from '../actions/remote';
-import {setActiveVision} from '../actions/vision';
-import {getNewRoomTemplate, brandsAC, brandsTV, toTitleCase} from '../utils';
-import {store} from '../store';
+import {setRooms, removeDevice, editRoom, addRoom, removeRoom, setNewRemote, addRemote, removeRemote, addDevice, addCamera, setNewDevice, setActiveRemote, setActiveRoom} from '../actions/remote.js';
+import {setActiveVision} from '../actions/vision.js';
+import {getNewRoomTemplate, brandsAC, brandsTV, toTitleCase} from '../utils.js';
+import {store} from '../store.js';
 
 const get = _.get;
 const values = _.values;

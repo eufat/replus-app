@@ -1,4 +1,4 @@
-import {env} from './configs';
+import {env} from './configs.js';
 let errorHandler;
 
 if (env.NODE_ENV === 'production') {
