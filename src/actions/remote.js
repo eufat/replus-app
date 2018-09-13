@@ -201,7 +201,7 @@ export const addDevice = (room) => async (dispatch, getState) => {
     const uid = get(getState(), 'app.currentUser.uid');
     const deviceID = get(getState(), 'remote.newDevice.deviceID');
     const deviceCode = get(getState(), 'remote.newDevice.deviceCode');
-    const type = 'replus-remote.js';
+    const type = 'replus-remote';
 
     try {
         await coreClient().post('/device-register', qs({uid, type, room: room.id, deviceID, deviceCode}));
@@ -234,7 +234,7 @@ export const addCamera = (room) => async (dispatch, getState) => {
     const uid = get(getState(), 'app.currentUser.uid');
     const deviceID = get(getState(), 'remote.newDevice.deviceID');
     const deviceCode = get(getState(), 'remote.newDevice.deviceCode');
-    const type = 'replus-vision.js';
+    const type = 'replus-vision';
 
     try {
         await coreClient().post('/device-register', qs({uid, type, room: room.id, deviceID, deviceCode}));

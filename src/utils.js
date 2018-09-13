@@ -158,6 +158,7 @@ export function qs(obj) {
 
 export function toTitleCase(str) {
     if (str) {
+        str = str.toLowerCase();
         return str.replace(/\w\S*/g, function(txt) {
             const shouldUpperCase = upperCases.indexOf(txt) > -1;
             if (shouldUpperCase) {
