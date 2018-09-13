@@ -153,10 +153,10 @@ export default class MainRooms extends connect(store)(LitElement) {
         const brandAC = 'ac-brandlist-' + room;
         if (remoteType == 'ac') {
             this.shadowRoot.getElementById(brandTV).style.display = 'none';
-            this.shadowRoot.getElementById(brandAC).style.display = 'inline';
+            this.shadowRoot.getElementById(brandAC).style.display = 'inline-block';
         } else {
             this.shadowRoot.getElementById(brandAC).style.display = 'none';
-            this.shadowRoot.getElementById(brandTV).style.display = 'inline';
+            this.shadowRoot.getElementById(brandTV).style.display = 'inline-block';
         }
     }
 
@@ -187,7 +187,11 @@ export default class MainRooms extends connect(store)(LitElement) {
         store.dispatch(addDevice(room));
     }
 
-    _handleNewRemoteAdd(roomID) {
+    _handleNewRemoteAdd(roomID, roomIndex) {
+        const ac = this.shadowRoot.getElementById(`ac-selected-${roomIndex}`);
+        const tv = this.shadowRoot.getElementById(`tv-selected-${roomIndex}`);
+        ac.selected = 0;
+        tv.selected = 0;
         store.dispatch(addRemote(roomID));
     }
 
@@ -429,31 +433,33 @@ export default class MainRooms extends connect(store)(LitElement) {
                             <paper-radio-button on-click="${(e) => this._setBrandList(e, roomIndex)}" name="tv">TV</paper-radio-button>
                             <paper-radio-button on-click="${(e) => this._setBrandList(e, roomIndex)}" name="ac">AC</paper-radio-button>
                         </paper-radio-group>
-                        <select
+                        <paper-dropdown-menu
+                            label="Remote TV"
                             id="tv-brandlist-${roomIndex}"
-                            on-change="${(e) => this._handleNewRemoteChange(e, 'brand', roomIndex)}"
+                            noink no-animations
                         >
-                            ${brandsTV.map((brand) => {
-                                return html`
-                                    <option id="tv-selected-${roomIndex}" value="${brand}">
-                                        ${toTitleCase(brand)}
-                                    </option>`;
-                            })}
-                        </select>
-                        <select
+                            <paper-listbox id="tv-selected-${roomIndex}" class="dropdown-content" slot="dropdown-content" selected="0">
+                                ${brandsTV.map((brand) => {
+                                    return html`
+                                        <paper-item on-tap="${(e) => this._handleNewRemoteChange(e, 'brand', roomIndex)}" value="${toTitleCase(brand)}">${toTitleCase(brand)}</paper-item>`;
+                                })}
+                            </paper-listbox>
+                        </paper-dropdown-menu>
+                        <paper-dropdown-menu
+                            label="Remote AC"
                             id="ac-brandlist-${roomIndex}"
                             style="display: none"
-                            on-change="${(e) => this._handleNewRemoteChange(e, 'brand', roomIndex)}"
+                            noink no-animations
                         >
-                            ${brandsAC.map((brand) => {
-                                return html`
-                                    <option id="ac-selected-${roomIndex}" value="${brand}">
-                                        ${toTitleCase(brand)}
-                                    </option>`;
-                            })}
-                        </select>
+                            <paper-listbox id="ac-selected-${roomIndex}" class="dropdown-content" slot="dropdown-content" selected="0">
+                                ${brandsAC.map((brand) => {
+                                    return html`
+                                        <paper-item on-tap="${(e) => this._handleNewRemoteChange(e, 'brand', roomIndex)}" value="${toTitleCase(brand)}">${toTitleCase(brand)}</paper-item>`;
+                                })}
+                            </paper-listbox>
+                        </paper-dropdown-menu>
                         <div class="buttons">
-                            <mwc-button class="blue-button" dialog-confirm label="Add This Remote" on-click="${() => this._handleNewRemoteAdd(item.id)}"></mwc-button>
+                            <mwc-button class="blue-button" dialog-confirm label="Add This Remote" on-click="${() => this._handleNewRemoteAdd(item.id, roomIndex)}"></mwc-button>
                         </div>
                     </div>
                 </paper-dialog>
