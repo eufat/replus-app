@@ -20,7 +20,14 @@ export const fetchActivities = (by, id) => async (dispatch, getState) => {
     const uid = get(getState(), 'app.currentUser.uid');
 
     try {
-        const response = await coreActivity().get('/activity/fetch', {params: {uid, id, by}});
+        let response;
+        if (by == 'date') {
+            const before = id.startDate;
+            const after = id.endDate;
+            response = await coreActivity().get('/activity/fetch', {params: {uid, by, before, after}});
+        } else {
+            response = await coreActivity().get('/activity/fetch', {params: {uid, id, by}});
+        }
         dispatch(setActivities(response.data));
         dispatch(closeProgress());
     } catch (error) {
