@@ -243,7 +243,10 @@ export default class activityMain extends connect(store)(LitElement) {
             const deviceId = this.selectedFilterItem;
             store.dispatch(fetchActivities('device', deviceId));
         } else if (type === 'date') {
-            console.log(this.startDate, this.endDate);
+            const startDate = new Date(`${this.startDate}`).getTime();
+            const endDate = new Date(`${this.endDate}`).getTime();
+            const date = {startDate: startDate, endDate: endDate};
+            store.dispatch(fetchActivities('date', date));
         }
 
         store.dispatch(showSnackbar(`Activity filtered by ${this.selectedFilterType}`));
