@@ -1,4 +1,4 @@
-const prod = true; // process.env.NODE_ENV === 'production';
+const prod = false; // process.env.NODE_ENV === 'production';
 const version = '2.0.0-alpha.1';
 
 const mapsApi = 'AIzaSyCfGVFRrYf89QiMaQCiXUb-D_uDjUPCsCc';

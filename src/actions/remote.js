@@ -110,6 +110,7 @@ export const fetchRooms = () => async (dispatch, getState) => {
 export const fetchIR = (brand) => async (dispatch, getState) => {
     // dispatch(showProgress());
     try {
+        brand = brand.toLowerCase();
         const response = await coreIR().get(`${brand}/manifest.json`);
         dispatch(setManifest(response.data));
         dispatch(closeProgress());
