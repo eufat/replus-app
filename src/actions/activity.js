@@ -22,8 +22,8 @@ export const fetchActivities = (by, id) => async (dispatch, getState) => {
     try {
         let response;
         if (by == 'date') {
-            const before = id.startDate;
-            const after = id.endDate;
+            const before = parseInt(id.endDate);
+            const after = parseInt(id.startDate);
             response = await coreActivity().get('/activity/fetch', {params: {uid, by, before, after}});
         } else {
             response = await coreActivity().get('/activity/fetch', {params: {uid, id, by}});
