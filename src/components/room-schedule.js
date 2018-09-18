@@ -223,8 +223,8 @@ class AddSchedule extends connect(store)(PolymerElement) {
                         <paper-toggle-button id="toggleRepeated" checked="{{isRepeated}}" on-active-changed="_changeIsRepeated"></paper-toggle-button>
                         <p>Repeated</p>
                     </div>
-                    <paper-input id="inputTime" type="time" name="time" on-change="_changeTime"></paper-input>
-                    <paper-input id="inputDate" type="date" name="date" value="{{choosenDates}}" min="{{minDate}}" on-change="calculateYear" on-click="calculateDate"></paper-input>
+                    <paper-input id="inputTime" type="time" name="time" label="Time" on-change="_changeTime"></paper-input>
+                    <paper-input id="inputDate" type="date" name="date" label="Date" value="{{choosenDates}}" min="{{minDate}}" on-change="calculateYear" on-click="calculateDate"></paper-input>
                     <div id="containerTime" class="horizontal layout">
                         <paper-dropdown-menu id="dropdownHour" label="Hour" noink no-animations>
                             <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="name" selected="{{choosenHour}}" on-selected-changed="_changeTime">
