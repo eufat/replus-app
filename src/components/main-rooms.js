@@ -527,6 +527,9 @@ export default class MainRooms extends connect(store)(LitElement) {
                                                 width: 100px;
                                             }
                                         }
+                                        .feature-anchor {
+                                            text-decoration: none;
+                                        }
                                     </style>
                                     <h1>${item.name}</h1>
                                     <mwc-button
@@ -537,14 +540,14 @@ export default class MainRooms extends connect(store)(LitElement) {
                                         on-click="${() => this._enterOnEdit(roomIndex)}">
                                     </mwc-button>
                                     <div class="top-button">
-                                        <a href="/dashboard/room-schedule" on-click="${() => this._handleActiveRoom(room, roomIndex)}">
+                                        <a class="feature-anchor" href="/dashboard/room-schedule" on-click="${() => this._handleActiveRoom(room, roomIndex)}">
                                             <mwc-button
                                                 class="mwc-schedule blue-button"
                                                 label="Schedule"
                                                 icon="calendar_today">
                                             </mwc-button>
                                         </a>
-                                        <a href="/dashboard/room-location" on-click="${() => this._handleActiveRoom(room, roomIndex)}">
+                                        <a class="feature-anchor" href="/dashboard/room-location" on-click="${() => this._handleActiveRoom(room, roomIndex)}">
                                             <mwc-button
                                                 class="mwc-location blue-button"
                                                 label="Location"
