@@ -1,9 +1,7 @@
 import {LitElement, html} from '@polymer/lit-element';
 import {connect} from 'pwa-helpers/connect-mixin';
 
-import {setRooms, removeDevice, editRoom, addRoom, removeRoom, setNewRemote, addRemote, removeRemote, addDevice, addCamera, setNewDevice, setActiveRemote, setActiveRoom} from '../actions/remote.js';
-import {setActiveVision} from '../actions/vision.js';
-import {getNewRoomTemplate, brandsAC, brandsTV, toTitleCase} from '../utils.js';
+import {toTitleCase} from '../utils.js';
 import {store} from '../store.js';
 
 const get = _.get;
@@ -13,10 +11,7 @@ const mapValues = _.mapValues;
 export default class MainMetrics extends connect(store)(LitElement) {
     static get properties() {
         return {
-            // _progress: Boolean,
             rooms: Array,
-            // newDevice: Object,
-            // newRemote: Object,
             uid: String,
             active: Boolean,
         };
@@ -40,10 +35,7 @@ export default class MainMetrics extends connect(store)(LitElement) {
 
     _stateChanged(state) {
         this.rooms = get(state, 'remote.rooms');
-        this.newDevice = get(state, 'remote.newDevice');
-        this.newRemote = get(state, 'remote.newRemote');
         this.uid = get(state, 'app.currentUser.uid');
-        // this._progress = get(state, 'app.progressOpened');
     }
 
     googleChart() {
@@ -209,18 +201,7 @@ export default class MainMetrics extends connect(store)(LitElement) {
     _render({rooms}) {
         const roomRemotes = (remotes, roomIndex) => {
             return mapValues(remotes, (remote) => {
-                const applicanceType = remote.name.split(' ')[0].toLowerCase();
-
                 return html`
-                    <style>
-                        a {
-                            color: black;
-                            text-decoration: none;
-                        }
-                        .remove-button {
-                            display: flex;
-                        }
-                    </style>
                     <div id="remote-${roomIndex}${remotes.indexOf(remote)}" class="remote-item">
                         <div id="chart-${roomIndex}${remotes.indexOf(remote)}"></div>
                     </div>`
@@ -229,8 +210,6 @@ export default class MainMetrics extends connect(store)(LitElement) {
 
         const roomsValues = values(rooms);
         const roomsItems = roomsValues.map((item, roomIndex) => {
-            const room = rooms[roomIndex];
-
             return html`
                 <style>
                     paper-fab {
@@ -257,11 +236,6 @@ export default class MainMetrics extends connect(store)(LitElement) {
                 </style>
                 <paper-material id="material-${roomIndex}" elevation="1">
                     <div class="room-title">
-                        <style>
-                            .feature-anchor {
-                                text-decoration: none;
-                            }
-                        </style>
                         <h1>${item.name}</h1>
                     </div>
                     <div id="remotes-${roomIndex}" class="room-remotes" on-scroll="${(e) => this._scroll(e, roomIndex)}">
@@ -356,7 +330,7 @@ export default class MainMetrics extends connect(store)(LitElement) {
                     border: 1px solid #0000000f;
                 }
 
-                .remote-item p, .camera-item p  {
+                .remote-item p {
                     margin: 0;
                 }
 
