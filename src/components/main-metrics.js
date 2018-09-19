@@ -1,7 +1,9 @@
 import {LitElement, html} from '@polymer/lit-element';
 import {connect} from 'pwa-helpers/connect-mixin';
 
-import {toTitleCase} from '../utils.js';
+import {setRooms, removeDevice, editRoom, addRoom, removeRoom, setNewRemote, addRemote, removeRemote, addDevice, addCamera, setNewDevice, setActiveRemote, setActiveRoom} from '../actions/remote.js';
+import {setActiveVision} from '../actions/vision.js';
+import {getNewRoomTemplate, brandsAC, brandsTV, toTitleCase} from '../utils.js';
 import {store} from '../store.js';
 
 const get = _.get;
@@ -11,7 +13,10 @@ const mapValues = _.mapValues;
 export default class MainMetrics extends connect(store)(LitElement) {
     static get properties() {
         return {
+            // _progress: Boolean,
             rooms: Array,
+            // newDevice: Object,
+            // newRemote: Object,
             uid: String,
             active: Boolean,
         };
@@ -35,7 +40,10 @@ export default class MainMetrics extends connect(store)(LitElement) {
 
     _stateChanged(state) {
         this.rooms = get(state, 'remote.rooms');
+        this.newDevice = get(state, 'remote.newDevice');
+        this.newRemote = get(state, 'remote.newRemote');
         this.uid = get(state, 'app.currentUser.uid');
+        // this._progress = get(state, 'app.progressOpened');
     }
 
     googleChart() {
@@ -61,7 +69,7 @@ export default class MainMetrics extends connect(store)(LitElement) {
             // Define the chart to be drawn.
             const data = new google.visualization.DataTable();
             data.addColumn('timeofday', 'Time of Day');
-            data.addColumn('number', 'Power');
+            data.addColumn('number', 'Motivation Level');
 
             data.addRows([
                 [{v: [8, 0, 0], f: '8 am'}, 1], // v: value, f: format as
@@ -89,8 +97,7 @@ export default class MainMetrics extends connect(store)(LitElement) {
                 },
                 vAxis: {
                     title: 'Rating (scale of 1-10)'
-                },
-                legend: 'none',
+                }
             };
 
             // Instantiate and draw the chart.
@@ -106,29 +113,28 @@ export default class MainMetrics extends connect(store)(LitElement) {
 
         function drawChart() {
             const data = new google.visualization.DataTable();
-            data.addColumn('number', 'Day');
+            data.addColumn('number', 'Time of Day');
             data.addColumn('number', 'Power');
 
             data.addRows([
-                [{v: 1, f: 'Day 1'}, 1.1],
-                [{v: 2, f: 'Day 2'}, 3.2],
-                [{v: 3, f: 'Day 3'}, 2.9],
-                [{v: 4, f: 'Day 4'}, 8.2],
-                [{v: 5, f: 'Day 5'}, 5.3],
-                [{v: 6, f: 'Day 6'}, 2.6],
-                [{v: 7, f: 'Day 7'}, 7.7],
+                [1, 10],
+                [2, 20],
+                [3, 30],
+                [4, 40],
+                [5, 50],
+                [6, 60],
+                [7, 70],
             ]);
 
             // Set chart options
             const options = {
                 title: `${toTitleCase(remote.name)}`,
                 hAxis: {
-                    title: 'Day',
+                    title: 'Time of Day',
                 },
                 vAxis: {
                     title: 'Rating (scale of 1-10)',
-                },
-                legend: 'none',
+                }
             };
 
             // Instantiate and draw the chart.
@@ -147,11 +153,11 @@ export default class MainMetrics extends connect(store)(LitElement) {
 
             if (nextButton != null || prevButton != null) {
                 if (item.onEdit == true) {
-                    nextButton.style.top = '230px';
-                    prevButton.style.top = '230px';
-                } else {
                     nextButton.style.top = '150px';
                     prevButton.style.top = '150px';
+                } else {
+                    nextButton.style.top = '70px';
+                    prevButton.style.top = '70px';
                 }
             }
 
@@ -179,9 +185,9 @@ export default class MainMetrics extends connect(store)(LitElement) {
         const remoteItem = this.shadowRoot.getElementById(`remote-${roomIndex}0`);
         const remoteWidth = remoteItem.offsetWidth;
         if (button == 'right') {
-            remotes.scrollLeft += remoteWidth + 11;
+            remotes.scrollLeft += remoteWidth + 12;
         } else if (button == 'left') {
-            remotes.scrollLeft -= remoteWidth + 11;
+            remotes.scrollLeft -= remoteWidth + 12;
         }
     }
 
@@ -203,31 +209,28 @@ export default class MainMetrics extends connect(store)(LitElement) {
     _render({rooms}) {
         const roomRemotes = (remotes, roomIndex) => {
             return mapValues(remotes, (remote) => {
+                const applicanceType = remote.name.split(' ')[0].toLowerCase();
+
                 return html`
-                    <div id="remote-${roomIndex}${remotes.indexOf(remote)}" class="remote-item" style="height: 265px;">
+                    <style>
+                        a {
+                            color: black;
+                            text-decoration: none;
+                        }
+                        .remove-button {
+                            display: flex;
+                        }
+                    </style>
+                    <div id="remote-${roomIndex}${remotes.indexOf(remote)}" class="remote-item">
                         <div id="chart-${roomIndex}${remotes.indexOf(remote)}"></div>
-                        <div class="statistics">
-                            <div class="row">
-                                <div class="column">
-                                    <p class="title">Used time</p>
-                                    <p class="total">5 hours</p>
-                                </div>
-                                <div class="column">
-                                    <p class="title">Avg power used</p>
-                                    <p class="total">1000</p>
-                                </div>
-                                <div class="column">
-                                    <p class="title">Max power used</p>
-                                    <p class="total">5000</p>
-                                </div>
-                            </div>
-                        </div>
                     </div>`
             });
         };
 
         const roomsValues = values(rooms);
         const roomsItems = roomsValues.map((item, roomIndex) => {
+            const room = rooms[roomIndex];
+
             return html`
                 <style>
                     paper-fab {
@@ -254,6 +257,11 @@ export default class MainMetrics extends connect(store)(LitElement) {
                 </style>
                 <paper-material id="material-${roomIndex}" elevation="1">
                     <div class="room-title">
+                        <style>
+                            .feature-anchor {
+                                text-decoration: none;
+                            }
+                        </style>
                         <h1>${item.name}</h1>
                     </div>
                     <div id="remotes-${roomIndex}" class="room-remotes" on-scroll="${(e) => this._scroll(e, roomIndex)}">
@@ -262,6 +270,8 @@ export default class MainMetrics extends connect(store)(LitElement) {
                             <paper-fab id="prev-slide-${roomIndex}" class="prev" mini icon="image:navigate-before" on-click="${(e) => this._scrollLeft(roomIndex, 'left')}"></paper-fab>
                             <paper-fab id="next-slide-${roomIndex}" class="next" mini icon="image:navigate-next" on-click="${(e) => this._scrollLeft(roomIndex, 'right')}"></paper-fab>
                         </div>
+                    </div>
+                    <div id="statistics">
                     </div>
                 </paper-material>
             `;
@@ -311,14 +321,12 @@ export default class MainMetrics extends connect(store)(LitElement) {
                     white-space: nowrap;
                 }
 
-                @media screen and (max-width: 425px) {
-                    .title {
-                        font-size: 3vw !important;
-                    }
-                }
-
                 /* @media screen and (max-width: 375px) {
                     .remote-item {
+                        width: 42% !important;
+                        height: 120px !important;
+                    }
+                    .camera-item {
                         width: 42% !important;
                         height: 120px !important;
                     }
@@ -326,6 +334,10 @@ export default class MainMetrics extends connect(store)(LitElement) {
 
                 @media screen and (max-width: 320px) {
                     .remote-item {
+                        width: 115px !important;
+                        height: 120px !important;
+                    }
+                    .camera-item {
                         width: 115px !important;
                         height: 120px !important;
                     }
@@ -337,14 +349,24 @@ export default class MainMetrics extends connect(store)(LitElement) {
                     vertical-align: top;
                     padding: 10px;
                     width: 97%;
+                    height: 200px;
                     padding: 5px;
                     margin-right: 0.5rem;
                     border-radius: 10px;
                     border: 1px solid #0000000f;
                 }
 
-                .remote-item p {
+                .remote-item p, .camera-item p  {
                     margin: 0;
+                }
+
+                .appliance-icon {
+                    height: 50px;
+                    padding-top: 25px;
+                }
+
+                .appliance-icon-edit {
+                    height: 50px;
                 }
 
                 h2 {
@@ -391,41 +413,6 @@ export default class MainMetrics extends connect(store)(LitElement) {
                 .wide {
                     width: 100%;
                     margin: 1rem 0 0 !important;
-                }
-
-                /* Create three equal columns that floats next to each other */
-                .column {
-                    float: left;
-                    width: 33.33%;
-                }
-
-                /* Clear floats after the columns */
-                .row:after {
-                    content: "";
-                    display: table;
-                    clear: both;
-                }
-
-                .column p {
-                    text-align: center;
-                }
-
-                .total {
-                    font-size: 1.25rem;
-                    margin-bottom: 0px !important;
-                }
-
-                .title {
-                    margin-top: 0px !important;
-                }
-
-                .statistics {
-                    padding-top: 10px;
-                    padding-bottom: 10px;
-                }
-
-                [id|=chart] {
-                    margin-left: 25px;
                 }
             </style>
             <div class="rooms-container">
