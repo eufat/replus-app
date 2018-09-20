@@ -1,4 +1,5 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const {htmlTransform} = require('polymer-build/lib/html-transform');
 const {addCustomElementsEs5Adapter} = require('polymer-build/lib/custom-elements-es5-adapter');
 
@@ -67,5 +68,6 @@ module.exports = {
             template: 'index.html',
         }),
         new WebcomponentsjsHtmlWebpackPlugin(),
+        new CopyWebpackPlugin([{from: 'images/', to: 'images/'}, {from: 'manifest/', to: 'manifest/'}]),
     ],
 };

@@ -1,5 +1,5 @@
-const prod = false; // process.env.NODE_ENV === 'production';
-const version = '2.0.0-alpha.1';
+const prod = true; // process.env.NODE_ENV === 'production';
+const version = '2.0.0-alpha.1.webpack';
 
 const mapsApi = 'AIzaSyCfGVFRrYf89QiMaQCiXUb-D_uDjUPCsCc';
 const mapsURL = `https://maps.googleapis.com/maps/api/geocode/json?key=${mapsApi}`;
