@@ -1,5 +1,7 @@
 import {LitElement, html} from '@polymer/lit-element';
 
+import includes from 'lodash/includes';
+import isEmpty from 'lodash/isEmpty';
 import '@polymer/app-layout/app-drawer/app-drawer';
 import '@polymer/app-layout/app-header/app-header';
 import '@polymer/app-layout/app-scroll-effects/effects/waterfall';
@@ -12,7 +14,7 @@ import {installOfflineWatcher} from 'pwa-helpers/network';
 import {installMediaQueryWatcher} from 'pwa-helpers/media-query';
 import {updateMetadata} from 'pwa-helpers/metadata';
 
-import firebase from '../firebase.js';
+import { firebase } from '../firebase.js';
 import {store} from '../store.js';
 import {setCurrentUser, authenticateUser, deauthenticateUser} from '../actions/app.js';
 import {navigate, updateOffline, updateLayout} from '../actions/app.js';
@@ -35,9 +37,6 @@ import './remote-vision.js';
 
 import './room-schedule.js';
 import './room-location.js';
-
-const includes = _.includes;
-const isEmpty = _.isEmpty;
 
 class MainApp extends connect(store)(LitElement) {
     static get properties() {

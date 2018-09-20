@@ -1,6 +1,8 @@
 import {PolymerElement, html} from '@polymer/polymer';
 import {connect} from 'pwa-helpers/connect-mixin';
 
+import get from 'lodash/get';
+
 import '@polymer/paper-fab';
 import '@polymer/paper-toast';
 import '@polymer/paper-button';
@@ -21,8 +23,6 @@ import '@polymer/iron-flex-layout/iron-flex-layout';
 import {remoteCommand} from '../actions/remote.js';
 import {toTitleCase} from '../utils.js';
 import {store} from '../store.js';
-
-const get = _.get;
 
 class RemoteTv extends connect(store)(PolymerElement) {
     static get template() {

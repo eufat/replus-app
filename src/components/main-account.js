@@ -1,4 +1,6 @@
 import {LitElement, html} from '@polymer/lit-element';
+import get from 'lodash/get';
+import values from 'lodash/values';
 
 import '@polymer/paper-toggle-button';
 import '@polymer/paper-button';
@@ -7,13 +9,10 @@ import '@polymer/paper-dialog';
 import '@polymer/paper-radio-group';
 import '@polymer/paper-radio-button';
 
-import firebase from '../firebase.js';
+import { firebase } from '../firebase.js';
 import {store} from '../store.js';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {linkWithProvider, notification} from '../actions/app.js';
-
-// Import from lodash
-const get = _.get;
 
 export default class MainAccount extends connect(store)(LitElement) {
     static get properties() {
@@ -73,7 +72,7 @@ export default class MainAccount extends connect(store)(LitElement) {
 
         let totalDevice = 0;
         let totalRemote = 0;
-        const deviceValues = _.values(rooms);
+        const deviceValues = values(rooms);
         deviceValues.map((deviceItem) => {
             if (deviceItem.devices.length != 0) {
                 totalDevice = totalDevice + deviceItem.devices.length;

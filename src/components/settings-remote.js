@@ -1,6 +1,8 @@
 import {LitElement, html} from '@polymer/lit-element';
 import {connect} from 'pwa-helpers/connect-mixin';
 
+import get from 'lodash/get';
+
 import '@polymer/paper-toggle-button';
 import '@polymer/paper-button';
 import '@polymer/paper-item/paper-item';
@@ -53,8 +55,8 @@ export default class SettingsRemote extends connect(store)(LitElement) {
     }
 
     _stateChanged(state) {
-        this.deviceName = _.get(state, 'remote.activeDevice');
-        this.remotes = _.get(state, 'remote.activeRemotes');
+        this.deviceName = get(state, 'remote.activeDevice');
+        this.remotes = get(state, 'remote.activeRemotes');
     }
 
     getIndexOf(array, element) {

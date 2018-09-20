@@ -1,6 +1,9 @@
 import {PolymerElement, html} from '@polymer/polymer';
 import {connect} from 'pwa-helpers/connect-mixin';
 
+import get from 'lodash/get';
+import values from 'lodash/values';
+
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu';
 import '@polymer/paper-listbox';
 import '@polymer/paper-item/paper-item';
@@ -32,9 +35,6 @@ import '@material/mwc-icon';
 import {createSchedule, fetchIR, removeSchedule} from '../actions/remote.js';
 import {mobileCheck, toTitleCase} from '../utils.js';
 import {store} from '../store.js';
-
-const get = _.get;
-const values = _.values;
 
 class AddSchedule extends connect(store)(PolymerElement) {
     static get template() {
@@ -223,8 +223,8 @@ class AddSchedule extends connect(store)(PolymerElement) {
                         <paper-toggle-button id="toggleRepeated" checked="{{isRepeated}}" on-active-changed="_changeIsRepeated"></paper-toggle-button>
                         <p>Repeated</p>
                     </div>
-                    <paper-input id="inputTime" type="time" name="time" on-change="_changeTime"></paper-input>
-                    <paper-input id="inputDate" type="date" name="date" value="{{choosenDates}}" min="{{minDate}}" on-change="calculateYear" on-click="calculateDate"></paper-input>
+                    <paper-input id="inputTime" type="time" name="time" label="Time" on-change="_changeTime"></paper-input>
+                    <paper-input id="inputDate" type="date" name="date" label="Date" value="{{choosenDates}}" min="{{minDate}}" on-change="calculateYear" on-click="calculateDate"></paper-input>
                     <div id="containerTime" class="horizontal layout">
                         <paper-dropdown-menu id="dropdownHour" label="Hour" noink no-animations>
                             <paper-listbox slot="dropdown-content" class="dropdown-content" attr-for-selected="name" selected="{{choosenHour}}" on-selected-changed="_changeTime">
@@ -798,7 +798,7 @@ class AddSchedule extends connect(store)(PolymerElement) {
     getMode() {
         const arrModes = [];
         const modeName = [];
-        const manifestValues = _.values(this.manifest);
+        const manifestValues = values(this.manifest);
         manifestValues.map((item, index) => {
             const key = parseInt(Object.keys(this.manifest)[index]);
             arrModes.push(key);
@@ -825,7 +825,7 @@ class AddSchedule extends connect(store)(PolymerElement) {
     getFan() {
         const arrFans = [];
         const fanName = [];
-        const fanValues = _.values(this.manifest[`${this.mode}`]);
+        const fanValues = values(this.manifest[`${this.mode}`]);
 
         fanValues.map((item, index) => {
             const key = parseInt(Object.keys(this.manifest[`${this.mode}`])[index]);

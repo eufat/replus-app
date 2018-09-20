@@ -1,4 +1,5 @@
 import {LitElement, html} from '@polymer/lit-element';
+import get from 'lodash/get';
 
 import '@polymer/paper-toggle-button';
 import '@polymer/paper-button';
@@ -12,9 +13,6 @@ import {store} from '../store.js';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {saveLocation} from '../actions/remote.js';
 import {log} from '../utils.js';
-
-// Import from lodash
-const get = _.get;
 
 export default class Location extends connect(store)(LitElement) {
     static get properties() {
