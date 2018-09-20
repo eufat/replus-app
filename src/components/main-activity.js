@@ -1,5 +1,12 @@
 import {LitElement, html} from '@polymer/lit-element';
 import {connect} from 'pwa-helpers/connect-mixin';
+import io from 'socket.io-client';
+import dayjs from 'dayjs';
+
+import get from 'lodash/get';
+import values from 'lodash/values';
+import concat from 'lodash/concat';
+
 import '@polymer/paper-card';
 import '@polymer/paper-material';
 import '@polymer/paper-icon-button';
@@ -13,9 +20,7 @@ import {store} from '../store.js';
 import {fetchActivities} from '../actions/activity.js';
 import {showSnackbar} from '../actions/app.js';
 
-const get = _.get;
-const values = _.values;
-const concat = _.concat;
+// import {getEventsDummy, getRemoteActivityDummy} from '../dummy.js';
 
 const CORE_ACTIVITY = env.CORE_ACTIVITY;
 

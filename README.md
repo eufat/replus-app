@@ -15,6 +15,7 @@ A Replus Progressive Web App (PWA) for Replus Remote and Replus Vision.
 ```
 git clone https://github.com/eufat/replus-app.git
 cd replus-app
+git checkout webpack
 ```
 
 ### Install project
@@ -34,7 +35,7 @@ npm install -g browser-sync
 Start project backend on https://github.com/RianWardana/mqtt-remote-api then
 
 ```
-npm run dev
+npm run start:webpack
 ```
 
 ### Deploy project
