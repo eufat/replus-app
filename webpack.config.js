@@ -68,6 +68,6 @@ module.exports = {
             template: 'index.html',
         }),
         new WebcomponentsjsHtmlWebpackPlugin(),
-        new CopyWebpackPlugin([{from: 'images/', to: 'images/'}, {from: 'manifest/', to: 'manifest/'}]),
+        new CopyWebpackPlugin([{from: 'images/', to: 'images/'}, {from: 'manifest/', to: 'manifest/'}, {from: '_redirects', to: '_redirects', toType: 'file'}]),
     ],
 };
