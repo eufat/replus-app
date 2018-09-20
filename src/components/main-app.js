@@ -14,7 +14,7 @@ import {installOfflineWatcher} from 'pwa-helpers/network';
 import {installMediaQueryWatcher} from 'pwa-helpers/media-query';
 import {updateMetadata} from 'pwa-helpers/metadata';
 
-import firebase from '../firebase.js';
+import { firebase } from '../firebase.js';
 import {store} from '../store.js';
 import {setCurrentUser, authenticateUser, deauthenticateUser} from '../actions/app.js';
 import {navigate, updateOffline, updateLayout} from '../actions/app.js';

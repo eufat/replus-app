@@ -9,7 +9,7 @@ import '@polymer/paper-dialog';
 import '@polymer/paper-radio-group';
 import '@polymer/paper-radio-button';
 
-import firebase from '../firebase.js';
+import { firebase } from '../firebase.js';
 import {store} from '../store.js';
 import {connect} from 'pwa-helpers/connect-mixin';
 import {linkWithProvider, notification} from '../actions/app.js';
