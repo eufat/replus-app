@@ -15,7 +15,6 @@ A Replus Progressive Web App (PWA) for Replus Remote and Replus Vision.
 ```
 git clone https://github.com/eufat/replus-app.git
 cd replus-app
-git checkout webpack
 ```
 
 ### Install project
@@ -34,8 +33,4 @@ npm run start
 
 ### Deploy project
 
-Deployment process include building builds and App Engine deployment
-
-```
-npm run deploy
-```
+Deployment process automated using Netlify on prod branch
