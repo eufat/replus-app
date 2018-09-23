@@ -1,4 +1,6 @@
-import {env} from './configs.js';
+import {invert} from 'lodash';
+
+import {env} from './configs';
 
 export const userDataKey = ['uid', 'email', 'displayName', 'photoUrl'];
 
@@ -45,7 +47,7 @@ export function getTVCodesetFromBrand(brand) {
 }
 
 export function getTVBrandFromCodeset(codeset) {
-    const invertedTVCodeset = _.invert(TVBrandsCodeset);
+    const invertedTVCodeset = invert(TVBrandsCodeset);
     return invertedTVCodeset[codeset];
 }
 
@@ -54,7 +56,7 @@ export function getTVCodesetFromCommand(command) {
 }
 
 export function getTVCommandFromCodeset(codeset) {
-    const invertedTVCodeset = _.invert(TVCommandsCodeset);
+    const invertedTVCodeset = invert(TVCommandsCodeset);
     return invertedTVCodeset[codeset];
 }
 
@@ -158,6 +160,7 @@ export function qs(obj) {
 
 export function toTitleCase(str) {
     if (str) {
+        str = str.toLowerCase();
         return str.replace(/\w\S*/g, function(txt) {
             const shouldUpperCase = upperCases.indexOf(txt) > -1;
             if (shouldUpperCase) {

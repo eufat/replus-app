@@ -1,9 +1,9 @@
-import {coreClient, corePost, coreIR, coreSchedule, googleMaps} from '../client.js';
-import {qs} from '../utils.js';
-import errorHandler from '../error.js';
-import {showSnackbar, showProgress, closeProgress, showBack} from './app.js';
-import {toTitleCase} from '../utils.js';
-const get = _.get; // import from lodash
+import get from 'lodash/get';
+import {coreClient, corePost, coreIR, coreSchedule, googleMaps} from '../client';
+import {qs} from '../utils';
+import errorHandler from '../error';
+import {showSnackbar, showProgress, closeProgress, showBack} from './app';
+import {toTitleCase} from '../utils';
 
 export const setRooms = (rooms) => (dispatch, getState) => {
     if (rooms) {
@@ -108,8 +108,8 @@ export const fetchRooms = () => async (dispatch, getState) => {
 };
 
 export const fetchIR = (brand) => async (dispatch, getState) => {
-    // dispatch(showProgress());
     try {
+        brand = brand.toLowerCase();
         const response = await coreIR().get(`${brand}/manifest.json`);
         dispatch(setManifest(response.data));
         dispatch(closeProgress());
@@ -201,7 +201,7 @@ export const addDevice = (room) => async (dispatch, getState) => {
     const uid = get(getState(), 'app.currentUser.uid');
     const deviceID = get(getState(), 'remote.newDevice.deviceID');
     const deviceCode = get(getState(), 'remote.newDevice.deviceCode');
-    const type = 'replus-remote.js';
+    const type = 'replus-remote';
 
     try {
         await coreClient().post('/device-register', qs({uid, type, room: room.id, deviceID, deviceCode}));
@@ -234,7 +234,7 @@ export const addCamera = (room) => async (dispatch, getState) => {
     const uid = get(getState(), 'app.currentUser.uid');
     const deviceID = get(getState(), 'remote.newDevice.deviceID');
     const deviceCode = get(getState(), 'remote.newDevice.deviceCode');
-    const type = 'replus-vision.js';
+    const type = 'replus-vision';
 
     try {
         await coreClient().post('/device-register', qs({uid, type, room: room.id, deviceID, deviceCode}));

@@ -1,4 +1,5 @@
 import {LitElement, html} from '@polymer/lit-element';
+import get from 'lodash/get';
 
 import '@polymer/paper-toggle-button';
 import '@polymer/paper-button';
@@ -50,7 +51,7 @@ export default class SettingsVision extends connect(store)(LitElement) {
     }
 
     _stateChanged(state) {
-        this.settings = _.get(state, 'vision.settings');
+        this.settings = get(state, 'vision.settings');
     }
 
     getResolution(resolution) {
