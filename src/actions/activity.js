@@ -1,8 +1,7 @@
-import {showProgress, closeProgress} from './app.js';
-import {coreActivity} from '../client.js';
-import errorHandler from '../error.js';
-
-const get = _.get;
+import {showProgress, closeProgress} from './app';
+import {coreActivity} from '../client';
+import errorHandler from '../error';
+import get from 'lodash/get';
 
 export const SET_ACTIVITIES = 'SET_ACTIVITIES';
 
@@ -20,7 +19,14 @@ export const fetchActivities = (by, id) => async (dispatch, getState) => {
     const uid = get(getState(), 'app.currentUser.uid');
 
     try {
-        const response = await coreActivity().get('/activity/fetch', {params: {uid, id, by}});
+        let response;
+        if (by == 'date') {
+            const before = parseInt(id.endDate);
+            const after = parseInt(id.startDate);
+            response = await coreActivity().get('/activity/fetch', {params: {uid, by, before, after}});
+        } else {
+            response = await coreActivity().get('/activity/fetch', {params: {uid, id, by}});
+        }
         dispatch(setActivities(response.data));
         dispatch(closeProgress());
     } catch (error) {

@@ -90,16 +90,12 @@
   <noscript>
     Please enable JavaScript to view this website.
   </noscript>
-  <script defer src="node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
-  <script defer src="https://www.gstatic.com/firebasejs/5.4.1/firebase-app.js"></script>
-  <script defer src="https://www.gstatic.com/firebasejs/5.4.1/firebase-auth.js"></script>
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.10/lodash.min.js"></script>
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.slim.js"></script>
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.7.5/dayjs.min.js"></script>
-  <script defer src="https://cdn.rawgit.com/GoogleCloudPlatform/stackdriver-errors-js/v0.4.0/dist/stackdriver-errors-concat.min.js"></script>
-  <script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCfGVFRrYf89QiMaQCiXUb-D_uDjUPCsCc&libraries=places"></script>
-  <script defer type="module" src="src/components/main-app.js"></script>
+  <!-- Load webcomponents-loader.js to check and load any polyfills your browser needs -->
+  <script src="node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+  <script src="https://cdn.rawgit.com/GoogleCloudPlatform/stackdriver-errors-js/v0.4.0/dist/stackdriver-errors-concat.min.js"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCfGVFRrYf89QiMaQCiXUb-D_uDjUPCsCc&libraries=places"></script>
+  <!-- Built with love using PWA Starter Kit -->
+  <script type="module" src="src/components/main-app.js"></script>
 </body>
 
 </html>

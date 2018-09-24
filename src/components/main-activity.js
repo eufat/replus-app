@@ -1,5 +1,12 @@
 import {LitElement, html} from '@polymer/lit-element';
 import {connect} from 'pwa-helpers/connect-mixin';
+import io from 'socket.io-client';
+import dayjs from 'dayjs';
+
+import get from 'lodash/get';
+import values from 'lodash/values';
+import concat from 'lodash/concat';
+
 import '@polymer/paper-card';
 import '@polymer/paper-material';
 import '@polymer/paper-icon-button';
@@ -13,9 +20,7 @@ import {store} from '../store.js';
 import {fetchActivities} from '../actions/activity.js';
 import {showSnackbar} from '../actions/app.js';
 
-const get = _.get;
-const values = _.values;
-const concat = _.concat;
+// import {getEventsDummy, getRemoteActivityDummy} from '../dummy.js';
 
 const CORE_ACTIVITY = env.CORE_ACTIVITY;
 
@@ -35,6 +40,8 @@ export default class activityMain extends connect(store)(LitElement) {
             selectedFilterType: String,
             selectedFilterItem: String,
             currentUser: Object,
+            startDate: String,
+            endDate: String,
         };
     }
 
@@ -46,11 +53,13 @@ export default class activityMain extends connect(store)(LitElement) {
         this.storedActivities = [];
         this.rooms = [];
         this.listening = false;
-        this.filterTypeSelection = ['owner', 'room', 'device'];
+        this.filterTypeSelection = ['owner', 'room', 'device', 'date'];
         this.filterItemSelection = [];
         this.selectedFilterType = 'owner';
         this.selectedFilterItem = '';
         this.currentUser = {};
+        this.startDate = '';
+        this.endDate = '';
     }
 
     _stateChanged(state) {
@@ -172,6 +181,16 @@ export default class activityMain extends connect(store)(LitElement) {
 
     selectFilterType(type) {
         this.selectedFilterType = type;
+        const startDate = this.shadowRoot.getElementById('start-date');
+        const endDate = this.shadowRoot.getElementById('end-date');
+        const filterType = this.shadowRoot.getElementById('filter-type-selection');
+        const filterItem = this.shadowRoot.getElementById('filter-item-selection');
+        startDate.value = null;
+        endDate.value = null;
+        startDate.style.display = 'none';
+        endDate.style.display = 'none';
+        filterType.style.marginRight = '5%';
+        filterItem.style.display = 'block';
         if (type === 'owner') {
             const owner = this.currentUser.displayName;
             this.filterItemSelection = [owner];
@@ -197,6 +216,11 @@ export default class activityMain extends connect(store)(LitElement) {
             this.filterItemSelection = devices;
             this.selectedFilterItem = devices[0];
             // this.startActivityFiltering();
+        } else if (type === 'date') {
+            startDate.style.display = 'block';
+            endDate.style.display = 'block';
+            filterItem.style.display = 'none';
+            filterType.style.marginRight = '40px';
         }
         const itemSelected = this.shadowRoot.getElementById('item-selected');
         itemSelected.selected = null;
@@ -225,6 +249,11 @@ export default class activityMain extends connect(store)(LitElement) {
         } else if (type === 'device') {
             const deviceId = this.selectedFilterItem;
             store.dispatch(fetchActivities('device', deviceId));
+        } else if (type === 'date') {
+            const startDate = new Date(`${this.startDate}`).getTime();
+            const endDate = new Date(`${this.endDate}`).getTime();
+            const date = {startDate: startDate, endDate: endDate};
+            store.dispatch(fetchActivities('date', date));
         }
 
         store.dispatch(showSnackbar(`Activity filtered by ${this.selectedFilterType}`));
@@ -235,7 +264,21 @@ export default class activityMain extends connect(store)(LitElement) {
         this.startActivityFiltering();
     }
 
-    _render({filterTypeSelection, filterItemSelection, selectedFilterType, selectedFilterItem}) {
+    setStartDate(e) {
+        this.startDate = e.target.value;
+        if (this.startDate != '' && this.endDate != '') {
+            this.startActivityFiltering();
+        }
+    }
+
+    selectFilterDate(e) {
+        this.endDate = e.target.value;
+        if (this.startDate != '' && this.endDate != '') {
+            this.startActivityFiltering();
+        }
+    }
+
+    _render({filterTypeSelection, filterItemSelection, selectedFilterType, selectedFilterItem, startDate, endDate}) {
         const activityIcon = html`
                 <svg class="time-icon time-icon-activity" viewBox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true">
                     <path fill-rule="evenodd" d="M10.86 7c-.45-1.72-2-3-3.86-3-1.86 0-3.41 1.28-3.86 3H0v2h3.14c.45 1.72 2 3 3.86 3 1.86 0 3.41-1.28 3.86-3H14V7h-3.14zM7 10.2c-1.22 0-2.2-.98-2.2-2.2 0-1.22.98-2.2 2.2-2.2 1.22 0 2.2.98 2.2 2.2 0 1.22-.98 2.2-2.2 2.2z"></path>
@@ -323,6 +366,8 @@ export default class activityMain extends connect(store)(LitElement) {
                     })}
                 </paper-listbox>
             </paper-dropdown-menu>
+            <paper-input id="start-date" label="Start date" type="date" name="date" max="${endDate}" on-change="${(e) => this.setStartDate(e)}"></paper-input>
+            <paper-input id="end-date" label="End date" type="date" name="date" min="${startDate}" on-change="${(e) => this.selectFilterDate(e)}"></paper-input>
         </div>`;
 
         return html`
@@ -449,6 +494,17 @@ export default class activityMain extends connect(store)(LitElement) {
                     --iron-icon-fill-color: #5f6368;
                     --iron-icon-height: 48px;
                     --iron-icon-width: 48px;
+                }
+
+                #start-date {
+                    width: 47%;
+                    display: none;
+                }
+
+                #end-date {
+                    width: 47%;
+                    margin-left: 6%;
+                    display: none;
                 }
             </style>
             <div class="container">

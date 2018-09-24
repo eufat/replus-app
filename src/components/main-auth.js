@@ -1,10 +1,10 @@
-import {LitElement, html} from '@polymer/lit-element';
-import {connect} from 'pwa-helpers/connect-mixin';
+import { LitElement, html } from "@polymer/lit-element";
+import { connect } from "pwa-helpers/connect-mixin";
 
-import '@material/mwc-button';
+import "@material/mwc-button";
 
-import firebase from '../firebase.js';
-import {store} from '../store.js';
+import { firebase } from "../firebase.js";
+import { store } from "../store.js";
 
 export default class MainAuth extends connect(store)(LitElement) {
     constructor() {
@@ -93,12 +93,14 @@ export default class MainAuth extends connect(store)(LitElement) {
                 <paper-material class="auth-container" elevation="1">
                     <p id="header">Sign in to Replus</p>
                     <p id="subheader">Use your social account to continue.</p>
-                    <mwc-button class="width google-button" on-click="${() => this.handleOnGoogleSignIn()}">Continue with Google</mwc-button>
-                    <mwc-button class="width facebook-button" on-click="${() => this.handleOnFacebookSignIn()}">Continue with Facebook</mwc-button>
+                    <mwc-button class="width google-button" on-click="${() =>
+                        this.handleOnGoogleSignIn()}">Continue with Google</mwc-button>
+                    <mwc-button class="width facebook-button" on-click="${() =>
+                        this.handleOnFacebookSignIn()}">Continue with Facebook</mwc-button>
                 </paper-material>
             </div>
     `;
     }
 }
 
-customElements.define('main-auth', MainAuth);
+customElements.define("main-auth", MainAuth);

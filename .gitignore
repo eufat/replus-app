@@ -17,6 +17,11 @@ build/*
 server/build/*
 !build/build.xml
 
+# dist
+dist/*
+server/dist/*
+
+
 # env
 .env
 
