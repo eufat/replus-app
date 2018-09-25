@@ -7,6 +7,7 @@ import mapValues from 'lodash/mapValues';
 
 import '@polymer/paper-item/paper-item';
 import '@polymer/paper-dialog';
+import '@polymer/paper-button';
 import '@material/mwc-button';
 import '@material/mwc-icon';
 import '@polymer/paper-input/paper-input';
@@ -416,8 +417,8 @@ export default class MainRooms extends connect(store)(LitElement) {
                             on-input="${(e) => this._handleNewDeviceChange(e, 'deviceCode')}"
                         >
                         </paper-input>
-                        <div class="buttons" on-click="${() => this._handleNewDeviceAdd(room)}">
-                            <mwc-button class="blue-button" dialog-confirm label="Add This Device" disabled="${!(this.newDevice.deviceID || this.newDevice.deviceCode)}"></mwc-button>
+                        <div class="buttons">
+                            <paper-button class="blue-button" dialog-confirm on-click="${() => this._handleNewDeviceAdd(room)}" disabled="${!(this.newDevice.deviceID || this.newDevice.deviceCode)}">Add This Device</paper-button>
                         </div>
                     </div>
                 </paper-dialog>
@@ -756,6 +757,10 @@ export default class MainRooms extends connect(store)(LitElement) {
                     --mdc-theme-primary: #4664ae;
                     --mdc-theme-on-secondary: white;
                     --mdc-theme-secondary: #4664ae;
+                }
+
+                paper-button.blue-button:not([disabled]) {
+                    color: #4664ae;
                 }
 
                 .add-device-button {
