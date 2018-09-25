@@ -5,6 +5,7 @@ import '@polymer/paper-toggle-button';
 import '@polymer/paper-button';
 import '@polymer/paper-item/paper-item';
 import '@polymer/paper-dialog';
+import '@polymer/iron-icon';
 import '@polymer/paper-radio-group';
 import '@polymer/paper-radio-button';
 import '@em-polymer/google-map/google-map';
@@ -53,16 +54,21 @@ export default class Location extends connect(store)(LitElement) {
             this.geocodeLatLng(this.location.lat + ',' + this.location.lng);
         }
 
-        const locationEmpty = this.location.lat == undefined;
+        const locationEmpty = this.address == '';
+        const saveElement = this.shadowRoot.getElementById(`save-button-${this.room.index}`);
         const resetElement = this.shadowRoot.getElementById(`reset-button-${this.room.index}`);
         const geoInElement = this.shadowRoot.getElementById(`geo-in-${this.room.index}`);
         const geoOutElement = this.shadowRoot.getElementById(`geo-out-${this.room.index}`);
         if (locationEmpty) {
+            saveElement.setAttribute('disabled', true);
             resetElement.setAttribute('disabled', true);
             geoInElement.setAttribute('disabled', true);
             geoOutElement.setAttribute('disabled', true);
         } else {
+            saveElement.removeAttribute('disabled');
             resetElement.removeAttribute('disabled');
+            geoInElement.removeAttribute('disabled');
+            geoOutElement.removeAttribute('disabled');
         }
     }
 
@@ -302,15 +308,11 @@ export default class Location extends connect(store)(LitElement) {
 
     getLocation(roomIndex) {
         const address = this.shadowRoot.getElementById('address').value;
-        const geoInElement = this.shadowRoot.getElementById(`geo-in-${roomIndex}`);
-        const geoOutElement = this.shadowRoot.getElementById(`geo-out-${roomIndex}`);
         this.address = address;
         this.geocode(address);
         // store.dispatch(getLocation(address));
         this.zoom = 15;
         this.shadowRoot.getElementById('address').value = null;
-        geoInElement.removeAttribute('disabled');
-        geoOutElement.removeAttribute('disabled');
     }
 
     saveLocation() {
@@ -492,10 +494,6 @@ export default class Location extends connect(store)(LitElement) {
                     flex-flow: row wrap;
                 }
 
-                .save-button {
-                    margin-right: 4%;
-                }
-
                 .save-button, .reset-button {
                     width: 47.5%;
                 }
@@ -531,13 +529,12 @@ export default class Location extends connect(store)(LitElement) {
                                 ${
                                     commandIn == ''
                                         ? html`
-                                        <mwc-button
+                                        <paper-button
                                             id="geo-in-${room.index}"
                                             class="mwc-edit"
-                                            label="Edit"
-                                            icon="edit"
                                             on-click="${() => this.shadowRoot.getElementById('geoInDialog').open()}">
-                                        </mwc-button>`
+                                        <iron-icon icon="image:edit"></iron-icon>Edit
+                                        </paper-button>`
                                         : html`
                                         ${commandIn}`
                                 }
@@ -551,32 +548,30 @@ export default class Location extends connect(store)(LitElement) {
                             ${
                                 commandOut == ''
                                     ? html`
-                                        <mwc-button
+                                        <paper-button
                                             id="geo-out-${room.index}"
                                             class="mwc-edit"
-                                            label="Edit"
-                                            icon="edit"
                                             on-click="${() => this.shadowRoot.getElementById('geoOutDialog').open()}">
-                                        </mwc-button>`
+                                        <iron-icon icon="image:edit"></iron-icon>Edit
+                                        </paper-button>`
                                     : html`
                                         ${commandOut}`
                             }
                             </div>
                         </paper-item>
                         <div class="geolocation-buttons">
-                            <mwc-button
+                            <paper-button
                                 raised
                                 id="save-button-${room.index}"
                                 class="light save-button"
-                                label="save"
                                 on-click="${() => this.saveLocation()}"
-                            ></mwc-button>
-                            <mwc-button
+                            >Save</paper-button>
+                            <paper-button
+                                raised
                                 id="reset-button-${room.index}"
                                 class="reset-button"
-                                label="reset"
                                 on-click="${() => this.resetLocation()}"
-                            ></mwc-button>
+                            >Reset</paper-button>
                         </div>
                     </div>
                 </paper-material>
