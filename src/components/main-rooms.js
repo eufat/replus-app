@@ -211,8 +211,9 @@ export default class MainRooms extends connect(store)(LitElement) {
         store.dispatch(addCamera(roomID));
     }
 
-    _handleActiveRemote(remote) {
-        store.dispatch(setActiveRemote(remote));
+    _handleActiveRemote(remote, devices) {
+        const activeRemote = {...remote, devices};
+        store.dispatch(setActiveRemote(activeRemote));
     }
 
     _handleActiveRoom(room, index) {
@@ -280,7 +281,7 @@ export default class MainRooms extends connect(store)(LitElement) {
                                         <p>${toTitleCase(remote.name)}</p>
                                     </div>`
                                 : html`
-                                <a href="/dashboard/remote-${remote.name.substring(0, 2)}" on-click="${() => this._handleActiveRemote(remote)}">
+                                <a href="/dashboard/remote-${remote.name.substring(0, 2)}" on-click="${() => this._handleActiveRemote(remote, rooms[roomIndex].devices)}">
                                     <div id="remote-${roomIndex}${remotes.indexOf(remote)}" class="remote-item">
                                         <img class="appliance-icon" src="images/${applicanceType}-icon.png"/>
                                         <p>${toTitleCase(remote.name)}</p>

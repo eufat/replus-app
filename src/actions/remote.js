@@ -321,6 +321,7 @@ export const remoteCommand = (command) => (dispatch, getState) => {
     dispatch(showProgress());
     const uid = get(getState(), 'app.currentUser.uid');
     const activeRemoteRoom = get(getState(), 'remote.activeRemote.room');
+    const activeDevices = get(getState(), 'remote.activeRemote.devices');
 
     // Iterate over rooms to get devices on desired room
     // the output of devices will be for ex: "ABC123,ABC234".
@@ -338,7 +339,11 @@ export const remoteCommand = (command) => (dispatch, getState) => {
 
     try {
         corePost().post('/remote', qs({uid, devices, command: formattedCommand, room: activeRemoteRoom, source: 'app'}));
-        dispatch(showSnackbar(`Command sent.`));
+        if (activeDevices.length == 0) {
+            dispatch(showSnackbar(`No device is assigned for this room.`));
+        } else {
+            dispatch(showSnackbar(`Command sent.`));
+        }
         dispatch(closeProgress());
     } catch (error) {
         errorHandler.report(error);
