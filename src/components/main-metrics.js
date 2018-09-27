@@ -204,7 +204,7 @@ export default class MainMetrics extends connect(store)(LitElement) {
         const roomRemotes = (remotes, roomIndex) => {
             return mapValues(remotes, (remote) => {
                 return html`
-                    <div id="remote-${roomIndex}${remotes.indexOf(remote)}" class="remote-item">
+                    <div id="remote-${roomIndex}${remotes.indexOf(remote)}" class="remote-item" style="height: 265px;">
                         <div id="chart-${roomIndex}${remotes.indexOf(remote)}"></div>
                         <div class="statistics">
                             <div class="row">
