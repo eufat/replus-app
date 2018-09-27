@@ -1,9 +1,31 @@
-import {UPDATE_PAGE, UPDATE_OFFLINE, OPEN_SNACKBAR, CLOSE_SNACKBAR, OPEN_PROGRESS, CLOSE_PROGRESS, UPDATE_DRAWER_STATE, AUTHENTICATE_USER, DEAUTHENTICATE_USER, SET_CURRENT_USER, OPEN_BACK, CLOSE_BACK, SET_NOTIFICATION, SET_GEOLOCATION_STATE, SET_GEOLOCATION_LATLONG, SET_GEOLOCATION_ID} from '../actions/app.js';
+import {
+    UPDATE_PAGE,
+    UPDATE_OFFLINE,
+    OPEN_SNACKBAR,
+    CLOSE_SNACKBAR,
+    OPEN_PROGRESS,
+    CLOSE_PROGRESS,
+    UPDATE_DRAWER_STATE,
+    AUTHENTICATE_USER,
+    DEAUTHENTICATE_USER,
+    SET_CURRENT_USER,
+    OPEN_BACK,
+    CLOSE_BACK,
+    SET_NOTIFICATION,
+    SET_GEOLOCATION_STATE,
+    SET_GEOLOCATION_LATLONG,
+    SET_GEOLOCATION_ID,
+    SET_SERVICE_WORKERS,
+} from '../actions/app.js';
 
 const initialState = {
     progressOpened: false,
     backable: false,
     notification: false,
+    serviceWorkers: {
+        isSubscribed: false,
+        swRegistration: null,
+    },
 };
 
 const app = (state = initialState, action) => {
@@ -99,6 +121,15 @@ const app = (state = initialState, action) => {
                     ...state.geolocation,
                     latitude: action.latitude,
                     longitude: action.longitude,
+                },
+            };
+        case SET_SERVICE_WORKERS:
+            return {
+                ...state,
+                serviceWorkers: {
+                    ...state.serviceWorkers,
+                    isSubscribed: action.isSubscribed,
+                    swRegistration: action.swRegistration,
                 },
             };
         default:

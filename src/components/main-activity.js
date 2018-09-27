@@ -18,7 +18,7 @@ import {env} from '../configs.js';
 import {getDateFromFilename, getTVBrandFromCodeset, getTVCommandFromCodeset, toTitleCase, modesAC, fansAC, camelToSentence, log} from '../utils.js';
 import {store} from '../store.js';
 import {fetchActivities} from '../actions/activity.js';
-import {showSnackbar} from '../actions/app.js';
+import {showSnackbar, displayNotification} from '../actions/app.js';
 
 // import {getEventsDummy, getRemoteActivityDummy} from '../dummy.js';
 
@@ -29,7 +29,7 @@ export default class activityMain extends connect(store)(LitElement) {
         return {
             activityStatus: String,
             activityURL: String,
-            realtimeAcitivities: Array,
+            realtimeActivities: Array,
             storedActivities: Array,
             active: Boolean,
             rooms: Array,
@@ -49,7 +49,7 @@ export default class activityMain extends connect(store)(LitElement) {
         super();
         this.activityURL = 'Not set';
         this.activityStatus = 'Not available';
-        this.realtimeAcitivities = [];
+        this.realtimeActivities = [];
         this.storedActivities = [];
         this.rooms = [];
         this.listening = false;
@@ -77,8 +77,9 @@ export default class activityMain extends connect(store)(LitElement) {
 
     _didRender() {
         if (this.rooms.length > 0 && !this.listening) {
-            const url = `${CORE_ACTIVITY}/activity`;
+            const url = `${CORE_ACTIVITY}`;
             const socket = io(url, {
+                path: '/activity',
                 extraHeaders: {
                     'Access-Control-Allow-Credentials': 'omit',
                 },
@@ -93,28 +94,15 @@ export default class activityMain extends connect(store)(LitElement) {
             });
 
             for (let room of this.rooms) {
-                log(`Listening to room ${room.id}`);
                 socket.on(room.id, (data) => {
                     data.room = room.name;
-                    this.realtimeAcitivities = this.formatActivity(data);
+                    const activity = this.formatActivity(data);
+                    displayNotification(activity);
+                    this.realtimeActivities = [...this.realtimeActivities, activity];
                 });
             }
 
             this.listening = true;
-        }
-    }
-
-    displayNotification(message) {
-        const options = {
-            body: message,
-        };
-
-        if (Notification.permission == 'granted') {
-            if (this.notification == 'true') {
-                navigator.serviceWorker.getRegistration().then((reg) => {
-                    reg.showNotification('Replus Remote', options);
-                });
-            }
         }
     }
 
@@ -165,8 +153,8 @@ export default class activityMain extends connect(store)(LitElement) {
 
     addFrameRealtime(frame) {
         const newData = `data:frame/jpeg;base64, ${frame.data}`;
-        const frames = [...this.realtimeAcitivities, {data: newData, name: frame.name, dev_id: frame.dev_id}];
-        this.realtimeAcitivities = frames;
+        const frames = [...this.realtimeActivities, {data: newData, name: frame.name, dev_id: frame.dev_id}];
+        this.realtimeActivities = frames;
     }
 
     addFrameStored(frame) {
@@ -301,7 +289,7 @@ export default class activityMain extends connect(store)(LitElement) {
             });
         };
 
-        const data = [...this.realtimeAcitivities, ...this.storedActivities];
+        const data = [...this.realtimeActivities, ...this.storedActivities];
 
         function compare(a, b) {
             const dateA = a.date.getTime();

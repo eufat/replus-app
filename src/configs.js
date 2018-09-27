@@ -1,6 +1,7 @@
-const prod = true; // process.env.NODE_ENV === 'production';
+const prod = false; // process.env.NODE_ENV === 'production';
 const version = '2.0.0-alpha.1.webpack';
 
+const applicationServerPublicKey = '<Your Public Key>';
 const mapsApi = 'AIzaSyCfGVFRrYf89QiMaQCiXUb-D_uDjUPCsCc';
 const mapsURL = `https://maps.googleapis.com/maps/api/geocode/json?key=${mapsApi}`;
 const projectId = 'replus-162509';
@@ -56,6 +57,7 @@ const prodEnv = {
     PROJECT_ENV: projectId,
     GOOGLE_MAPS: mapsURL,
     ERROR_KEY: stackdriverError,
+    SERVER_KEY: applicationServerPublicKey,
     ...prodEndpoint,
 };
 
@@ -65,6 +67,7 @@ const devEnv = {
     PROJECT_ENV: projectId,
     GOOGLE_MAPS: mapsURL,
     ERROR_KEY: stackdriverError,
+    SERVER_KEY: applicationServerPublicKey,
     ...devEndpoint,
 };
 

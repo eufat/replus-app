@@ -1,12 +1,13 @@
 import pick from 'lodash/pick';
 import get from 'lodash/get';
-import { pushLocationTo } from '../utils';
-import { userDataKey, qs, setCookie, getCookie } from '../utils';
+import { pushLocationTo, log } from '../utils';
+import { userDataKey, qs, setCookie, getCookie, urlB64ToUint8Array } from '../utils';
 import { createClient, coreClient } from '../client';
 import firebase from '../firebase';
 import errorHandler from '../error';
 import { fetchRooms, fetchSchedules } from './remote';
 import { fetchActivities } from './activity';
+import { env } from '../configs';
 
 export const UPDATE_PAGE = 'UPDATE_PAGE';
 export const UPDATE_OFFLINE = 'UPDATE_OFFLINE';
@@ -24,6 +25,7 @@ export const SET_NOTIFICATION = 'SET_NOTIFICATION';
 export const SET_GEOLOCATION_STATE = 'SET_GEOLOCATION_STATE';
 export const SET_GEOLOCATION_LATLONG = 'SET_GEOLOCATION_LATLONG';
 export const SET_GEOLOCATION_ID = 'SET_GEOLOCATION_ID';
+export const SET_SERVICE_WORKERS = 'SET_SERVICE_WORKERS';
 
 export const navigate = (path) => (dispatch) => {
     const page = path === '/' ? 'auth' : path.slice(1);
@@ -183,10 +185,11 @@ export const setCurrentUser = (user) => async (dispatch, getState) => {
             currentUser,
         });
 
-        dispatch(fetchRooms());
-        dispatch(fetchActivities('owner', currentUser.uid));
-        dispatch(fetchSchedules());
+        dispatch(initServiceWorkers());
         dispatch(fetchUser());
+        dispatch(fetchRooms());
+        dispatch(fetchSchedules());
+        dispatch(fetchActivities('owner', currentUser.uid));
     } catch (error) {
         errorHandler.report(error);
     }
@@ -262,6 +265,43 @@ export const linkWithProvider = (providerType) => async (dispatch, getState) => 
     }
 };
 
+export const setServiceWorkers = (serviceWorkers) => (dispatch, getState) => {
+    dispatch({
+        type: SET_SERVICE_WORKERS,
+        serviceWorkers,
+    });
+};
+
+export const initServiceWorkers = () => async (dispatch, getState) => {
+    /* Load and register pre-caching Service Worker */
+    if ('serviceWorker' in navigator && 'PushManager' in window) {
+        log('Service Worker and Push is supported');
+
+        try {
+            const swRegistration = await navigator.serviceWorker.register('service-worker.js');
+            log('Service Worker is registered', swReg);
+
+            await swRegistration.pushManager.getSubscription();
+            isSubscribed = !(subscription === null);
+
+            if (isSubscribed) {
+                log('User IS subscribed.');
+            } else {
+                log('User is NOT subscribed.');
+            }
+
+            setServiceWorkers({
+                isSubscribed,
+                swRegistration,
+            });
+        } catch (err) {
+            errorHandler.report('Service Worker Error', error);
+        }
+    } else {
+        log('Push messaging is not supported');
+    }
+};
+
 export const setNotification = (notification) => (dispatch, getState) => {
     dispatch({
         type: SET_NOTIFICATION,
@@ -271,8 +311,49 @@ export const setNotification = (notification) => (dispatch, getState) => {
 
 export const notification = (state) => (dispatch, getState) => {
     dispatch(showProgress());
+    const applicationServerPublicKey = env.SERVER_KEY;
     const uid = get(getState(), 'app.currentUser.uid');
     const name = get(getState(), 'app.currentUser.displayName');
+    let isSubscribed = get(getState(), 'app.serviceWorkers.isSubsribed');
+    let swRegistration = get(getState(), 'app.serviceWorkers.swRegistration');
+
+    async function subscribeUser() {
+        const applicationServerKey = urlB64ToUint8Array(applicationServerPublicKey);
+        try {
+            const subscription = await swRegistration.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: applicationServerKey,
+            });
+
+            setServiceWorkers({
+                isSubscribed: true,
+                swRegistration,
+            });
+
+            log('User is subscribed.');
+        } catch (err) {
+            log('Failed to subscribe the user: ', err);
+        }
+    }
+
+    async function unsubscribeUser() {
+        try {
+            const subsciption = await swRegistration.pushManager.getSubscription();
+            if (subscription) {
+                await subscription.unsubscribe();
+
+                setServiceWorkers({
+                    isSubscribed: false,
+                    swRegistration,
+                });
+
+                log('User is unsubscribed.');
+            }
+        } catch (err) {
+            log('Error unsubscribing', error);
+        }
+    }
+
     try {
         coreClient().put('/user-edit', qs({ name, notification: state }), { params: { uid } });
         dispatch(setNotification(state));
@@ -288,14 +369,31 @@ export const notification = (state) => (dispatch, getState) => {
                     }
                 });
             }
+
+            subscribeUser();
             dispatch(showSnackbar('Notification on'));
         } else {
+            unsubscribeUser();
             dispatch(showSnackbar('Notification off'));
         }
         dispatch(closeProgress());
     } catch (error) {
         errorHandler.report(error);
         dispatch(closeProgress());
+    }
+};
+
+export const displayNotification = (message) => {
+    const options = {
+        body: message,
+    };
+
+    if (Notification.permission == 'granted') {
+        if (this.notification == 'true') {
+            navigator.serviceWorker.getRegistration().then((reg) => {
+                reg.showNotification('Replus App', options);
+            });
+        }
     }
 };
 
