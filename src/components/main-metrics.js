@@ -311,6 +311,12 @@ export default class MainMetrics extends connect(store)(LitElement) {
                     white-space: nowrap;
                 }
 
+                @media screen and (max-width: 425px) {
+                    .title {
+                        font-size: 3vw !important;
+                    }
+                }
+
                 /* @media screen and (max-width: 375px) {
                     .remote-item {
                         width: 42% !important;
