@@ -19,6 +19,8 @@ server/build/*
 
 # dist
 dist/*
+server/dist/*
+
 
 # env
 .env
