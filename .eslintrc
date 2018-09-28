@@ -20,7 +20,7 @@
                 "capIsNewExceptionPattern": "Mixin$"
             }
         ],
-        "max-len": ["error", { "code": 320 }]
+        "max-len": ["error", { "code": 200 }]
     },
     "settings": {
         "html/indent": "+2",

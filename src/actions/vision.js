@@ -1,11 +1,15 @@
 /* eslint-disable camelcase */
-import {expandResolution, rotationsList, resolutionsList, getCookie} from '../utils.js';
+import {expandResolution, rotationsList, resolutionsList} from '../utils.js';
 import {visionClient} from '../client.js';
 import errorHandler from '../error.js';
 
+// Define vision action types
+export const SET_VISION_SETTINGS = 'SET_VISION_SETTINGS';
+export const SET_ACTIVE_VISION = 'SET_ACTIVE_VISION';
+
 export const setSettings = (settings) => (dispatch, getState) => {
     dispatch({
-        type: 'SET_VISION_SETTINGS',
+        type: SET_VISION_SETTINGS,
         settings,
     });
 };
@@ -21,7 +25,7 @@ export const fetchSettings = (uid, dev_name) => (dispatch, getState) => {
 
 export const setActiveVision = (name) => (dispatch, getState) => {
     dispatch({
-        type: 'SET_ACTIVE_VISION',
+        type: SET_ACTIVE_VISION,
         activeVision: name,
     });
 };
