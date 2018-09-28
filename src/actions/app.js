@@ -278,21 +278,22 @@ export const initServiceWorkers = () => async (dispatch, getState) => {
         log('Service Worker and Push is supported');
 
         try {
-            const swRegistration = await navigator.serviceWorker.register('service-worker.js');
-            log('Service Worker is registered', swReg);
+            const swRegistration = await navigator.serviceWorker.register('/service-worker.js');
+            log('Service Worker is registered', swRegistration);
 
-            await swRegistration.pushManager.getSubscription();
-            isSubscribed = !(subscription === null);
+            swRegistration.pushManager.getSubscription().then(function(subscription) {
+                const isSubscribed = !(subscription === null);
 
-            if (isSubscribed) {
-                log('User IS subscribed.');
-            } else {
-                log('User is NOT subscribed.');
-            }
+                if (isSubscribed) {
+                    log('User IS subscribed.');
+                } else {
+                    log('User is NOT subscribed.');
+                }
 
-            setServiceWorkers({
-                isSubscribed,
-                swRegistration,
+                setServiceWorkers({
+                    isSubscribed,
+                    swRegistration,
+                });
             });
         } catch (err) {
             errorHandler.report('Service Worker Error', error);
@@ -314,13 +315,12 @@ export const notification = (state) => (dispatch, getState) => {
     const applicationServerPublicKey = env.SERVER_KEY;
     const uid = get(getState(), 'app.currentUser.uid');
     const name = get(getState(), 'app.currentUser.displayName');
-    let isSubscribed = get(getState(), 'app.serviceWorkers.isSubsribed');
     let swRegistration = get(getState(), 'app.serviceWorkers.swRegistration');
 
     async function subscribeUser() {
         const applicationServerKey = urlB64ToUint8Array(applicationServerPublicKey);
         try {
-            const subscription = await swRegistration.pushManager.subscribe({
+            await swRegistration.pushManager.subscribe({
                 userVisibleOnly: true,
                 applicationServerKey: applicationServerKey,
             });
@@ -338,7 +338,7 @@ export const notification = (state) => (dispatch, getState) => {
 
     async function unsubscribeUser() {
         try {
-            const subsciption = await swRegistration.pushManager.getSubscription();
+            const subscription = await swRegistration.pushManager.getSubscription();
             if (subscription) {
                 await subscription.unsubscribe();
 
