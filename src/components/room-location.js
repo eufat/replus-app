@@ -495,7 +495,7 @@ export default class Location extends connect(store)(LitElement) {
                 }
 
                 .save-button, .reset-button {
-                    width: 47.5%;
+                    width: 46.5%;
                 }
             </style>
             <div align="left" id="map" style="width: 100%; height: 300px;"></div>
