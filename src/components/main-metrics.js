@@ -213,7 +213,7 @@ export default class MainMetrics extends connect(store)(LitElement) {
                                     <p class="total">5 hours</p>
                                 </div>
                                 <div class="column">
-                                    <p class="title">Average power used</p>
+                                    <p class="title">Avg power used</p>
                                     <p class="total">1000</p>
                                 </div>
                                 <div class="column">
