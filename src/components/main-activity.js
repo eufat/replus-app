@@ -77,8 +77,9 @@ export default class activityMain extends connect(store)(LitElement) {
 
     _didRender() {
         if (this.rooms.length > 0 && !this.listening) {
-            const url = `${CORE_ACTIVITY}/activity`;
+            const url = `${CORE_ACTIVITY}`;
             const socket = io(url, {
+                path: '/activity/socket.io',
                 extraHeaders: {
                     'Access-Control-Allow-Credentials': 'omit',
                 },

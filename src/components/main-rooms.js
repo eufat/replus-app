@@ -7,6 +7,7 @@ import mapValues from 'lodash/mapValues';
 
 import '@polymer/paper-item/paper-item';
 import '@polymer/paper-dialog';
+import '@polymer/paper-button';
 import '@material/mwc-button';
 import '@material/mwc-icon';
 import '@polymer/paper-input/paper-input';
@@ -210,8 +211,9 @@ export default class MainRooms extends connect(store)(LitElement) {
         store.dispatch(addCamera(roomID));
     }
 
-    _handleActiveRemote(remote) {
-        store.dispatch(setActiveRemote(remote));
+    _handleActiveRemote(remote, devices) {
+        const activeRemote = {...remote, devices};
+        store.dispatch(setActiveRemote(activeRemote));
     }
 
     _handleActiveRoom(room, index) {
@@ -279,7 +281,7 @@ export default class MainRooms extends connect(store)(LitElement) {
                                         <p>${toTitleCase(remote.name)}</p>
                                     </div>`
                                 : html`
-                                <a href="/dashboard/remote-${remote.name.substring(0, 2)}" on-click="${() => this._handleActiveRemote(remote)}">
+                                <a href="/dashboard/remote-${remote.name.substring(0, 2)}" on-click="${() => this._handleActiveRemote(remote, rooms[roomIndex].devices)}">
                                     <div id="remote-${roomIndex}${remotes.indexOf(remote)}" class="remote-item">
                                         <img class="appliance-icon" src="images/${applicanceType}-icon.png"/>
                                         <p>${toTitleCase(remote.name)}</p>
@@ -416,8 +418,8 @@ export default class MainRooms extends connect(store)(LitElement) {
                             on-input="${(e) => this._handleNewDeviceChange(e, 'deviceCode')}"
                         >
                         </paper-input>
-                        <div class="buttons" on-click="${() => this._handleNewDeviceAdd(room)}">
-                            <mwc-button class="blue-button" dialog-confirm label="Add This Device" disabled="${!(this.newDevice.deviceID || this.newDevice.deviceCode)}"></mwc-button>
+                        <div class="buttons">
+                            <paper-button class="blue-button" dialog-confirm on-click="${() => this._handleNewDeviceAdd(room)}" disabled="${!(this.newDevice.deviceID || this.newDevice.deviceCode)}">Add This Device</paper-button>
                         </div>
                     </div>
                 </paper-dialog>
@@ -756,6 +758,10 @@ export default class MainRooms extends connect(store)(LitElement) {
                     --mdc-theme-primary: #4664ae;
                     --mdc-theme-on-secondary: white;
                     --mdc-theme-secondary: #4664ae;
+                }
+
+                paper-button.blue-button:not([disabled]) {
+                    color: #4664ae;
                 }
 
                 .add-device-button {

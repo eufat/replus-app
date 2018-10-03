@@ -3,6 +3,7 @@ import {coreActivity} from '../client';
 import errorHandler from '../error';
 import get from 'lodash/get';
 
+// Define activity action types
 export const SET_ACTIVITIES = 'SET_ACTIVITIES';
 
 export const setActivities = (activities) => (dispatch, getState) => {

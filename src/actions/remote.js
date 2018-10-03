@@ -5,10 +5,23 @@ import errorHandler from '../error';
 import {showSnackbar, showProgress, closeProgress, showBack} from './app';
 import {toTitleCase} from '../utils';
 
+// Define remote action types
+export const SET_ROOMS = 'SET_ROOMS';
+export const NEW_DEVICE = 'NEW_DEVICE';
+export const NEW_REMOTE = 'NEW_REMOTE';
+export const SET_ACTIVE_REMOTE = 'SET_ACTIVE_REMOTE';
+export const SET_ACTIVE_REMOTES = 'SET_ACTIVE_REMOTES';
+export const SET_ACTIVE_ROOM = 'SET_ACTIVE_ROOM';
+export const SET_ACTIVE_DEVICE = 'SET_ACTIVE_DEVICE';
+export const SET_REMOTE_SETTINGS = 'SET_REMOTE_SETTINGS';
+export const SET_MANIFEST = 'SET_MANIFEST';
+export const SET_LOCATION = 'SET_LOCATION';
+export const SET_SCHEDULES = 'SET_SCHEDULES';
+
 export const setRooms = (rooms) => (dispatch, getState) => {
     if (rooms) {
         dispatch({
-            type: 'SET_ROOMS',
+            type: SET_ROOMS,
             rooms,
         });
     }
@@ -16,34 +29,34 @@ export const setRooms = (rooms) => (dispatch, getState) => {
 
 export const setNewDevice = (newDevice) => (dispatch, getState) => {
     dispatch({
-        type: 'NEW_DEVICE',
+        type: NEW_DEVICE,
         newDevice,
     });
 };
 
 export const setNewRemote = (newRemote) => (dispatch, getState) => {
     dispatch({
-        type: 'NEW_REMOTE',
+        type: NEW_REMOTE,
         newRemote,
     });
 };
 export const setActiveRemotes = (activeRemotes) => (dispatch, getState) => {
     dispatch({
-        type: 'SET_ACTIVE_REMOTES',
+        type: SET_ACTIVE_REMOTES,
         activeRemotes,
     });
 };
 
 export const setActiveDevice = (activeDevice) => (dispatch, getState) => {
     dispatch({
-        type: 'SET_ACTIVE_DEVICE',
+        type: SET_ACTIVE_DEVICE,
         activeDevice,
     });
 };
 
 export const setSchedules = (schedules) => (dispatch, getState) => {
     dispatch({
-        type: 'SET_SCHEDULES',
+        type: SET_SCHEDULES,
         schedules,
     });
 };
@@ -61,21 +74,21 @@ export const setDevices = (devices) => (dispatch, getState) => {
     });
 
     dispatch({
-        type: 'SET_ROOMS',
+        type: SET_ROOMS,
         rooms: newRooms,
     });
 };
 
 export const setSettings = (settings) => (dispatch, getState) => {
     dispatch({
-        type: 'SET_REMOTE_SETTINGS',
+        type: SET_REMOTE_SETTINGS,
         settings,
     });
 };
 
 export const setManifest = (manifest) => (dispatch, getState) => {
     dispatch({
-        type: 'SET_MANIFEST',
+        type: SET_MANIFEST,
         manifest,
     });
 };
@@ -251,7 +264,7 @@ export const addCamera = (room) => async (dispatch, getState) => {
 export const setActiveRemote = (activeRemote) => (dispatch, getState) => {
     dispatch(showBack());
     dispatch({
-        type: 'SET_ACTIVE_REMOTE',
+        type: SET_ACTIVE_REMOTE,
         activeRemote,
     });
     let brand = get(getState(), 'remote.activeRemote.name');
@@ -262,7 +275,7 @@ export const setActiveRemote = (activeRemote) => (dispatch, getState) => {
 export const setActiveRoom = (activeRoom) => (dispatch, getState) => {
     dispatch(showBack());
     dispatch({
-        type: 'SET_ACTIVE_ROOM',
+        type: SET_ACTIVE_ROOM,
         activeRoom,
     });
 };
@@ -321,6 +334,7 @@ export const remoteCommand = (command) => (dispatch, getState) => {
     dispatch(showProgress());
     const uid = get(getState(), 'app.currentUser.uid');
     const activeRemoteRoom = get(getState(), 'remote.activeRemote.room');
+    const activeDevices = get(getState(), 'remote.activeRemote.devices');
 
     // Iterate over rooms to get devices on desired room
     // the output of devices will be for ex: "ABC123,ABC234".
@@ -338,7 +352,11 @@ export const remoteCommand = (command) => (dispatch, getState) => {
 
     try {
         corePost().post('/remote', qs({uid, devices, command: formattedCommand, room: activeRemoteRoom, source: 'app'}));
-        dispatch(showSnackbar(`Command sent.`));
+        if (activeDevices.length == 0) {
+            dispatch(showSnackbar(`No device is assigned for this room.`));
+        } else {
+            dispatch(showSnackbar(`Command sent.`));
+        }
         dispatch(closeProgress());
     } catch (error) {
         errorHandler.report(error);
@@ -358,7 +376,7 @@ export const addSetting = (command, deviceID) => (dispatch, getState) => {
 
 export const setLocation = (location) => async (dispatch, getState) => {
     dispatch({
-        type: 'SET_LOCATION',
+        type: SET_LOCATION,
         location,
     });
 };
@@ -378,7 +396,7 @@ export const getLocation = (address) => async (dispatch, getState) => {
 
 export const setReverseGeocode = (latlng) => async (dispatch, getState) => {
     dispatch({
-        type: 'SET_LOCATION',
+        type: SET_LOCATION,
         location: latlng,
     });
 };

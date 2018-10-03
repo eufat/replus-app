@@ -8,6 +8,7 @@ import errorHandler from '../error';
 import { fetchRooms, fetchSchedules } from './remote';
 import { fetchActivities } from './activity';
 
+// Define app action types
 export const UPDATE_PAGE = 'UPDATE_PAGE';
 export const UPDATE_OFFLINE = 'UPDATE_OFFLINE';
 export const UPDATE_DRAWER_STATE = 'UPDATE_DRAWER_STATE';

@@ -82,10 +82,23 @@
       user-drag: none;
       -webkit-touch-callout: none;
     }
+
+    #initial-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #initial-container p {
+      text-align: center;
+    }
   </style>
 </head>
 
 <body>
+  <div id="initial-container">
+    <p>Loading ...</p>
+  </div>
   <main-app appTitle="Replus"></main-app>
   <noscript>
     Please enable JavaScript to view this website.
