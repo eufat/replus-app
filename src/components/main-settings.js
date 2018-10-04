@@ -12,6 +12,8 @@ import '@polymer/paper-radio-button';
 import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-icon/iron-icon';
 import '@polymer/iron-icons/social-icons';
+import '@material/mwc-button';
+import '@material/mwc-icon';
 import '@polymer/paper-material';
 
 import {connect} from 'pwa-helpers/connect-mixin';
@@ -34,6 +36,8 @@ export default class MainSettings extends connect(store)(LitElement) {
             notification: Boolean,
             geolocation: Boolean,
             groups: Array,
+            currentGroup: Object,
+            onEdit: Boolean,
         };
     }
 
@@ -50,14 +54,21 @@ export default class MainSettings extends connect(store)(LitElement) {
             {
                 name: 'Group 2',
                 room: ['Kamar 1', 'Kamar 2', 'Kamar 3'],
-                email: ['email1@gmail.com', 'email2@gmail.com', 'email3@gmail.com'],
+                email: ['emailA@gmail.com', 'emailB@gmail.com', 'emailC@gmail.com'],
             },
             {
                 name: 'Group 3',
                 room: ['Kamar 1', 'Kamar 2', 'Kamar 3'],
-                email: ['email1@gmail.com', 'email2@gmail.com', 'email3@gmail.com'],
+                email: ['email-a@gmail.com', 'email-b@gmail.com', 'email-c@gmail.com'],
+            },
+            {
+                name: 'Group 4',
+                room: [],
+                email: [],
             },
         ];
+        this.currentGroup = {};
+        this.onEdit = false;
     }
 
     _shouldRender(props, changedProps, old) {
@@ -114,7 +125,24 @@ export default class MainSettings extends connect(store)(LitElement) {
         }
     }
 
-    _render({rooms, currentUser, provider, notification, geolocation, groups}) {
+    _groupDialog(group) {
+        this.shadowRoot.getElementById('edit-group-modal').open();
+        this.currentGroup = group;
+    }
+
+    _onEdit() {
+        this.onEdit = true;
+    }
+
+    _cancelEdit() {
+        this.onEdit = false;
+    }
+
+    _save() {
+        this.onEdit = false;
+    }
+
+    _render({rooms, currentUser, provider, notification, geolocation, groups, currentGroup, onEdit}) {
         const remoteDevices = (devices, rooms) => {
             return devices.map((device, index) => {
                 if (device.type == 'replus-remote') {
@@ -206,7 +234,12 @@ export default class MainSettings extends connect(store)(LitElement) {
         const groupValues = values(groups);
         const groupItems = groupValues.map((item, index) => {
             return html`
-                <paper-item>
+                <style>
+                    .group-item {
+                        cursor: pointer;
+                    }
+                </style>
+                <paper-item class="group-item" on-click="${() => this._groupDialog(item)}">
                     <paper-item-body>
                         <div>${item.name}</div>
                     </paper-item-body>
@@ -225,8 +258,8 @@ export default class MainSettings extends connect(store)(LitElement) {
 
         let totalDevice = 0;
         let totalRemote = 0;
-        const deviceValues = values(rooms);
-        deviceValues.map((deviceItem) => {
+        const roomValues = values(rooms);
+        roomValues.map((deviceItem) => {
             if (deviceItem.devices) {
                 if (deviceItem.devices.length != 0) {
                     totalDevice = totalDevice + deviceItem.devices.length;
@@ -355,6 +388,38 @@ export default class MainSettings extends connect(store)(LitElement) {
                 .header {
                     margin-top: 30px;
                 }
+
+                #edit-group-modal {
+                    width: 500px;
+                }
+
+                mwc-button.mwc-edit {
+                    display: inline-block;
+                    position: absolute;
+                    right: 1rem;
+                    top: 1rem;
+                }
+
+                @media screen and (max-width: 320px) {
+                    mwc-button.mwc-edit {
+                        width: 65px;
+                    }
+                    mwc-button.mwc-schedule {
+                        width: 105px;
+                    }
+                    mwc-button.mwc-location {
+                        width: 100px;
+                    }
+                }
+
+                .mwc-add {
+                    display: inline-block;
+                }
+
+                .room-name {
+                    display: inline-block;
+                    position: relative;
+                }
             </style>
             <div class="container">
                 <paper-material class="paper-container" elevation="1">
@@ -465,6 +530,68 @@ export default class MainSettings extends connect(store)(LitElement) {
                             always-float-label>
                         </paper-input>
                         <mwc-button dialog-confirm label="Add This Group"></mwc-button>
+                    </div>
+                </paper-dialog>
+                <paper-dialog id="edit-group-modal" with-backdrop>
+                    <div class="modal-content">
+                        ${onEdit
+                            ? html`
+                            <paper-input
+                                label="Group Name"
+                                value="${currentGroup.name}"
+                                always-float-label>
+                            </paper-input>
+                            <mwc-button
+                                class="blue-button"
+                                label="Save"
+                                icon="save"
+                                on-click="${() => this._save()}">
+                            </mwc-button>
+                            <mwc-button
+                                class="blue-button"
+                                label="Cancel"
+                                icon="clear"
+                                on-click="${() => this._cancelEdit()}">
+                            </mwc-button>`
+                            : html`
+                            <h3>${currentGroup.name}</h3>
+                            <mwc-button
+                                dense
+                                class="mwc-edit blue-button"
+                                label="Edit"
+                                icon="edit"
+                                on-click="${() => this._onEdit()}">
+                            </mwc-button>`
+                        }
+                        <h3>People</h3>
+                        <paper-input
+                            label="Email"
+                            always-float-label>
+                        </paper-input>
+                        <mwc-button
+                            class="blue-button"
+                            label="Add"
+                            icon="add">
+                        </mwc-button>
+                        ${values(currentGroup.email).map((email) => {
+                            return html`
+                                <p>${email}</p>
+                            `;
+                        })}
+                        <h3>Room</h3>
+                        ${roomValues.map((room) => {
+                            return html`
+                                <div class="room-group">
+                                    <p class="room-name">${room.name}</p>
+                                    <mwc-button
+                                        dense
+                                        class="mwc-add blue-button"
+                                        label="Add"
+                                        icon="add">
+                                    </mwc-button>
+                                </div>
+                            `;
+                        })}
                     </div>
                 </paper-dialog>
             </div>
