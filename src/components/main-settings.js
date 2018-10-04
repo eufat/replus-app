@@ -10,6 +10,8 @@ import '@polymer/paper-dialog';
 import '@polymer/paper-radio-group';
 import '@polymer/paper-radio-button';
 import '@polymer/iron-icons/iron-icons';
+import '@polymer/iron-icon/iron-icon';
+import '@polymer/iron-icons/social-icons';
 import '@polymer/paper-material';
 
 import {connect} from 'pwa-helpers/connect-mixin';
@@ -31,6 +33,7 @@ export default class MainSettings extends connect(store)(LitElement) {
             provider: String,
             notification: Boolean,
             geolocation: Boolean,
+            groups: Array,
         };
     }
 
@@ -38,6 +41,23 @@ export default class MainSettings extends connect(store)(LitElement) {
         super();
         this.rooms = [];
         this.currentUser = {};
+        this.groups = [
+            {
+                name: 'Group 1',
+                room: ['Kamar 1', 'Kamar 2', 'Kamar 3'],
+                email: ['email1@gmail.com', 'email2@gmail.com', 'email3@gmail.com'],
+            },
+            {
+                name: 'Group 2',
+                room: ['Kamar 1', 'Kamar 2', 'Kamar 3'],
+                email: ['email1@gmail.com', 'email2@gmail.com', 'email3@gmail.com'],
+            },
+            {
+                name: 'Group 3',
+                room: ['Kamar 1', 'Kamar 2', 'Kamar 3'],
+                email: ['email1@gmail.com', 'email2@gmail.com', 'email3@gmail.com'],
+            },
+        ];
     }
 
     _shouldRender(props, changedProps, old) {
@@ -94,7 +114,7 @@ export default class MainSettings extends connect(store)(LitElement) {
         }
     }
 
-    _render({rooms, currentUser, provider, notification, geolocation}) {
+    _render({rooms, currentUser, provider, notification, geolocation, groups}) {
         const remoteDevices = (devices, rooms) => {
             return devices.map((device, index) => {
                 if (device.type == 'replus-remote') {
@@ -183,6 +203,23 @@ export default class MainSettings extends connect(store)(LitElement) {
             `;
         });
 
+        const groupValues = values(groups);
+        const groupItems = groupValues.map((item, index) => {
+            return html`
+                <paper-item>
+                    <paper-item-body>
+                        <div>${item.name}</div>
+                    </paper-item-body>
+                    <div class="settings-right">
+                        ${item.email.length}
+                        <iron-icon icon="social:person"></iron-icon>
+                        ${item.room.length}
+                        <iron-icon icon="icons:weekend"></iron-icon>
+                    </div>
+                </paper-item>
+            `
+        });
+
         const providerIsGoogle = provider === undefined ? true : provider === 'google.com';
         const providerIsFacebook = provider === undefined ? true : provider === 'facebook.com';
 
@@ -244,6 +281,7 @@ export default class MainSettings extends connect(store)(LitElement) {
                 .settings-icon {
                     color: #333333;
                     padding-bottom: 5px;
+                    cursor: pointer;
                 }
                 .remote-icon {
                     padding-right: 5px;
@@ -319,73 +357,116 @@ export default class MainSettings extends connect(store)(LitElement) {
                 }
             </style>
             <div class="container">
-            <paper-material class="paper-container" elevation="1">
-                <div role="listbox" class="settings">
-                    <div class="row">
-                        <div class="column">
-                            <p class="total">${rooms.length}</p>
-                            <p class="title">Rooms</p>
+                <paper-material class="paper-container" elevation="1">
+                    <div role="listbox" class="settings">
+                        <div class="row">
+                            <div class="column">
+                                <p class="total">${rooms.length}</p>
+                                <p class="title">Rooms</p>
+                            </div>
+                            <div class="column">
+                                <p class="total">${totalRemote}</p>
+                                <p class="title">Remotes</p>
+                            </div>
+                            <div class="column">
+                                <p class="total">${totalDevice}</p>
+                                <p class="title">Devices</p>
+                            </div>
                         </div>
-                        <div class="column">
-                            <p class="total">${totalRemote}</p>
-                            <p class="title">Remotes</p>
-                        </div>
-                        <div class="column">
-                            <p class="total">${totalDevice}</p>
-                            <p class="title">Devices</p>
-                        </div>
+                        <paper-item>
+                            <paper-item-body class="text-container">
+                                <p class="left">Notification</p>
+                                <paper-toggle-button class="right" checked="${notification}" on-tap="${(e) => this._handleNotification(e)}"></paper-toggle-button>
+                            </paper-item-body>
+                        </paper-item>
+                        <paper-item>
+                            <paper-item-body class="text-container">
+                                <p class="left">Geolocation</p>
+                                <paper-toggle-button class="right" checked="${geolocation}" on-tap="${(e) => this._handleGeolocation(e)}"></paper-toggle-button>
+                            </paper-item-body>
+                        </paper-item>
                     </div>
-                    <paper-item>
-                        <paper-item-body class="text-container">
-                            <p class="left">Notification</p>
-                            <paper-toggle-button class="right" checked="${notification}" on-tap="${(e) => this._handleNotification(e)}"></paper-toggle-button>
-                        </paper-item-body>
-                    </paper-item>
-                </div>
-            </paper-material>
-            <div class="header">Account</div>
-            <paper-material class="paper-container" elevation="1">
-                <div role="listbox" class="settings">
-                    <paper-item>
-                        <paper-item-body class="text-container">
-                            <p class="left">Owner Name</p>
-                            <p class="right">${get(currentUser, 'displayName')}</p>
-                        </paper-item-body>
-                    </paper-item>
-                    <paper-item>
-                        <paper-item-body class="text-container">
-                            <p class="left">Owner Email</p>
-                            <p class="right">${get(currentUser, 'email')}</p>
-                        </paper-item-body>
-                    </paper-item>
-                    <paper-item>
-                        <mwc-button
-                            dense
-                            icon="link"
-                            class="light"
-                            label="Link to Google"
-                            disabled="${providerIsGoogle}"
-                            on-click="${() => store.dispatch(linkWithProvider('google'))}"
-                        ></mwc-button>
-                    </paper-item>
-                    <paper-item>
-                        <mwc-button
-                            dense
-                            icon="link"
-                            class="light"
-                            label="Link to Facebook"
-                            disabled="${providerIsFacebook}"
-                            on-click="${() => store.dispatch(linkWithProvider('facebook'))}"
-                        ></mwc-button>
-                    </paper-item>
-                </div>
-            </paper-material>
-            <div class="header">Replus Remote</div>
-            <paper-material class="paper-container" elevation="1">
-                <div role="listbox" class="settings">
-                    ${remoteItems}
-                </div>
-            </paper-material>
+                </paper-material>
+                <paper-material class="paper-container" elevation="1">
+                    <div role="listbox" class="settings">
+                        <paper-item>
+                            <paper-item-body class="text-container">
+                                <p class="left">Owner Name</p>
+                                <p class="right">${get(currentUser, 'displayName')}</p>
+                            </paper-item-body>
+                        </paper-item>
+                        <paper-item>
+                            <paper-item-body class="text-container">
+                                <p class="left">Owner Email</p>
+                                <p class="right">${get(currentUser, 'email')}</p>
+                            </paper-item-body>
+                        </paper-item>
+                        <paper-item>
+                            <mwc-button
+                                dense
+                                icon="link"
+                                class="light"
+                                label="Link to Google"
+                                disabled="${providerIsGoogle}"
+                                on-click="${() => store.dispatch(linkWithProvider('google'))}"
+                            ></mwc-button>
+                        </paper-item>
+                        <paper-item>
+                            <mwc-button
+                                dense
+                                icon="link"
+                                class="light"
+                                label="Link to Facebook"
+                                disabled="${providerIsFacebook}"
+                                on-click="${() => store.dispatch(linkWithProvider('facebook'))}"
+                            ></mwc-button>
+                        </paper-item>
+                    </div>
+                </paper-material>
+                <paper-material class="paper-container" elevation="1">
+                    <div role="listbox" class="settings">
+                        <paper-item>
+                            <paper-item-body>
+                                <div>Groups</div>
+                            </paper-item-body>
+                        </paper-item>
+                        ${groupItems}
+                        <paper-item>
+                            <paper-item-body>
+                                <div>Add Group</div>
+                            </paper-item-body>
+                            <div class="settings-right">
+                                <iron-icon class="settings-icon" icon="icons:add" on-click="${() => this.shadowRoot.getElementById('add-new-group-modal').open()}">
+                            </div>
+                        </paper-item>
+                    </div>
+                </paper-material>
+                <paper-material class="paper-container" elevation="1">
+                    <div role="listbox" class="settings">
+                        <paper-item>
+                            <paper-item-body>
+                                <div>Replus Remote</div>
+                            </paper-item-body>
+                        </paper-item>
+                        ${remoteItems}
+                        <paper-item>
+                            <paper-item-body>
+                                <div>Replus Vision</div>
+                            </paper-item-body>
+                        </paper-item>
+                        ${cameraItems}
+                    </div>
+                </paper-material>
+                <paper-dialog id="add-new-group-modal" with-backdrop>
+                    <div class="modal-content">
+                        <paper-input
+                            id="groupName"
+                            label="Enter Group Name"
+                            always-float-label>
+                        </paper-input>
+                        <mwc-button dialog-confirm label="Add This Group"></mwc-button>
+                    </div>
+                </paper-dialog>
             </div>
     `;
     }
