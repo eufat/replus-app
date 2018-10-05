@@ -15,6 +15,7 @@ import '@polymer/paper-fab';
 import '@polymer/iron-icon';
 import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-icons/image-icons';
+import '@polymer/iron-icons/social-icons';
 
 import {setRooms, removeDevice, editRoom, addRoom, removeRoom, setNewRemote, addRemote, removeRemote, addDevice, addCamera, setNewDevice, setActiveRemote, setActiveRoom} from '../actions/remote.js';
 import {setActiveVision} from '../actions/vision.js';
@@ -512,11 +513,13 @@ export default class MainRooms extends connect(store)(LitElement) {
                                     </mwc-button>`
                                 : html`
                                     <style>
-                                        mwc-button.mwc-edit {
-                                            display: inline-block;
+                                        .title-room {
+                                            position: relative;
+                                        }
+                                        .title-button {
                                             position: absolute;
-                                            right: 1rem;
-                                            top: 1rem;
+                                            top: 0;
+                                            right: 0;
                                         }
                                         @media screen and (max-width: 320px) {
                                             mwc-button.mwc-edit {
@@ -533,14 +536,25 @@ export default class MainRooms extends connect(store)(LitElement) {
                                             text-decoration: none;
                                         }
                                     </style>
-                                    <h1>${item.name}</h1>
-                                    <mwc-button
-                                        dense
-                                        class="mwc-edit blue-button"
-                                        label="Edit"
-                                        icon="edit"
-                                        on-click="${() => this._enterOnEdit(roomIndex)}">
-                                    </mwc-button>
+                                    <div class="title-room">
+                                        <h1>${item.name}</h1>
+                                        <div class="title-button">
+                                            <mwc-button
+                                                dense
+                                                class="blue-button"
+                                                label="Group"
+                                                icon="person"
+                                                on-click="${() => this._enterOnEdit(roomIndex)}">
+                                            </mwc-button>
+                                            <mwc-button
+                                                dense
+                                                class="blue-button"
+                                                label="Edit"
+                                                icon="edit"
+                                                on-click="${() => this._enterOnEdit(roomIndex)}">
+                                            </mwc-button>
+                                        </div>
+                                    </div>
                                     <div class="top-button">
                                         <a class="feature-anchor" href="/dashboard/room-schedule" on-click="${() => this._handleActiveRoom(room, roomIndex)}">
                                             <mwc-button
