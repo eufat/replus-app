@@ -241,7 +241,7 @@ export default class MainSettings extends connect(store)(LitElement) {
                 </style>
                 <paper-item class="group-item" on-click="${() => this._groupDialog(item)}">
                     <paper-item-body>
-                        <div>${item.name}</div>
+                        ${item.name}
                     </paper-item-body>
                     <div class="settings-right">
                         ${item.email.length}
@@ -393,13 +393,6 @@ export default class MainSettings extends connect(store)(LitElement) {
                     width: 500px;
                 }
 
-                mwc-button.mwc-edit {
-                    display: inline-block;
-                    position: absolute;
-                    right: 1rem;
-                    top: 1rem;
-                }
-
                 @media screen and (max-width: 320px) {
                     mwc-button.mwc-edit {
                         width: 65px;
@@ -412,13 +405,14 @@ export default class MainSettings extends connect(store)(LitElement) {
                     }
                 }
 
-                .mwc-add {
-                    display: inline-block;
+                .group-name, .room-name {
+                    position: relative;
                 }
 
-                .room-name {
-                    display: inline-block;
-                    position: relative;
+                .edit-group-button, .add-room-button {
+                    position: absolute;
+                    top: -5px;
+                    right: 0;
                 }
             </style>
             <div class="container">
@@ -554,14 +548,16 @@ export default class MainSettings extends connect(store)(LitElement) {
                                 on-click="${() => this._cancelEdit()}">
                             </mwc-button>`
                             : html`
-                            <h3>${currentGroup.name}</h3>
-                            <mwc-button
-                                dense
-                                class="mwc-edit blue-button"
-                                label="Edit"
-                                icon="edit"
-                                on-click="${() => this._onEdit()}">
-                            </mwc-button>`
+                            <div class="group-name">
+                                <h3>${currentGroup.name}</h3>
+                                <mwc-button
+                                    dense
+                                    class="edit-group-button blue-button"
+                                    label="Edit"
+                                    icon="edit"
+                                    on-click="${() => this._onEdit()}">
+                                </mwc-button>
+                            </div>`
                         }
                         <h3>People</h3>
                         <paper-input
@@ -581,11 +577,11 @@ export default class MainSettings extends connect(store)(LitElement) {
                         <h3>Room</h3>
                         ${roomValues.map((room) => {
                             return html`
-                                <div class="room-group">
-                                    <p class="room-name">${room.name}</p>
+                                <div class="room-name">
+                                    <p>${room.name}</p>
                                     <mwc-button
                                         dense
-                                        class="mwc-add blue-button"
+                                        class="add-room-button blue-button"
                                         label="Add"
                                         icon="add">
                                     </mwc-button>
