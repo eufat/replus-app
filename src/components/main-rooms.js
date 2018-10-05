@@ -31,6 +31,7 @@ export default class MainRooms extends connect(store)(LitElement) {
             newRemote: Object,
             uid: String,
             active: Boolean,
+            groups: Array,
         };
     }
 
@@ -39,6 +40,28 @@ export default class MainRooms extends connect(store)(LitElement) {
         this.rooms = [];
         this.newDevice = {};
         this.newRemote = {};
+        this.groups = [
+            {
+                name: 'Group 1',
+                room: ['Kamar 1', 'Kamar 2', 'Kamar 3'],
+                email: ['email1@gmail.com', 'email2@gmail.com', 'email3@gmail.com'],
+            },
+            {
+                name: 'Group 2',
+                room: ['Kamar 1', 'Kamar 2', 'Kamar 3'],
+                email: ['emailA@gmail.com', 'emailB@gmail.com', 'emailC@gmail.com'],
+            },
+            {
+                name: 'Group 3',
+                room: ['Kamar 1', 'Kamar 2', 'Kamar 3'],
+                email: ['email-a@gmail.com', 'email-b@gmail.com', 'email-c@gmail.com'],
+            },
+            {
+                name: 'Keluarga Bahagia',
+                room: [],
+                email: [],
+            },
+        ];
     }
 
     _didRender() {
@@ -252,7 +275,24 @@ export default class MainRooms extends connect(store)(LitElement) {
         }
     }
 
-    _render({rooms, newRemote, newDevice, _progress}) {
+    _toggleGroup(roomIndex) {
+        const menuElement = this.shadowRoot.getElementById(`more-menu-${roomIndex}`);
+
+        if (menuElement.style.display == 'none' || menuElement.style.display == '') {
+            menuElement.style.display = 'block';
+        } else {
+            menuElement.style.display = 'none';
+        }
+
+        const body = this.shadowRoot.getElementById('body-main-rooms');
+        body.onclick = function(event) {
+            if (!event.target.matches('.more-button')) {
+                menuElement.style.display = 'none';
+            }
+        };
+    }
+
+    _render({rooms, newRemote, newDevice, groups,_progress}) {
         const roomRemotes = (remotes, roomIndex) => {
             return mapValues(remotes, (remote) => {
                 const onEdit = rooms[roomIndex].onEdit;
@@ -373,6 +413,20 @@ export default class MainRooms extends connect(store)(LitElement) {
                 `;
             });
         };
+
+        const groupValues = values(groups);
+        const groupName = groupValues.map((group) => {
+            return html`
+                <paper-item>${group.name}
+                    <mwc-button
+                        dense
+                        class="blue-button add-group-icon"
+                        label="Add"
+                        icon="add">
+                    </mwc-button>
+                </paper-item>
+            `;
+        });
 
         const roomsValues = values(rooms);
         const roomsItems = roomsValues.map((item, roomIndex) => {
@@ -535,16 +589,26 @@ export default class MainRooms extends connect(store)(LitElement) {
                                         .feature-anchor {
                                             text-decoration: none;
                                         }
+                                        [id|=more-menu] {
+                                            position: absolute !important;
+                                            right: 0;
+                                            display: none;
+                                            padding: 5px;
+                                            z-index: 9999;
+                                        }
+                                        .add-group-icon {
+                                            margin-left: auto;
+                                        }
                                     </style>
                                     <div class="title-room">
                                         <h1>${item.name}</h1>
                                         <div class="title-button">
                                             <mwc-button
                                                 dense
-                                                class="blue-button"
+                                                class="more-button blue-button"
                                                 label="Group"
                                                 icon="person"
-                                                on-click="${() => this._enterOnEdit(roomIndex)}">
+                                                on-click="${() => this._toggleGroup(roomIndex)}">
                                             </mwc-button>
                                             <mwc-button
                                                 dense
@@ -554,6 +618,11 @@ export default class MainRooms extends connect(store)(LitElement) {
                                                 on-click="${() => this._enterOnEdit(roomIndex)}">
                                             </mwc-button>
                                         </div>
+                                        <paper-material id="more-menu-${roomIndex}">
+                                            <paper-listbox>
+                                                ${groupName}
+                                            </paper-listbox>
+                                        </paper-material>
                                     </div>
                                     <div class="top-button">
                                         <a class="feature-anchor" href="/dashboard/room-schedule" on-click="${() => this._handleActiveRoom(room, roomIndex)}">
@@ -798,7 +867,7 @@ export default class MainRooms extends connect(store)(LitElement) {
                     <mwc-button dialog-confirm label="Add This Room" on-click="${() => this._addNewRoom()}"></mwc-button>
                 </div>
             </paper-dialog>
-            <div class="rooms-container">
+            <div id="body-main-rooms" class="rooms-container">
                 <div class="paper-container">
                     ${roomsItems}
                     <mwc-button raised class="wide light-button" label="Add new room" icon="add" on-click="${() => this.shadowRoot.getElementById('add-new-room-modal').open()}" />
