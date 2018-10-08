@@ -17,6 +17,7 @@ export const SET_REMOTE_SETTINGS = 'SET_REMOTE_SETTINGS';
 export const SET_MANIFEST = 'SET_MANIFEST';
 export const SET_LOCATION = 'SET_LOCATION';
 export const SET_SCHEDULES = 'SET_SCHEDULES';
+export const SET_GROUP = 'SET_GROUP';
 
 export const setRooms = (rooms) => (dispatch, getState) => {
     if (rooms) {
@@ -92,6 +93,13 @@ export const setManifest = (manifest) => (dispatch, getState) => {
         manifest,
     });
 };
+
+export const setGroup = (group) => (dispatch, getState) => {
+    dispatch({
+        type: SET_GROUP,
+        group,
+    });
+}
 
 export const fetchDevices = () => async (dispatch, getState) => {
     dispatch(showProgress());
@@ -450,4 +458,33 @@ export const fetchLocation = () => async (dispatch, getState) => {
         errorHandler.report(error);
         dispatch(closeProgress());
     }
+};
+
+export const fetchGroup = () => async (dispatch, getState) => {
+    dispatch(showProgress());
+    const uid = get(getState(), 'app.currentUser.uid');
+    const group = [
+        {
+            name: 'Group 1',
+            room: ['Kamar 1', 'Kamar 2', 'Kamar 3'],
+            email: ['email1@gmail.com', 'email2@gmail.com', 'email3@gmail.com'],
+        },
+        {
+            name: 'Group 2',
+            room: ['Kamar 1', 'Kamar 2', 'Kamar 3'],
+            email: ['emailA@gmail.com', 'emailB@gmail.com', 'emailC@gmail.com'],
+        },
+        {
+            name: 'Group 3',
+            room: ['Kamar 1', 'Kamar 2', 'Kamar 3'],
+            email: ['email-a@gmail.com', 'email-b@gmail.com', 'email-c@gmail.com'],
+        },
+        {
+            name: 'Keluarga Bahagia',
+            room: [],
+            email: [],
+        },
+    ];
+    dispatch(setGroup(group));
+    dispatch(closeProgress());
 };
