@@ -17,7 +17,7 @@ import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-icons/image-icons';
 import '@polymer/iron-icons/social-icons';
 
-import {setRooms, removeDevice, editRoom, addRoom, removeRoom, setNewRemote, addRemote, removeRemote, addDevice, addCamera, setNewDevice, setActiveRemote, setActiveRoom} from '../actions/remote.js';
+import {setRooms, removeDevice, editRoom, addRoom, removeRoom, setNewRemote, addRemote, removeRemote, addDevice, addCamera, setNewDevice, setActiveRemote, setActiveRoom, fetchGroup} from '../actions/remote.js';
 import {setActiveVision} from '../actions/vision.js';
 import {getNewRoomTemplate, brandsAC, brandsTV, toTitleCase} from '../utils.js';
 import {store} from '../store.js';
@@ -40,32 +40,15 @@ export default class MainRooms extends connect(store)(LitElement) {
         this.rooms = [];
         this.newDevice = {};
         this.newRemote = {};
-        this.groups = [
-            {
-                name: 'Group 1',
-                room: ['Kamar 1', 'Kamar 2', 'Kamar 3'],
-                email: ['email1@gmail.com', 'email2@gmail.com', 'email3@gmail.com'],
-            },
-            {
-                name: 'Group 2',
-                room: ['Kamar 1', 'Kamar 2', 'Kamar 3'],
-                email: ['emailA@gmail.com', 'emailB@gmail.com', 'emailC@gmail.com'],
-            },
-            {
-                name: 'Group 3',
-                room: ['Kamar 1', 'Kamar 2', 'Kamar 3'],
-                email: ['email-a@gmail.com', 'email-b@gmail.com', 'email-c@gmail.com'],
-            },
-            {
-                name: 'Keluarga Bahagia',
-                room: [],
-                email: [],
-            },
-        ];
+        this.groups = [];
     }
 
     _didRender() {
         this._setButton();
+    }
+
+    _firstRendered() {
+        store.dispatch(fetchGroup());
     }
 
     _shouldRender(props, changedProps, old) {
@@ -77,6 +60,7 @@ export default class MainRooms extends connect(store)(LitElement) {
         this.newDevice = get(state, 'remote.newDevice');
         this.newRemote = get(state, 'remote.newRemote');
         this.uid = get(state, 'app.currentUser.uid');
+        this.groups = get(state, 'remote.group');
         this._progress = get(state, 'app.progressOpened');
     }
 

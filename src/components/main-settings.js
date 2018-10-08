@@ -20,7 +20,7 @@ import {connect} from 'pwa-helpers/connect-mixin';
 
 import {store} from '../store.js';
 import { firebase } from '../firebase.js';
-import {setActiveDevice, setActiveRemotes} from '../actions/remote.js';
+import {setActiveDevice, setActiveRemotes, fetchGroup} from '../actions/remote.js';
 import {linkWithProvider, notification, setGeolocation} from '../actions/app.js';
 import {showBack} from '../actions/app.js';
 import {log} from '../utils.js';
@@ -45,28 +45,7 @@ export default class MainSettings extends connect(store)(LitElement) {
         super();
         this.rooms = [];
         this.currentUser = {};
-        this.groups = [
-            {
-                name: 'Group 1',
-                room: ['Kamar 1', 'Kamar 2', 'Kamar 3'],
-                email: ['email1@gmail.com', 'email2@gmail.com', 'email3@gmail.com'],
-            },
-            {
-                name: 'Group 2',
-                room: ['Kamar 1', 'Kamar 2', 'Kamar 3'],
-                email: ['emailA@gmail.com', 'emailB@gmail.com', 'emailC@gmail.com'],
-            },
-            {
-                name: 'Group 3',
-                room: ['Kamar 1', 'Kamar 2', 'Kamar 3'],
-                email: ['email-a@gmail.com', 'email-b@gmail.com', 'email-c@gmail.com'],
-            },
-            {
-                name: 'Group 4',
-                room: [],
-                email: [],
-            },
-        ];
+        this.groups = [];
         this.currentGroup = {};
         this.onEdit = false;
     }
@@ -75,12 +54,17 @@ export default class MainSettings extends connect(store)(LitElement) {
         return props.active;
     }
 
+    _firstRendered() {
+        store.dispatch(fetchGroup());
+    }
+
     _stateChanged(state) {
         this.rooms = get(state, 'remote.rooms');
         this.uid = get(state, 'app.currentUser.uid');
         this.currentUser = get(state, 'app.currentUser');
         this.notification = get(state, 'app.notification');
         this.geolocation = get(state, 'app.geolocation.state');
+        this.groups = get(state, 'remote.group');
     }
 
     _didRender() {
