@@ -55,7 +55,7 @@ export default class MainSettings extends connect(store)(LitElement) {
     }
 
     _firstRendered() {
-        store.dispatch(fetchGroup());
+        store.dispatch(fetchGroup([]));
     }
 
     _stateChanged(state) {
@@ -109,21 +109,63 @@ export default class MainSettings extends connect(store)(LitElement) {
         }
     }
 
-    _groupDialog(group) {
+    _groupDialog(group, index) {
         this.shadowRoot.getElementById('edit-group-modal').open();
-        this.currentGroup = group;
+        this.currentGroup = {...group, index};
     }
 
     _onEdit() {
         this.onEdit = true;
     }
 
-    _cancelEdit() {
+    _cancelEditGroup() {
         this.onEdit = false;
     }
 
-    _save() {
+    _saveGroup() {
+        const groupName = this.shadowRoot.getElementById('groupName').value;
+
+        const newGroup = [...this.groups];
+        newGroup[this.currentGroup.index].name = groupName;
+        this.groups = newGroup;
+
+        const newCurrentGroup = {...this.currentGroup};
+        newCurrentGroup.name = groupName;
+        this.currentGroup = newCurrentGroup;
+
         this.onEdit = false;
+        store.dispatch(fetchGroup(this.groups));
+    }
+
+    _addGroup() {
+        const groupName = this.shadowRoot.getElementById('addGroup').value;
+        const newGroup = {
+            name: groupName,
+            room: [],
+            email: [],
+        };
+        this.groups = [...this.groups, newGroup];
+        store.dispatch(fetchGroup(this.groups));
+        this.shadowRoot.getElementById('addGroup').value = null;
+    }
+
+    _addEmail() {
+        const email = this.shadowRoot.getElementById('email').value;
+        const newGroup = [...this.groups];
+        newGroup[this.currentGroup.index].email = [...newGroup[this.currentGroup.index].email, email];
+        this.groups = newGroup;
+
+        const newCurrentGroup = {...this.currentGroup};
+        newCurrentGroup.email = [...newCurrentGroup.email, email];
+        this.currentGroup = newCurrentGroup;
+        store.dispatch(fetchGroup(this.groups));
+        this.shadowRoot.getElementById('email').value = null;
+    }
+
+    _addRoom(room) {
+        const newGroup = [...this.groups];
+        newGroup[this.currentGroup.index].room = [...newGroup[this.currentGroup.index].room, room];
+        this.groups = newGroup;
     }
 
     _render({rooms, currentUser, provider, notification, geolocation, groups, currentGroup, onEdit}) {
@@ -223,7 +265,7 @@ export default class MainSettings extends connect(store)(LitElement) {
                         cursor: pointer;
                     }
                 </style>
-                <paper-item class="group-item" on-click="${() => this._groupDialog(item)}">
+                <paper-item class="group-item" on-click="${() => this._groupDialog(item, index)}">
                     <paper-item-body>
                         ${item.name}
                     </paper-item-body>
@@ -503,11 +545,11 @@ export default class MainSettings extends connect(store)(LitElement) {
                 <paper-dialog id="add-new-group-modal" with-backdrop>
                     <div class="modal-content">
                         <paper-input
-                            id="groupName"
+                            id="addGroup"
                             label="Enter Group Name"
                             always-float-label>
                         </paper-input>
-                        <mwc-button dialog-confirm label="Add This Group"></mwc-button>
+                        <mwc-button dialog-confirm label="Add This Group" on-click="${() => this._addGroup()}"></mwc-button>
                     </div>
                 </paper-dialog>
                 <paper-dialog id="edit-group-modal" with-backdrop>
@@ -515,6 +557,7 @@ export default class MainSettings extends connect(store)(LitElement) {
                         ${onEdit
                             ? html`
                             <paper-input
+                                id="groupName"
                                 label="Group Name"
                                 value="${currentGroup.name}"
                                 always-float-label>
@@ -523,13 +566,13 @@ export default class MainSettings extends connect(store)(LitElement) {
                                 class="blue-button"
                                 label="Save"
                                 icon="save"
-                                on-click="${() => this._save()}">
+                                on-click="${() => this._saveGroup()}">
                             </mwc-button>
                             <mwc-button
                                 class="blue-button"
                                 label="Cancel"
                                 icon="clear"
-                                on-click="${() => this._cancelEdit()}">
+                                on-click="${() => this._cancelEditGroup()}">
                             </mwc-button>`
                             : html`
                             <div class="group-name">
@@ -545,13 +588,15 @@ export default class MainSettings extends connect(store)(LitElement) {
                         }
                         <h3>People</h3>
                         <paper-input
+                            id="email"
                             label="Email"
                             always-float-label>
                         </paper-input>
                         <mwc-button
                             class="blue-button"
                             label="Add"
-                            icon="add">
+                            icon="add"
+                            on-click="${() => this._addEmail()}">
                         </mwc-button>
                         ${values(currentGroup.email).map((email) => {
                             return html`
@@ -567,7 +612,8 @@ export default class MainSettings extends connect(store)(LitElement) {
                                         dense
                                         class="add-room-button blue-button"
                                         label="Add"
-                                        icon="add">
+                                        icon="add"
+                                        on-click="${() => this._addRoom(room.name)}">
                                     </mwc-button>
                                 </div>
                             `;
