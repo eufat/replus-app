@@ -460,31 +460,31 @@ export const fetchLocation = () => async (dispatch, getState) => {
     }
 };
 
-export const fetchGroup = () => async (dispatch, getState) => {
+export const fetchGroup = (group) => async (dispatch, getState) => {
     dispatch(showProgress());
     const uid = get(getState(), 'app.currentUser.uid');
-    const group = [
-        {
-            name: 'Group 1',
-            room: ['Kamar 1', 'Kamar 2', 'Kamar 3'],
-            email: ['email1@gmail.com', 'email2@gmail.com', 'email3@gmail.com'],
-        },
-        {
-            name: 'Group 2',
-            room: ['Kamar 1', 'Kamar 2', 'Kamar 3'],
-            email: ['emailA@gmail.com', 'emailB@gmail.com', 'emailC@gmail.com'],
-        },
-        {
-            name: 'Group 3',
-            room: ['Kamar 1', 'Kamar 2', 'Kamar 3'],
-            email: ['email-a@gmail.com', 'email-b@gmail.com', 'email-c@gmail.com'],
-        },
-        {
-            name: 'Keluarga Bahagia',
-            room: [],
-            email: [],
-        },
-    ];
+    // const group = [
+    //     {
+    //         name: 'Group 1',
+    //         room: ['Kamar 1', 'Kamar 2', 'Kamar 3'],
+    //         email: ['email1@gmail.com', 'email2@gmail.com', 'email3@gmail.com'],
+    //     },
+    //     {
+    //         name: 'Group 2',
+    //         room: ['Kamar 1', 'Kamar 2', 'Kamar 3'],
+    //         email: ['emailA@gmail.com', 'emailB@gmail.com', 'emailC@gmail.com'],
+    //     },
+    //     {
+    //         name: 'Group 3',
+    //         room: ['Kamar 1', 'Kamar 2', 'Kamar 3'],
+    //         email: ['email-a@gmail.com', 'email-b@gmail.com', 'email-c@gmail.com'],
+    //     },
+    //     {
+    //         name: 'Keluarga Bahagia',
+    //         room: [],
+    //         email: [],
+    //     },
+    // ];
     dispatch(setGroup(group));
     dispatch(closeProgress());
 };
