@@ -602,11 +602,20 @@ export default class MainRooms extends connect(store)(LitElement) {
                                                 on-click="${() => this._enterOnEdit(roomIndex)}">
                                             </mwc-button>
                                         </div>
-                                        <paper-material id="more-menu-${roomIndex}">
-                                            <paper-listbox>
-                                                ${groupName}
-                                            </paper-listbox>
-                                        </paper-material>
+                                        ${groups.length == 0 ?
+                                            html`
+                                            <paper-material id="more-menu-${roomIndex}">
+                                                <paper-listbox>
+                                                    <paper-item>Empty</paper-item>
+                                                </paper-listbox>
+                                            </paper-material>`
+                                            : html`
+                                            <paper-material id="more-menu-${roomIndex}">
+                                                <paper-listbox>
+                                                    ${groupName}
+                                                </paper-listbox>
+                                            </paper-material>
+                                        `}
                                     </div>
                                     <div class="top-button">
                                         <a class="feature-anchor" href="/dashboard/room-schedule" on-click="${() => this._handleActiveRoom(room, roomIndex)}">
