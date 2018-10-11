@@ -217,7 +217,7 @@ export const addDevice = (room) => async (dispatch, getState) => {
     const type = 'replus-remote';
 
     try {
-        await coreClient().post('/device-register', qs({uid, type, room: room.id, deviceID, deviceCode}));
+        await coreClient().post('/device-add', qs({uid, type, room: room.id, deviceID, deviceCode}));
         dispatch(showSnackbar(`Device ${deviceID} registered.`));
         dispatch(fetchDevices());
         dispatch(closeProgress());
