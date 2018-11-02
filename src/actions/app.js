@@ -3,7 +3,7 @@ import get from 'lodash/get';
 import { pushLocationTo } from '../utils';
 import { userDataKey, qs, setCookie, getCookie } from '../utils';
 import { createClient, coreClient } from '../client';
-import firebase from '../firebase';
+import { firebase } from '../firebase.js';
 import errorHandler from '../error';
 import { fetchRooms, fetchSchedules } from './remote';
 import { fetchActivities } from './activity';
