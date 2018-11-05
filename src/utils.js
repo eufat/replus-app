@@ -198,6 +198,11 @@ export function getCookie(cname) {
     return '';
 }
 
+export function deleteCookie(name) {
+  document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+}
+
+
 export function pageToTitle(page) {
     if (page) {
         // Take the last subpage
@@ -245,4 +250,15 @@ export function log(message) {
     if (!env.PRODUCTION) {
         console.log(message);
     }
+}
+
+// Filter from duplicate array item and empty array item string
+export function removeDuplicateAndEmpty(input) {
+    let output = [];
+
+    output = input.filter((item, pos) => {
+        return (item.length > 0) && (input.indexOf(item) == pos);
+    })
+
+    return output;
 }

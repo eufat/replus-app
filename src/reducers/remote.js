@@ -10,7 +10,7 @@ import {
     SET_MANIFEST,
     SET_LOCATION,
     SET_SCHEDULES,
-    SET_GROUP,
+    SET_GROUPS,
 } from '../actions/remote.js';
 
 const initialState = {
@@ -28,7 +28,7 @@ const initialState = {
     manifest: {},
     location: {},
     schedules: {},
-    group: [],
+    groups: [],
 };
 
 const remote = (state = initialState, action) => {
@@ -88,10 +88,10 @@ const remote = (state = initialState, action) => {
                 ...state,
                 schedules: action.schedules,
             };
-        case SET_GROUP:
+        case SET_GROUPS:
             return {
                 ...state,
-                group: action.group,
+                groups: action.groups,
             };
         default:
             return state;

@@ -17,7 +17,7 @@ import '@polymer/iron-icons/iron-icons';
 import '@polymer/iron-icons/image-icons';
 import '@polymer/iron-icons/social-icons';
 
-import {setRooms, removeDevice, editRoom, addRoom, removeRoom, setNewRemote, addRemote, removeRemote, addDevice, addCamera, setNewDevice, setActiveRemote, setActiveRoom, fetchGroup} from '../actions/remote.js';
+import {setRooms, removeDevice, editRoom, addRoom, removeRoom, setNewRemote, addRemote, removeRemote, addDevice, addCamera, setNewDevice, setActiveRemote, setActiveRoom, fetchGroups} from '../actions/remote.js';
 import {setActiveVision} from '../actions/vision.js';
 import {getNewRoomTemplate, brandsAC, brandsTV, toTitleCase} from '../utils.js';
 import {store} from '../store.js';
@@ -48,7 +48,7 @@ export default class MainRooms extends connect(store)(LitElement) {
     }
 
     _firstRendered() {
-        store.dispatch(fetchGroup());
+        store.dispatch(fetchGroups());
     }
 
     _shouldRender(props, changedProps, old) {
@@ -60,7 +60,7 @@ export default class MainRooms extends connect(store)(LitElement) {
         this.newDevice = get(state, 'remote.newDevice');
         this.newRemote = get(state, 'remote.newRemote');
         this.uid = get(state, 'app.currentUser.uid');
-        this.groups = get(state, 'remote.group');
+        this.groups = get(state, 'remote.groups');
         this._progress = get(state, 'app.progressOpened');
     }
 
@@ -602,7 +602,7 @@ export default class MainRooms extends connect(store)(LitElement) {
                                                 on-click="${() => this._enterOnEdit(roomIndex)}">
                                             </mwc-button>
                                         </div>
-                                        ${groups.length == 0 ?
+                                        ${(groups.length == 0) ?
                                             html`
                                             <paper-material id="more-menu-${roomIndex}">
                                                 <paper-listbox>

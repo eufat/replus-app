@@ -72,6 +72,7 @@ class MainApp extends connect(store)(LitElement) {
         };
 
         firebase.auth().onAuthStateChanged((firebaseUser) => {
+            // store.dispatch(deauthenticateUser(setLoaded));
             if (firebaseUser) {
                 store.dispatch(authenticateUser(setLoaded));
                 store.dispatch(setCurrentUser(firebaseUser));

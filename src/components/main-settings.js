@@ -19,11 +19,11 @@ import '@polymer/paper-material';
 import {connect} from 'pwa-helpers/connect-mixin';
 
 import {store} from '../store.js';
-import { firebase } from '../firebase.js';
-import {setActiveDevice, setActiveRemotes, fetchGroup} from '../actions/remote.js';
+import {firebase} from '../firebase.js';
+import {setActiveDevice, setActiveRemotes, fetchGroups, editGroups, addGroup, editGroup} from '../actions/remote.js';
 import {linkWithProvider, notification, setGeolocation} from '../actions/app.js';
 import {showBack} from '../actions/app.js';
-import {log} from '../utils.js';
+import {removeDuplicateAndEmpty} from '../utils.js'
 
 export default class MainSettings extends connect(store)(LitElement) {
     static get properties() {
@@ -55,7 +55,7 @@ export default class MainSettings extends connect(store)(LitElement) {
     }
 
     _firstRendered() {
-        store.dispatch(fetchGroup([]));
+        store.dispatch(fetchGroups());
     }
 
     _stateChanged(state) {
@@ -64,14 +64,14 @@ export default class MainSettings extends connect(store)(LitElement) {
         this.currentUser = get(state, 'app.currentUser');
         this.notification = get(state, 'app.notification');
         this.geolocation = get(state, 'app.geolocation.state');
-        this.groups = get(state, 'remote.group');
+        this.groups = get(state, 'remote.groups');
     }
 
     _didRender() {
-        let user = firebase.auth().currentUser;
+        let users = firebase.auth().currentUser;
 
-        if (user != null) {
-            user.providerData.forEach((profile) => {
+        if (users != null) {
+            users.providerData.forEach((profile) => {
                 this.provider = profile.providerId;
             });
         }
@@ -122,50 +122,88 @@ export default class MainSettings extends connect(store)(LitElement) {
         this.onEdit = false;
     }
 
-    _saveGroup() {
-        const groupName = this.shadowRoot.getElementById('groupName').value;
-
-        const newGroup = [...this.groups];
-        newGroup[this.currentGroup.index].name = groupName;
-        this.groups = newGroup;
-
-        const newCurrentGroup = {...this.currentGroup};
-        newCurrentGroup.name = groupName;
-        this.currentGroup = newCurrentGroup;
-
-        this.onEdit = false;
-        store.dispatch(fetchGroup(this.groups));
-    }
-
     _addGroup() {
-        const groupName = this.shadowRoot.getElementById('addGroup').value;
+        const name = this.shadowRoot.getElementById('addGroup').value;
         const newGroup = {
-            name: groupName,
-            room: [],
-            email: [],
+            name,
+            rooms: [],
+            users: [],
         };
-        this.groups = [...this.groups, newGroup];
-        store.dispatch(fetchGroup(this.groups));
+        store.dispatch(addGroup(newGroup));
         this.shadowRoot.getElementById('addGroup').value = null;
     }
 
-    _addEmail() {
-        const email = this.shadowRoot.getElementById('email').value;
-        const newGroup = [...this.groups];
-        newGroup[this.currentGroup.index].email = [...newGroup[this.currentGroup.index].email, email];
-        this.groups = newGroup;
+    _saveGroupName() {
+        const newGroup = this.groups[this.currentGroup.index];
+        const groupName = this.shadowRoot.getElementById('groupName').value;
 
-        const newCurrentGroup = {...this.currentGroup};
-        newCurrentGroup.email = [...newCurrentGroup.email, email];
-        this.currentGroup = newCurrentGroup;
-        store.dispatch(fetchGroup(this.groups));
-        this.shadowRoot.getElementById('email').value = null;
+        if (groupName !== '') {
+            // Set groups with a new name
+            newGroup.name = groupName;
+            const newGroups = [...this.groups];
+            this.groups = [...newGroups, newGroup];
+
+            // Set current group with a new name too
+            const newCurrentGroup = {...this.currentGroup};
+            newCurrentGroup.name = groupName;
+            this.currentGroup = newCurrentGroup;
+
+            // Update group and refetch groups
+            store.dispatch(editGroup(newCurrentGroup.groupID, newCurrentGroup));
+            store.dispatch(fetchGroups());
+        }
+
+        this.onEdit = false;
+    }
+
+    _addUser() {
+        const newGroup = this.groups[this.currentGroup.index];
+        const user = this.shadowRoot.getElementById('user').value;
+
+        if (user !== '') {
+            // Set group with a new user
+            newGroup.users = removeDuplicateAndEmpty([...newGroup.users, user]);
+
+            // Set groups with a new group
+            const newGroups = [...this.groups];
+            this.groups = [...newGroups, newGroup];
+
+            // Set current group with a new name too
+            const newCurrentGroup = {...this.currentGroup};
+            newCurrentGroup.users = removeDuplicateAndEmpty([...newCurrentGroup.users, user]);
+            this.currentGroup = newCurrentGroup;
+
+            // Update group and refetch groups
+            store.dispatch(editGroup(newCurrentGroup.groupID, newCurrentGroup));
+            store.dispatch(fetchGroups());
+        }
+        
+        // Reset form for preparing a new data
+        this.shadowRoot.getElementById('user').value = null;
     }
 
     _addRoom(room) {
-        const newGroup = [...this.groups];
-        newGroup[this.currentGroup.index].room = [...newGroup[this.currentGroup.index].room, room];
-        this.groups = newGroup;
+        console.log("add room triggered");
+        const newGroup = this.groups[this.currentGroup.index];
+
+        if (room !== '') {
+            // Set groups with a new user
+            newGroup.rooms = removeDuplicateAndEmpty([...newGroup.rooms, room]);
+
+            // Set groups with a new group
+            const newGroups = [...this.groups];
+            this.groups = [...newGroups, newGroup];
+
+            // Set current group with a new name too
+            const newCurrentGroup = {...this.currentGroup};
+            newCurrentGroup.rooms = removeDuplicateAndEmpty([...newCurrentGroup.rooms, room]);
+            this.currentGroup = newCurrentGroup;
+
+            // Update group and refetch groups
+            store.dispatch(editGroup(newCurrentGroup.groupID, newCurrentGroup));
+            store.dispatch(fetchGroups());
+        }
+        
     }
 
     _render({rooms, currentUser, provider, notification, geolocation, groups, currentGroup, onEdit}) {
@@ -257,8 +295,14 @@ export default class MainSettings extends connect(store)(LitElement) {
             `;
         });
 
-        const groupValues = values(groups);
-        const groupItems = groupValues.map((item, index) => {
+        const groupItems = groups.map((item, index) => {
+            const name = get(item, 'name') || '';
+            const users = get(item, 'users') || [];
+            const rooms = get(item, 'rooms') || [];
+
+            const usersAmount = users.length || 0;
+            const roomsAmount = rooms.length || 0;
+
             return html`
                 <style>
                     .group-item {
@@ -267,16 +311,17 @@ export default class MainSettings extends connect(store)(LitElement) {
                 </style>
                 <paper-item class="group-item" on-click="${() => this._groupDialog(item, index)}">
                     <paper-item-body>
-                        ${item.name}
+                        ${name}
                     </paper-item-body>
                     <div class="settings-right">
-                        ${item.email.length}
+                        ${usersAmount}
                         <iron-icon icon="social:person"></iron-icon>
-                        ${item.room.length}
+                        ${roomsAmount}
                         <iron-icon icon="icons:weekend"></iron-icon>
-                    </div>
+                    </div>                
                 </paper-item>
-            `
+
+            `;
         });
 
         const providerIsGoogle = provider === undefined ? true : provider === 'google.com';
@@ -284,6 +329,8 @@ export default class MainSettings extends connect(store)(LitElement) {
 
         let totalDevice = 0;
         let totalRemote = 0;
+        let totalGroup = 0;
+
         const roomValues = values(rooms);
         roomValues.map((deviceItem) => {
             if (deviceItem.devices) {
@@ -295,6 +342,8 @@ export default class MainSettings extends connect(store)(LitElement) {
                 }
             }
         });
+
+        totalGroup = groups.length;
 
         return html`
             <style>
@@ -374,7 +423,7 @@ export default class MainSettings extends connect(store)(LitElement) {
                 /* Create three equal columns that floats next to each other */
                 .column {
                     float: left;
-                    width: 33.33%;
+                    width: 25%;
                 }
 
                 /* Clear floats after the columns */
@@ -387,7 +436,7 @@ export default class MainSettings extends connect(store)(LitElement) {
                     text-align: center;
                 }
                 .total {
-                    font-size: 1.25rem;
+                    font-size: 1.15rem;
                     margin-bottom: 0px !important;
                 }
                 .title {
@@ -456,6 +505,10 @@ export default class MainSettings extends connect(store)(LitElement) {
                             <div class="column">
                                 <p class="total">${totalDevice}</p>
                                 <p class="title">Devices</p>
+                            </div>
+                            <div class="column">
+                                <p class="total">${totalGroup}</p>
+                                <p class="title">Groups</p>
                             </div>
                         </div>
                         <paper-item>
@@ -566,7 +619,7 @@ export default class MainSettings extends connect(store)(LitElement) {
                                 class="blue-button"
                                 label="Save"
                                 icon="save"
-                                on-click="${() => this._saveGroup()}">
+                                on-click="${() => this._saveGroupName()}">
                             </mwc-button>
                             <mwc-button
                                 class="blue-button"
@@ -588,23 +641,25 @@ export default class MainSettings extends connect(store)(LitElement) {
                         }
                         <h3>People</h3>
                         <paper-input
-                            id="email"
-                            label="Email"
+                            id="user"
+                            label="User"
                             always-float-label>
                         </paper-input>
                         <mwc-button
                             class="blue-button"
                             label="Add"
                             icon="add"
-                            on-click="${() => this._addEmail()}">
+                            on-click="${() => this._addUser()}">
                         </mwc-button>
-                        ${values(currentGroup.email).map((email) => {
+                        ${values(currentGroup.users).map((users) => {
                             return html`
-                                <p>${email}</p>
+                                <p>${users}</p>
                             `;
                         })}
                         <h3>Room</h3>
                         ${roomValues.map((room) => {
+                            // const isAdded = currentGroup.rooms.indexOf(room.id) > -1; 
+
                             return html`
                                 <div class="room-name">
                                     <p>${room.name}</p>
@@ -613,7 +668,7 @@ export default class MainSettings extends connect(store)(LitElement) {
                                         class="add-room-button blue-button"
                                         label="Add"
                                         icon="add"
-                                        on-click="${() => this._addRoom(room.name)}">
+                                        on-click="${() => this._addRoom(room.id)}">
                                     </mwc-button>
                                 </div>
                             `;

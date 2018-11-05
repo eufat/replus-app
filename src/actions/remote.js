@@ -17,7 +17,7 @@ export const SET_REMOTE_SETTINGS = 'SET_REMOTE_SETTINGS';
 export const SET_MANIFEST = 'SET_MANIFEST';
 export const SET_LOCATION = 'SET_LOCATION';
 export const SET_SCHEDULES = 'SET_SCHEDULES';
-export const SET_GROUP = 'SET_GROUP';
+export const SET_GROUPS = 'SET_GROUPS';
 
 export const setRooms = (rooms) => (dispatch, getState) => {
     if (rooms) {
@@ -94,10 +94,10 @@ export const setManifest = (manifest) => (dispatch, getState) => {
     });
 };
 
-export const setGroup = (group) => (dispatch, getState) => {
+export const setGroups = (groups) => (dispatch, getState) => {
     dispatch({
-        type: SET_GROUP,
-        group,
+        type: SET_GROUPS,
+        groups,
     });
 }
 
@@ -460,31 +460,109 @@ export const fetchLocation = () => async (dispatch, getState) => {
     }
 };
 
-export const fetchGroup = (group) => async (dispatch, getState) => {
+export const addGroup = (newGroup) => async (dispatch, getState) => {
     dispatch(showProgress());
     const uid = get(getState(), 'app.currentUser.uid');
-    // const group = [
-    //     {
-    //         name: 'Group 1',
-    //         room: ['Kamar 1', 'Kamar 2', 'Kamar 3'],
-    //         email: ['email1@gmail.com', 'email2@gmail.com', 'email3@gmail.com'],
-    //     },
-    //     {
-    //         name: 'Group 2',
-    //         room: ['Kamar 1', 'Kamar 2', 'Kamar 3'],
-    //         email: ['emailA@gmail.com', 'emailB@gmail.com', 'emailC@gmail.com'],
-    //     },
-    //     {
-    //         name: 'Group 3',
-    //         room: ['Kamar 1', 'Kamar 2', 'Kamar 3'],
-    //         email: ['email-a@gmail.com', 'email-b@gmail.com', 'email-c@gmail.com'],
-    //     },
-    //     {
-    //         name: 'Keluarga Bahagia',
-    //         room: [],
-    //         email: [],
-    //     },
-    // ];
-    dispatch(setGroup(group));
-    dispatch(closeProgress());
+    const groups = get(getState(), 'remote.groups');
+    const { name, users } = newGroup;
+
+    try {
+        await coreClient().post('/group-add', qs({groupName: name, users}), {params: {uid}});
+
+        const newGroups = [
+            ...groups,
+            newGroup
+        ];
+
+        dispatch(setGroups(newGroups));
+        dispatch(showSnackbar(`Group ${name} added.`))
+    } catch (error) {
+        dispatch(showSnackbar(`Error adding ${name}.`))
+        errorHandler.report(error);
+    } finally {
+        dispatch(closeProgress());
+    }
+}
+
+export const deleteGroup = (groupID) => async (dispatch, getState) => {
+    dispatch(showProgress());
+    const uid = get(getState(), 'app.currentUser.uid');
+    const groups = get(getState(), 'remote.groups');
+
+    try {
+        await coreClient().delete('/group-delete', {params: {uid, groupID}});
+
+        const prevGroups = groups;
+        const newGroups = prevGroups.filter(item => item.groupID !== groupID);
+
+        dispatch(setGroups(newGroups));
+    } catch (error) {
+        errorHandler.report(error);
+    } finally {
+        dispatch(closeProgress());
+    }
+}
+
+export const editGroup = (groupID, newGroup) => async (dispatch, getState) => {
+    dispatch(showProgress());
+    const uid = get(getState(), 'app.currentUser.uid');
+    const groups = get(getState(), 'remote.groups');
+
+
+    let { name, users, rooms } = newGroup;
+
+    let filteredRooms = [];
+    let filteredUsers = [];
+
+    if (rooms) {
+        const prevRooms = rooms;
+
+        // Filter from duplicate rooms and empty rooms string
+        filteredRooms = prevRooms.filter((item, pos) => {
+            return (item.length > 0) && (prevRooms.indexOf(item) == pos);
+        })
+    }
+
+
+    if (users) {
+        const prevUsers = users;
+
+        // Filter from duplicate users and empty users string
+        filteredUsers = prevUsers.filter((item, pos) => {
+            return (item.length > 0) && (prevUsers.indexOf(item) == pos);
+        })
+    }
+
+    try {
+        await coreClient().put('/group-edit', qs({name, users, rooms}), {params: {uid, groupID}});
+
+        const prevGroups = groups;
+        const newGroups = prevGroups.map(item => {
+            if (item.groupID = groupID) {
+                const newItem = {name, users, rooms};
+                return newItem;
+            }
+        })
+    } catch (error) {
+        errorHandler.report(error);
+    } finally {
+        dispatch(closeProgress());
+    }
+}
+
+export const fetchGroups = () => async (dispatch, getState) => {
+    dispatch(showProgress());
+    const uid = get(getState(), 'app.currentUser.uid');
+
+    try {
+        const response = await coreClient().get('/get-groups', {params: {uid}});
+        const groups = response.data;
+
+
+        dispatch(setGroups(groups));
+    } catch (error) {
+        errorHandler.report(error);
+    } finally {
+        dispatch(closeProgress());
+    }
 };

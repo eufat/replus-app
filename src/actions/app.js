@@ -1,7 +1,7 @@
 import pick from 'lodash/pick';
 import get from 'lodash/get';
 import { pushLocationTo } from '../utils';
-import { userDataKey, qs, setCookie, getCookie } from '../utils';
+import { userDataKey, qs, setCookie, getCookie, deleteCookie } from '../utils';
 import { createClient, coreClient } from '../client';
 import { firebase } from '../firebase.js';
 import errorHandler from '../error';
@@ -222,6 +222,7 @@ export const deauthenticateUser = (callback) => (dispatch, getState) => {
     if (!(window.location.href.indexOf('auth') > -1)) {
         pushLocationTo('/auth');
         firebase.auth().signOut();
+        deleteCookie('accessToken');
     }
 
     dispatch({
