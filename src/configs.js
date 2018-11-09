@@ -1,4 +1,4 @@
-const envType = 'prod'; // process.env.NODE_ENV === 'production';
+const envType = 'staging'; // process.env.NODE_ENV === 'production';
 const version = '2.0.0-alpha.1.webpack';
 
 const mapsApi = 'AIzaSyCfGVFRrYf89QiMaQCiXUb-D_uDjUPCsCc';
