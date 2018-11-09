@@ -168,7 +168,7 @@ export default class MainSettings extends connect(store)(LitElement) {
             const newGroups = [...this.groups];
             this.groups = [...newGroups, newGroup];
 
-            // Set current group with a new name too
+            // Set current group with a new user too
             const newCurrentGroup = {...this.currentGroup};
             newCurrentGroup.users = removeDuplicateAndEmpty([...newCurrentGroup.users, user]);
             this.currentGroup = newCurrentGroup;
@@ -183,20 +183,44 @@ export default class MainSettings extends connect(store)(LitElement) {
     }
 
     _addRoom(room) {
-        console.log("add room triggered");
         const newGroup = this.groups[this.currentGroup.index];
 
         if (room !== '') {
-            // Set groups with a new user
+            // Set groups with a new room
             newGroup.rooms = removeDuplicateAndEmpty([...newGroup.rooms, room]);
 
             // Set groups with a new group
             const newGroups = [...this.groups];
             this.groups = [...newGroups, newGroup];
 
-            // Set current group with a new name too
+            // Set current group with a new room too
             const newCurrentGroup = {...this.currentGroup};
             newCurrentGroup.rooms = removeDuplicateAndEmpty([...newCurrentGroup.rooms, room]);
+            this.currentGroup = newCurrentGroup;
+
+            // Update group and refetch groups
+            store.dispatch(editGroup(newCurrentGroup.groupID, newCurrentGroup));
+            store.dispatch(fetchGroups());
+        }
+        
+    }
+
+    _removeRoom(room) {
+        const newGroup = this.groups[this.currentGroup.index];
+
+        if (room !== '') {
+            // Set groups with removed room
+            const filteredRooms = newGroup.rooms.filter(item => item !== room);
+            newGroup.rooms = removeDuplicateAndEmpty(filteredRooms);
+
+            // Set groups with a new group
+            const newGroups = [...this.groups];
+            this.groups = [...newGroups, newGroup];
+
+            // Set current group with a removed room too
+            const newCurrentGroup = {...this.currentGroup};
+            const filteredCurrentRooms = newCurrentGroup.rooms.filter(item => item !== room);
+            newCurrentGroup.rooms = removeDuplicateAndEmpty(filteredCurrentRooms);
             this.currentGroup = newCurrentGroup;
 
             // Update group and refetch groups
@@ -658,18 +682,31 @@ export default class MainSettings extends connect(store)(LitElement) {
                         })}
                         <h3>Room</h3>
                         ${roomValues.map((room) => {
-                            // const isAdded = currentGroup.rooms.indexOf(room.id) > -1; 
-
+                            const currentGroupRooms = get(currentGroup, 'rooms') || [];
+                            const isAdded = currentGroupRooms.indexOf(room.id) > -1; 
                             return html`
                                 <div class="room-name">
                                     <p>${room.name}</p>
-                                    <mwc-button
-                                        dense
-                                        class="add-room-button blue-button"
-                                        label="Add"
-                                        icon="add"
-                                        on-click="${() => this._addRoom(room.id)}">
-                                    </mwc-button>
+
+                                    ${ 
+                                        isAdded
+                                            ? html`
+                                            <mwc-button
+                                                dense
+                                                class="add-room-button red-button"
+                                                label="remove"
+                                                icon="remove"
+                                                on-click="${() => this._removeRoom(room.id)}">
+                                            </mwc-button>`
+                                            : html`
+                                            <mwc-button
+                                                dense
+                                                class="add-room-button blue-button"
+                                                label="add"
+                                                icon="add"
+                                                on-click="${() => this._addRoom(room.id)}">
+                                            </mwc-button>`
+                                    }
                                 </div>
                             `;
                         })}
