@@ -188,9 +188,9 @@ class RemoteAc extends connect(store)(PolymerElement) {
 
     resetTimeout() {
         clearTimeout(this.timeout);
-        this.timeout = setTimeout(() => {
+        // this.timeout = setTimeout(() => {
             this.send();
-        }, 1000);
+        // }, 1000);
     }
 
     setupPosition() {
@@ -275,7 +275,7 @@ class RemoteAc extends connect(store)(PolymerElement) {
             this._tapPowerOFF();
         } else {
             this.stateEnabled();
-            // this.send();
+            this.send();
         }
     }
 
