@@ -351,11 +351,12 @@ export const remoteCommand = (command) => async (dispatch, getState) => {
     const formattedCommand = command.trim();
 
     try {
-        await corePost().post('/remote', qs({uid, devices, command: formattedCommand, room: activeRemoteRoom, source: 'app'}));
+        const response = await corePost().post('/remote', qs({uid, devices, command: formattedCommand, room: activeRemoteRoom, source: 'app'}));
         if (activeDevices.length == 0) {
             dispatch(showSnackbar(`No device is assigned for this room.`));
         } else {
-            dispatch(showSnackbar(`Command sent.`));
+            if (response.data == 'NO_DEVICES_IS_READY') dispatch(showSnackbar('Device(s) aren\'t ready.'));
+            else dispatch(showSnackbar(`Command sent to ${response.data} .`));
         }
         dispatch(closeProgress());
     } catch (error) {
