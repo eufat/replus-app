@@ -330,7 +330,7 @@ export const fetchSchedules = () => async (dispatch, getState) => {
     }
 };
 
-export const remoteCommand = (command) => (dispatch, getState) => {
+export const remoteCommand = (command) => async (dispatch, getState) => {
     dispatch(showProgress());
     const uid = get(getState(), 'app.currentUser.uid');
     const activeRemoteRoom = get(getState(), 'remote.activeRemote.room');
@@ -351,16 +351,21 @@ export const remoteCommand = (command) => (dispatch, getState) => {
     const formattedCommand = command.trim();
 
     try {
-        corePost().post('/remote', qs({uid, devices, command: formattedCommand, room: activeRemoteRoom, source: 'app'}));
+        const response = await corePost().post('/remote', qs({uid, devices, command: formattedCommand, room: activeRemoteRoom, source: 'app'}));
         if (activeDevices.length == 0) {
             dispatch(showSnackbar(`No device is assigned for this room.`));
         } else {
-            dispatch(showSnackbar(`Command sent.`));
+            if (response.data == 'NO_DEVICES_IS_READY') dispatch(showSnackbar('Device(s) aren\'t ready.'));
+            else dispatch(showSnackbar(`Command sent to ${response.data} .`));
         }
         dispatch(closeProgress());
     } catch (error) {
         errorHandler.report(error);
-        dispatch(showSnackbar(`Device is offline.`));
+        if (error.message == 'Request failed with status code 500') {
+            dispatch(showSnackbar('No response'));
+        } else if (error.message == 'Network Error') {
+            dispatch(showSnackbar('Command sent.'));
+        }
         dispatch(closeProgress());
     }
 };
