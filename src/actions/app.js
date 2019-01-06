@@ -346,7 +346,7 @@ export const setGeolocation = (state) => (dispatch, getState) => {
                 id: '',
             });
 
-            dispatch(showSnackbar('Geolocation off'));
+            // dispatch(showSnackbar('Geolocation off'));
         }
 
         dispatch(closeProgress());

@@ -313,6 +313,10 @@ export default class MainSettings extends connect(store)(LitElement) {
                 paper-item {
                     border-top: 1px solid #0000000f;
                 }
+
+                .header {
+                    margin-top: 30px;
+                }
             </style>
             <div class="container">
             <paper-material class="paper-container" elevation="1">
@@ -337,14 +341,9 @@ export default class MainSettings extends connect(store)(LitElement) {
                             <paper-toggle-button class="right" checked="${notification}" on-tap="${(e) => this._handleNotification(e)}"></paper-toggle-button>
                         </paper-item-body>
                     </paper-item>
-                    <paper-item>
-                        <paper-item-body class="text-container">
-                            <p class="left">Geolocation</p>
-                            <paper-toggle-button class="right" checked="${geolocation}" on-tap="${(e) => this._handleGeolocation(e)}"></paper-toggle-button>
-                        </paper-item-body>
-                    </paper-item>
                 </div>
             </paper-material>
+            <div class="header">Account</div>
             <paper-material class="paper-container" elevation="1">
                 <div role="listbox" class="settings">
                     <paper-item>
@@ -381,20 +380,10 @@ export default class MainSettings extends connect(store)(LitElement) {
                     </paper-item>
                 </div>
             </paper-material>
+            <div class="header">Replus Remote</div>
             <paper-material class="paper-container" elevation="1">
                 <div role="listbox" class="settings">
-                    <paper-item>
-                        <paper-item-body>
-                            <div>Replus Remote</div>
-                        </paper-item-body>
-                    </paper-item>
                     ${remoteItems}
-                    <paper-item>
-                        <paper-item-body>
-                            <div>Replus Vision</div>
-                        </paper-item-body>
-                    </paper-item>
-                    ${cameraItems}
                 </div>
             </paper-material>
             </div>

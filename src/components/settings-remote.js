@@ -57,6 +57,16 @@ export default class SettingsRemote extends connect(store)(LitElement) {
     _stateChanged(state) {
         this.deviceName = get(state, 'remote.activeDevice');
         this.remotes = get(state, 'remote.activeRemotes');
+        this.command = '';
+    }
+
+    _didRender() {
+        const saveSettings = this.shadowRoot.getElementById('saveSettings');
+        if (this.command != '') {
+            saveSettings.removeAttribute('disabled');
+        } else {
+            saveSettings.setAttribute('disabled', true);
+        }
     }
 
     getIndexOf(array, element) {
@@ -87,21 +97,29 @@ export default class SettingsRemote extends connect(store)(LitElement) {
 
     setSelectedRemote(remote) {
         this.selectedRemote = remote;
+        const dropdownRemoteButton = this.shadowRoot.getElementById('dropdownPushButton');
+        dropdownRemoteButton.removeAttribute('disabled');
     }
 
     setSelectedPushButton(button) {
         this.selectedPushButton = button;
+        const saveButton = this.shadowRoot.getElementById('saveButton');
+        saveButton.removeAttribute('disabled');
     }
 
     setCommand(element) {
         this.command = this.selectedRemote + ' ' + this.selectedPushButton;
         const listboxButton = element.getElementById('listbox-button');
         const listboxRemote = element.getElementById('listbox-remote');
+        const dropdownPushButton = this.shadowRoot.getElementById('dropdownPushButton');
+        const saveButton = this.shadowRoot.getElementById('saveButton');
         listboxButton.selected = null;
         listboxRemote.selected = null;
+        dropdownPushButton.setAttribute('disabled', true);
+        saveButton.setAttribute('disabled', true);
     }
 
-    _render({remotes, onePushButtons, command, settingsIsDisabled}) {
+    _render({remotes, onePushButtons, command, deviceName, settingsIsDisabled}) {
         return html`
         <style include="iron-flex iron-flex-alignment">
             :host {
@@ -129,50 +147,72 @@ export default class SettingsRemote extends connect(store)(LitElement) {
             .pointer {
                 cursor: pointer;
             }
-            #container {
-                width: 400px;
-                margin-left: calc((100vw - 400px) / 2);
-                padding-bottom: 150px;
+            .container {
+                max-width: 680px;
+                margin: 0 auto;
+                padding: 0 0.8rem 5rem;
             }
-            #dropdownType {
-                width: 21%;
-                margin-right: 10px;
+            paper-material.paper-container {
+                position: relative;
+                display: block;
+                border-radius: 5px;
+                background-color: white;
+                margin: 1rem 0;
+                background-color: white;
             }
-            #dropdownBrand {
-                width: 75%;
+            .header {
+                margin-top: 15px;
             }
-            #dropdownPushButton {
+            paper-item {
+                border-top: 1px solid #0000000f;
+            }
+            .text-container {
+                width: 100%;
+            }
+            .dropdown-button {
                 width: 100%;
             }
             #remoteDialog {
                 width: 400px;
             }
-            @media (max-width: 500px) {
-                #container {
-                    width: 280px;
-                    margin-left: calc((100vw - 280px) / 2);
-                }
+            .wide {
+                width: 100%;
+                height: 36px;
+            }
+            .light-button {
+                --mdc-theme-on-primary: black;
+                --mdc-theme-primary: white;
+                --mdc-theme-on-secondary: black;
+                --mdc-theme-secondary: white;
             }
         </style>
-        <div role="listbox" class="settings">
-            <paper-item class="pointer" on-click="${() => this.shadowRoot.getElementById('remoteDialog').open()}">
-                <paper-item-body>
-                    <div>One Push Button</div>
-                </paper-item-body>
-                <div class="settings-right">
-                    ${toTitleCase(command)}
+        <div class="container">
+            <div class="header">Device ${deviceName}</div>
+            <paper-material class="paper-container" elevation="1">
+                <div role="listbox" class="settings">
+                    <paper-item class="pointer" on-click="${() => this.shadowRoot.getElementById('remoteDialog').open()}">
+                        <paper-item-body>
+                            <div>One Push Button</div>
+                        </paper-item-body>
+                        <div class="settings-right">
+                            ${toTitleCase(command)}
+                        </div>
+                    </paper-item>
                 </div>
-            </paper-item>
-            <paper-button
-                class="save"
-                raised
-                on-click="${() => this.handleSaveSettings()}">
-                    Save Settings
-            </paper-button>
+            </paper-material>
+            <paper-material class="paper-container" elevation="1">
+                <div role="listbox" class="settings">
+                    <paper-button
+                        id="saveSettings"
+                        class="wide light-button"
+                        on-click="${() => this.handleSaveSettings()}">Save Settings
+                    </paper-button>
+                </div>
+            </paper-material>
         </div>
         <paper-dialog id="remoteDialog" with-backdrop>
             <div class="horizontal layout">
-                <paper-dropdown-menu id="dropdownPushButton" label="Remote" noink no-animations>
+                <paper-dropdown-menu id="dropdownRemote" class="dropdown-button" label="Remote" noink no-animations>
                     <paper-listbox id="listbox-remote" slot="dropdown-content" class="dropdown-content">
                         ${remotes.map(
                             (item) => html`
@@ -183,7 +223,7 @@ export default class SettingsRemote extends connect(store)(LitElement) {
                         )}
                     </paper-listbox>
                 </paper-dropdown-menu>
-                <paper-dropdown-menu id="dropdownPushButton" label="One Push Button" noink no-animations>
+                <paper-dropdown-menu id="dropdownPushButton" class="dropdown-button" label="One Push Button" disabled noink no-animations>
                     <paper-listbox id="listbox-button" slot="dropdown-content" class="dropdown-content">
                         ${onePushButtons.map(
                             (item) => html`
@@ -196,7 +236,11 @@ export default class SettingsRemote extends connect(store)(LitElement) {
                 </paper-dropdown-menu>
             </div>
             <div class="buttons">
-                <mwc-button on-click="${() => this.setCommand(this.shadowRoot)}" dialog-confirm label="Add This Setting"></mwc-button>
+                <paper-button
+                    id="saveButton"
+                    class="mwc-edit"
+                    on-click="${() => this.setCommand(this.shadowRoot)}" dialog-confirm disabled>Add This Setting
+                </paper-button>
             </div>
         </paper-dialog>
     `;
