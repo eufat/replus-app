@@ -3,7 +3,7 @@ import {coreClient, corePost, coreIR, coreSchedule, googleMaps} from '../client'
 import {qs} from '../utils';
 import errorHandler from '../error';
 import {showSnackbar, showProgress, closeProgress, showBack} from './app';
-import {toTitleCase} from '../utils';
+import {toTitleCase, removeDuplicateAndEmpty} from '../utils';
 
 // Define remote action types
 export const SET_ROOMS = 'SET_ROOMS';
@@ -99,7 +99,7 @@ export const setGroups = (groups) => (dispatch, getState) => {
         type: SET_GROUPS,
         groups,
     });
-}
+};
 
 export const fetchDevices = () => async (dispatch, getState) => {
     dispatch(showProgress());
@@ -464,25 +464,22 @@ export const addGroup = (newGroup) => async (dispatch, getState) => {
     dispatch(showProgress());
     const uid = get(getState(), 'app.currentUser.uid');
     const groups = get(getState(), 'remote.groups');
-    const { name, users } = newGroup;
+    const {name, users} = newGroup;
 
     try {
         await coreClient().post('/group-add', qs({groupName: name, users}), {params: {uid}});
 
-        const newGroups = [
-            ...groups,
-            newGroup
-        ];
+        const newGroups = [...groups, newGroup];
 
         dispatch(setGroups(newGroups));
-        dispatch(showSnackbar(`Group ${name} added.`))
+        dispatch(showSnackbar(`Group ${name} added.`));
     } catch (error) {
-        dispatch(showSnackbar(`Error adding ${name}.`))
+        dispatch(showSnackbar(`Error adding ${name}.`));
         errorHandler.report(error);
     } finally {
         dispatch(closeProgress());
     }
-}
+};
 
 export const deleteGroup = (groupID) => async (dispatch, getState) => {
     dispatch(showProgress());
@@ -493,7 +490,7 @@ export const deleteGroup = (groupID) => async (dispatch, getState) => {
         await coreClient().delete('/group-delete', {params: {uid, groupID}});
 
         const prevGroups = groups;
-        const newGroups = prevGroups.filter(item => item.groupID !== groupID);
+        const newGroups = prevGroups.filter((item) => item.groupID !== groupID);
 
         dispatch(setGroups(newGroups));
     } catch (error) {
@@ -501,54 +498,41 @@ export const deleteGroup = (groupID) => async (dispatch, getState) => {
     } finally {
         dispatch(closeProgress());
     }
-}
+};
 
 export const editGroup = (groupID, newGroup) => async (dispatch, getState) => {
     dispatch(showProgress());
     const uid = get(getState(), 'app.currentUser.uid');
     const groups = get(getState(), 'remote.groups');
 
+    let {name, users, rooms} = newGroup;
 
-    let { name, users, rooms } = newGroup;
-
-    let filteredRooms = [];
-    let filteredUsers = [];
-
-    if (rooms) {
-        const prevRooms = rooms;
-
-        // Filter from duplicate rooms and empty rooms string
-        filteredRooms = prevRooms.filter((item, pos) => {
-            return (item.length > 0) && (prevRooms.indexOf(item) == pos);
-        })
-    }
-
-
-    if (users) {
-        const prevUsers = users;
-
-        // Filter from duplicate users and empty users string
-        filteredUsers = prevUsers.filter((item, pos) => {
-            return (item.length > 0) && (prevUsers.indexOf(item) == pos);
-        })
-    }
+    let filteredRooms = removeDuplicateAndEmpty(rooms);
+    let filteredUsers = removeDuplicateAndEmpty(users);
 
     try {
-        await coreClient().put('/group-edit', qs({name, users, rooms}), {params: {uid, groupID}});
+        await coreClient().put('/group-edit', qs({name, users: filteredUsers, rooms: filteredRooms}), {params: {uid, groupID}});
 
         const prevGroups = groups;
-        const newGroups = prevGroups.map(item => {
-            if (item.groupID = groupID) {
+
+        console.log('pg: ', prevGroups);
+
+        const newGroups = prevGroups.map((item) => {
+            if (item.groupID == groupID) {
                 const newItem = {name, users, rooms};
                 return newItem;
             }
-        })
+        });
+
+        console.log('ng: ', newGroups);
+
+        dispatch(setGroups(removeDuplicateAndEmpty(newGroups)));
     } catch (error) {
         errorHandler.report(error);
     } finally {
         dispatch(closeProgress());
     }
-}
+};
 
 export const fetchGroups = () => async (dispatch, getState) => {
     dispatch(showProgress());
@@ -557,7 +541,6 @@ export const fetchGroups = () => async (dispatch, getState) => {
     try {
         const response = await coreClient().get('/get-groups', {params: {uid}});
         const groups = response.data;
-
 
         dispatch(setGroups(groups));
     } catch (error) {

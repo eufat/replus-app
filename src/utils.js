@@ -199,9 +199,8 @@ export function getCookie(cname) {
 }
 
 export function deleteCookie(name) {
-  document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 }
-
 
 export function pageToTitle(page) {
     if (page) {
@@ -257,8 +256,12 @@ export function removeDuplicateAndEmpty(input) {
     let output = [];
 
     output = input.filter((item, pos) => {
-        return (item.length > 0) && (input.indexOf(item) == pos);
-    })
+        if (item !== undefined) {
+            return item.length > 0 && input.indexOf(item) == pos;
+        } else {
+            return false;
+        }
+    });
 
     return output;
 }
