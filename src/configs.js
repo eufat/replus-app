@@ -1,4 +1,4 @@
-const prod = true; // process.env.NODE_ENV === 'production';
+const envType = 'prod'; // process.env.NODE_ENV === 'production';
 const version = '2.0.0-alpha.1.webpack';
 
 const mapsApi = 'AIzaSyCfGVFRrYf89QiMaQCiXUb-D_uDjUPCsCc';
@@ -37,6 +37,19 @@ const prodEndpoint = {
     VISION_STREAM: 'https://vision.replus.co/stream',
 };
 
+const stagingEndpoint = {
+    CORE_IR: 'https://staging.replus.co/ir/',
+    CORE_API: 'https://staging.replus.co/api-v2',
+    CORE_POST: 'https://staging.replus.co/post-v2',
+    CORE_SCHEDULE: 'https://staging.replus.co/schedule-v2',
+    CORE_ACTIVITY: 'https://staging.replus.co',
+    CORE_GEOSENSE: 'https://staging.replus.co/geosense',
+    CORE_FORECAST: 'https://staging.replus.co/forecast',
+    VISION_API: 'https://vision.replus.co/api',
+    VISION_ACTIVITY: 'https://vision.replus.co/activity',
+    VISION_STREAM: 'https://vision.replus.co/stream',
+};
+
 const devEndpoint = {
     CORE_IR: 'https://core.replus.co/ir/',
     CORE_API: 'http://localhost:2000/api',
@@ -51,7 +64,7 @@ const devEndpoint = {
 };
 
 const prodEnv = {
-    PRODUCTION: prod,
+    PRODUCTION: envType,
     VERSION: version,
     PROJECT_ENV: projectId,
     GOOGLE_MAPS: mapsURL,
@@ -60,7 +73,7 @@ const prodEnv = {
 };
 
 const devEnv = {
-    PRODUCTION: prod,
+    PRODUCTION: envType,
     VERSION: version,
     PROJECT_ENV: projectId,
     GOOGLE_MAPS: mapsURL,
@@ -68,8 +81,34 @@ const devEnv = {
     ...devEndpoint,
 };
 
-export const env = prod ? prodEnv : devEnv;
-export const firebaseConfig = prod ? prodFirebase : devFirebase;
+const stagingEnv = {
+    PRODUCTION: envType,
+    VERSION: version,
+    PROJECT_ENV: projectId,
+    GOOGLE_MAPS: mapsURL,
+    ERROR_KEY: stackdriverError,
+    ...stagingEndpoint,
+};
+
+let type = prodEnv;
+
+switch (envType) {
+    case 'prod':
+        type = prodEnv;
+        break;
+    case 'dev':
+        type = devEnv;
+        break;
+    case 'staging':
+        type = stagingEnv;
+        break;
+    default:
+        type = 'prod';
+}
+
+export const env = type;
+export const firebaseConfig = envType === 'prod' ? prodFirebase : devFirebase;
 export const loadEnv = () => {
     window.process.env = env;
 };
+
