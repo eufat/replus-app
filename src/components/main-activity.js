@@ -131,7 +131,11 @@ export default class activityMain extends connect(store)(LitElement) {
             const codesetMode = codesetAC.substring(0, 1);
             const codesetFan = codesetAC.substring(1, 2);
             const codesetTemp = codesetAC.substring(2, 4);
-            actionMessage = `set to ${fansAC[codesetFan].toLowerCase()} fan with ${modesAC[codesetMode].toLowerCase()} mode and ${codesetTemp}°C temperature`;
+            if (codesetTemp === '00') {
+                actionMessage = `turned off`;
+            } else {
+                actionMessage = `set to ${fansAC[codesetFan].toLowerCase()} fan with ${modesAC[codesetMode].toLowerCase()} mode and ${codesetTemp}°C temperature`;
+            }
         } else if (type === 'TV') {
             const codesetTV = data.command.substring(4, 9);
             if (getTVCommandFromCodeset(codesetTV) != undefined) {
