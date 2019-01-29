@@ -32,7 +32,7 @@ import './settings-vision.js';
 import './settings-remote.js';
 
 import './remote-ac.js';
-import './remote-tv.js';
+import './remote-tv-2.js';
 import './remote-vision.js';
 
 import './room-schedule.js';

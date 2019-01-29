@@ -75,7 +75,7 @@ const loadPage = (page) => async (dispatch) => {
                 await import('../components/remote-ac.js');
                 break;
             case 'remote-tv':
-                await import('../components/remote-tv.js');
+                await import('../components/remote-tv-2.js');
                 break;
             case 'room-schedule':
                 await import('../components/room-schedule.js');
