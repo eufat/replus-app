@@ -1,6 +1,6 @@
-# Replus App [![CircleCI](https://circleci.com/gh/eufat/replus-app.svg?style=svg&circle-token=b9e8d9011a8a2ef3f465235e9df53eea6507ca42)](https://circleci.com/gh/eufat/replus-app)
+# Replus App [![CircleCI](https://circleci.com/gh/eufat/replus-app.svg?style=svg&circle-token=b9e8d9011a8a2ef3f465235e9df53eea6507ca42)](https://circleci.com/gh/eufat/replus-app) [![Netlify Status](https://api.netlify.com/api/v1/badges/7972ec1e-086f-479c-b635-bc893925a6d1/deploy-status)](https://app.netlify.com/sites/replus/deploys)
 
-A Replus Progressive Web App (PWA) for Replus Remote and Replus Vision.
+A Replus Progressive Web App (PWA) for Replus Devices.
 
 ### Prerequisites
 
